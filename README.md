@@ -1,2 +1,2 @@
 # Rainbow
-Reddit client
+Reddit getClient
