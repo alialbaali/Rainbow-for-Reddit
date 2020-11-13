@@ -3,7 +3,7 @@ package com.rainbow.remote.dto
 import kotlinx.serialization.Serializable
 
 //@Serializable
-data class Subreddit(
+data class RemoteSubreddit(
     val name: String?,
     val title: String?,
     val over18: Boolean?,
