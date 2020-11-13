@@ -1,0 +1,25 @@
+package com.rainbow.remote.dto
+
+data class RemotePost(
+    val id: String?,
+    val fullName: String?,
+    val subreddit: String?,
+    val title: String?,
+    val selftext: String?,
+    val subredditNamePrefixed: String?,
+    val ups: Int?,
+    val downs: Int?,
+    val upvoteRatio: Int?,
+    val totalAwardsReceived: Int?,
+    val spoiler: Boolean?,
+    val numComments: Int?,
+    val pinned: Boolean?,
+    val edited: Boolean?,
+    val created: Int?,
+    val createdUtc: Int?,
+    val over18: Int?,
+    val locked: Boolean?,
+    val hideScore: Boolean?,
+    val isOriginalContent: Boolean?,
+    val url: String?,
+)
