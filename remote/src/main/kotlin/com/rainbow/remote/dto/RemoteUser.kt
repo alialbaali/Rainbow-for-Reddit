@@ -1,19 +1,18 @@
 package com.rainbow.remote.dto
 
-import kotlinx.serialization.Serializable
-
-//@Serializable
-data class User(
+data class RemoteUser(
     val id: String?,
-    val username: String?,
+    val name: String?,
     val banner: String?,
     val avatar: String?,
     val linkKarma: Int?,
     val commentKarma: Int?,
     val iconImg: String?,
-    val totalKarma: String?,
+    val totalKarma: Int?,
     val verified: Boolean,
     val isGold: Boolean?,
     val isMod: Boolean?,
-    val subreddit: Subreddit?,
+    val subreddit: RemoteSubreddit?,
+    val created: Long?,
+    val createdUtc: Long?,
 )
