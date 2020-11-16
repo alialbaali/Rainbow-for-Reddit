@@ -1,14 +1,15 @@
 package com.rainbow.remote.dto
 
 data class RemoteAward(
-    val id: String?,
-    val name: String?,
-    val staticIconUrl: String?,
-    val description: String?,
+    val id: String,
+    val name: String,
+    val description: String,
+    val count: Long?,
+    val coinPrice: Long?, // Might be Double
     val awardSubType: AwardSubType?,
     val awardType: AwardSubType?,
-    val count: Int?,
-    val coinPrice: Int?,
+    val IconUrl: String?,
+    val staticIconUrl: String,
 ) {
     enum class AwardSubType {
         Global, Premium,
