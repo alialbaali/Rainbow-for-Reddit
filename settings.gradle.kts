@@ -11,7 +11,7 @@ pluginManagement {
 
 rootProject.name = "Rainbow"
 
-include("app", "remote")
+include("app", "remote", "domain", "data", "local")
 
 buildscript {
     repositories { gradlePluginPortal() }

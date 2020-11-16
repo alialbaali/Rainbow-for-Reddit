@@ -8,6 +8,7 @@ version = "0.1"
 
 repositories {
     mavenCentral()
+    maven(url = "https://kotlin.bintray.com/kotlinx/")
 }
 
 dependencies {
@@ -15,6 +16,7 @@ dependencies {
     implementation(Ktor.Client.authBasic)
     implementation(Ktor.Client.core)
     implementation("io.ktor:ktor-client-jackson:1.4.1")
+    api("org.jetbrains.kotlinx:kotlinx-datetime:0.1.0")
     api(Ktor.Client.apache)
     implementation(Ktor.Client.logging)
     implementation(Ktor.Client.json)
