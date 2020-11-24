@@ -1,6 +1,6 @@
 package com.rainbow.domain.models
 
-import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 
 private const val DefaultUserImageUrl = ""
 
@@ -11,7 +11,7 @@ data class User(
     val commentKarma: Long,
     val imageUrl: String = DefaultUserImageUrl,
     val isNSFW: Boolean = false,
-    val creationDate: LocalDate,
+    val creationDate: LocalDateTime,
 )
 
 val User.totalKarma
@@ -20,8 +20,8 @@ val User.totalKarma
 val User.redditUrl
     get() = "/user/$name"
 
-val User.redditName
-    get() = "u/$name"
-
-val User.redditId
+val User.idPrefixed
     get() = "t2_$id"
+
+val User.namePrefixed
+    get() = "u/$name"

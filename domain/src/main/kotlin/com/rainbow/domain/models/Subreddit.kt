@@ -27,11 +27,11 @@ data class Subreddit(
 
 private val DefaultColors = Subreddit.Colors(DefaultPrimaryColor, DefaultBackgroundColor, DefaultKeyColor)
 
-val Subreddit.redditName
-    get() = "r/$name"
-
-val Subreddit.redditId
+val Subreddit.idPrefixed
     get() = "t5_$id"
+
+val Subreddit.namePrefixed
+    get() = "r/$name"
 
 val Subreddit.redditUrl
     get() = "/r/$name"
