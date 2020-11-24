@@ -2,7 +2,7 @@ package com.rainbow.remote.dto
 
 data class RemotePost(
     val id: String,
-    val authorFullname: String,
+    val authorFullname: String?,
     val title: String,
     val selftext: String?,
     val subreddit: String,
@@ -16,7 +16,7 @@ data class RemotePost(
     val spoiler: Boolean?,
     val numComments: Long?,
     val pinned: Boolean?,
-    val edited: Long?,
+//    val edited: Boolean?,
     val created: Long,
     val createdUtc: Long,
     val over18: Boolean?,

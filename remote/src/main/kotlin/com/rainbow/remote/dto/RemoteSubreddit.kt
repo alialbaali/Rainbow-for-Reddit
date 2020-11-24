@@ -18,6 +18,10 @@ data class RemoteSubreddit(
     val bannerBackgroundColor: String?,
     val lang: String?,
     val activeUserCount: Long?,
+    val userHasFavorited: Boolean?,
+    val userIsContributor: Boolean?,
+    val userIsSubscriber: Boolean?,
+    val userIsModerator: Boolean?,
     val created: Long?,
     val createdUtc: Long?,
 )
