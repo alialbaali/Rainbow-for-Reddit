@@ -12,6 +12,6 @@ enum class ModPermission {
     Wiki, Posts, Mail, Config, Flair, Access, All;
 
     companion object {
-        fun allPermissions() = listOf(Wiki, Posts, Mail, Config, Flair, Access)
+        val All = listOf(Wiki, Posts, Mail, Config, Flair, Access)
     }
 }

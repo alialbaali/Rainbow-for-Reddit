@@ -14,5 +14,6 @@ data class RemoteAward(
     enum class AwardSubType {
         Global, Premium,
         Appreciation, Group,
+        Community,
     }
 }
