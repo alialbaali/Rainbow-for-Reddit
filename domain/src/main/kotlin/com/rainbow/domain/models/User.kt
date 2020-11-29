@@ -1,5 +1,7 @@
 package com.rainbow.domain.models
 
+import com.rainbow.domain.asUserIdPrefixed
+import com.rainbow.domain.asUserNamePrefixed
 import kotlinx.datetime.LocalDateTime
 
 private const val DefaultUserImageUrl = ""
@@ -21,7 +23,7 @@ val User.redditUrl
     get() = "/user/$name"
 
 val User.idPrefixed
-    get() = "t2_$id"
+    get() = id.asUserIdPrefixed()
 
 val User.namePrefixed
-    get() = "u/$name"
+    get() = name.asUserNamePrefixed()

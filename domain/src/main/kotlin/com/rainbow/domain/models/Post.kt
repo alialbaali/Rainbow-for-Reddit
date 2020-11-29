@@ -1,5 +1,6 @@
 package com.rainbow.domain.models
 
+import com.rainbow.domain.*
 import kotlinx.datetime.LocalDateTime
 
 data class Post(
@@ -25,25 +26,26 @@ data class Post(
         object None : Type()
         data class Text(val body: String) : Type()
         data class Link(val url: String) : Type()
+        data class Gif(val url: String) : Type()
         data class Image(val url: String) : Type()
         data class Video(val url: String) : Type()
     }
 }
 
 val Post.idPrefixed
-    get() = "t3_$id"
+    get() = id.asPostIdPrefixed()
 
 val Post.userIdPrefixed
-    get() = "t2_$userId"
+    get() = userId.asUserIdPrefixed()
 
 val Post.userNamePrefixed
-    get() = "u/$userName"
+    get() = userName.asUserNamePrefixed()
 
 val Post.subredditIdPrefixed
-    get() = "t5_$subredditId"
+    get() = subredditId.asSubredditIdPrefixed()
 
 val Post.subredditNamePrefixed
-    get() = "r/$subredditName"
+    get() = subredditName.asSubredditNamePrefixed()
 
 val Post.upvotesCount
     get() = votes.upvotesCount
@@ -53,6 +55,3 @@ val Post.downvotesCount
 
 val Post.voteRatio
     get() = votes.voteRatio
-
-val Post.awardsCount
-    get() = awards.count()
