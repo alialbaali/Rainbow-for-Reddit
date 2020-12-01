@@ -7,34 +7,39 @@ import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 
+const val OauthUrl = "https://oauth.reddit.com/"
+
 suspend inline fun <reified T> HttpClient.redditRequest(
     url: String,
     builder: HttpRequestBuilder.() -> Unit = {}
 ): RedditResponse<T> = request<HttpResponse> {
     bearerAuthHeader(getLocalToken())
-    url("https://oauth.reddit.com/$url.json")
+    url("$OauthUrl$url.json")
     builder()
-}.asRedditResponse()
-
+}.run {
+    if (status.isSuccess())
+        receive<RedditResponse.Success<T>>()
+    else
+        receive<RedditResponse.Failure<T>>()
+}
 
 suspend inline fun <reified T> HttpClient.customRedditRequest(
     url: String,
     builder: HttpRequestBuilder.() -> Unit = {}
 ): T? = request {
     bearerAuthHeader(getLocalToken())
-    url("https://oauth.reddit.com/$url.json")
+    url("$OauthUrl$url.json")
     builder()
 }
 
-
 suspend inline fun <reified T> HttpClient.redditSubmitForm(
     url: String,
-    block: HttpRequestBuilder.() -> Unit = {}
-): T = submitForm {
+    block: HttpRequestBuilder .() -> Unit = {}
+): RedditResponse<T> = submitForm<HttpResponse> {
     bearerAuthHeader(getLocalToken())
-    url("https://oauth.reddit.com/$url")
+    url("$OauthUrl$url")
     block()
-}
+}.toRedditResponse()
 
 suspend inline fun <reified T> HttpClient.redditGet(
     urlString: String,
@@ -68,11 +73,10 @@ suspend inline fun <reified T> HttpClient.redditDelete(
     builder()
 }
 
-suspend inline fun <reified T> HttpResponse.asRedditResponse(): RedditResponse<T> =
+suspend inline fun <reified T> HttpResponse.toRedditResponse(): RedditResponse<T> =
     if (status.isSuccess())
-        receive<RedditResponse.Success<T>>()
+        RedditResponse.Success(data = receive())
     else
-        receive<RedditResponse.Failure<T>>()
-
+        RedditResponse.Failure(receive<Any>().toString(), status.value)
 
 fun getLocalToken() = "383986809160-W8fkmrvNV_VrDouPMun37hc9J20Mtg"
