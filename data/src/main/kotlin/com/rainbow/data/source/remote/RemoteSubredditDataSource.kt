@@ -1,9 +1,10 @@
 package com.rainbow.data.source.remote
 
-import com.rainbow.remote.*
-import com.rainbow.remote.dto.RemoteMod
-import com.rainbow.remote.dto.RemoteRule
+import com.rainbow.remote.RedditResponse
+import com.rainbow.remote.client
 import com.rainbow.remote.dto.RemoteSubreddit
+import com.rainbow.remote.redditGet
+import com.rainbow.remote.redditSubmitForm
 import com.rainbow.remote.source.RemoteSubredditDataSource
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -17,31 +18,40 @@ private class RemoteSubredditDataSourceImpl(private val client: HttpClient) : Re
         return client.redditGet(url)
     }
 
-    override suspend fun getSubredditMods(subredditName: String): RedditResponse<Listing<RemoteMod>> {
-        val url = "r/$subredditName/about/moderators"
+    override suspend fun getMySubreddits(): RedditResponse<List<RemoteSubreddit>> {
+        val url = "subreddits/mine/subscriber"
         return client.redditGet(url)
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override suspend fun getSubredditRules(subredditName: String): RedditResponse<List<RemoteRule>> {
-        val url = "r/$subredditName/about/rules"
-        return client.redditGet<Map<String, Any>>(url)
-            .map { it["rules"] as List<RemoteRule> }
-    }
-
-    override suspend fun subscribe(subredditId: String) {
+    override suspend fun subscribeSubreddit(subredditId: String): RedditResponse<Unit> {
         val url = "api/subscribe"
         return client.redditSubmitForm(url) {
-            parameter("sr", subredditId)
-            parameter("action", "sub")
+            parameter(Keys.Subreddit, subredditId)
+            parameter(Keys.Action, Values.Sub)
         }
     }
 
-    override suspend fun unSubscribe(subredditId: String) {
+    override suspend fun unSubscribeSubreddit(subredditId: String): RedditResponse<Unit> {
         val url = "api/subscribe"
         return client.redditSubmitForm(url) {
-            parameter("sr", subredditId)
-            parameter("action", "unsub")
+            parameter(Keys.Subreddit, subredditId)
+            parameter(Keys.Action, Values.unSub)
+        }
+    }
+
+    override suspend fun favoriteSubreddit(subredditName: String): RedditResponse<Unit> {
+        val url = "api/favorite"
+        return client.redditSubmitForm(url) {
+            parameter(Keys.SubredditName, subredditName)
+            parameter(Keys.Favorite, true)
+        }
+    }
+
+    override suspend fun unFavoriteSubreddit(subredditName: String): RedditResponse<Unit> {
+        val url = "api/favorite"
+        return client.redditSubmitForm(url) {
+            parameter(Keys.SubredditName, subredditName)
+            parameter(Keys.Favorite, false)
         }
     }
 

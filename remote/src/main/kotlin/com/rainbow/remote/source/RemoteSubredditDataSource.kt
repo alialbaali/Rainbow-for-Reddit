@@ -1,21 +1,20 @@
 package com.rainbow.remote.source
 
-import com.rainbow.remote.Listing
 import com.rainbow.remote.RedditResponse
-import com.rainbow.remote.dto.RemoteMod
-import com.rainbow.remote.dto.RemoteRule
 import com.rainbow.remote.dto.RemoteSubreddit
 
 interface RemoteSubredditDataSource {
 
     suspend fun getSubredditAbout(subredditName: String): RedditResponse<RemoteSubreddit>
 
-    suspend fun getSubredditMods(subredditName: String): RedditResponse<Listing<RemoteMod>>
+    suspend fun getMySubreddits(): RedditResponse<List<RemoteSubreddit>>
 
-    suspend fun getSubredditRules(subredditName: String): RedditResponse<List<RemoteRule>>
+    suspend fun subscribeSubreddit(subredditId: String): RedditResponse<Unit>
 
-    suspend fun subscribe(subredditId: String)
+    suspend fun unSubscribeSubreddit(subredditId: String): RedditResponse<Unit>
 
-    suspend fun unSubscribe(subredditId: String)
+    suspend fun favoriteSubreddit(subredditName: String): RedditResponse<Unit>
+
+    suspend fun unFavoriteSubreddit(subredditName: String): RedditResponse<Unit>
 
 }
