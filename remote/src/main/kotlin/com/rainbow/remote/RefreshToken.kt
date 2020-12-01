@@ -24,7 +24,7 @@ internal class RefreshToken(val config: Config) {
         }
 
         override fun install(feature: RefreshToken, scope: HttpClient) =
-            scope.receivePipeline.intercept(HttpReceivePipeline.After) { response ->
+            scope.receivePipeline.intercept(HttpReceivePipeline.Before) { response ->
 
                 if (response.status == HttpStatusCode.Unauthorized)
                     with(scope.refreshToken(feature.config)) {
