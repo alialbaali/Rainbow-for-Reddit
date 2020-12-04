@@ -38,6 +38,16 @@ interface RemotePostDataSource {
 
     suspend fun unHidePost(postIdPrefixed: String): RedditResponse<Unit>
 
-    suspend fun submitPost(remotePost: RemotePost): RedditResponse<Unit>
+    suspend fun submitPost(
+        subredditName: String,
+        title: String,
+        isNsfw: Boolean = false,
+        isSpoiler: Boolean = false,
+        resubmit: Boolean = true,
+        text: String? = null,
+        url: String? = null,
+    ): RedditResponse<Unit>
+
+    suspend fun deletePost(postIdPrefixed: String): RedditResponse<Unit>
 
 }

@@ -95,10 +95,49 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
         }
     }
 
-    override suspend fun submitPost(remotePost: RemotePost): RedditResponse<Unit> {
-        val url = "api/submit"
+    override suspend fun submitPost(
+        subredditName: String,
+        title: String,
+        isNsfw: Boolean,
+        isSpoiler: Boolean,
+        resubmit: Boolean,
+        text: String?,
+        url: String?,
+    ): RedditResponse<Unit> {
+        val endpointUrl = "api/submit"
+        return client.redditSubmitForm<Map<String, Any?>>(endpointUrl) {
+            parameter(Keys.Subreddit, subredditName)
+            parameter(Keys.Title, title)
+            parameter(Keys.Nsfw, isNsfw)
+            parameter(Keys.Spoiler, isSpoiler)
+            parameter(Keys.ReSubmit, resubmit)
+
+            when {
+                text != null && text.isNotBlank() -> {
+                    parameter(Keys.Kind, Values.Self)
+                    parameter(Keys.Text, text)
+                }
+                url != null && url.isNotBlank() -> {
+                    parameter(Keys.Kind, Values.Url)
+                    parameter(Keys.Url, url)
+                }
+                else -> {
+                    parameter(Keys.Kind, Values.Self)
+                }
+            }
+        }.let { response ->
+            response as RedditResponse.Success
+            when (response.data.getOrDefault("success", false) as Boolean) {
+                true -> RedditResponse.Success(data = Unit)
+                false -> RedditResponse.Failure("Something went wrong", 400)
+            }
+        }
+    }
+
+    override suspend fun deletePost(postIdPrefixed: String): RedditResponse<Unit> {
+        val url = "api/del"
         return client.redditSubmitForm(url) {
-            TODO()
+            parameter(Keys.Id, postIdPrefixed)
         }
     }
 
