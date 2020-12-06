@@ -6,4 +6,10 @@ data class RemoteMessage(
     val text: String?,
     val to: String?,
     val fromSr: String?,
+    val firstMessage: Long?,
+    val firstMessageName: String?,
+    val subreddit: String?,
+    val authorFullname: String?,
+    val author: String?,
+    val score: Long?,
 )
