@@ -13,7 +13,7 @@ repositories {
 }
 
 kotlin {
-    tasks.withType<KotlinCompile> {
+    target.compilations.all {
         kotlinOptions {
             freeCompilerArgs = freeCompilerArgs + "-Xallow-result-return-type"
         }

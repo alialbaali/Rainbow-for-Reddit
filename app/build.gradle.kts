@@ -2,7 +2,7 @@ import org.jetbrains.compose.compose
 
 plugins {
     kotlin("jvm") version "1.4.20"
-    id("org.jetbrains.compose") version "0.2.0-build132"
+    id("org.jetbrains.compose") version "0.3.0-build133"
     application
 }
 
@@ -24,12 +24,23 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.1.0")
 }
 
+kotlin {
+    target.compilations.all {
+        kotlinOptions {
+            freeCompilerArgs = freeCompilerArgs + "-Xallow-result-return-type"
+        }
+    }
+}
+
 allprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "11"
+        kotlinOptions {
+            jvmTarget = "11"
+            freeCompilerArgs = freeCompilerArgs + "-Xallow-result-return-type"
+        }
     }
 }
 
 application {
-    mainClassName = "MainKt"
+    mainClass.set("com.rainbow.app.MainKt")
 }
