@@ -2,7 +2,7 @@ import org.jetbrains.compose.compose
 
 plugins {
     kotlin("jvm") version "1.4.20"
-    id("org.jetbrains.compose") version "0.3.0-build133"
+    id("org.jetbrains.compose") version "0.3.0-build135"
     application
 }
 
@@ -19,7 +19,6 @@ repositories {
 dependencies {
     implementation(compose.desktop.currentOs)
     implementation(compose.materialIconsExtended)
-    implementation(KotlinX.Coroutines.core)
     implementation(project(":data"))
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.1.0")
 }
