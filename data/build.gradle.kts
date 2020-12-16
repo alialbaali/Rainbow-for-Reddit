@@ -1,7 +1,5 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    kotlin("jvm") version "1.4.20"
+    kotlin("jvm") version "1.4.21"
 }
 
 version = "unspecified"
@@ -14,6 +12,7 @@ kotlin {
     target.compilations.all {
         kotlinOptions {
             freeCompilerArgs = freeCompilerArgs + "-Xallow-result-return-type"
+            jvmTarget = "1.8"
         }
     }
 }
@@ -23,4 +22,8 @@ dependencies {
     implementation(project(":remote"))
     implementation(project(":local"))
     api("org.jetbrains.kotlinx:kotlinx-datetime:0.1.0")
+    testApi(Testing.Kotest.core)
+    testApi(Testing.Kotest.Assertions.core)
+    testApi(Testing.Kotest.property)
+    testApi(Testing.Kotest.Runner.junit5)
 }

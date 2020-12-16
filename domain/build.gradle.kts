@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.4.20"
+    kotlin("jvm") version "1.4.21"
 }
 
 version = "unspecified"
@@ -14,6 +14,7 @@ kotlin {
     target.compilations.all {
         kotlinOptions {
             freeCompilerArgs = freeCompilerArgs + "-Xallow-result-return-type"
+            jvmTarget = "1.8"
         }
     }
 }
