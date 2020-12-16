@@ -7,9 +7,9 @@ import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 
-const val OauthUrl = "https://oauth.reddit.com/"
+internal const val OauthUrl = "https://oauth.reddit.com/"
 
-suspend inline fun <reified T> HttpClient.redditRequest(
+internal suspend inline fun <reified T> HttpClient.redditRequest(
     url: String,
     builder: HttpRequestBuilder.() -> Unit = {}
 ): RedditResponse<T> = request<HttpResponse> {
@@ -23,7 +23,7 @@ suspend inline fun <reified T> HttpClient.redditRequest(
         receive<RedditResponse.Failure<T>>()
 }
 
-suspend inline fun <reified T> HttpClient.customRedditRequest(
+internal suspend inline fun <reified T> HttpClient.customRedditRequest(
     url: String,
     builder: HttpRequestBuilder.() -> Unit = {}
 ): T? = request {
@@ -32,7 +32,7 @@ suspend inline fun <reified T> HttpClient.customRedditRequest(
     builder()
 }
 
-suspend inline fun <reified T> HttpClient.redditSubmitForm(
+internal suspend inline fun <reified T> HttpClient.redditSubmitForm(
     url: String,
     block: HttpRequestBuilder .() -> Unit = {}
 ): RedditResponse<T> = submitForm<HttpResponse> {
@@ -41,7 +41,7 @@ suspend inline fun <reified T> HttpClient.redditSubmitForm(
     block()
 }.toRedditResponse()
 
-suspend inline fun <reified T> HttpClient.redditGet(
+internal suspend inline fun <reified T> HttpClient.redditGet(
     urlString: String,
     builder: HttpRequestBuilder.() -> Unit = {}
 ): RedditResponse<T> = redditRequest(urlString) {
@@ -49,7 +49,7 @@ suspend inline fun <reified T> HttpClient.redditGet(
     builder()
 }
 
-suspend inline fun <reified T> HttpClient.redditPost(
+internal suspend inline fun <reified T> HttpClient.redditPost(
     urlString: String,
     builder: HttpRequestBuilder.() -> Unit = {}
 ): RedditResponse<T> = redditRequest(urlString) {
@@ -57,7 +57,7 @@ suspend inline fun <reified T> HttpClient.redditPost(
     builder()
 }
 
-suspend inline fun <reified T> HttpClient.redditPut(
+internal suspend inline fun <reified T> HttpClient.redditPut(
     urlString: String,
     builder: HttpRequestBuilder.() -> Unit = {}
 ): RedditResponse<T> = redditRequest(urlString) {
@@ -65,7 +65,7 @@ suspend inline fun <reified T> HttpClient.redditPut(
     builder()
 }
 
-suspend inline fun <reified T> HttpClient.redditDelete(
+internal suspend inline fun <reified T> HttpClient.redditDelete(
     urlString: String,
     builder: HttpRequestBuilder.() -> Unit = {}
 ): RedditResponse<T> = redditRequest(urlString) {
@@ -73,10 +73,10 @@ suspend inline fun <reified T> HttpClient.redditDelete(
     builder()
 }
 
-suspend inline fun <reified T> HttpResponse.toRedditResponse(): RedditResponse<T> =
+internal suspend inline fun <reified T> HttpResponse.toRedditResponse(): RedditResponse<T> =
     if (status.isSuccess())
         RedditResponse.Success(data = receive())
     else
         RedditResponse.Failure(receive<Any>().toString(), status.value)
 
-fun getLocalToken() = "383986809160-W8fkmrvNV_VrDouPMun37hc9J20Mtg"
+internal fun getLocalToken() = "383986809160-3P6bG8xlYwllIh70X7SWooPUFtJ2yA"

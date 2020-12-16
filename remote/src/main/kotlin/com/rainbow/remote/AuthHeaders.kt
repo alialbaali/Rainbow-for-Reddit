@@ -6,6 +6,7 @@ import io.ktor.http.*
 val Enum<*>.lowerCaseName
     get() = name.toLowerCase()
 
-fun HttpRequestBuilder.bearerAuthHeader(token: String) = header(HttpHeaders.Authorization, "Bearer $token")
+internal fun HttpRequestBuilder.bearerAuthHeader(token: String) = header(HttpHeaders.Authorization, "Bearer $token")
 
-fun HttpRequestBuilder.basicAuthHeader(credentials: String) = header(HttpHeaders.Authorization, "Basic $credentials")
+internal fun HttpRequestBuilder.basicAuthHeader(credentials: String) =
+    header(HttpHeaders.Authorization, "Basic $credentials")
