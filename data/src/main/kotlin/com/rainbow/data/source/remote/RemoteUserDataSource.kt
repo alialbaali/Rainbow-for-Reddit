@@ -1,26 +1,23 @@
 package com.rainbow.data.source.remote
 
-import com.rainbow.remote.RedditResponse
-import com.rainbow.remote.client
-import com.rainbow.remote.customRedditRequest
+import com.rainbow.remote.*
 import com.rainbow.remote.dto.RemoteUser
-import com.rainbow.remote.redditGet
 import com.rainbow.remote.source.RemoteUserDataSource
 import io.ktor.client.*
 import io.ktor.client.request.*
 
-internal fun RemoteUserDataSource(): RemoteUserDataSource = UserDataSourceImpl(client)
+internal fun RemoteUserDataSource(client: HttpClient): RemoteUserDataSource = RemoteUserDataSourceImpl(client)
 
-private class UserDataSourceImpl(private val client: HttpClient) : RemoteUserDataSource {
+private class RemoteUserDataSourceImpl(private val client: HttpClient) : RemoteUserDataSource {
 
     override suspend fun getUserAbout(userName: String): RedditResponse<RemoteUser> {
-        val url = "user/$userName/about"
-        return client.redditGet(url)
+        val path by Endpoint.Users.About(userName)
+        return client.redditGet(path)
     }
 
     override suspend fun checkUserName(userName: String): RedditResponse<Boolean> {
-        val url = "api/username_available"
-        val response = client.customRedditRequest<Boolean>(url) {
+        val path by Endpoint.Users.CheckUserName
+        val response = client.customRedditRequest<Boolean>(path) {
             parameter(Keys.User, userName)
         }
 
