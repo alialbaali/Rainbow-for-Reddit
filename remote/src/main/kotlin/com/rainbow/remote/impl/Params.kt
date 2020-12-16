@@ -1,4 +1,4 @@
-package com.rainbow.data.source.remote
+package com.rainbow.remote.impl
 
 internal object Keys {
     const val User = "user"

@@ -1,13 +1,13 @@
-package com.rainbow.data.source.remote
+package com.rainbow.remote.impl
 
 import com.rainbow.remote.*
-import com.rainbow.remote.Endpoint.Posts
 import com.rainbow.remote.dto.RemotePost
+import com.rainbow.remote.impl.Endpoint.*
 import com.rainbow.remote.source.RemotePostDataSource
 import io.ktor.client.*
 import io.ktor.client.request.*
 
-internal fun RemotePostDataSource(client: HttpClient): RemotePostDataSource = RemotePostDataSourceImpl(client)
+fun RemotePostDataSource(client: HttpClient = mainClient): RemotePostDataSource = RemotePostDataSourceImpl(client)
 
 private class RemotePostDataSourceImpl(private val client: HttpClient) : RemotePostDataSource {
 

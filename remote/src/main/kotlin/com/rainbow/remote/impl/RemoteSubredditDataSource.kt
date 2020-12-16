@@ -1,16 +1,13 @@
-package com.rainbow.data.source.remote
+package com.rainbow.remote.impl
 
-import com.rainbow.remote.Endpoint.Subreddits
-import com.rainbow.remote.RedditResponse
+import com.rainbow.remote.*
 import com.rainbow.remote.dto.RemoteSubreddit
-import com.rainbow.remote.getValue
-import com.rainbow.remote.redditGet
-import com.rainbow.remote.redditSubmitForm
+import com.rainbow.remote.impl.Endpoint.*
 import com.rainbow.remote.source.RemoteSubredditDataSource
 import io.ktor.client.*
 import io.ktor.client.request.*
 
-internal fun RemoteSubredditDataSource(client: HttpClient): RemoteSubredditDataSource =
+fun RemoteSubredditDataSource(client: HttpClient = mainClient): RemoteSubredditDataSource =
     RemoteSubredditDataSourceImpl(client)
 
 private class RemoteSubredditDataSourceImpl(private val client: HttpClient) : RemoteSubredditDataSource {

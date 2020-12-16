@@ -1,13 +1,14 @@
-package com.rainbow.data.source.remote
+package com.rainbow.remote.impl
 
 import com.rainbow.remote.*
-import com.rainbow.remote.Endpoint.Comments
 import com.rainbow.remote.dto.RemoteComment
+import com.rainbow.remote.impl.Endpoint.Comments
 import com.rainbow.remote.source.RemoteCommentDataSource
 import io.ktor.client.*
 import io.ktor.client.request.*
 
-internal fun RemoteCommentDataSource(client: HttpClient): RemoteCommentDataSource = RemoteCommentDataSourceImpl(client)
+fun RemoteCommentDataSource(client: HttpClient = mainClient): RemoteCommentDataSource =
+    RemoteCommentDataSourceImpl(client)
 
 private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommentDataSource {
 

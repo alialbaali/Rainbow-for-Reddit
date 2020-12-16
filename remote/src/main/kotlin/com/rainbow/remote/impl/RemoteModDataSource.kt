@@ -1,15 +1,14 @@
-package com.rainbow.data.source.remote
+package com.rainbow.remote.impl
 
-import com.rainbow.remote.Endpoint.Mods
-import com.rainbow.remote.RedditResponse
-import com.rainbow.remote.UserListing
+import com.rainbow.remote.*
 import com.rainbow.remote.dto.RemoteMod
-import com.rainbow.remote.getValue
+import com.rainbow.remote.impl.Endpoint.*
+import com.rainbow.remote.mainClient
 import com.rainbow.remote.redditGet
 import com.rainbow.remote.source.RemoteModDataSource
 import io.ktor.client.*
 
-internal fun RemoteModDataSource(client: HttpClient): RemoteModDataSource = RemoteModDataSourceImpl(client)
+fun RemoteModDataSource(client: HttpClient = mainClient): RemoteModDataSource = RemoteModDataSourceImpl(client)
 
 private class RemoteModDataSourceImpl(private val client: HttpClient) : RemoteModDataSource {
 

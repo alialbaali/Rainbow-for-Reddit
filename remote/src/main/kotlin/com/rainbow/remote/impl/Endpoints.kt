@@ -1,8 +1,8 @@
-package com.rainbow.remote
+package com.rainbow.remote.impl
 
 import kotlin.reflect.KProperty
 
-sealed class Endpoint(val path: String) {
+internal sealed class Endpoint(val path: String) {
 
     private companion object {
         const val BaseActionPath = "api/"
@@ -104,5 +104,4 @@ sealed class Endpoint(val path: String) {
 
 }
 
-
-operator fun Endpoint.getValue(thisObj: Any?, property: KProperty<*>): String = path
+internal operator fun Endpoint.getValue(thisObj: Any?, property: KProperty<*>): String = path

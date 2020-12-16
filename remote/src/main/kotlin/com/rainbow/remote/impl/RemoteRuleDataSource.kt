@@ -1,12 +1,14 @@
-package com.rainbow.data.source.remote
+package com.rainbow.remote.impl
 
-import com.rainbow.remote.*
-import com.rainbow.remote.Endpoint.*
+import com.rainbow.remote.RedditResponse
+import com.rainbow.remote.customRedditRequest
 import com.rainbow.remote.dto.RemoteRule
+import com.rainbow.remote.impl.Endpoint.Rules
+import com.rainbow.remote.mainClient
 import com.rainbow.remote.source.RemoteRuleDataSource
 import io.ktor.client.*
 
-internal fun RemoteRuleDataSource(client: HttpClient): RemoteRuleDataSource = RemoteRuleDataSourceImpl(client)
+fun RemoteRuleDataSource(client: HttpClient = mainClient): RemoteRuleDataSource = RemoteRuleDataSourceImpl(client)
 
 private class RemoteRuleDataSourceImpl(private val client: HttpClient) : RemoteRuleDataSource {
 
