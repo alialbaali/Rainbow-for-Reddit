@@ -17,9 +17,9 @@ private class RemoteUserDataSourceImpl(private val client: HttpClient) : RemoteU
 
     override suspend fun checkUserName(userName: String): RedditResponse<Boolean> {
         val path by Endpoint.Users.CheckUserName
-        val response = client.customRedditRequest<Boolean>(path) {
+        val response = client.customRedditRequest<String>(path) {
             parameter(Keys.User, userName)
-        }
+        }?.toBoolean()
 
         return when (response) {
             null -> RedditResponse.Failure("Error", 400)
