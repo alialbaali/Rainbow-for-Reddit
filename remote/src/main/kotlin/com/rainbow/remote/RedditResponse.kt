@@ -1,9 +1,14 @@
 package com.rainbow.remote
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+    @Serializable
 sealed class RedditResponse<T> {
-    data class Success<T>(val kind: RedditKind? = null, val data: T) : RedditResponse<T>()
+    @Serializable
+    data class Success<T>(@Serializable val kind: RedditKind? = null, @Serializable val data: T) : RedditResponse<T>()
+    @Serializable
     data class Failure<T>(val message: String, val error: Int) : RedditResponse<T>()
 }
 
@@ -32,15 +37,17 @@ data class UserListing<T>(
 
 val <T> Listing<T>.items get() = children.map { it.data }
 
+@Serializable
 enum class RedditKind {
     @JsonProperty("t1")
     Comment,
 
     @JsonProperty("t2")
-    Account,
+    @SerialName("t2")
+    User,
 
     @JsonProperty("t3")
-    Link,
+    Post,
 
     @JsonProperty("t4")
     Message,
