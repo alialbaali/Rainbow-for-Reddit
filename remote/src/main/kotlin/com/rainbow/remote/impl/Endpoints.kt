@@ -5,103 +5,166 @@ import kotlin.reflect.KProperty
 internal sealed class Endpoint(val path: String) {
 
     private companion object {
-        const val BaseActionPath = "api/"
-        const val BaseUserPath = "user/"
-        const val BaseSubredditPath = "r/"
-        const val BaseCommentPath = "comment/"
-        const val BaseMessagePath = "message/"
+        const val ActionPath = "api/"
+        const val UserPath = "user/"
+        const val SubredditPath = "r/"
+        const val CommentPath = "comment/"
+        const val MessagePath = "message/"
     }
 
     object Users {
 
-        class About(userName: String) : Endpoint("$BaseUserPath$userName/about")
+        // https://oauth.reddit.com/user/{user-name}/about
+        class About(userName: String) : Endpoint("$UserPath$userName/about")
 
-        object CheckUserName : Endpoint(BaseActionPath + "username_available")
+        // https://oauth.reddit.com/user/username_available
+        object CheckUserName : Endpoint(UserPath + "username_available")
 
     }
 
     object Subreddits {
 
-        class About(subredditName: String) : Endpoint("$BaseSubredditPath$subredditName/about")
+        // https://oauth.reddit.com/r/{subreddit-name}/about
+        class About(subredditName: String) : Endpoint("$SubredditPath$subredditName/about")
 
+        // https://oauth.reddit.com/subreddits/mine/subscriber
         object Mine : Endpoint("subreddits/mine/subscriber")
 
-        object Subscribe : Endpoint(BaseActionPath + "subscribe")
+        // https://oauth.reddit.com/api/subscribe
+        object Subscribe : Endpoint(ActionPath + "subscribe")
 
-        object UnSubscribe : Endpoint(BaseActionPath + "subscribe")
+        // https://oauth.reddit.com/api/subscribe
+        object UnSubscribe : Endpoint(ActionPath + "subscribe")
 
-        object Favorite : Endpoint(BaseActionPath + "favorite")
+        // https://oauth.reddit.com/api/favorite
+        object Favorite : Endpoint(ActionPath + "favorite")
 
-        object UnFavorite : Endpoint(BaseActionPath + "favorite")
+        // https://oauth.reddit.com/api/favorite
+        object UnFavorite : Endpoint(ActionPath + "favorite")
 
     }
 
     object Posts {
 
+        // https://oauth.reddit.com/r/{subreddit-name}/{post-sorting}
         class SubredditPosts(subredditName: String, postsSorting: String) :
-            Endpoint("$BaseSubredditPath$subredditName/$postsSorting")
+            Endpoint("$SubredditPath$subredditName/$postsSorting")
 
+        // https://oauth.reddit.com/user/{user-name}/submitted/{post-sorting}
         class UserPosts(userName: String, postsSorting: String) :
-            Endpoint("$BaseUserPath$userName/submitted/$postsSorting")
+            Endpoint("$UserPath$userName/submitted/$postsSorting")
 
-        object UpVote : Endpoint(BaseActionPath + "vote")
+        // https://oauth.reddit.com/api/vote
+        object UpVote : Endpoint(ActionPath + "vote")
 
-        object DownVote : Endpoint(BaseActionPath + "vote")
+        // https://oauth.reddit.com/api/vote
+        object DownVote : Endpoint(ActionPath + "vote")
 
-        object UnVote : Endpoint(BaseActionPath + "vote")
+        // https://oauth.reddit.com/api/vote
+        object UnVote : Endpoint(ActionPath + "vote")
 
-        object Save : Endpoint(BaseActionPath + "save")
+        // https://oauth.reddit.com/api/save
+        object Save : Endpoint(ActionPath + "save")
 
-        object UnSave : Endpoint(BaseActionPath + "unsave")
+        // https://oauth.reddit.com/api/unsave
+        object UnSave : Endpoint(ActionPath + "unsave")
 
-        object Hide : Endpoint(BaseActionPath + "hide")
+        // https://oauth.reddit.com/api/hide
+        object Hide : Endpoint(ActionPath + "hide")
 
-        object UnHide : Endpoint(BaseActionPath + "unhide")
+        // https://oauth.reddit.com/api/unhide
+        object UnHide : Endpoint(ActionPath + "unhide")
 
-        object Delete : Endpoint(BaseActionPath + "del")
+        // https://oauth.reddit.com/api/del
+        object Delete : Endpoint(ActionPath + "del")
 
-        object Submit : Endpoint(BaseActionPath + "submit")
+        // https://oauth.reddit.com/api/submit
+        object Submit : Endpoint(ActionPath + "submit")
 
     }
 
     object Comments {
 
-        class Get(postIdPrefixed: String) : Endpoint("$BaseCommentPath$postIdPrefixed")
+        // https://oauth.reddit.com/comment/{post-id}
+        class Get(postIdPrefixed: String) : Endpoint("$CommentPath$postIdPrefixed")
 
-        object Save : Endpoint(BaseActionPath + "save")
+        // https://oauth.reddit.com/api/save
+        object Save : Endpoint(ActionPath + "save")
 
-        object UnSave : Endpoint(BaseActionPath + "unsave")
+        // https://oauth.reddit.com/api/unsave
+        object UnSave : Endpoint(ActionPath + "unsave")
 
     }
 
     object Messages {
 
-        class Get(messagesSorting: String) : Endpoint("$BaseMessagePath$messagesSorting")
+        // https://oauth.reddit.com/message/{message-sorting}
+        class Get(messagesSorting: String) : Endpoint("$MessagePath$messagesSorting")
 
-        object Compose : Endpoint(BaseActionPath + "compose")
+        // https://oauth.reddit.com/api/compose
+        object Compose : Endpoint(ActionPath + "compose")
 
-        object Read : Endpoint(BaseActionPath + "read_message")
+        // https://oauth.reddit.com/api/read_message
+        object Read : Endpoint(ActionPath + "read_message")
 
-        object UnRead : Endpoint(BaseActionPath + "unread_message")
+        // https://oauth.reddit.com/api/unread_message
+        object UnRead : Endpoint(ActionPath + "unread_message")
 
-        object ReadAll : Endpoint(BaseActionPath + "read_all_messages")
+        // https://oauth.reddit.com/api/read_all_messages
+        object ReadAll : Endpoint(ActionPath + "read_all_messages")
 
-        object Delete : Endpoint(BaseActionPath + "del_message")
+        // https://oauth.reddit.com/api/del_message
+        object Delete : Endpoint(ActionPath + "del_message")
 
     }
 
     object Mods {
 
-        class Get(subredditName: String) : Endpoint("$BaseSubredditPath$subredditName/about/moderators")
+        // https://oauth.reddit.com/r/{subreddit-name}/about/moderators
+        class Get(subredditName: String) : Endpoint("$SubredditPath$subredditName/about/moderators")
 
     }
 
     object Rules {
 
-        class Get(subredditName: String) : Endpoint("$BaseSubredditPath$subredditName/about/rules")
+        // https://oauth.reddit.com/r/{subreddit-name}/about/rules
+        class Get(subredditName: String) : Endpoint("$SubredditPath$subredditName/about/rules")
 
     }
 
 }
 
 internal operator fun Endpoint.getValue(thisObj: Any?, property: KProperty<*>): String = path
+
+private val All = listOf(
+    Endpoint.Users.About("{user-name}"),
+    Endpoint.Users.CheckUserName,
+    Endpoint.Subreddits.UnSubscribe,
+    Endpoint.Subreddits.Subscribe,
+    Endpoint.Subreddits.Favorite,
+    Endpoint.Subreddits.UnFavorite,
+    Endpoint.Subreddits.Mine,
+    Endpoint.Subreddits.About("{subreddit-name}"),
+    Endpoint.Posts.DownVote,
+    Endpoint.Posts.UpVote,
+    Endpoint.Posts.UnVote,
+    Endpoint.Posts.UnSave,
+    Endpoint.Posts.UnHide,
+    Endpoint.Posts.Save,
+    Endpoint.Posts.Submit,
+    Endpoint.Posts.Delete,
+    Endpoint.Posts.Hide,
+    Endpoint.Posts.SubredditPosts("{subreddit-name}", "{post-sorting}"),
+    Endpoint.Posts.UserPosts("{user-name}", "{post-sorting}"),
+    Endpoint.Comments.Save,
+    Endpoint.Comments.UnSave,
+    Endpoint.Comments.Get("{post-id}"),
+    Endpoint.Messages.Compose,
+    Endpoint.Messages.Delete,
+    Endpoint.Messages.Read,
+    Endpoint.Messages.ReadAll,
+    Endpoint.Messages.UnRead,
+    Endpoint.Messages.Get("{message-sorting}"),
+    Endpoint.Rules.Get("{subreddit-name}"),
+    Endpoint.Mods.Get("{subreddit-name}"),
+)
