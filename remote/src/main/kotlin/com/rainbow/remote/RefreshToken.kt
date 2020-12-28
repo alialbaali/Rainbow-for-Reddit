@@ -15,7 +15,7 @@ private const val BasicAuthCredentials = "Y3BLTXJSYmg4YjA2VFE6"
 
 internal class RefreshToken(val config: Config) {
 
-    internal companion object : HttpClientFeature<Config, RefreshToken> {
+    companion object : HttpClientFeature<Config, RefreshToken> {
 
         override val key: AttributeKey<RefreshToken> = AttributeKey("RefreshToken")
 
@@ -49,7 +49,7 @@ internal class RefreshToken(val config: Config) {
 
     }
 
-    internal class Config {
+    class Config {
 
         lateinit var uri: String
 
