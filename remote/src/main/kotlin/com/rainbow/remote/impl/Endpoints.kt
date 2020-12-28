@@ -46,6 +46,9 @@ internal sealed class Endpoint(val path: String) {
 
     object Posts {
 
+        // https://oauth.reddit.com/r/{main-page-sorting}
+        class MainPagePosts(mainPageSorting: String) : Endpoint(mainPageSorting)
+
         // https://oauth.reddit.com/r/{subreddit-name}/{post-sorting}
         class SubredditPosts(subredditName: String, postsSorting: String) :
             Endpoint("$SubredditPath$subredditName/$postsSorting")
@@ -145,6 +148,7 @@ private val All = listOf(
     Endpoint.Subreddits.UnFavorite,
     Endpoint.Subreddits.Mine,
     Endpoint.Subreddits.About("{subreddit-name}"),
+    Endpoint.Posts.MainPagePosts("{main-page-sorting}"),
     Endpoint.Posts.DownVote,
     Endpoint.Posts.UpVote,
     Endpoint.Posts.UnVote,
