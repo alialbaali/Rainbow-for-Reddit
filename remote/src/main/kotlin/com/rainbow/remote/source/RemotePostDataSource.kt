@@ -1,7 +1,5 @@
 package com.rainbow.remote.source
 
-import com.rainbow.remote.Listing
-import com.rainbow.remote.RedditResponse
 import com.rainbow.remote.dto.RemotePost
 
 interface RemotePostDataSource {
@@ -10,33 +8,33 @@ interface RemotePostDataSource {
         mainPageSorting: String,
         timeSorting: String,
         lastPostIdPrefixed: String?,
-    ): RedditResponse<Listing<RemotePost>>
+    ): Result<List<RemotePost>>
 
     suspend fun getSubredditPosts(
         subredditName: String,
         postsSorting: String,
-        timeSorting: String
-    ): RedditResponse<Listing<RemotePost>>
+        timeSorting: String,
+    ): Result<List<RemotePost>>
 
     suspend fun getUserPosts(
         userName: String,
         postsSorting: String,
         timeSorting: String,
-    ): RedditResponse<Listing<RemotePost>>
+    ): Result<List<RemotePost>>
 
-    suspend fun upvotePost(postIdPrefixed: String): RedditResponse<Unit>
+    suspend fun upvotePost(postIdPrefixed: String): Result<Unit>
 
-    suspend fun unvotePost(postIdPrefixed: String): RedditResponse<Unit>
+    suspend fun unvotePost(postIdPrefixed: String): Result<Unit>
 
-    suspend fun downvotePost(postIdPrefixed: String): RedditResponse<Unit>
+    suspend fun downvotePost(postIdPrefixed: String): Result<Unit>
 
-    suspend fun savePost(postIdPrefixed: String): RedditResponse<Unit>
+    suspend fun savePost(postIdPrefixed: String): Result<Unit>
 
-    suspend fun unSavePost(postIdPrefixed: String): RedditResponse<Unit>
+    suspend fun unSavePost(postIdPrefixed: String): Result<Unit>
 
-    suspend fun hidePost(postIdPrefixed: String): RedditResponse<Unit>
+    suspend fun hidePost(postIdPrefixed: String): Result<Unit>
 
-    suspend fun unHidePost(postIdPrefixed: String): RedditResponse<Unit>
+    suspend fun unHidePost(postIdPrefixed: String): Result<Unit>
 
     suspend fun submitTextPost(
         subredditName: String,
@@ -45,7 +43,7 @@ interface RemotePostDataSource {
         isNsfw: Boolean = false,
         isSpoiler: Boolean = false,
         resubmit: Boolean = true,
-    ): RedditResponse<Unit>
+    ): Result<Unit>
 
     suspend fun submitUrlPost(
         subredditName: String,
@@ -54,8 +52,8 @@ interface RemotePostDataSource {
         isNsfw: Boolean = false,
         isSpoiler: Boolean = false,
         resubmit: Boolean = true,
-    ): RedditResponse<Unit>
+    ): Result<Unit>
 
-    suspend fun deletePost(postIdPrefixed: String): RedditResponse<Unit>
+    suspend fun deletePost(postIdPrefixed: String): Result<Unit>
 
 }

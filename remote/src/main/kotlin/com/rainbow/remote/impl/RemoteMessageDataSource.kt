@@ -1,12 +1,11 @@
 package com.rainbow.remote.impl
 
-import com.rainbow.remote.RedditResponse
 import com.rainbow.remote.dto.RemoteMessage
 import com.rainbow.remote.impl.Endpoint.Messages
 import com.rainbow.remote.mainClient
-import com.rainbow.remote.redditGet
-import com.rainbow.remote.redditSubmitForm
+import com.rainbow.remote.get
 import com.rainbow.remote.source.RemoteMessageDataSource
+import com.rainbow.remote.submitForm
 import io.ktor.client.*
 import io.ktor.client.request.*
 
@@ -15,42 +14,36 @@ fun RemoteMessageDataSource(client: HttpClient = mainClient): RemoteMessageDataS
 
 private class RemoteMessageDataSourceImpl(private val client: HttpClient) : RemoteMessageDataSource {
 
-    override suspend fun getMessages(messagesSorting: String): RedditResponse<List<RemoteMessage>> {
-        val path by Messages.Get(messagesSorting)
-        return client.redditGet(path)
+    override suspend fun getMessages(messagesSorting: String): Result<List<RemoteMessage>> {
+        return client.get(Messages.Get(messagesSorting))
     }
 
-    override suspend fun sendMessage(subject: String, text: String, toUserIdPrefixed: String): RedditResponse<Unit> {
-        val path by Messages.Compose
-        return client.redditSubmitForm(path) {
+    override suspend fun sendMessage(subject: String, text: String, toUserIdPrefixed: String): Result<Unit> {
+        return client.submitForm(Messages.Compose) {
             parameter(Keys.Subject, subject)
             parameter(Keys.Text, text)
             parameter(Keys.To, toUserIdPrefixed)
         }
     }
 
-    override suspend fun readMessage(messageId: String): RedditResponse<Unit> {
-        val path by Messages.Read
-        return client.redditSubmitForm(path) {
+    override suspend fun readMessage(messageId: String): Result<Unit> {
+        return client.submitForm(Messages.Read) {
             parameter(Keys.Id, messageId)
         }
     }
 
-    override suspend fun unreadMessage(messageId: String): RedditResponse<Unit> {
-        val path by Messages.UnRead
-        return client.redditSubmitForm(path) {
+    override suspend fun unreadMessage(messageId: String): Result<Unit> {
+        return client.submitForm(Messages.UnRead) {
             parameter(Keys.Id, messageId)
         }
     }
 
-    override suspend fun readAllMessages(): RedditResponse<Unit> {
-        val path by Messages.ReadAll
-        return client.redditSubmitForm(path)
+    override suspend fun readAllMessages(): Result<Unit> {
+        return client.submitForm(Messages.ReadAll)
     }
 
-    override suspend fun deleteMessage(messageId: String): RedditResponse<Unit> {
-        val path by Messages.Delete
-        return client.redditSubmitForm(path) {
+    override suspend fun deleteMessage(messageId: String): Result<Unit> {
+        return client.submitForm(Messages.Delete) {
             parameter(Keys.Id, messageId)
         }
     }

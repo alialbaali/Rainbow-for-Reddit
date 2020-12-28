@@ -1,10 +1,11 @@
 package com.rainbow.remote.dto
 
+import com.rainbow.remote.dto.Scope.Companion.joinToLowerCaseString
 import com.rainbow.remote.mainClient
-import com.rainbow.remote.dto.Scope.Companion.asRedditScope
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
+import io.ktor.http.*
 import kotlinx.coroutines.delay
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.firefox.FirefoxDriver
@@ -25,21 +26,17 @@ private const val StateValue = "StateValue"
 private const val DurationKey = "duration"
 private const val PermanentDuration = "permanent"
 private const val ScopeKey = "scope"
-private val AuthUrl = buildString {
-    append("https://www.reddit.com/api/v1/authorize")
-    append('?')
-    append("$ClientIdKey=$ClientId")
-    append('&')
-    append("$ResponseTypeKey=$CodeResponseType")
-    append('&')
-    append("$StateKey=$StateValue")
-    append('&')
-    append("$RedirectUriKey=$RedirectUri")
-    append('&')
-    append("$DurationKey=$PermanentDuration")
-    append('&')
-    append("$ScopeKey=${Scope.UserScope.asRedditScope()}")
+
+private val AuthUrl = request {
+    url("https://www.reddit.com/api/v1/authorize")
+    parameter(ClientIdKey, ClientId)
+    parameter(ResponseTypeKey, CodeResponseType)
+    parameter(StateKey, StateValue)
+    parameter(RedirectUriKey, RedirectUri)
+    parameter(DurationKey, PermanentDuration)
+    parameter(ScopeKey, Scope.UserScope.joinToLowerCaseString())
 }
+
 
 private suspend fun HttpClient.getAccessToken(code: String): TokenResponse {
     return submitForm(AccessTokenUri) {
@@ -56,7 +53,13 @@ private suspend fun main() {
             .window()
             .maximize()
 
-        navigate().to(AuthUrl)
+        navigate().to(
+            AuthUrl
+                .build()
+                .url
+                .toURI()
+                .toURL()
+        )
     }
     while (true) {
         delay(5000)

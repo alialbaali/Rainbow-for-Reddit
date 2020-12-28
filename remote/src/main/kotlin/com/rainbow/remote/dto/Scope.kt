@@ -1,8 +1,6 @@
 package com.rainbow.remote.dto
 
-import com.rainbow.remote.lowerCaseName
-
-enum class Scope {
+internal enum class Scope {
     ModPosts, ModWiki, MySubreddits,
     PrivateMessages, Read, Report,
     History, ModConfig, ModFlair,
@@ -32,7 +30,7 @@ enum class Scope {
             ModConfig, ModFlair,
         )
 
-        fun List<Scope>.asRedditScope() = joinToString(separator = " ") { scope -> scope.lowerCaseName }
+        fun List<Scope>.joinToLowerCaseString() = joinToString(separator = " ") { scope -> scope.name.toLowerCase() }
 
     }
 
