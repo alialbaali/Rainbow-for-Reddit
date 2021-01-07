@@ -1,17 +1,15 @@
 package com.rainbow.domain.models
 
-import com.rainbow.domain.*
-import com.rainbow.domain.asCommentIdPrefixed
-import com.rainbow.domain.asPostIdPrefixed
-import com.rainbow.domain.asSubredditIdPrefixed
-import com.rainbow.domain.asUserIdPrefixed
+import com.rainbow.domain.utils.asSubredditDisplayName
+import com.rainbow.domain.utils.asUserDisplayName
+import kotlinx.datetime.LocalDateTime
 
 data class Comment(
     val id: String,
     val postId: String,
     val userId: String,
-    val userName: String,
     val subredditId: String,
+    val userName: String,
     val subredditName: String,
     val parent: Comment? = null,
     val replies: List<Comment> = emptyList(),
@@ -19,6 +17,8 @@ data class Comment(
     val votes: Votes,
     val awards: List<Award> = emptyList(),
     val isEdited: Boolean = false,
+    val isSaved: Boolean = false,
+    val creationDate: LocalDateTime,
 )
 
 val Comment.upvotesCount
@@ -30,20 +30,8 @@ val Comment.downvotesCount
 val Comment.voteRatio
     get() = votes.voteRatio
 
-val Comment.idPrefixed
-    get() = id.asCommentIdPrefixed()
+val Comment.userDisplayName
+    get() = userName.asUserDisplayName()
 
-val Comment.postIdPrefixed
-    get() = postId.asPostIdPrefixed()
-
-val Comment.userIdPrefixed
-    get() = userId.asUserIdPrefixed()
-
-val Comment.subredditIdPrefixed
-    get() = subredditId.asSubredditIdPrefixed()
-
-val Comment.userNamePrefixed
-    get() = userName.asUserNamePrefixed()
-
-val Comment.subredditNamePrefixed
-    get() = subredditName.asSubredditNamePrefixed()
+val Comment.subredditDisplayName
+    get() = subredditName.asSubredditDisplayName()

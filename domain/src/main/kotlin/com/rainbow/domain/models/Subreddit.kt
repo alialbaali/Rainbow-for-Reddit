@@ -1,11 +1,9 @@
 package com.rainbow.domain.models
 
-import com.rainbow.domain.colorOf
-import kotlinx.datetime.LocalDate
-
-private val DefaultPrimaryColor = colorOf(red = "00", green = "00", blue = "00")
-private val DefaultBackgroundColor = colorOf(red = "FF", green = "FF", blue = "FF")
-private val DefaultKeyColor = colorOf(red = "FF", green = "FF", blue = "FF")
+import com.rainbow.domain.utils.OauthUrl
+import com.rainbow.domain.utils.asSubredditDisplayName
+import com.rainbow.domain.utils.colorOf
+import kotlinx.datetime.LocalDateTime
 
 data class Subreddit(
     val id: String,
@@ -14,33 +12,50 @@ data class Subreddit(
     val description: String,
     val subscribersCount: Long,
     val activeSubscribersCount: Long,
-    val colors: Colors = DefaultColors,
+    val imageUrl: String? = null,
+    val bannerImageUrl: String? = null,
     val isNSFW: Boolean = false,
-    val creationDate: LocalDate,
+    val colors: Colors = Colors.Default,
+    val isSubscribed: Boolean,
+    val isFavorite: Boolean,
+    val creationDate: LocalDateTime,
 ) {
     data class Colors(
         val primary: Long,
-        val background: Long,
+        val banner: Long,
         val key: Long,
-    )
+    ) {
+        companion object {
+
+            private val DefaultPrimaryColor = colorOf(red = "00", green = "00", blue = "00")
+
+            private val DefaultBackgroundColor = colorOf(red = "FF", green = "FF", blue = "FF")
+
+            private val DefaultKeyColor = colorOf(red = "FF", green = "FF", blue = "FF")
+
+            val Default = Colors(
+                DefaultPrimaryColor,
+                DefaultBackgroundColor,
+                DefaultKeyColor
+            )
+        }
+    }
 }
 
-private val DefaultColors = Subreddit.Colors(DefaultPrimaryColor, DefaultBackgroundColor, DefaultKeyColor)
-
-val Subreddit.idPrefixed
-    get() = "t5_$id"
-
-val Subreddit.namePrefixed
-    get() = "r/$name"
+val Subreddit.displayName
+    get() = name.asSubredditDisplayName()
 
 val Subreddit.redditUrl
     get() = "/r/$name"
 
+val Subreddit.fullUrl
+    get() = OauthUrl + redditUrl
+
 val Subreddit.primaryColor
     get() = colors.primary
 
-val Subreddit.backgroundColor
-    get() = colors.background
+val Subreddit.bannerColor
+    get() = colors.banner
 
 val Subreddit.keyColor
     get() = colors.key

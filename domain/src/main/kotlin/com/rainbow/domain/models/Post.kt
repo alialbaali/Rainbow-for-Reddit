@@ -1,8 +1,10 @@
 package com.rainbow.domain.models
 
-import com.rainbow.domain.*
+import com.rainbow.domain.utils.asSubredditDisplayName
+import com.rainbow.domain.utils.asUserDisplayName
 import kotlinx.datetime.LocalDateTime
 
+@OptIn(ExperimentalUnsignedTypes::class)
 data class Post(
     val id: String,
     val userId: String,
@@ -10,8 +12,8 @@ data class Post(
     val subredditId: String,
     val subredditName: String,
     val title: String,
-    val type: Type = Type.None,
-    val commentsCount: Long,
+    val type: Type = Type.Default,
+    val commentsCount: ULong,
     val votes: Votes,
     val isOC: Boolean = false,
     val isNSFW: Boolean = false,
@@ -20,6 +22,7 @@ data class Post(
     val isPinned: Boolean = false,
     val isEdited: Boolean = false,
     val awards: List<Award> = emptyList(),
+    val isSaved: Boolean,
     val creationDate: LocalDateTime,
 ) {
     sealed class Type {
@@ -29,23 +32,18 @@ data class Post(
         data class Gif(val url: String) : Type()
         data class Image(val url: String) : Type()
         data class Video(val url: String) : Type()
+
+        companion object {
+            val Default = None
+        }
     }
 }
 
-val Post.idPrefixed
-    get() = id.asPostIdPrefixed()
+val Post.userDisplayName
+    get() = userName.asUserDisplayName()
 
-val Post.userIdPrefixed
-    get() = userId.asUserIdPrefixed()
-
-val Post.userNamePrefixed
-    get() = userName.asUserNamePrefixed()
-
-val Post.subredditIdPrefixed
-    get() = subredditId.asSubredditIdPrefixed()
-
-val Post.subredditNamePrefixed
-    get() = subredditName.asSubredditNamePrefixed()
+val Post.subredditDisplayName
+    get() = subredditName.asSubredditDisplayName()
 
 val Post.upvotesCount
     get() = votes.upvotesCount
