@@ -1,4 +1,4 @@
-package com.rainbow.domain
+package com.rainbow.domain.utils
 
 
 fun colorOf(value: String): Long = value.toLong(16)
