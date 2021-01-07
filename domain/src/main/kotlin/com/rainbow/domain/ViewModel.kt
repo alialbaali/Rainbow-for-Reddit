@@ -19,13 +19,13 @@ abstract class ViewModel<in I : Intent, out S : State>(initialState: S) {
 
     init {
         mutableIntent
-            .onEach { intent -> mutableState.value = intent.onIntent() }
+            .onEach { intent -> mutableState.value = onIntent(intent) }
             .launchIn(viewModelScope)
     }
 
     fun emitIntent(intent: I) = viewModelScope.launch { mutableIntent.emit(intent) }
 
-    protected abstract suspend fun I.onIntent(): S
+    protected abstract suspend fun onIntent(intent: I): S
 
     interface Intent
 
