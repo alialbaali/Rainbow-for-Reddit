@@ -1,20 +1,19 @@
 package com.rainbow.remote
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.MapperFeature
-import com.fasterxml.jackson.databind.PropertyNamingStrategy
-import com.fasterxml.jackson.databind.SerializationFeature
+import com.rainbow.remote.impl.RemoteSubredditDataSource
 import io.ktor.client.*
 import io.ktor.client.engine.apache.*
 import io.ktor.client.features.*
 import io.ktor.client.features.auth.*
 import io.ktor.client.features.auth.providers.*
 import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.util.*
+import kotlinx.serialization.json.Json as JsonConfig
 
 private const val ClientId = "cpKMrRbh8b06TQ"
 private const val ClientPassword = ""
@@ -49,17 +48,14 @@ internal val mainClient by lazy {
         }
 
         Json {
-            serializer = JacksonSerializer {
-                propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
-                enable(SerializationFeature.INDENT_OUTPUT)
-                enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
-                enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
-                disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES)
-                disable(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES)
-                disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                disable(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE)
-                disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
-            }
+            serializer = KotlinxSerializer(
+                JsonConfig {
+                    prettyPrint = true
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                    coerceInputValues = true
+                }
+            )
 
             accept(ContentType.Application.Json)
         }
