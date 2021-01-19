@@ -1,13 +1,9 @@
 package com.rainbow.remote.impl
 
-import com.rainbow.remote.Listing
+import com.rainbow.remote.*
 import com.rainbow.remote.dto.RemotePost
-import com.rainbow.remote.toList
-import com.rainbow.remote.get
 import com.rainbow.remote.impl.Endpoint.Posts
-import com.rainbow.remote.mainClient
 import com.rainbow.remote.source.RemotePostDataSource
-import com.rainbow.remote.submitForm
 import io.ktor.client.*
 import io.ktor.client.request.*
 
@@ -47,21 +43,21 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
     }
 
     override suspend fun upvotePost(postIdPrefixed: String): Result<Unit> {
-        return client.submitForm(Posts.UpVote) {
+        return client.submitForm(Posts.Upvote) {
             parameter(Keys.Id, postIdPrefixed)
             parameter(Keys.Direction, Values.Upvote)
         }
     }
 
     override suspend fun unvotePost(postIdPrefixed: String): Result<Unit> {
-        return client.submitForm(Posts.UnVote) {
+        return client.submitForm(Posts.Unvote) {
             parameter(Keys.Id, postIdPrefixed)
             parameter(Keys.Direction, Values.Unvote)
         }
     }
 
     override suspend fun downvotePost(postIdPrefixed: String): Result<Unit> {
-        return client.submitForm(Posts.DownVote) {
+        return client.submitForm(Posts.Downvote) {
             parameter(Keys.Id, postIdPrefixed)
             parameter(Keys.Direction, Values.Downvote)
         }

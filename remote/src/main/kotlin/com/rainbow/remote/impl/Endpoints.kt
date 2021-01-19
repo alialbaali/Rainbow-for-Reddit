@@ -20,6 +20,8 @@ internal sealed class Endpoint(val path: String) {
         // https://oauth.reddit.com/user/username_available
         object CheckUserName : Endpoint(UserPath + "username_available")
 
+        object BlockUser : Endpoint(ActionPath + "block_user")
+
     }
 
     object Subreddits {
@@ -58,13 +60,13 @@ internal sealed class Endpoint(val path: String) {
             Endpoint("$UserPath$userName/submitted/$postsSorting")
 
         // https://oauth.reddit.com/api/vote
-        object UpVote : Endpoint(ActionPath + "vote")
+        object Upvote : Endpoint(ActionPath + "vote")
 
         // https://oauth.reddit.com/api/vote
-        object DownVote : Endpoint(ActionPath + "vote")
+        object Downvote : Endpoint(ActionPath + "vote")
 
         // https://oauth.reddit.com/api/vote
-        object UnVote : Endpoint(ActionPath + "vote")
+        object Unvote : Endpoint(ActionPath + "vote")
 
         // https://oauth.reddit.com/api/save
         object Save : Endpoint(ActionPath + "save")
@@ -89,13 +91,24 @@ internal sealed class Endpoint(val path: String) {
     object Comments {
 
         // https://oauth.reddit.com/comment/{post-id}
-        class Get(postIdPrefixed: String) : Endpoint("$CommentPath$postIdPrefixed")
+        class PostComments(postIdPrefixed: String) : Endpoint("$CommentPath$postIdPrefixed")
+
+        class UserComments(userName: String) : Endpoint("$UserPath$userName/comments")
 
         // https://oauth.reddit.com/api/save
         object Save : Endpoint(ActionPath + "save")
 
         // https://oauth.reddit.com/api/unsave
         object UnSave : Endpoint(ActionPath + "unsave")
+
+        // https://oauth.reddit.com/api/vote
+        object Upvote : Endpoint(ActionPath + "vote")
+
+        // https://oauth.reddit.com/api/vote
+        object Downvote : Endpoint(ActionPath + "vote")
+
+        // https://oauth.reddit.com/api/vote
+        object Unvote : Endpoint(ActionPath + "vote")
 
     }
 
@@ -138,37 +151,3 @@ internal sealed class Endpoint(val path: String) {
 }
 
 internal operator fun Endpoint.getValue(thisObj: Any?, property: KProperty<*>): String = path
-
-private val All = listOf(
-    Endpoint.Users.About("{user-name}"),
-    Endpoint.Users.CheckUserName,
-    Endpoint.Subreddits.UnSubscribe,
-    Endpoint.Subreddits.Subscribe,
-    Endpoint.Subreddits.Favorite,
-    Endpoint.Subreddits.UnFavorite,
-    Endpoint.Subreddits.Mine,
-    Endpoint.Subreddits.About("{subreddit-name}"),
-    Endpoint.Posts.MainPagePosts("{main-page-sorting}"),
-    Endpoint.Posts.DownVote,
-    Endpoint.Posts.UpVote,
-    Endpoint.Posts.UnVote,
-    Endpoint.Posts.UnSave,
-    Endpoint.Posts.UnHide,
-    Endpoint.Posts.Save,
-    Endpoint.Posts.Submit,
-    Endpoint.Posts.Delete,
-    Endpoint.Posts.Hide,
-    Endpoint.Posts.SubredditPosts("{subreddit-name}", "{post-sorting}"),
-    Endpoint.Posts.UserPosts("{user-name}", "{post-sorting}"),
-    Endpoint.Comments.Save,
-    Endpoint.Comments.UnSave,
-    Endpoint.Comments.Get("{post-id}"),
-    Endpoint.Messages.Compose,
-    Endpoint.Messages.Delete,
-    Endpoint.Messages.Read,
-    Endpoint.Messages.ReadAll,
-    Endpoint.Messages.UnRead,
-    Endpoint.Messages.Get("{message-sorting}"),
-    Endpoint.Rules.Get("{subreddit-name}"),
-    Endpoint.Mods.Get("{subreddit-name}"),
-)

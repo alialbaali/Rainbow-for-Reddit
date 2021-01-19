@@ -1,11 +1,9 @@
 package com.rainbow.remote.impl
 
+import com.rainbow.remote.*
 import com.rainbow.remote.dto.RemoteSubreddit
 import com.rainbow.remote.impl.Endpoint.Subreddits
-import com.rainbow.remote.mainClient
-import com.rainbow.remote.get
 import com.rainbow.remote.source.RemoteSubredditDataSource
-import com.rainbow.remote.submitForm
 import io.ktor.client.*
 import io.ktor.client.request.*
 
@@ -19,7 +17,8 @@ private class RemoteSubredditDataSourceImpl(private val client: HttpClient) : Re
     }
 
     override suspend fun getMySubreddits(): Result<List<RemoteSubreddit>> {
-        return client.get(Subreddits.Mine)
+        return client.get<Listing<RemoteSubreddit>>(Subreddits.Mine)
+            .mapCatching { it.toList() }
     }
 
     override suspend fun subscribeSubreddit(subredditId: String): Result<Unit> {

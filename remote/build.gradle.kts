@@ -21,7 +21,6 @@ dependencies {
     implementation(Ktor.Client.serialization)
     implementation(Ktor.Client.authBasic)
     implementation(Ktor.Client.core)
-    implementation("io.ktor:ktor-client-jackson:1.4.1")
     implementation("org.seleniumhq.selenium:selenium-java:3.141.59")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.1.0")
     api(Ktor.Client.apache)

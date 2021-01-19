@@ -9,6 +9,7 @@ internal object Keys {
     const val Action = "action"
     const val Subreddit = "sr"
     const val SubredditName = "sr_name"
+    const val Name = "name"
     const val Favorite = "make_favorite"
     const val Limit = "limit"
     const val Title = "title"
