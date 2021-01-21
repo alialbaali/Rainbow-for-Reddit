@@ -2,8 +2,6 @@ plugins {
     kotlin("jvm") version "1.4.21"
 }
 
-version = "unspecified"
-
 repositories {
     mavenCentral()
     maven(url = "https://kotlin.bintray.com/kotlinx/")
