@@ -1,6 +1,7 @@
 package com.rainbow.remote
 
 import com.rainbow.remote.dto.TokenResponse
+import com.rainbow.remote.impl.RemoteSubredditDataSource
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
@@ -19,9 +20,7 @@ internal class RefreshToken(val config: Config) {
 
         override val key: AttributeKey<RefreshToken> = AttributeKey("RefreshToken")
 
-        override fun prepare(block: Config.() -> Unit): RefreshToken {
-            return RefreshToken(Config().apply(block))
-        }
+        override fun prepare(block: Config.() -> Unit): RefreshToken = RefreshToken(Config().apply(block))
 
         override fun install(feature: RefreshToken, scope: HttpClient) =
             scope.receivePipeline.intercept(HttpReceivePipeline.Before) { response ->
@@ -39,12 +38,11 @@ internal class RefreshToken(val config: Config) {
                     }
             }
 
-        private suspend fun HttpClient.refreshToken(config: Config): TokenResponse {
-            return submitForm(config.uri) {
-                basicAuthHeader(BasicAuthCredentials)
-                parameter(GrantTypeKey, config.grantType)
-                parameter(RefreshTokenKey, config.refreshToken)
-            }
+        // Requests new token
+        private suspend fun HttpClient.refreshToken(config: Config): TokenResponse = submitForm(config.uri) {
+            basicAuthHeader(BasicAuthCredentials)
+            parameter(GrantTypeKey, config.grantType)
+            parameter(RefreshTokenKey, config.refreshToken)
         }
 
     }

@@ -1,6 +1,5 @@
 package com.rainbow.remote
 
-import com.rainbow.remote.impl.RemoteSubredditDataSource
 import io.ktor.client.*
 import io.ktor.client.engine.apache.*
 import io.ktor.client.features.*
@@ -8,7 +7,6 @@ import io.ktor.client.features.auth.*
 import io.ktor.client.features.auth.providers.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
-import io.ktor.client.features.logging.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -35,10 +33,10 @@ internal val mainClient by lazy {
             expectSuccess = false
         }
 
-        Logging {
-            level = LogLevel.ALL
-            logger = Logger.DEFAULT
-        }
+//        Logging {
+//            level = LogLevel.ALL
+//            logger = Logger.DEFAULT
+//        }
 
         Auth {
             basic {
