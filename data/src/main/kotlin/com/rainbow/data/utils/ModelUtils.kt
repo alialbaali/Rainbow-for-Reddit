@@ -13,3 +13,7 @@ val RemoteComment.validUserId: String
 
 
 private fun String.substringId() = substringAfter('_')
+
+const val DefaultLimit = 25
+
+const val Null = "null"
