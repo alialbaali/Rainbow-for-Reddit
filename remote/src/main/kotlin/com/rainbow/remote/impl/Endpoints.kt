@@ -44,6 +44,12 @@ internal sealed class Endpoint(val path: String) {
         // https://oauth.reddit.com/api/favorite
         object UnFavorite : Endpoint(ActionPath + "favorite")
 
+        class SubmitText(subredditName: String) : Endpoint("$SubredditPath$subredditName/${ActionPath}submit_text")
+
+        class PostRequirements(subredditName: String) : Endpoint("${ActionPath}v1/$subredditName/post_requirements")
+
+        object Search : Endpoint("subreddits/search")
+
     }
 
     object Posts {

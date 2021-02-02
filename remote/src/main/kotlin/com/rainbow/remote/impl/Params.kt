@@ -21,6 +21,8 @@ internal object Keys {
     const val Url = "url"
     const val Subject = "subject"
     const val To = "to"
+    const val Query = "q"
+    const val Sort = "sort"
 }
 
 internal object Values {
