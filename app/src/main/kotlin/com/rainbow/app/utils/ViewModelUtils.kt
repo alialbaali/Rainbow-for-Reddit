@@ -34,7 +34,7 @@ inline operator fun <I, S, VM : ViewModel<I, S>> VM.component2(): (I) -> Job = t
 
 inline fun <I, S, VM : ViewModel<I, S>> VM.withState(block: S.() -> @UnsafeVariance S): S = state.value.block()
 
-fun <T> Result<T>.toResource(): Resource<T> = fold(
-    onSuccess = { Resource.Success(it) },
-    onFailure = { Resource.Failure(it) }
+fun <T> Result<T>.toUIState(): UIState<T> = fold(
+    onSuccess = { UIState.Success(it) },
+    onFailure = { UIState.Failure(it) }
 )
