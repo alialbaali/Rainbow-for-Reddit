@@ -2,8 +2,8 @@ package com.rainbow.app.ui
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ComposableContract
-import androidx.compose.runtime.staticAmbientOf
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -15,9 +15,9 @@ data class Dimensions(
     val extraLarge: Dp = 24.dp,
 )
 
-private val AmbientDimensions = staticAmbientOf { Dimensions() }
+private val LocalDimensions = staticCompositionLocalOf { Dimensions() }
 
 val MaterialTheme.dimensions: Dimensions
     @Composable
-    @ComposableContract(readonly = true)
-    get() = AmbientDimensions.current
+    @ReadOnlyComposable
+    get() = LocalDimensions.current

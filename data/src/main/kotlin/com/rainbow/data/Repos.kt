@@ -42,4 +42,3 @@ object Repos {
     )
 
 }
-suspend fun downloadImage(url: String) = com.rainbow.remote.downloadImage(url)

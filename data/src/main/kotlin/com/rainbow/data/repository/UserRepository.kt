@@ -25,6 +25,13 @@ private class UserRepositoryImpl(
             .map { mapper.map(it) }
     }
 
+    override suspend fun checkUserName(userName: String): Result<Boolean> = withContext(dispatcher) {
+        remoteUserDataSource.checkUserName(userName)
+    }
+
+    override suspend fun blockUser(userName: String): Result<Unit> = withContext(dispatcher){
+        remoteUserDataSource.blockUser(userName)
+    }
 }
 
 

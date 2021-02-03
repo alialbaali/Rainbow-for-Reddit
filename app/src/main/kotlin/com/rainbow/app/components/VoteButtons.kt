@@ -39,6 +39,6 @@ private fun VoteButton(
     tint: Color = Color.Black,
 ) {
     IconButton(onClick, modifier, enabled) {
-        Icon(imageVector = imageVector, tint = tint)
+        Icon(imageVector = imageVector, tint = tint, contentDescription = null )
     }
 }
