@@ -1,18 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.4.21"
-}
-
-repositories {
-    mavenCentral()
-    maven(url = "https://kotlin.bintray.com/kotlinx/")
-}
-kotlin {
-    target.compilations.all {
-        kotlinOptions {
-            freeCompilerArgs = freeCompilerArgs + "-Xallow-result-return-type"
-            jvmTarget = "1.8"
-        }
-    }
+    kotlin("jvm")
 }
 
 dependencies {

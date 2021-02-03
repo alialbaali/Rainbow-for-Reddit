@@ -1,19 +1,14 @@
 import org.jetbrains.compose.compose
 
 plugins {
-    kotlin("jvm") version "1.4.21"
-    id("org.jetbrains.compose") version "0.3.0-build135"
+    kotlin("jvm")
+    id("org.jetbrains.compose") version "0.3.0-build148"
     application
 }
 
-group = "me.ali"
-version = "0.1"
-
 repositories {
-    jcenter()
-    mavenCentral()
-    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
-    maven(url = "https://kotlin.bintray.com/kotlinx/")
+    mavenLocal()
+    maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
 dependencies {
@@ -21,23 +16,9 @@ dependencies {
     implementation(compose.materialIconsExtended)
     implementation(project(":data"))
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.1.0")
-}
-
-kotlin {
-    target.compilations.all {
-        kotlinOptions {
-            freeCompilerArgs = freeCompilerArgs + "-Xallow-result-return-type"
-        }
-    }
-}
-
-allprojects {
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "11"
-            freeCompilerArgs = freeCompilerArgs + "-Xallow-result-return-type"
-        }
-    }
+    implementation("io.kamel:kamel-core:0.0.4")
+    implementation("com.arkivanov.decompose:decompose:0.1.7")
+    implementation("com.arkivanov.decompose:extensions-compose-jetbrains:0.1.7")
 }
 
 application {

@@ -1,2 +1,3 @@
 # Rainbow
-Reddit getClient
+
+Reddit third-party desktop client 

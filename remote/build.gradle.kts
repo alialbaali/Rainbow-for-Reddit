@@ -1,20 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.4.21"
+    kotlin("jvm")
     kotlin("plugin.serialization") version "1.4.10"
-}
-
-repositories {
-    mavenCentral()
-    maven(url = "https://kotlin.bintray.com/kotlinx/")
-}
-
-kotlin {
-    target.compilations.all {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-Xallow-result-return-type")
-            jvmTarget = "1.8"
-        }
-    }
 }
 
 dependencies {
