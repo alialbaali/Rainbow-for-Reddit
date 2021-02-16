@@ -2,12 +2,10 @@ import org.jetbrains.compose.compose
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.compose") version "0.3.0-build148"
-    application
+    id("org.jetbrains.compose") version "0.3.0-build154"
 }
 
 repositories {
-    mavenLocal()
     maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
@@ -16,11 +14,13 @@ dependencies {
     implementation(compose.materialIconsExtended)
     implementation(project(":data"))
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.1.0")
-    implementation("io.kamel:kamel-core:0.0.4")
-    implementation("com.arkivanov.decompose:decompose:0.1.7")
-    implementation("com.arkivanov.decompose:extensions-compose-jetbrains:0.1.7")
+    implementation("com.alialbaali.kamel:kamel-image:0.1.0")
+    implementation("com.arkivanov.decompose:decompose:0.1.8")
+    implementation("com.arkivanov.decompose:extensions-compose-jetbrains:0.1.8")
 }
 
-application {
-    mainClass.set("com.rainbow.app.MainKt")
+compose.desktop {
+    application {
+        mainClass = "com.rainbow.app.MainKt"
+    }
 }
