@@ -1,5 +1,6 @@
 package com.rainbow.remote
 
+import com.rainbow.remote.dto.CurrentFlair
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -16,6 +17,9 @@ internal data class Listing<T>(val children: List<Item<T>> = emptyList())
 
 @Serializable
 internal data class UserListing<T>(val children: List<T> = emptyList())
+
+@Serializable
+internal data class FlairSelectorResponse(@SerialName("current") val current: CurrentFlair)
 
 @Serializable
 internal enum class Kind {
@@ -45,6 +49,9 @@ internal enum class Kind {
 
     @SerialName("TrophyList")
     TrophyList,
+
+    @SerialName("KarmaList")
+    KarmaList,
 }
 
 internal fun <T> Listing<T>.toList() = children.map { it.data }
