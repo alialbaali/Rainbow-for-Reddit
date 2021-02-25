@@ -29,4 +29,12 @@ private class RemoteUserDataSourceImpl(private val client: HttpClient) : RemoteU
             parameter(Keys.Name, userName)
         }
     }
+
+    override suspend fun reportUser(userName: String, reason: String): Result<Unit> {
+        return client.submitForm(Users.ReportUser) {
+            parameter(Keys.User, userName)
+            parameter(Keys.Reason, reason)
+        }
+    }
+
 }

@@ -10,4 +10,6 @@ interface RemoteUserDataSource {
 
     suspend fun blockUser(userName: String): Result<Unit>
 
+    suspend fun reportUser(userName: String, reason: String): Result<Unit>
+
 }
