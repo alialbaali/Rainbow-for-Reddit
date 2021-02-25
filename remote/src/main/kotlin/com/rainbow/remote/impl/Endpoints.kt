@@ -8,7 +8,7 @@ internal sealed class Endpoint(val path: String) {
         const val ActionPath = "api/"
         const val UserPath = "user/"
         const val SubredditPath = "r/"
-        const val CommentPath = "comment/"
+        const val CommentPath = "comments/"
         const val MessagePath = "message/"
     }
 
@@ -65,6 +65,8 @@ internal sealed class Endpoint(val path: String) {
         class UserPosts(userName: String, postsSorting: String) :
             Endpoint("$UserPath$userName/submitted/$postsSorting")
 
+        object GetPost : Endpoint(ActionPath + "info")
+
         // https://oauth.reddit.com/api/vote
         object Upvote : Endpoint(ActionPath + "vote")
 
@@ -96,8 +98,8 @@ internal sealed class Endpoint(val path: String) {
 
     object Comments {
 
-        // https://oauth.reddit.com/comment/{post-id}
-        class PostComments(postIdPrefixed: String) : Endpoint("$CommentPath$postIdPrefixed")
+        // https://oauth.reddit.com/comments/{post-id}
+        class PostComments(postId: String) : Endpoint("$CommentPath$postId")
 
         class UserComments(userName: String) : Endpoint("$UserPath$userName/comments")
 
@@ -152,6 +154,36 @@ internal sealed class Endpoint(val path: String) {
         // https://oauth.reddit.com/r/{subreddit-name}/about/rules
         class Get(subredditName: String) : Endpoint("$SubredditPath$subredditName/about/rules")
 
+    }
+
+    object Flairs {
+
+        class GetCurrentSubredditFlair(subredditName: String) :
+            Endpoint("$SubredditPath$subredditName/${ActionPath}flairselector")
+
+        class GetSubredditFlairs(subredditName: String) :
+            Endpoint("$SubredditPath$subredditName/${ActionPath}user_flair_v2")
+
+        class SelectSubredditFlair(subredditName: String) :
+            Endpoint("$SubredditPath$subredditName/${ActionPath}selectflair")
+
+        class UnSelectSubredditFlair(subredditName: String) :
+            Endpoint("$SubredditPath$subredditName/${ActionPath}selectflair")
+
+        class EnableSubredditFlair(subredditName: String) :
+            Endpoint("$SubredditPath$subredditName/${ActionPath}setflairenabled")
+
+        class DisableSubredditFlair(subredditName: String) :
+            Endpoint("$SubredditPath$subredditName/${ActionPath}setflairenabled")
+
+    }
+
+    object Karma {
+        object GetMine : Endpoint(ActionPath + "v1/me/karma")
+    }
+
+    object Trophies {
+        class User(userName: String) : Endpoint("$UserPath$userName/trophies")
     }
 
 }
