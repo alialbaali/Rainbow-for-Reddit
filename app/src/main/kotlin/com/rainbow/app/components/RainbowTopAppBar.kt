@@ -53,10 +53,10 @@ fun RainbowTopAppBar(
 
             }
 
-            Search(
-                modifier = contentModifier
-                    .fillMaxWidth(0.5F)
-            )
+//            Search(
+//                modifier = contentModifier
+//                    .fillMaxWidth(0.5F)
+//            )
 
             Button(
                 onClick = {},
