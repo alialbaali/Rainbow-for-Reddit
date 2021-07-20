@@ -11,19 +11,15 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.rainbow.app.profile.ProfileViewModel
 import com.rainbow.app.ui.dimensions
-import com.rainbow.app.user.UserViewModel
-import com.rainbow.app.utils.RainbowIcons
-import com.rainbow.app.utils.RainbowStrings
-import com.rainbow.app.utils.component1
-import com.rainbow.app.utils.composed
-import io.kamel.core.LazyImage
-import io.kamel.core.lazyImageResource
+import com.rainbow.app.utils.*
+import io.kamel.image.KamelImage
+import io.kamel.image.lazyImageResource
 
 @Composable
 fun SidebarProfileItem(
@@ -32,7 +28,7 @@ fun SidebarProfileItem(
     modifier: Modifier = Modifier,
 ) {
 
-    val (state) = remember { UserViewModel() }
+    val (state) = rememberViewModel(ProfileViewModel())
 
     state.currentUser.composed { user ->
 
@@ -45,8 +41,8 @@ fun SidebarProfileItem(
         ) {
 
 
-            LazyImage(
-                resource = lazyImageResource(user.imageUrl),
+            KamelImage(
+                resource = lazyImageResource(user.imageUrl!!),
                 contentDescription = null,
                 modifier = Modifier
                     .clip(MaterialTheme.shapes.small)

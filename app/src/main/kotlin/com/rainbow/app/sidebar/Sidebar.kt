@@ -1,83 +1,107 @@
 package com.rainbow.app.sidebar
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import com.rainbow.app.sidebar.SidebarItem.Profile
+import com.rainbow.app.sidebar.SidebarItem.Settings
 import com.rainbow.app.ui.dimensions
-import com.rainbow.domain.models.MainPage
-
-sealed class SidebarState {
-    object Profile : SidebarState()
-    data class Page(val page: MainPage) : SidebarState()
-    data class Subreddit(val subredditName: String) : SidebarState()
-}
+import com.rainbow.app.utils.defaultPadding
 
 @Composable
 fun Sidebar(
-    sidebarState: SidebarState,
+    sidebarItem: SidebarItem,
     isExpanded: Boolean,
-    onClick: (SidebarState) -> Unit,
+    onClick: (SidebarItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    @Composable
+    fun SidebarItem.iconColor() =
+        if (sidebarItem == this)
+            MaterialTheme.colors.primary
+        else
+            MaterialTheme.colors.onBackground.copy(0.5F)
+
+    @Composable
+    fun SidebarItem.textStyle() = MaterialTheme.typography.subtitle2.copy(iconColor())
+
+    @Composable
+    fun SidebarItem.background() =
+        if (sidebarItem == this)
+            MaterialTheme.colors.primary.copy(0.075F)
+        else
+            MaterialTheme.colors.background
 
     Column(
-        modifier,
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimensions.large),
+        modifier
+            .defaultPadding(),
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
 
-        val backgroundColor: (Boolean) -> Color = { stateMatch ->
-            if (stateMatch)
-                Color.Red.copy(0.1F)
-            else
-                Color.Unspecified
+        with(Profile) {
+            SidebarItem(
+                this,
+                isExpanded,
+                onClick,
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .clip(clipShape)
+                    .background(background()),
+                textStyle(),
+                iconColor(),
+            )
         }
 
-        val layoutModifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            verticalArrangement = Arrangement.Center,
+        ) {
 
-
-        val itemModifier = Modifier
-            .clip(MaterialTheme.shapes.medium)
-
-        SidebarProfileItem(
-            onClick = { onClick(SidebarState.Profile) },
-            isExpanded = isExpanded,
-            modifier = layoutModifier then itemModifier
-                .background(backgroundColor(sidebarState == SidebarState.Profile)),
-        )
-
-        SidebarMainPageList(
-            onClick = { onClick(SidebarState.Page(it)) },
-            isExpanded = isExpanded,
-            modifier = layoutModifier,
-            itemModifier = {
-                val page = (sidebarState as? SidebarState.Page)?.page
-
-                itemModifier
-                    .background(backgroundColor(page == it))
+            SidebarItem.values().onEach { item ->
+                if (item != Profile && item != Settings)
+                    SidebarItem(
+                        item,
+                        isExpanded,
+                        onClick,
+                        Modifier
+                            .padding(vertical = MaterialTheme.dimensions.medium)
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .clip(item.clipShape)
+                            .background(item.background()),
+                        item.textStyle(),
+                        item.iconColor(),
+                    )
             }
-        )
+        }
 
-        SidebarSubredditList(
-            onClick = { onClick(SidebarState.Subreddit(it)) },
-            isExpanded = isExpanded,
-            modifier = layoutModifier,
-            itemModifier = {
-                val subredditName = (sidebarState as? SidebarState.Subreddit)?.subredditName
-
-                itemModifier
-                    .background(backgroundColor(subredditName == it.name))
-            }
-        )
-
+        with(Settings) {
+            SidebarItem(
+                this,
+                isExpanded,
+                onClick,
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .clip(clipShape)
+                    .background(background()),
+                textStyle(),
+                iconColor(),
+            )
+        }
     }
 }
 
+private inline val SidebarItem.clipShape
+    @Composable
+    get() = MaterialTheme.shapes.large
