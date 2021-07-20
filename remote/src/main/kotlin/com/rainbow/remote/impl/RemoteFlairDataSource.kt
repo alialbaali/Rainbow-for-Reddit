@@ -6,14 +6,14 @@ import com.rainbow.remote.dto.RemoteFlair
 import com.rainbow.remote.impl.Endpoint.Flairs
 import com.rainbow.remote.mainClient
 import com.rainbow.remote.plainRequest
-import com.rainbow.remote.source.RemoteFlairDataSource
+import com.rainbow.remote.source.RemoteSubredditFlairDataSource
 import com.rainbow.remote.submitForm
 import io.ktor.client.*
 import io.ktor.client.request.*
 
-fun RemoteFlairDataSource(client: HttpClient = mainClient): RemoteFlairDataSource = RemoteFlairDataSourceImpl(client)
+fun RemoteSubredditFlairDataSource(client: HttpClient = mainClient): RemoteSubredditFlairDataSource = RemoteSubredditFlairDataSourceImpl(client)
 
-private class RemoteFlairDataSourceImpl(private val client: HttpClient) : RemoteFlairDataSource {
+private class RemoteSubredditFlairDataSourceImpl(private val client: HttpClient) : RemoteSubredditFlairDataSource {
 
     override suspend fun getCurrentSubredditFlair(subredditName: String): Result<RemoteFlair> {
         return client.submitForm<FlairSelectorResponse>(Flairs.GetCurrentSubredditFlair(subredditName))
