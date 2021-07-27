@@ -8,13 +8,13 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-abstract class ViewModel<in I : Intent, out S : State>(initialState: S) {
+abstract class ViewModel<in I : Intent, S : State>(initialState: S) {
 
     val viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     private val mutableIntent = MutableSharedFlow<I>(replay = 1)
 
-    private val mutableState = MutableStateFlow(initialState)
+    protected val mutableState = MutableStateFlow(initialState)
     val state = mutableState.asStateFlow()
 
     init {

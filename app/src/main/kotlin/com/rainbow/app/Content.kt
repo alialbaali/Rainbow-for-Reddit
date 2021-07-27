@@ -1,38 +1,49 @@
 package com.rainbow.app
 
-import androidx.compose.material.Scaffold
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
-import com.rainbow.app.components.RainbowTopAppBar
-import com.rainbow.app.sidebar.SidebarState
-import com.rainbow.app.subreddit.SubredditScreen
-import com.rainbow.app.user.UserScreen
+import com.rainbow.app.post.PostContent
+import com.rainbow.app.post.PostScreenType
+import com.rainbow.app.profile.ProfileScreen
+import com.rainbow.app.sidebar.SidebarItem
+import com.rainbow.app.sidebar.SidebarItem.*
+import com.rainbow.app.subreddit.Subreddits
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Content(
-    sidebarState: SidebarState,
-    onSidebarClick: () -> Unit,
+    item: SidebarItem,
     modifier: Modifier = Modifier,
 ) {
 
-    val title = when (sidebarState) {
-        is SidebarState.Profile -> "Profile"
-        is SidebarState.Page -> sidebarState.page.toString()
-        is SidebarState.Subreddit -> sidebarState.subredditName
+    when (item) {
+        Profile -> ProfileScreen()
+        Home -> PostContent(PostScreenType.Home)
+        Subreddits -> Subreddits()
+        Messages -> {
+
+        }
+        Settings -> {
+
+        }
     }
 
-    Scaffold(
-        topBar = {
-            RainbowTopAppBar(title, onSidebarClick)
-        },
-        modifier = modifier,
-    ) {
+}
 
-        when (sidebarState) {
-            is SidebarState.Profile -> UserScreen("")
-            is SidebarState.Page -> MainPageScreen((sidebarState).page)
-            is SidebarState.Subreddit -> SubredditScreen((sidebarState).subredditName)
-        }
+@NonRestartableComposable
+@Composable
+fun <T> PagingEffect(iterable: Iterable<T>, currentIndex: Int, block: (T) -> Unit) {
+    SideEffect {
+        iterable.onIndex(currentIndex, block)
+    }
+}
 
+fun <T> Iterable<T>.onIndex(currentIndex: Int, block: (T) -> Unit) {
+    withIndex().last().apply {
+        if (index == currentIndex)
+            block(value)
     }
 }

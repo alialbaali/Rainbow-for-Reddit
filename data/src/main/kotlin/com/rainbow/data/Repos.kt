@@ -1,9 +1,8 @@
 package com.rainbow.data
 
 import com.rainbow.data.repository.*
-import com.rainbow.domain.models.PostsSorting
-import com.rainbow.domain.models.TimeSorting
 import com.rainbow.domain.repository.*
+import com.rainbow.local.RainbowDatabase
 import com.rainbow.remote.impl.*
 import kotlinx.coroutines.Dispatchers
 
@@ -11,34 +10,39 @@ private val DefaultDispatcher = Dispatchers.IO
 
 object Repos {
 
-    object UserRepo : UserRepository by UserRepository(
+    object User : UserRepository by UserRepository(
         RemoteUserDataSource(),
         DefaultDispatcher,
-        Mappers.UserMapper,
+        RemoteMappers.UserMapper,
+        LocalMappers.UserMapper
     )
 
-    object PostRepo : PostRepository by PostRepository(
+    object Post : PostRepository by PostRepository(
         RemotePostDataSource(),
+        RainbowDatabase.localPostQueries,
         DefaultDispatcher,
-        Mappers.PostMapper,
-    )
-
-    object CommentRepo : CommentRepository by CommentRepository(
-        RemoteCommentDataSource(),
-        DefaultDispatcher,
-        Mappers.CommentMapper,
+        RemoteMappers.PostMapper,
+        LocalMappers.PostMapper,
     )
 
     object SubredditRepo : SubredditRepository by SubredditRepository(
         RemoteSubredditDataSource(),
+        RainbowDatabase.localSubredditQueries,
         DefaultDispatcher,
-        Mappers.SubredditMapper,
+        RemoteMappers.SubredditMapper,
+        LocalMappers.SubredditMapper,
+    )
+
+    object Comment : CommentRepository by CommentRepository(
+        RemoteCommentDataSource(),
+        DefaultDispatcher,
+        RemoteMappers.CommentMapper,
     )
 
     object RuleRepo : RuleRepository by RuleRepository(
         RemoteRuleDataSource(),
         DefaultDispatcher,
-        Mappers.RuleMapper
+        RemoteMappers.RuleMapper
     )
 
 }

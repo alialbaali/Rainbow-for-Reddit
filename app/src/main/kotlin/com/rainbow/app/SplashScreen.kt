@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun IntroScreen(modifier: Modifier = Modifier) {
+fun SplashScreen(modifier: Modifier = Modifier) {
 
     Column(
         modifier,
@@ -59,5 +59,4 @@ fun IntroScreen(modifier: Modifier = Modifier) {
         }
 
     }
-
 }
