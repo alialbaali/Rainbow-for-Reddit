@@ -22,6 +22,10 @@ internal sealed class Endpoint(val path: String) {
 
         object BlockUser : Endpoint(ActionPath + "block_user")
 
+        object ReportUser : Endpoint(ActionPath + "report_user")
+
+        class OverView(userName: String):  Endpoint("$UserPath$userName/overview")
+
     }
 
     object Subreddits {
@@ -54,7 +58,7 @@ internal sealed class Endpoint(val path: String) {
 
     object Posts {
 
-        // https://oauth.reddit.com/r/{main-page-sorting}
+        // https://oauth.reddit.com/{main-page-sorting}
         class MainPagePosts(mainPageSorting: String) : Endpoint(mainPageSorting)
 
         // https://oauth.reddit.com/r/{subreddit-name}/{post-sorting}

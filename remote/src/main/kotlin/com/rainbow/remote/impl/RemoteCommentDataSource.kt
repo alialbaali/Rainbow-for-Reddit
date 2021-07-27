@@ -2,6 +2,7 @@ package com.rainbow.remote.impl
 
 import com.rainbow.remote.*
 import com.rainbow.remote.dto.RemoteComment
+import com.rainbow.remote.dto.Thing
 import com.rainbow.remote.impl.Endpoint.Comments
 import com.rainbow.remote.source.RemoteCommentDataSource
 import io.ktor.client.*
@@ -13,26 +14,52 @@ fun RemoteCommentDataSource(client: HttpClient = mainClient): RemoteCommentDataS
 private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommentDataSource {
 
     @Suppress("UNCHECKED_CAST")
-    override suspend fun getPostComments(postIdPrefixed: String): Result<List<RemoteComment>> {
-        return client.plainRequest<List<Map<String, Any>>>(Comments.PostComments(postIdPrefixed))
-            .mapCatching { it.getOrElse(2) { emptyMap() } as Item<Listing<RemoteComment>> }
-            .mapCatching { it.data.toList() }
+    override suspend fun getPostComments(postId: String): Result<List<RemoteComment>> {
+         client.plainRequest<List<Item<Listing<Thing>>>>(Comments.PostComments(postId))
+             .also(::println)
+//            .mapCatching { it.getOrNull(1) as? Item<Listing<RemoteComment>>? }
+//            .mapCatching { it?.data?.toList() ?: emptyList() }
+        return Result.success(emptyList())
     }
 
-    override suspend fun getUserComments(userIdPrefixed: String): Result<List<RemoteComment>> {
-        return client.get<Listing<RemoteComment>>(Comments.UserComments(userIdPrefixed))
+    override suspend fun getUserComments(userId: String): Result<List<RemoteComment>> {
+        return client.get<Listing<RemoteComment>>(Comments.UserComments(userId))
             .mapCatching { it.toList() }
     }
 
-    override suspend fun saveComment(commentIdPrefixed: String): Result<Unit> {
+    override suspend fun getCommentReplies(sort: String): Result<List<RemoteComment>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun submitComment(postId: String?, parentCommentId: String?, text: String): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteComment(commentId: String): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun editComment(commentId: String, text: String): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun enableInboxReplies(commentId: String): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun disableInboxReplies(commentId: String): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun saveComment(commentId: String): Result<Unit> {
         return client.submitForm(Comments.Save) {
-            parameter(Keys.Id, commentIdPrefixed)
+            parameter(Keys.Id, commentId)
         }
     }
 
-    override suspend fun unSaveComment(commentIdPrefixed: String): Result<Unit> {
+    override suspend fun unSaveComment(commentId: String): Result<Unit> {
         return client.submitForm(Comments.UnSave) {
-            parameter(Keys.Id, commentIdPrefixed)
+            parameter(Keys.Id, commentId)
         }
     }
 
@@ -56,5 +83,12 @@ private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommen
             parameter(Keys.Direction, Values.Downvote)
         }
     }
+
+}
+
+suspend fun main() {
+    RemoteCommentDataSource()
+        .getPostComments("lmktus")
+        .getOrThrow()
 
 }

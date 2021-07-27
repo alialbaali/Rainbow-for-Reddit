@@ -17,7 +17,7 @@ private class RemoteSubredditDataSourceImpl(private val client: HttpClient) : Re
         return client.get(Subreddits.About(subredditName))
     }
 
-    override suspend fun getMySubreddits(limit: Int, after: String): Result<List<RemoteSubreddit>> {
+    override suspend fun getMySubreddits(limit: Int, after: String?): Result<List<RemoteSubreddit>> {
         return client.get<Listing<RemoteSubreddit>>(Subreddits.Mine) {
             parameter(Keys.Limit, limit)
             parameter(Keys.After, after)
@@ -63,16 +63,21 @@ private class RemoteSubredditDataSourceImpl(private val client: HttpClient) : Re
 
     override suspend fun searchSubreddit(
         subredditName: String,
-        sort: String,
+        sorting: String,
         limit: Int,
-        after: String
+        after: String?,
     ): Result<List<RemoteSubreddit>> {
         return client.get<Listing<RemoteSubreddit>>(Subreddits.Search) {
             parameter(Keys.Query, subredditName)
-            parameter(Keys.Sort, sort)
+            parameter(Keys.Sort, sorting)
             parameter(Keys.Limit, limit)
             parameter(Keys.After, after)
         }.mapCatching { it.toList() }
     }
 
+}
+
+suspend fun main() {
+    RemoteSubredditDataSource()
+        .getMySubreddits(5, "").also(::println)
 }

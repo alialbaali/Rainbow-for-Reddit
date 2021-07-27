@@ -11,14 +11,15 @@ fun RemotePostDataSource(client: HttpClient = mainClient): RemotePostDataSource 
 
 private class RemotePostDataSourceImpl(private val client: HttpClient) : RemotePostDataSource {
 
-    override suspend fun getMainPagePosts(
-        mainPageSorting: String,
+    override suspend fun getHomePosts(
+        postsSorting: String,
         timeSorting: String,
-        lastPostIdPrefixed: String?,
+        limit: Int,
+        after: String?,
     ): Result<List<RemotePost>> {
-        return client.get<Listing<RemotePost>>(Posts.MainPagePosts(mainPageSorting)) {
+        return client.get<Listing<RemotePost>>(Posts.MainPagePosts(postsSorting)) {
             parameter(Keys.Time, timeSorting)
-            parameter(Keys.After, lastPostIdPrefixed)
+            parameter(Keys.After, after)
         }.mapCatching { it.toList() }
     }
 
@@ -26,6 +27,8 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
         subredditName: String,
         postsSorting: String,
         timeSorting: String,
+        limit: Int,
+        after: String?,
     ): Result<List<RemotePost>> {
         return client.get<Listing<RemotePost>>(Posts.SubredditPosts(subredditName, postsSorting)) {
             parameter(Keys.Time, timeSorting)
@@ -36,54 +39,70 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
         userName: String,
         postsSorting: String,
         timeSorting: String,
+        limit: Int,
+        after: String?,
     ): Result<List<RemotePost>> {
         return client.get<Listing<RemotePost>>(Posts.UserPosts(userName, postsSorting)) {
             parameter(Keys.Time, timeSorting)
         }.mapCatching { it.toList() }
     }
 
-    override suspend fun upvotePost(postIdPrefixed: String): Result<Unit> {
+    override suspend fun getPost(postId: String): Result<RemotePost> {
+        return client.get<Listing<RemotePost>>(Posts.GetPost) {
+            parameter(Keys.Id, postId)
+        }.mapCatching { it.toList().single() }
+    }
+
+    override suspend fun followPost(postId: String): String {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun unFollowPost(postId: String): String {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun upvotePost(postId: String): Result<Unit> {
         return client.submitForm(Posts.Upvote) {
-            parameter(Keys.Id, postIdPrefixed)
+            parameter(Keys.Id, postId)
             parameter(Keys.Direction, Values.Upvote)
         }
     }
 
-    override suspend fun unvotePost(postIdPrefixed: String): Result<Unit> {
+    override suspend fun unvotePost(postId: String): Result<Unit> {
         return client.submitForm(Posts.Unvote) {
-            parameter(Keys.Id, postIdPrefixed)
+            parameter(Keys.Id, postId)
             parameter(Keys.Direction, Values.Unvote)
         }
     }
 
-    override suspend fun downvotePost(postIdPrefixed: String): Result<Unit> {
+    override suspend fun downvotePost(postId: String): Result<Unit> {
         return client.submitForm(Posts.Downvote) {
-            parameter(Keys.Id, postIdPrefixed)
+            parameter(Keys.Id, postId)
             parameter(Keys.Direction, Values.Downvote)
         }
     }
 
-    override suspend fun savePost(postIdPrefixed: String): Result<Unit> {
+    override suspend fun savePost(postId: String): Result<Unit> {
         return client.submitForm(Posts.Save) {
-            parameter(Keys.Id, postIdPrefixed)
+            parameter(Keys.Id, postId)
         }
     }
 
-    override suspend fun unSavePost(postIdPrefixed: String): Result<Unit> {
+    override suspend fun unSavePost(postId: String): Result<Unit> {
         return client.submitForm(Posts.UnSave) {
-            parameter(Keys.Id, postIdPrefixed)
+            parameter(Keys.Id, postId)
         }
     }
 
-    override suspend fun hidePost(postIdPrefixed: String): Result<Unit> {
+    override suspend fun hidePost(postId: String): Result<Unit> {
         return client.submitForm(Posts.Hide) {
-            parameter(Keys.Id, postIdPrefixed)
+            parameter(Keys.Id, postId)
         }
     }
 
-    override suspend fun unHidePost(postIdPrefixed: String): Result<Unit> {
+    override suspend fun unHidePost(postId: String): Result<Unit> {
         return client.submitForm(Posts.UnHide) {
-            parameter(Keys.Id, postIdPrefixed)
+            parameter(Keys.Id, postId)
         }
     }
 
@@ -116,9 +135,9 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
         }
     }
 
-    override suspend fun deletePost(postIdPrefixed: String): Result<Unit> {
+    override suspend fun deletePost(postId: String): Result<Unit> {
         return client.submitForm(Posts.Delete) {
-            parameter(Keys.Id, postIdPrefixed)
+            parameter(Keys.Id, postId)
         }
     }
 

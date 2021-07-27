@@ -15,7 +15,7 @@ fun RemoteUserDataSource(client: HttpClient = mainClient): RemoteUserDataSource 
 private class RemoteUserDataSourceImpl(private val client: HttpClient) : RemoteUserDataSource {
 
     override suspend fun getUserAbout(userName: String): Result<RemoteUser> {
-        return client.get(Users.About(userName))
+        return client.get<RemoteUser>(Users.About(userName))
     }
 
     override suspend fun checkUserName(userName: String): Result<Boolean> {

@@ -23,6 +23,9 @@ internal object Keys {
     const val To = "to"
     const val Query = "q"
     const val Sort = "sort"
+    const val FlairId = "flair_template_id"
+    const val isFlairEnabled = "flair_enabled"
+    const val Reason = "reason"
 }
 
 internal object Values {

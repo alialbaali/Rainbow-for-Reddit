@@ -7,7 +7,7 @@ interface RemoteSubredditDataSource {
 
     suspend fun getSubreddit(subredditName: String): Result<RemoteSubreddit>
 
-    suspend fun getMySubreddits(limit: Int, after: String): Result<List<RemoteSubreddit>>
+    suspend fun getMySubreddits(limit: Int, after: String?): Result<List<RemoteSubreddit>>
 
     suspend fun subscribeSubreddit(subredditId: String): Result<Unit>
 
@@ -23,9 +23,9 @@ interface RemoteSubredditDataSource {
 
     suspend fun searchSubreddit(
         subredditName: String,
-        sort: String,
+        sorting: String,
         limit: Int,
-        after: String,
+        after: String?,
     ): Result<List<RemoteSubreddit>>
 
 }
