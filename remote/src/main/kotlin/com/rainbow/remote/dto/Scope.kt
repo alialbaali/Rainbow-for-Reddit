@@ -30,7 +30,7 @@ internal enum class Scope {
             ModConfig, ModFlair,
         )
 
-        fun List<Scope>.joinToLowerCaseString() = joinToString(separator = " ") { scope -> scope.name.toLowerCase() }
+        fun List<Scope>.joinToLowerCaseString() = joinToString(separator = " ") { scope -> scope.name.lowercase() }
 
     }
 

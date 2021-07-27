@@ -86,7 +86,7 @@ data class RemoteSubreddit internal constructor(
 //    @SerialName("icon_size")
 //    val iconSize: Any? = null, // null
     @SerialName("id")
-    val id: String, // yknuq
+    val id: String? = null, // yknuq
     @SerialName("is_chat_post_feature_enabled")
     val isChatPostFeatureEnabled: Boolean? = null, // true
     @SerialName("is_crosspostable_subreddit")
@@ -156,21 +156,21 @@ data class RemoteSubreddit internal constructor(
     @SerialName("user_can_flair_in_sr")
     val userCanFlairInSr: Boolean? = null, // true
     @SerialName("user_flair_background_color")
-//    val userFlairBackgroundColor: Any? = null, // null
-//    @SerialName("user_flair_css_class")
-//    val userFlairCssClass: Any? = null, // null
-//    @SerialName("user_flair_enabled_in_sr")
+    val userFlairBackgroundColor: String? = null, // null
+    @SerialName("user_flair_css_class")
+    val userFlairCssClass: String? = null, // null
+    @SerialName("user_flair_enabled_in_sr")
     val userFlairEnabledInSr: Boolean? = null, // true
     @SerialName("user_flair_position")
     val userFlairPosition: String? = null, // right
 //    @SerialName("user_flair_richtext")
 //    val userFlairRichtext: List<Any>? = null,
-//    @SerialName("user_flair_template_id")
-//    val userFlairTemplateId: Any? = null, // null
-//    @SerialName("user_flair_text")
-//    val userFlairText: Any? = null, // null
-//    @SerialName("user_flair_text_color")
-//    val userFlairTextColor: Any? = null, // null
+    @SerialName("user_flair_template_id")
+    val userFlairTemplateId: String? = null, // null
+    @SerialName("user_flair_text")
+    val userFlairText: String? = null, // null
+    @SerialName("user_flair_text_color")
+    val userFlairTextColor: String? = null, // null
     @SerialName("user_flair_type")
     val userFlairType: String? = null, // text
     @SerialName("user_has_favorited")

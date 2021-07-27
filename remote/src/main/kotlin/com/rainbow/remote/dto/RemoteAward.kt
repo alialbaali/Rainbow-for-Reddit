@@ -18,7 +18,7 @@ data class RemoteAward(
     val coinPrice: Long,
 
     @SerialName("award_sub_type")
-    val awardSubType: AwardSubType,
+    val awardSubType: AwardSubType? = null,
 
     @SerialName("icon_url")
     val IconUrl: String,

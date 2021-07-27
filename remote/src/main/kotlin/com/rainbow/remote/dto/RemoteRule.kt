@@ -12,6 +12,6 @@ data class RemoteRule(
     @SerialName("violation_reason")
     val violationReason: String?,
     @SerialName("created_utc")
-    val createdUtc: Double?,
+    val createdUtc: Double,
     val priority: Long?,
 )
