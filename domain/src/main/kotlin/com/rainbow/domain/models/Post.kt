@@ -13,16 +13,19 @@ data class Post(
     val subredditName: String,
     val title: String,
     val type: Type = Type.Default,
+    val upvotesCount: ULong,
+    val upvotesRatio: Double,
     val commentsCount: ULong,
-    val votes: Votes,
     val isOC: Boolean = false,
     val isNSFW: Boolean = false,
     val isLocked: Boolean = false,
     val isSpoiler: Boolean = false,
     val isPinned: Boolean = false,
     val isEdited: Boolean = false,
+    val isMine: Boolean = false,
+    val isSaved: Boolean = false,
+    val vote: Vote = Vote.None,
     val awards: List<Award> = emptyList(),
-    val isSaved: Boolean,
     val creationDate: LocalDateTime,
 ) {
     sealed class Type {
@@ -44,12 +47,3 @@ val Post.userDisplayName
 
 val Post.subredditDisplayName
     get() = subredditName.asSubredditDisplayName()
-
-val Post.upvotesCount
-    get() = votes.upvotesCount
-
-val Post.downvotesCount
-    get() = votes.downvotesCount
-
-val Post.voteRatio
-    get() = votes.voteRatio

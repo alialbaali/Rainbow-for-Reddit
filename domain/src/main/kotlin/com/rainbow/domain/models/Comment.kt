@@ -14,21 +14,14 @@ data class Comment(
     val parent: Comment? = null,
     val replies: List<Comment> = emptyList(),
     val body: String,
-    val votes: Votes,
+    val upvotesCount: ULong,
     val awards: List<Award> = emptyList(),
     val isEdited: Boolean = false,
     val isSaved: Boolean = false,
+    val isMine: Boolean = false,
+    val vote: Vote = Vote.None,
     val creationDate: LocalDateTime,
 )
-
-val Comment.upvotesCount
-    get() = votes.upvotesCount
-
-val Comment.downvotesCount
-    get() = votes.downvotesCount
-
-val Comment.voteRatio
-    get() = votes.voteRatio
 
 val Comment.userDisplayName
     get() = userName.asUserDisplayName()

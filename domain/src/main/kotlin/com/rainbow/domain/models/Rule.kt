@@ -6,7 +6,7 @@ import kotlinx.datetime.LocalDateTime
 data class Rule(
     val title: String,
     val description: String,
-    val priority: UInt,
+    val priority: Int,
     val violationReason: String,
     val creationDate: LocalDateTime,
 )
