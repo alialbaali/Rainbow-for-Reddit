@@ -1,7 +1,6 @@
 package com.rainbow.remote
 
 import com.rainbow.remote.dto.TokenResponse
-import com.rainbow.remote.impl.RemoteSubredditDataSource
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
@@ -28,6 +27,8 @@ internal class RefreshToken(val config: Config) {
                 if (response.status == HttpStatusCode.Unauthorized)
                     with(scope.refreshToken(feature.config)) {
 
+                        feature.config.onNewTokenResponse(this)
+
                         val newResponse = scope.request<HttpResponse> {
                             takeFrom(response.request)
                             headers.remove(HttpHeaders.Authorization)
@@ -38,7 +39,6 @@ internal class RefreshToken(val config: Config) {
                     }
             }
 
-        // Requests new token
         private suspend fun HttpClient.refreshToken(config: Config): TokenResponse = submitForm(config.uri) {
             basicAuthHeader(BasicAuthCredentials)
             parameter(GrantTypeKey, config.grantType)
@@ -52,6 +52,8 @@ internal class RefreshToken(val config: Config) {
         lateinit var uri: String
 
         lateinit var refreshToken: String
+
+        lateinit var onNewTokenResponse: (TokenResponse) -> Unit
 
         var grantType: String = RefreshTokenKey
 

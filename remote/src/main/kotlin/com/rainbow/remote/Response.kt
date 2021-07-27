@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 internal sealed class Response<out T>
 
 @Serializable
-internal data class Item<T>(val kind: Kind?, val data: T) : Response<T>()
+internal data class Item<T>(val kind: Kind? = null, val data: T) : Response<T>()
 
 @Serializable
 internal data class Error(val message: String? = null, val error: Int? = null) : Response<Nothing>()

@@ -9,7 +9,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 
 internal const val OauthUrl = "https://oauth.reddit.com/"
-internal const val LocalToken = "383986809160-ErNUJK12-2rJMeHmVs3BBxWvAAeqqA"
+internal val LocalToken = getTokenResponse().getOrThrow().accessToken!!
 
 internal suspend inline fun <reified T> HttpClient.get(
     endpoint: Endpoint,
@@ -59,4 +59,3 @@ private inline fun <reified T> T?.toResult(): Result<T> = when (this) {
     null -> Result.failure(Throwable("Something went wrong"))
     else -> Result.success(this)
 }
-

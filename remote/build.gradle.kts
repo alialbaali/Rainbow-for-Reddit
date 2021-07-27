@@ -8,7 +8,7 @@ dependencies {
     implementation(Ktor.Client.authBasic)
     implementation(Ktor.Client.core)
     implementation("org.seleniumhq.selenium:selenium-java:3.141.59")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.1.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.2.0")
     api(Ktor.Client.apache)
     implementation(Ktor.Client.logging)
     implementation(Ktor.Client.json)
