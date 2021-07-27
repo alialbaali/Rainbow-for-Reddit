@@ -3,36 +3,80 @@ package com.rainbow.data.repository
 import com.rainbow.data.Mapper
 import com.rainbow.data.quickMap
 import com.rainbow.data.utils.DefaultLimit
-import com.rainbow.data.utils.Null
 import com.rainbow.domain.models.Subreddit
 import com.rainbow.domain.models.SubredditsSearchSorting
 import com.rainbow.domain.repository.SubredditRepository
 import com.rainbow.remote.dto.RemoteSubreddit
 import com.rainbow.remote.source.RemoteSubredditDataSource
+import com.rainbow.sql.LocalSubreddit
+import com.rainbow.sql.LocalSubredditQueries
+import com.squareup.sqldelight.runtime.coroutines.asFlow
+import com.squareup.sqldelight.runtime.coroutines.mapToList
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
 internal fun SubredditRepository(
     remoteDataSource: RemoteSubredditDataSource,
+    localSubredditQueries: LocalSubredditQueries,
     dispatcher: CoroutineDispatcher,
-    mapper: Mapper<RemoteSubreddit, Subreddit>,
-): SubredditRepository = SubredditRepositoryImpl(remoteDataSource, dispatcher, mapper)
+    remoteMapper: Mapper<RemoteSubreddit, LocalSubreddit>,
+    localMapper: Mapper<LocalSubreddit, Subreddit>,
+): SubredditRepository =
+    SubredditRepositoryImpl(remoteDataSource, localSubredditQueries, dispatcher, remoteMapper, localMapper)
 
 private class SubredditRepositoryImpl(
     private val remoteDataSource: RemoteSubredditDataSource,
+    private val queries: LocalSubredditQueries,
     private val dispatcher: CoroutineDispatcher,
-    private val mapper: Mapper<RemoteSubreddit, Subreddit>,
+    private val remoteMapper: Mapper<RemoteSubreddit, LocalSubreddit>,
+    private val localMapper: Mapper<LocalSubreddit, Subreddit>,
 ) : SubredditRepository {
 
-    override suspend fun getMySubreddits(): Result<List<Subreddit>> = withContext(dispatcher) {
-        remoteDataSource.getMySubreddits(DefaultLimit, Null)
-            .mapCatching { it.quickMap(mapper) }
-    }
+    override fun getMySubreddits(lastSubredditId: String?): Flow<Result<List<Subreddit>>> = flow {
+        remoteDataSource.getMySubreddits(DefaultLimit, lastSubredditId)
+            .mapCatching { it.quickMap(remoteMapper) }
+            .onSuccess {
+                queries.transaction {
+                    queries.clear()
+                    it.forEach { queries.insert(it) }
+                }
+            }
+            .onFailure {
+                emit(Result.failure<List<Subreddit>>(it))
+            }
 
-    override suspend fun getSubreddit(subredditName: String): Result<Subreddit> = withContext(dispatcher) {
-        remoteDataSource.getSubreddit(subredditName)
-            .mapCatching { mapper.map(it) }
-    }
+        queries.selectAll()
+            .asFlow()
+            .mapToList()
+            .map { it.quickMap(localMapper) }
+            .map { Result.success(it) }
+            .also { emitAll(it) }
+
+    }.flowOn(dispatcher)
+
+    override fun getSubreddit(subredditName: String): Flow<Result<Subreddit>> = flow {
+        queries.selectByName(subredditName)
+            .executeAsOneOrNull()
+            .apply {
+                if (this == null) {
+                    remoteDataSource.getSubreddit(subredditName)
+                        .mapCatching { remoteMapper.map(it) }
+                        .onSuccess {
+                            queries.insert(it)
+                        }
+                        .onFailure {
+                            emit(Result.failure<Subreddit>(it))
+                        }
+                }
+            }
+
+        queries.selectByName(subredditName)
+            .executeAsOne()
+            .let { localMapper.map(it) }
+            .also { emit(Result.success(it)) }
+
+    }.flowOn(dispatcher)
 
     override suspend fun subscribeSubreddit(subredditName: String): Result<Unit> = withContext(dispatcher) {
         remoteDataSource.subscribeSubreddit(subredditName)
@@ -59,11 +103,25 @@ private class SubredditRepositoryImpl(
             .mapCatching { it.guidelinesText ?: "" }
     }
 
-    override suspend fun searchSubreddit(
+    override fun searchSubreddit(
         subredditName: String,
         sorting: SubredditsSearchSorting,
-    ): Result<List<Subreddit>> = withContext(dispatcher) {
-        remoteDataSource.searchSubreddit(subredditName, sorting.name.toLowerCase(), DefaultLimit, Null)
-            .mapCatching { it.quickMap(mapper) }
-    }
+    ): Flow<Result<List<Subreddit>>> = flow {
+        remoteDataSource.searchSubreddit(subredditName, sorting.name.lowercase(), DefaultLimit, null)
+            .mapCatching { it.quickMap(remoteMapper) }
+            .onSuccess {
+                queries.transaction {
+                    queries.clear()
+                    it.forEach { queries.insert(it) }
+                }
+            }
+
+        queries.selectAll()
+            .asFlow()
+            .mapToList()
+            .map { it.quickMap(localMapper) }
+            .map { Result.success(it) }
+            .also { emitAll(it) }
+
+    }.flowOn(dispatcher)
 }

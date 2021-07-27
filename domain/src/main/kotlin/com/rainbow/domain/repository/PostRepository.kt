@@ -1,36 +1,41 @@
 package com.rainbow.domain.repository
 
-import com.rainbow.domain.models.MainPage
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.PostsSorting
 import com.rainbow.domain.models.TimeSorting
+import kotlinx.coroutines.flow.Flow
 
 interface PostRepository {
 
-    suspend fun getMyPosts(
+    fun getMyPosts(
         postsSorting: PostsSorting,
         timeSorting: TimeSorting,
-    ): Result<List<Post>>
+        lastPostId: String?,
+    ): Flow<Result<List<Post>>>
 
-    suspend fun getMainPagePosts(
-        mainPage: MainPage,
+    fun getHomePosts(
+        postsSorting: PostsSorting,
         timeSorting: TimeSorting,
-        isNext: Boolean = false,
-    ): Result<List<Post>>
+        lastPostId: String?,
+    ): Flow<Result<List<Post>>>
 
-    suspend fun getSubredditPosts(
+    fun getSubredditPosts(
         subredditName: String,
         postsSorting: PostsSorting,
         timeSorting: TimeSorting,
-    ): Result<List<Post>>
+        lastPostId: String?,
+    ): Flow<Result<List<Post>>>
 
-    suspend fun getUserPosts(
+    fun getUserPosts(
         userName: String,
         postsSorting: PostsSorting,
         timeSorting: TimeSorting,
-    ): Result<List<Post>>
+        lastPostId: String?,
+    ): Flow<Result<List<Post>>>
 
-    suspend fun createPost(post: Post): Result<Post>
+    fun getPost(postId: String): Flow<Result<Post>>
+
+    suspend fun createPost(post: Post): Result<Unit>
 
     suspend fun deletePost(postId: String): Result<Unit>
 

@@ -2,12 +2,13 @@ package com.rainbow.domain.repository
 
 import com.rainbow.domain.models.Subreddit
 import com.rainbow.domain.models.SubredditsSearchSorting
+import kotlinx.coroutines.flow.Flow
 
 interface SubredditRepository {
 
-    suspend fun getMySubreddits(): Result<List<Subreddit>>
+    fun getMySubreddits(lastSubredditId: String?): Flow<Result<List<Subreddit>>>
 
-    suspend fun getSubreddit(subredditName: String): Result<Subreddit>
+    fun getSubreddit(subredditName: String): Flow<Result<Subreddit>>
 
     suspend fun subscribeSubreddit(subredditName: String): Result<Unit>
 
@@ -21,6 +22,6 @@ interface SubredditRepository {
 
     suspend fun getSubredditPostRequirements(subredditName: String): Result<String>
 
-    suspend fun searchSubreddit(subredditName: String, sorting: SubredditsSearchSorting): Result<List<Subreddit>>
+    fun searchSubreddit(subredditName: String, sorting: SubredditsSearchSorting): Flow<Result<List<Subreddit>>>
 
 }

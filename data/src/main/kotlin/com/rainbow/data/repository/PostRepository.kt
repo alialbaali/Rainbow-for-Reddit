@@ -2,8 +2,7 @@ package com.rainbow.data.repository
 
 import com.rainbow.data.Mapper
 import com.rainbow.data.quickMap
-import com.rainbow.data.utils.asPostIdPrefixed
-import com.rainbow.domain.models.MainPage
+import com.rainbow.data.utils.DefaultLimit
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.Post.Type
 import com.rainbow.domain.models.PostsSorting
@@ -11,112 +10,212 @@ import com.rainbow.domain.models.TimeSorting
 import com.rainbow.domain.repository.PostRepository
 import com.rainbow.remote.dto.RemotePost
 import com.rainbow.remote.source.RemotePostDataSource
+import com.rainbow.sql.LocalPost
+import com.rainbow.sql.LocalPostQueries
+import com.squareup.sqldelight.runtime.coroutines.asFlow
+import com.squareup.sqldelight.runtime.coroutines.mapToList
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
 internal fun PostRepository(
-    remotePostDataSource: RemotePostDataSource,
+    remoteDataSource: RemotePostDataSource,
+    localPostQueries: LocalPostQueries,
     dispatcher: CoroutineDispatcher,
-    mapper: Mapper<RemotePost, Post>,
-): PostRepository = PostRepositoryImpl(remotePostDataSource, dispatcher, mapper)
+    remoteMapper: Mapper<RemotePost, LocalPost>,
+    localMapper: Mapper<LocalPost, Post>,
+): PostRepository = PostRepositoryImpl(remoteDataSource, localPostQueries, dispatcher, remoteMapper, localMapper)
 
 private class PostRepositoryImpl(
-    private val remotePostDataSource: RemotePostDataSource,
+    private val remoteDataSource: RemotePostDataSource,
+    private val queries: LocalPostQueries,
     private val dispatcher: CoroutineDispatcher,
-    private val mapper: Mapper<RemotePost, Post>,
+    private val remoteMapper: Mapper<RemotePost, LocalPost>,
+    private val localMapper: Mapper<LocalPost, Post>,
 ) : PostRepository {
 
-    var lastPostIdPrefixed: String? = null
-
-    override suspend fun getMyPosts(
+    override fun getMyPosts(
         postsSorting: PostsSorting,
         timeSorting: TimeSorting,
-    ): Result<List<Post>> = withContext(dispatcher) {
+        lastPostId: String?,
+    ): Flow<Result<List<Post>>> = flow {
+        withContext(dispatcher) {
+        }
+
         TODO("Not yet implemented")
     }
 
-    override suspend fun getMainPagePosts(
-        mainPage: MainPage,
+    override fun getHomePosts(
+        postsSorting: PostsSorting,
         timeSorting: TimeSorting,
-        isNext: Boolean,
-    ): Result<List<Post>> = withContext(dispatcher) {
+        lastPostId: String?,
+    ): Flow<Result<List<Post>>> = flow {
+        remoteDataSource
+            .getHomePosts(
+                postsSorting.name.lowercase(),
+                timeSorting.name.lowercase(),
+                DefaultLimit,
+                lastPostId,
+            )
+            .mapCatching { it.quickMap(remoteMapper) }
+            .onSuccess {
+                queries.transaction {
+                    queries.clear()
+                    it.forEach { localPost -> queries.insert(localPost) }
+                }
+            }.onFailure { emit(Result.failure<List<Post>>(it)) }
 
-        remotePostDataSource.getMainPagePosts(
-            mainPage.name.toLowerCase(),
-            timeSorting.name.toLowerCase(),
-            lastPostIdPrefixed.takeIf { isNext },
-        )
-            .mapCatching { it.quickMap(mapper) }
-            .onSuccess { posts -> lastPostIdPrefixed = posts.lastOrNull()?.id?.asPostIdPrefixed() }
+        queries.selectAll()
+            .asFlow()
+            .mapToList(dispatcher)
+            .map { it.quickMap(localMapper) }
+            .map { Result.success(it) }
+            .also { emitAll(it) }
     }
+        .flowOn(dispatcher)
 
-    override suspend fun getSubredditPosts(
+    override fun getSubredditPosts(
         subredditName: String,
         postsSorting: PostsSorting,
         timeSorting: TimeSorting,
-    ): Result<List<Post>> = withContext(dispatcher) {
-        remotePostDataSource.getSubredditPosts(
-            subredditName,
-            postsSorting.name.toLowerCase(),
-            timeSorting.name.toLowerCase()
-        ).mapCatching { it.quickMap(mapper) }
+        lastPostId: String?,
+    ): Flow<Result<List<Post>>> = flow {
+        withContext(dispatcher) {
+            remoteDataSource.getSubredditPosts(
+                subredditName,
+                postsSorting.name.lowercase(),
+                timeSorting.name.lowercase(),
+                DefaultLimit,
+                lastPostId,
+            ).mapCatching { it.quickMap(remoteMapper) }
+                .onSuccess {
+                    queries.transaction {
+                        queries.clear()
+                        it.forEach { localPost ->
+                            queries.insert(localPost)
+                        }
+                    }
+                    queries.selectAll()
+                        .asFlow()
+                        .mapToList(dispatcher)
+                        .map { it.quickMap(localMapper) }
+                        .map { Result.success(it) }
+                        .also { emitAll(it) }
+                }.onFailure {
+                    emit(Result.failure<List<Post>>(it))
+                }
+        }
     }
 
-    override suspend fun getUserPosts(
+    override fun getUserPosts(
         userName: String,
         postsSorting: PostsSorting,
         timeSorting: TimeSorting,
-    ): Result<List<Post>> = withContext(dispatcher) {
-        remotePostDataSource.getUserPosts(
-            userName,
-            postsSorting.name.toLowerCase(),
-            timeSorting.name.toLowerCase()
-        ).mapCatching { it.quickMap(mapper) }
+        lastPostId: String?,
+    ): Flow<Result<List<Post>>> = flow {
+        withContext(dispatcher) {
+            remoteDataSource.getUserPosts(
+                userName,
+                postsSorting.name.lowercase(),
+                timeSorting.name.lowercase(),
+                DefaultLimit,
+                lastPostId,
+            ).mapCatching { it.quickMap(remoteMapper) }
+                .onSuccess {
+                    queries.transaction {
+                        queries.clear()
+                        it.forEach { localPost ->
+                            queries.insert(localPost)
+                        }
+                    }
+                    queries.selectAll()
+                        .asFlow()
+                        .mapToList(dispatcher)
+                        .map { it.quickMap(localMapper) }
+                        .map { Result.success(it) }
+                        .also { emitAll(it) }
+                }.onFailure {
+                    emit(Result.failure<List<Post>>(it))
+                }
+        }
     }
 
-    override suspend fun createPost(post: Post): Result<Post> = withContext(dispatcher) {
+    override fun getPost(postId: String): Flow<Result<Post>> = flow {
+        queries.selectById(postId)
+            .executeAsOneOrNull()
+            .apply {
+                if (this == null) {
+                    remoteDataSource.getPost(postId)
+                        .mapCatching { remoteMapper.map(it) }
+                        .onSuccess {
+                            queries.insert(it)
+                        }
+                        .onFailure {
+                            emit(Result.failure<Post>(it))
+                        }
+                }
+            }
+
+        queries.selectById(postId)
+            .executeAsOne()
+            .let { localMapper.map(it) }
+            .also { emit(Result.success(it)) }
+    }.flowOn(dispatcher)
+
+    override suspend fun createPost(post: Post): Result<Unit> = withContext(dispatcher) {
         with(post) {
             when (val postType = type) {
-                is Type.None -> remotePostDataSource.submitTextPost(subredditName, title, null, isNSFW, isSpoiler)
-                is Type.Text -> remotePostDataSource.submitTextPost(subredditName,
+                is Type.None -> remoteDataSource.submitTextPost(subredditName, title, null, isNSFW, isSpoiler)
+                is Type.Text -> remoteDataSource.submitTextPost(
+                    subredditName,
                     title,
                     postType.body,
                     isNSFW,
-                    isSpoiler)
-                is Type.Link -> remotePostDataSource.submitUrlPost(subredditName,
+                    isSpoiler
+                )
+                is Type.Link -> remoteDataSource.submitUrlPost(
+                    subredditName,
                     title,
                     postType.url,
                     isNSFW,
-                    isSpoiler)
-                is Type.Gif -> remotePostDataSource.submitUrlPost(subredditName, title, postType.url, isNSFW, isSpoiler)
-                is Type.Image -> remotePostDataSource.submitUrlPost(subredditName,
+                    isSpoiler
+                )
+                is Type.Gif -> remoteDataSource.submitUrlPost(subredditName, title, postType.url, isNSFW, isSpoiler)
+                is Type.Image -> remoteDataSource.submitUrlPost(
+                    subredditName,
                     title,
                     postType.url,
                     isNSFW,
-                    isSpoiler)
-                is Type.Video -> remotePostDataSource.submitUrlPost(subredditName,
+                    isSpoiler
+                )
+                is Type.Video -> remoteDataSource.submitUrlPost(
+                    subredditName,
                     title,
                     postType.url,
                     isNSFW,
-                    isSpoiler)
+                    isSpoiler
+                )
             }
-        }.map { post }
+        }
     }
 
     override suspend fun deletePost(postId: String): Result<Unit> = withContext(dispatcher) {
-        remotePostDataSource.deletePost(postId.asPostIdPrefixed())
+        remoteDataSource.deletePost(postId)
     }
 
     override suspend fun upvotePost(postId: String): Result<Unit> = withContext(dispatcher) {
-        remotePostDataSource.upvotePost(postId.asPostIdPrefixed())
+        remoteDataSource.upvotePost(postId)
+            .onSuccess { queries.upvote(postId) }
     }
 
     override suspend fun unvotePost(postId: String): Result<Unit> = withContext(dispatcher) {
-        remotePostDataSource.upvotePost(postId.asPostIdPrefixed())
+        remoteDataSource.unvotePost(postId)
+            .onSuccess { queries.unvote(postId) }
     }
 
     override suspend fun downvotePost(postId: String): Result<Unit> = withContext(dispatcher) {
-        remotePostDataSource.downvotePost(postId.asPostIdPrefixed())
+        remoteDataSource.downvotePost(postId)
+            .onSuccess { queries.downvote(postId) }
     }
 
 }

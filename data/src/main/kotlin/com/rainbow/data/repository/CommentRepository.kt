@@ -2,8 +2,6 @@ package com.rainbow.data.repository
 
 import com.rainbow.data.Mapper
 import com.rainbow.data.quickMap
-import com.rainbow.data.utils.asPostIdPrefixed
-import com.rainbow.data.utils.asUserIdPrefixed
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.repository.CommentRepository
 import com.rainbow.remote.dto.RemoteComment
@@ -24,17 +22,17 @@ private class CommentRepositoryImpl(
 ) : CommentRepository {
 
     override suspend fun getMyComments(): Result<List<Comment>> = withContext(dispatcher) {
-        remoteCommentDataSource.getUserComments("userId".asUserIdPrefixed())
+        remoteCommentDataSource.getUserComments("userId")
             .mapCatching { it.quickMap(mapper) }
     }
 
     override suspend fun getPostsComments(postId: String): Result<List<Comment>> = withContext(dispatcher) {
-        remoteCommentDataSource.getPostComments(postId.asPostIdPrefixed())
+        remoteCommentDataSource.getPostComments(postId)
             .mapCatching { it.quickMap(mapper) }
     }
 
     override suspend fun getUserComments(userId: String): Result<List<Comment>> = withContext(dispatcher) {
-        remoteCommentDataSource.getUserComments(userId.asUserIdPrefixed())
+        remoteCommentDataSource.getUserComments(userId)
             .mapCatching { it.quickMap(mapper) }
     }
 
