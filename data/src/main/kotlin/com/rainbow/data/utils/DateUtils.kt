@@ -6,9 +6,11 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import java.time.Year
 
-internal fun Long?.toSystemLocalDateTime(): LocalDateTime {
+const val DefaultLimit = 100
+
+internal fun Double?.toSystemLocalDateTime(): LocalDateTime {
     return this?.let {
-        Instant.fromEpochSeconds(it)
+        Instant.fromEpochSeconds(it.toLong())
             .toLocalDateTime(TimeZone.currentSystemDefault())
     } ?: ZeroDateTime
 }

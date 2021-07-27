@@ -1,6 +1,7 @@
 package com.rainbow.app.utils
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
@@ -9,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.GraphicsLayerScope
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.unit.Dp
@@ -68,7 +70,7 @@ var GraphicsLayerScope.shadow: Dp
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 inline fun <T> UIState<T>.composed(
-    actionLabel: String? = null,
+    actionLabel: String = "Hide",
     onSuccess: @Composable (T) -> Unit,
 ) {
 
@@ -82,7 +84,7 @@ inline fun <T> UIState<T>.composed(
             SnackbarHost(snackbarHostState, modifier = Modifier.defaultPadding())
 
             LaunchedEffect(Unit) {
-                snackbarHostState.showSnackbar(exception.message.toString(), actionLabel ?: "Hide")
+                snackbarHostState.showSnackbar(exception.message.toString(), actionLabel)
             }
 
         }
@@ -92,3 +94,5 @@ inline fun <T> UIState<T>.composed(
 }
 
 fun LocalDateTime.Companion.now() = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+
+fun Modifier.handy() = border(5.dp, color = Color.Red)

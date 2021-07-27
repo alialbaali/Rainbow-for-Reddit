@@ -4,35 +4,58 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import com.rainbow.app.comment.CommentViewModel
+import com.rainbow.app.post.PostViewModel
+import com.rainbow.app.profile.ProfileViewModel
+import com.rainbow.app.subreddit.SubredditViewModel
 import com.rainbow.domain.ViewModel
+import com.rainbow.domain.ViewModel.Intent
+import com.rainbow.domain.ViewModel.State
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 
 @Composable
-@OptIn(ExperimentalCoroutinesApi::class)
-@Suppress("NOTHING_TO_INLINE")
-inline operator fun <I, S, VM : ViewModel<I, S>> VM.component1(): S {
-    remember {
-
-        object : RememberObserver {
-            override fun onRemembered() {}
-            override fun onForgotten() {
-                viewModelScope.cancel()
-            }
-            override fun onAbandoned() {
-                viewModelScope.cancel()
-            }
-        }
-
+fun <I : Intent, S : State> rememberViewModel(viewModel: ViewModel<I, S>): ViewModel<I, S> {
+    val wrapper = remember {
+        CompositionScopedViewModelController(viewModel)
     }
-    return state.collectAsState().value
+    return wrapper.viewModel
 }
 
-@Suppress("NOTHING_TO_INLINE")
-inline operator fun <I, S, VM : ViewModel<I, S>> VM.component2(): (I) -> Job = this::emitIntent
+object ViewModels {
+    val Post by lazy { PostViewModel() }
+    val Subreddit by lazy { SubredditViewModel() }
+    val Comment by lazy { CommentViewModel() }
+    val Profile by lazy { ProfileViewModel() }
+}
 
-inline fun <I, S, VM : ViewModel<I, S>> VM.withState(block: S.() -> @UnsafeVariance S): S = state.value.block()
+private class CompositionScopedViewModelController<I : Intent, S : State>(
+    val viewModel: ViewModel<I, S>
+) : RememberObserver {
+    override fun onRemembered() {
+        // Nothing to do
+    }
+
+    override fun onForgotten() {
+        viewModel.viewModelScope.cancel()
+    }
+
+    override fun onAbandoned() {
+        viewModel.viewModelScope.cancel()
+    }
+}
+
+@Composable
+@OptIn(ExperimentalCoroutinesApi::class)
+@Suppress("NOTHING_TO_INLINE")
+inline operator fun <I : Intent, S : State, VM : ViewModel<I, S>> VM.component1(): S = state.collectAsState().value
+
+@Suppress("NOTHING_TO_INLINE")
+inline operator fun <I : Intent, S : State, VM : ViewModel<I, S>> VM.component2(): (I) -> Job = this::emitIntent
+
+inline fun <I : Intent, S : State, VM : ViewModel<I, S>> VM.withState(block: S.() -> @UnsafeVariance S): S =
+    state.value.block()
 
 fun <T> Result<T>.toUIState(): UIState<T> = fold(
     onSuccess = { UIState.Success(it) },

@@ -9,4 +9,5 @@ object RainbowStrings {
     const val ShowMenu = "Show menu"
     const val CreatePost = "Create post"
     const val Me = "Me"
+    const val Profile = "Profile"
 }
