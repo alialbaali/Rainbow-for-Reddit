@@ -1,0 +1,57 @@
+import kotlinx.datetime.LocalDateTime;
+
+CREATE TABLE LocalPost
+(
+    id             TEXT                  NOT NULL PRIMARY KEY,
+    user_id        TEXT                  NOT NULL,
+    user_name      TEXT                  NOT NULL,
+    subreddit_id   TEXT                  NOT NULL,
+    subreddit_name TEXT                  NOT NULL,
+    title          TEXT                  NOT NULL,
+    body           TEXT,
+    upvotes_count  INTEGER               NOT NULL,
+    upvotes_ratio  REAL                  NOT NULL,
+    comments_count INTEGER               NOT NULL,
+    is_oc          INTEGER AS Boolean    NOT NULL,
+    is_nsfw        INTEGER AS Boolean    NOT NULL,
+    is_locked      INTEGER AS Boolean    NOT NULL,
+    is_spoiler     INTEGER AS Boolean    NOT NULL,
+    is_pinned      INTEGER AS Boolean    NOT NULL,
+    is_edited      INTEGER AS Boolean    NOT NULL,
+    is_mine        INTEGER AS Boolean    NOT NULL,
+    is_saved       INTEGER AS Boolean    NOT NULL,
+    vote           INTEGER AS Boolean,
+    creation_date  TEXT AS LocalDateTime NOT NULL
+);
+
+selectAll:
+SELECT *
+FROM LocalPost;
+
+selectById:
+SELECT *
+FROM LocalPost
+WHERE id = ?;
+
+insert:
+INSERT INTO LocalPost
+VALUES ?;
+
+upvote:
+UPDATE LocalPost
+SET vote = 1
+WHERE id = ?;
+
+downvote:
+UPDATE LocalPost
+SET vote = 0
+WHERE id = ?;
+
+unvote:
+UPDATE LocalPost
+SET vote = NULL
+WHERE id = ?;
+
+clear:
+DELETE
+FROM LocalPost;

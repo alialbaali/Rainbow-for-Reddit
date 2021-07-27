@@ -1,13 +1,18 @@
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization") version "1.4.10"
+    id("com.squareup.sqldelight")
 }
 
 dependencies {
-    val exposedVersion = "0.29.1"
-    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
-    implementation("org.xerial:sqlite-jdbc:3.30.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+    api("com.squareup.sqldelight:coroutines-extensions-jvm:1.5.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.2.0")
+    implementation("com.squareup.sqldelight:sqlite-driver:1.5.0")
+}
+
+sqldelight {
+    database("RainbowDatabase") {
+        packageName = "com.rainbow.sql"
+    }
 }

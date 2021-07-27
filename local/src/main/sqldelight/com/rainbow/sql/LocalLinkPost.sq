@@ -1,0 +1,4 @@
+CREATE TABLE LocalLinkPost (
+id TEXT NOT NULL PRIMARY KEY REFERENCES LocalPost(id),
+url TEXT NOT NULL
+);

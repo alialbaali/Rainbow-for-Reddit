@@ -1,0 +1,5 @@
+CREATE TABLE LocalImagePost(
+id TEXT  NOT NULL REFERENCES LocalPost(id),
+url TEXT NOT NULL,
+PRIMARY KEY (id, url)
+);
