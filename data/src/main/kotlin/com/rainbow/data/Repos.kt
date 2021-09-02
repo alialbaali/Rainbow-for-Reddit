@@ -27,6 +27,9 @@ object Repos {
         .toFlowSettings(DefaultDispatcher)
 
     @OptIn(ExperimentalSettingsApi::class)
+    object Settings : SettingsRepository by SettingsRepository(settings, DefaultDispatcher)
+
+    @OptIn(ExperimentalSettingsApi::class)
     object User : UserRepository by UserRepository(
         RemoteUserDataSource(),
         DefaultDispatcher,

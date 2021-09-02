@@ -1,5 +1,6 @@
 package com.rainbow.app.settings
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -42,7 +43,12 @@ private fun LogoutDialog(
         title = RainbowStrings.Logout,
         resizable = false,
     ) {
-        Column(modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween) {
+        Column(
+            modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
 
             Text(
                 RainbowStrings.LogoutConfirmation,

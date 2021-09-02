@@ -10,6 +10,10 @@ enum class TimeSorting {
 
 }
 
+enum class Theme {
+    Dark, Light, System,
+}
+
 enum class Vote {
     Up, Down, None,
 }
