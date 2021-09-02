@@ -53,7 +53,8 @@ private fun LogoutDialog(
             Text(
                 RainbowStrings.LogoutConfirmation,
                 Modifier.defaultPadding(),
-                style = MaterialTheme.typography.h5
+                color = MaterialTheme.colors.onBackground,
+                style = MaterialTheme.typography.h5,
             )
 
             Row(

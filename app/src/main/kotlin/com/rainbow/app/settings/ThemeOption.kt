@@ -34,10 +34,17 @@ fun ThemeOption(modifier: Modifier = Modifier) {
         Arrangement.SpaceBetween,
         Alignment.CenterVertically,
     ) {
-        Text(RainbowStrings.Theme, style = MaterialTheme.typography.body1)
+        Text(
+            RainbowStrings.Theme,
+            color = MaterialTheme.colors.onBackground,
+            style = MaterialTheme.typography.body1,
+        )
 
         Row {
             Theme.values().forEach { theme ->
+
+                val isSelected = currentTheme == theme
+
                 Button(
                     onClick = {
                         scope.launch {
@@ -46,13 +53,20 @@ fun ThemeOption(modifier: Modifier = Modifier) {
                     },
                     modifier = Modifier.padding(horizontal = 4.dp),
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = if (currentTheme == theme)
+                        backgroundColor = if (isSelected)
                             MaterialTheme.colors.primary
                         else
                             MaterialTheme.colors.background
                     )
                 ) {
-                    Text(theme.name, style = MaterialTheme.typography.body1)
+                    Text(
+                        theme.name,
+                        color = if (isSelected)
+                            MaterialTheme.colors.onPrimary
+                        else
+                            MaterialTheme.colors.onBackground,
+                        style = MaterialTheme.typography.body1
+                    )
                 }
             }
         }
