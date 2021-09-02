@@ -2,10 +2,20 @@ package com.rainbow.app.ui
 
 import androidx.compose.desktop.DesktopMaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import com.rainbow.data.Repos
+import com.rainbow.domain.models.Theme
 
 @Composable
-fun RainbowTheme(isDarkMode: Boolean = isSystemInDarkMode(), content: @Composable () -> Unit) {
-    val colors = if (isDarkMode) darkColors else lightColors
+fun RainbowTheme(content: @Composable () -> Unit) {
+    val theme by Repos.Settings.theme.collectAsState(Theme.System)
+
+    val colors = when (theme) {
+        Theme.Dark -> darkColors
+        Theme.Light -> lightColors
+        Theme.System -> lightColors
+    }
 
     DesktopMaterialTheme(
         colors,
@@ -13,7 +23,4 @@ fun RainbowTheme(isDarkMode: Boolean = isSystemInDarkMode(), content: @Composabl
         shapes,
         content
     )
-
 }
-
-private fun isSystemInDarkMode(): Boolean = false // TODO Get real value from the current os
