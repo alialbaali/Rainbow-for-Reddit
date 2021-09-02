@@ -1,14 +1,13 @@
 plugins {
     kotlin("jvm")
-    kotlin("plugin.serialization") version "1.4.10"
+    kotlin("plugin.serialization") version "1.5.30"
 }
 
 dependencies {
     implementation(Ktor.Client.serialization)
     implementation(Ktor.Client.authBasic)
     implementation(Ktor.Client.core)
-    implementation("org.seleniumhq.selenium:selenium-java:3.141.59")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.2.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.2.1")
     api(Ktor.Client.apache)
     implementation(Ktor.Client.logging)
     implementation(Ktor.Client.json)
@@ -21,4 +20,6 @@ dependencies {
     testApi(Ktor.Client.mock)
     testApi(Testing.Kotest.Assertions.json)
     testApi(Testing.Kotest.Assertions.ktor)
+    api("com.russhwolf:multiplatform-settings:0.8")
+    api("com.russhwolf:multiplatform-settings-coroutines:0.8")
 }

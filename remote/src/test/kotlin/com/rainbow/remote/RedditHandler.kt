@@ -12,9 +12,9 @@ internal fun MockEngineConfig.redditHandler() {
 
         val url = request.url.fullHost
 
-        require(url == OauthUrl) {
-            "Wrong Url. Make sure the url is $OauthUrl and not $url"
-        }
+//        require(url == OauthUrl) {
+//            "Wrong Url. Make sure the url is $OauthUrl and not $url"
+//        }
 
         userRoute(request) ?: subredditRoute(request) ?: respondNotImplemented().also { println(request.urlPath) }
     }

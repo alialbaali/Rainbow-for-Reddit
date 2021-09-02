@@ -1,8 +1,13 @@
 package com.rainbow.remote.source
 
 import com.rainbow.remote.dto.RemoteUser
+import java.util.*
 
 interface RemoteUserDataSource {
+
+    suspend fun loginUser(uuid: UUID): Result<Unit>
+
+    suspend fun getCurrentUser(): Result<RemoteUser>
 
     suspend fun getUserAbout(userName: String): Result<RemoteUser>
 

@@ -14,6 +14,8 @@ internal sealed class Endpoint(val path: String) {
 
     object Users {
 
+        object CurrentUser : Endpoint(ActionPath + "v1/me")
+
         // https://oauth.reddit.com/user/{user-name}/about
         class About(userName: String) : Endpoint("$UserPath$userName/about")
 
@@ -24,7 +26,7 @@ internal sealed class Endpoint(val path: String) {
 
         object ReportUser : Endpoint(ActionPath + "report_user")
 
-        class OverView(userName: String):  Endpoint("$UserPath$userName/overview")
+        class OverView(userName: String) : Endpoint("$UserPath$userName/overview")
 
     }
 

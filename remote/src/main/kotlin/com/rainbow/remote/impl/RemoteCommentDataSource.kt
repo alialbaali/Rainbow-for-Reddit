@@ -1,6 +1,7 @@
 package com.rainbow.remote.impl
 
 import com.rainbow.remote.*
+import com.rainbow.remote.client.redditClient
 import com.rainbow.remote.dto.RemoteComment
 import com.rainbow.remote.dto.Thing
 import com.rainbow.remote.impl.Endpoint.Comments
@@ -8,15 +9,15 @@ import com.rainbow.remote.source.RemoteCommentDataSource
 import io.ktor.client.*
 import io.ktor.client.request.*
 
-fun RemoteCommentDataSource(client: HttpClient = mainClient): RemoteCommentDataSource =
+fun RemoteCommentDataSource(client: HttpClient = redditClient): RemoteCommentDataSource =
     RemoteCommentDataSourceImpl(client)
 
 private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommentDataSource {
 
     @Suppress("UNCHECKED_CAST")
     override suspend fun getPostComments(postId: String): Result<List<RemoteComment>> {
-         client.plainRequest<List<Item<Listing<Thing>>>>(Comments.PostComments(postId))
-             .also(::println)
+        client.plainRequest<List<Item<Listing<Thing>>>>(Comments.PostComments(postId))
+            .also(::println)
 //            .mapCatching { it.getOrNull(1) as? Item<Listing<RemoteComment>>? }
 //            .mapCatching { it?.data?.toList() ?: emptyList() }
         return Result.success(emptyList())

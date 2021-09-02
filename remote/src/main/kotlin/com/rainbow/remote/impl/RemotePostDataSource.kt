@@ -1,13 +1,17 @@
 package com.rainbow.remote.impl
 
-import com.rainbow.remote.*
+import com.rainbow.remote.Listing
+import com.rainbow.remote.client.redditClient
 import com.rainbow.remote.dto.RemotePost
+import com.rainbow.remote.get
 import com.rainbow.remote.impl.Endpoint.Posts
 import com.rainbow.remote.source.RemotePostDataSource
+import com.rainbow.remote.submitForm
+import com.rainbow.remote.toList
 import io.ktor.client.*
 import io.ktor.client.request.*
 
-fun RemotePostDataSource(client: HttpClient = mainClient): RemotePostDataSource = RemotePostDataSourceImpl(client)
+fun RemotePostDataSource(client: HttpClient = redditClient): RemotePostDataSource = RemotePostDataSourceImpl(client)
 
 private class RemotePostDataSourceImpl(private val client: HttpClient) : RemotePostDataSource {
 

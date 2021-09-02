@@ -1,6 +1,7 @@
 package com.rainbow.remote.impl
 
 import com.rainbow.remote.*
+import com.rainbow.remote.client.redditClient
 import com.rainbow.remote.dto.RemotePostRequirements
 import com.rainbow.remote.dto.RemoteSubreddit
 import com.rainbow.remote.impl.Endpoint.Subreddits
@@ -8,7 +9,7 @@ import com.rainbow.remote.source.RemoteSubredditDataSource
 import io.ktor.client.*
 import io.ktor.client.request.*
 
-fun RemoteSubredditDataSource(client: HttpClient = mainClient): RemoteSubredditDataSource =
+fun RemoteSubredditDataSource(client: HttpClient = redditClient): RemoteSubredditDataSource =
     RemoteSubredditDataSourceImpl(client)
 
 private class RemoteSubredditDataSourceImpl(private val client: HttpClient) : RemoteSubredditDataSource {

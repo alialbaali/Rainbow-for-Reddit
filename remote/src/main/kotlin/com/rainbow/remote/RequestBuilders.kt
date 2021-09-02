@@ -8,24 +8,19 @@ import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 
-internal const val OauthUrl = "https://oauth.reddit.com/"
-internal val LocalToken = getTokenResponse().getOrThrow().accessToken!!
-
 internal suspend inline fun <reified T> HttpClient.get(
     endpoint: Endpoint,
     builder: HttpRequestBuilder.() -> Unit = {},
 ): Result<T> = get<HttpResponse> {
-    bearerAuthHeader(LocalToken)
-    url("$OauthUrl${endpoint.path}.json")
+    url("${endpoint.path}.json")
     builder()
-}.receiveAsResponse<T>().asResult()
+}.receiveAsResponse<T>().toResult()
 
 internal suspend inline fun <reified T> HttpClient.submitForm(
     endpoint: Endpoint,
     block: HttpRequestBuilder .() -> Unit = {},
 ): Result<T> = submitForm<HttpResponse> {
-    bearerAuthHeader(LocalToken)
-    url("$OauthUrl${endpoint.path}")
+    url(endpoint.path)
     block()
 }.receiveAsResult()
 
@@ -33,10 +28,9 @@ internal suspend inline fun <reified T> HttpClient.plainRequest(
     endpoint: Endpoint,
     builder: HttpRequestBuilder.() -> Unit = {},
 ): Result<T> = request<T?> {
-    bearerAuthHeader(LocalToken)
-    url("$OauthUrl${endpoint.path}.json")
+    url("${endpoint.path}.json")
     builder()
-}.toResult()
+}.asResult()
 
 private suspend inline fun <reified T> HttpResponse.receiveAsResponse() =
     if (status.isSuccess())
@@ -44,7 +38,7 @@ private suspend inline fun <reified T> HttpResponse.receiveAsResponse() =
     else
         receive<Error>()
 
-private inline fun <reified T> Response<T>.asResult(): Result<T> = when (this) {
+private inline fun <reified T> Response<T>.toResult(): Result<T> = when (this) {
     is Item -> Result.success(data)
     is Error -> Result.failure(Throwable("$error $message"))
 }
@@ -55,7 +49,7 @@ private suspend inline fun <reified T> HttpResponse.receiveAsResult(): Result<T>
     else
         Result.failure(Throwable("${receive<Any?>()}, ${status.value}"))
 
-private inline fun <reified T> T?.toResult(): Result<T> = when (this) {
+private inline fun <reified T> T?.asResult(): Result<T> = when (this) {
     null -> Result.failure(Throwable("Something went wrong"))
     else -> Result.success(this)
 }

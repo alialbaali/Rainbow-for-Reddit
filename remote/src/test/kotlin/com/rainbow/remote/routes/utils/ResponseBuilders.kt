@@ -1,6 +1,6 @@
 package com.rainbow.remote.routes.utils
 
-import com.rainbow.remote.mainClient
+import com.rainbow.remote.redditClient
 import io.ktor.client.engine.mock.*
 import io.ktor.client.features.*
 import io.ktor.client.features.json.*
@@ -22,7 +22,7 @@ internal inline fun <reified T : Any> MockRequestHandleScope.respondJson(
     status: HttpStatusCode = HttpStatusCode.OK,
 ): HttpResponseData {
 
-    val serializedContent = mainClient.feature(JsonFeature)
+    val serializedContent = redditClient.feature(JsonFeature)
         ?.serializer
         ?.write(content, ContentType.Application.Json) as TextContent
 

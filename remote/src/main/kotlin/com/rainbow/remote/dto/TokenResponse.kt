@@ -6,16 +6,16 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TokenResponse(
     @SerialName("access_token")
-    val accessToken: String?,
+    val accessToken: String,
 
     @SerialName("refresh_token")
-    val refreshToken: String? = null,
+    val refreshToken: String,
 
     @SerialName("token_type")
-    val tokenType: String?,
+    val tokenType: String,
 
     @SerialName("expires_in")
-    val expiresIn: Long?,
+    val expiresIn: Long,
 
-    val scope: String?,
+    val scope: String,
 )
