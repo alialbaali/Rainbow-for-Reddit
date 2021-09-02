@@ -1,6 +1,7 @@
 package com.rainbow.app.ui
 
 import androidx.compose.desktop.DesktopMaterialTheme
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -14,7 +15,10 @@ fun RainbowTheme(content: @Composable () -> Unit) {
     val colors = when (theme) {
         Theme.Dark -> darkColors
         Theme.Light -> lightColors
-        Theme.System -> lightColors
+        Theme.System -> if (isSystemInDarkTheme())
+            lightColors
+        else
+            darkColors
     }
 
     DesktopMaterialTheme(
