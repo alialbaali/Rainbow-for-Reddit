@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.rainbow.app.ui.dimensions
+import com.rainbow.app.ui.dpDimensions
 import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.domain.models.Award
 
@@ -22,7 +22,7 @@ fun Awards(awards: List<Award>) {
             .clip(RoundedCornerShape(4.dp))
             .background(MaterialTheme.colors.primaryVariant.copy(0.05F))
             .border(2.dp, MaterialTheme.colors.primaryVariant.copy(0.1F))
-            .padding(MaterialTheme.dimensions.small),
+            .padding(MaterialTheme.dpDimensions.small),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         awards

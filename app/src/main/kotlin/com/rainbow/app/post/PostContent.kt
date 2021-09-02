@@ -1,7 +1,9 @@
 package com.rainbow.app.post
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.clickable
+import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -16,27 +18,28 @@ import com.rainbow.app.PagingEffect
 import com.rainbow.app.utils.*
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.Post
-import com.rainbow.domain.models.PostsSorting
+import com.rainbow.domain.models.PostListSorting
 import com.rainbow.domain.models.TimeSorting
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDateTime
 
 
-sealed class PostScreenType {
-    object Home : PostScreenType()
-    data class User(val userName: String) : PostScreenType()
-    data class Subreddit(val subredditName: String) : PostScreenType()
+sealed class PostListType {
+    object Home : PostListType()
+    data class User(val userName: String) : PostListType()
+    data class Subreddit(val subredditName: String) : PostListType()
 }
 
 @Composable
-fun PostContent(type: PostScreenType, modifier: Modifier = Modifier) {
+fun PostContent(type: PostListType, modifier: Modifier = Modifier) {
 
     var currentSelectedPost by remember { mutableStateOf<String?>(null) }
 
     Row(modifier) {
 
-        Posts(
+        PostList(
             type = type,
             onSelectPost = {
                 currentSelectedPost = it
@@ -51,9 +54,10 @@ fun PostContent(type: PostScreenType, modifier: Modifier = Modifier) {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Posts(
-    type: PostScreenType,
+fun PostList(
+    type: PostListType,
     onSelectPost: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -62,7 +66,7 @@ fun Posts(
 
     var lastPostId by remember { mutableStateOf<String?>(null) }
 
-    var postSorting by remember { mutableStateOf(PostsSorting.Default) }
+    var postSorting by remember { mutableStateOf(PostListSorting.Default) }
 
     var timeSorting by remember { mutableStateOf(TimeSorting.Default) }
 
@@ -72,59 +76,68 @@ fun Posts(
             .collect { value = it }
     }
 
-        state.composed { posts ->
+    state.composed { posts ->
 
         if (posts.isNotEmpty())
             onSelectPost(posts.first().id)
 
-        Column(modifier) {
+        LazyColumn(modifier) {
 
-            PostsSorting(
-                postSorting,
-                { postSorting = it }
-            )
-
-            LazyColumn {
-
-                itemsIndexed(posts) { index, post ->
-
-                    Post(
-                        post,
-                        onUpvote = {
-                            scope.launch { Repos.Post.upvotePost(post.id) }
-                        },
-                        onDownvote = {
-                            scope.launch {
-                                Repos.Post.downvotePost(post.id)
-                            }
-                        },
-                        onUnvote = {
-                            scope.launch {
-                                Repos.Post.unvotePost(post.id)
-                            }
-                        },
-                        onShare = {},
-                        modifier = Modifier
-                            .fillParentMaxWidth()
-                            .wrapContentHeight()
-                            .layoutId(post.id)
-                            .clickable { onSelectPost(post.id) },
+            stickyHeader {
+                Box(
+                    Modifier
+                        .background(MaterialTheme.colors.background)
+                        .fillParentMaxWidth()
+                ) {
+                    PostListSortingItem(
+                        postSorting,
+                        { postSorting = it }
                     )
-
-                    PagingEffect(posts, index) {
-                        lastPostId = it.id
-                    }
-
                 }
+            }
+
+            itemsIndexed(posts) { index, post ->
+
+                PostItem(
+                    post,
+                    onUpvote = {
+                        scope.launch {
+                            Repos.Post.upvotePost(post.id)
+                        }
+                    },
+                    onDownvote = {
+                        scope.launch {
+                            Repos.Post.downvotePost(post.id)
+                        }
+                    },
+                    onUnvote = {
+                        scope.launch {
+                            Repos.Post.unvotePost(post.id)
+                        }
+                    },
+                    onShare = {},
+                    modifier = Modifier
+                        .fillParentMaxWidth()
+                        .wrapContentHeight()
+                        .layoutId(post.id),
+                    onClick = {
+                        onSelectPost(post.id)
+                    }
+                )
+
+                PagingEffect(posts, index) {
+                    lastPostId = it.id
+                }
+
             }
         }
     }
 }
 
 @Composable
-private fun PostsSorting(
-    postSorting: PostsSorting,
-    onPostSortingUpdate: (PostsSorting) -> Unit,
+private fun PostListSortingItem(
+    postSorting: PostListSorting,
+    onPostSortingUpdate: (PostListSorting) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -159,7 +172,7 @@ private fun PostsSorting(
             isMenuVisible,
             onDismissRequest = { isMenuVisible = !isMenuVisible },
         ) {
-            PostsSorting.values()
+            PostListSorting.values()
                 .forEach {
 
                     DropdownMenuItem(
@@ -180,4 +193,29 @@ private fun PostsSorting(
 
     }
 
+}
+
+@Preview
+@Composable
+private fun PostItemPreview() {
+    PostItem(
+        post = Post(
+            id = "",
+            userId = "",
+            userName = "LoneWalker20",
+            subredditId = "",
+            subredditName = "Apple",
+            title = "This is rainbow",
+            type = Post.Type.Text("This is body"),
+            upvotesCount = 30UL,
+            upvotesRatio = 4.4,
+            commentsCount = 30UL,
+            creationDate = LocalDateTime.now(),
+        ),
+        onClick = {},
+        onUpvote = {},
+        onDownvote = {},
+        onUnvote = {},
+        onShare = {}
+    )
 }

@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.zIndex
 import com.rainbow.app.components.RainbowTopAppBar
@@ -17,7 +16,7 @@ import com.rainbow.app.sidebar.SidebarItem
 @Composable
 fun Rainbow(modifier: Modifier = Modifier) {
 
-    var sidebarItem by remember { mutableStateOf(SidebarItem.Subreddits) }
+    var sidebarItem by remember { mutableStateOf(SidebarItem.Settings) }
 
     var isExpanded by remember { mutableStateOf(true) }
 
@@ -26,7 +25,7 @@ fun Rainbow(modifier: Modifier = Modifier) {
         RainbowTopAppBar(
             sidebarItem.name,
             onSidebarClick = { isExpanded = !isExpanded },
-            Modifier.zIndex(1F)
+            Modifier.zIndex(1F),
         )
 
         Row(

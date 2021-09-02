@@ -16,10 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.profile.ProfileViewModel
-import com.rainbow.app.ui.dimensions
+import com.rainbow.app.ui.dpDimensions
 import com.rainbow.app.utils.*
 import io.kamel.image.KamelImage
-import io.kamel.image.lazyImageResource
+import io.kamel.image.lazyPainterResource
 
 @Composable
 fun SidebarProfileItem(
@@ -35,14 +35,14 @@ fun SidebarProfileItem(
         Row(
             modifier = modifier
                 .clickable(onClick = onClick)
-                .padding(MaterialTheme.dimensions.medium),
+                .padding(MaterialTheme.dpDimensions.medium),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimensions.medium),
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dpDimensions.medium),
         ) {
 
 
             KamelImage(
-                resource = lazyImageResource(user.imageUrl!!),
+                resource = lazyPainterResource(user.imageUrl!!),
                 contentDescription = null,
                 modifier = Modifier
                     .clip(MaterialTheme.shapes.small)

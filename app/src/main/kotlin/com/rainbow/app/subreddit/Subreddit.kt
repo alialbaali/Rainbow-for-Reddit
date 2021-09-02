@@ -12,11 +12,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.components.BannerImage
-import com.rainbow.app.ui.dimensions
+import com.rainbow.app.ui.dpDimensions
 import com.rainbow.app.utils.defaultPadding
 import com.rainbow.domain.models.Subreddit
 import com.rainbow.domain.models.bannerColor
-import io.kamel.image.lazyImageResource
+import io.kamel.image.lazyPainterResource
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -35,11 +35,11 @@ fun Subreddit(
             .defaultPadding()
             .clickable { onClick(subreddit.id) },
         shape = MaterialTheme.shapes.large,
-        elevation = MaterialTheme.dimensions.small,
+        elevation = MaterialTheme.dpDimensions.small,
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimensions.large)) {
+        Column(verticalArrangement = Arrangement.spacedBy(MaterialTheme.dpDimensions.large)) {
 
-            val imageResource = lazyImageResource(subreddit.imageUrl.toString())
+            val imageResource = lazyPainterResource(subreddit.imageUrl.toString())
 
             BannerImage(
                 imageResource,

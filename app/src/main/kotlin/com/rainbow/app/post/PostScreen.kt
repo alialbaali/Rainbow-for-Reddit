@@ -29,16 +29,16 @@ fun PostScreen(postId: String, modifier: Modifier = Modifier) {
 
         CommentContent(postId, modifier) {
 
-            Post(
-                post,
-                onUpvote = { scope.launch { Repos.Post.upvotePost(postId) } },
-                onDownvote = { scope.launch { Repos.Post.downvotePost(postId) } },
-                onUnvote = { scope.launch { Repos.Post.unvotePost(postId) } },
-                onShare = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-            )
+//            PostItem(
+//                post,
+//                onUpvote = { scope.launch { Repos.Post.upvotePost(postId) } },
+//                onDownvote = { scope.launch { Repos.Post.downvotePost(postId) } },
+//                onUnvote = { scope.launch { Repos.Post.unvotePost(postId) } },
+//                onShare = {},
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .wrapContentHeight(),
+//            )
 
         }
     }

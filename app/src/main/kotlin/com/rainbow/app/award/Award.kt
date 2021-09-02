@@ -4,11 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.rainbow.domain.models.Award
 import io.kamel.image.KamelImage
-import io.kamel.image.lazyImageResource
+import io.kamel.image.lazyPainterResource
 
 @Composable
 fun Award(award: Award, modifier: Modifier = Modifier) {
-    val imageResource = lazyImageResource(award.imageUrl)
+    val imageResource = lazyPainterResource(award.imageUrl)
 
     KamelImage(
         resource = imageResource,

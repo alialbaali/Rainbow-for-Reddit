@@ -2,7 +2,7 @@ import org.jetbrains.compose.compose
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.compose") version "0.4.0-build209"
+    id("org.jetbrains.compose") version "1.0.0-alpha4-build331"
 }
 
 repositories {
@@ -14,10 +14,8 @@ dependencies {
     implementation(compose.desktop.currentOs)
     implementation(compose.materialIconsExtended)
     implementation(project(":data"))
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.2.0")
-    implementation("com.alialbaali.kamel:kamel-image:0.2.1")
-    implementation("com.arkivanov.decompose:decompose:0.2.4")
-    implementation("com.arkivanov.decompose:extensions-compose-jetbrains:0.2.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.2.1")
+    implementation("com.alialbaali.kamel:kamel-image:0.2.2")
 }
 
 compose.desktop {

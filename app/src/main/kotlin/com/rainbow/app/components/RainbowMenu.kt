@@ -21,14 +21,14 @@ fun RainbowMenu(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     offset: DpOffset = DpOffset(0.dp, 0.dp),
-    content: @Composable ColumnScope.() -> Unit = {  },
+    content: @Composable ColumnScope.() -> Unit = { },
 ) {
     DropdownMenu(
         expanded,
         onDismissRequest,
-        modifier,
-        offset,
-        content,
+        modifier = modifier,
+        offset = offset,
+        content = content,
     )
 }
 

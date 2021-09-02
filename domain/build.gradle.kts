@@ -3,9 +3,9 @@ plugins {
 }
 
 dependencies {
-    api("org.jetbrains.kotlinx:kotlinx-datetime:0.2.0")
+    api("org.jetbrains.kotlinx:kotlinx-datetime:0.2.1")
     api(KotlinX.Coroutines.core)
-    testApi("io.kotest:kotest-assertions-kotlinx-time:4.3.1")
+    testApi("io.kotest:kotest-assertions-kotlinx-time:4.4.3")
     testApi(Testing.Kotest.core)
     testApi(Testing.Kotest.Assertions.core)
     testApi(Testing.Kotest.property)

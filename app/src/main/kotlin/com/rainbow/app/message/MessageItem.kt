@@ -7,6 +7,4 @@ import com.rainbow.domain.models.Message
 @Composable
 fun MessageItem(message: Message, modifier: Modifier = Modifier) {
 
-
-
 }

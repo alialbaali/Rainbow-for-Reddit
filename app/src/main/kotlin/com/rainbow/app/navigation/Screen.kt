@@ -1,8 +1,6 @@
 package com.rainbow.app.navigation
 
-import com.arkivanov.decompose.statekeeper.Parcelable
-
-sealed class Screen : Parcelable {
+sealed class Screen {
 
     data class Subreddit(val subredditName: String) : Screen()
 

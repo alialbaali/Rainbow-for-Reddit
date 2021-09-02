@@ -14,7 +14,7 @@ enum class Vote {
     Up, Down, None,
 }
 
-enum class PostsSorting {
+enum class PostListSorting {
     New, Controversial, Top,
     Hot, Rising;
 

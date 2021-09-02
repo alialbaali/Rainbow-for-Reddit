@@ -5,7 +5,7 @@ import com.rainbow.data.quickMap
 import com.rainbow.data.utils.DefaultLimit
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.Post.Type
-import com.rainbow.domain.models.PostsSorting
+import com.rainbow.domain.models.PostListSorting
 import com.rainbow.domain.models.TimeSorting
 import com.rainbow.domain.repository.PostRepository
 import com.rainbow.remote.dto.RemotePost
@@ -35,7 +35,7 @@ private class PostRepositoryImpl(
 ) : PostRepository {
 
     override fun getMyPosts(
-        postsSorting: PostsSorting,
+        postsSorting: PostListSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
     ): Flow<Result<List<Post>>> = flow {
@@ -46,7 +46,7 @@ private class PostRepositoryImpl(
     }
 
     override fun getHomePosts(
-        postsSorting: PostsSorting,
+        postsSorting: PostListSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
     ): Flow<Result<List<Post>>> = flow {
@@ -76,7 +76,7 @@ private class PostRepositoryImpl(
 
     override fun getSubredditPosts(
         subredditName: String,
-        postsSorting: PostsSorting,
+        postsSorting: PostListSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
     ): Flow<Result<List<Post>>> = flow {
@@ -109,14 +109,14 @@ private class PostRepositoryImpl(
 
     override fun getUserPosts(
         userName: String,
-        postsSorting: PostsSorting,
+        postListSorting: PostListSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
     ): Flow<Result<List<Post>>> = flow {
         withContext(dispatcher) {
             remoteDataSource.getUserPosts(
                 userName,
-                postsSorting.name.lowercase(),
+                postListSorting.name.lowercase(),
                 timeSorting.name.lowercase(),
                 DefaultLimit,
                 lastPostId,

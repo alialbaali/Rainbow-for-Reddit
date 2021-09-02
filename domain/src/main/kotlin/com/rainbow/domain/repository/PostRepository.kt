@@ -1,34 +1,34 @@
 package com.rainbow.domain.repository
 
 import com.rainbow.domain.models.Post
-import com.rainbow.domain.models.PostsSorting
+import com.rainbow.domain.models.PostListSorting
 import com.rainbow.domain.models.TimeSorting
 import kotlinx.coroutines.flow.Flow
 
 interface PostRepository {
 
     fun getMyPosts(
-        postsSorting: PostsSorting,
+        postsSorting: PostListSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
     ): Flow<Result<List<Post>>>
 
     fun getHomePosts(
-        postsSorting: PostsSorting,
+        postsSorting: PostListSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
     ): Flow<Result<List<Post>>>
 
     fun getSubredditPosts(
         subredditName: String,
-        postsSorting: PostsSorting,
+        postsSorting: PostListSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
     ): Flow<Result<List<Post>>>
 
     fun getUserPosts(
         userName: String,
-        postsSorting: PostsSorting,
+        postsSorting: PostListSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
     ): Flow<Result<List<Post>>>

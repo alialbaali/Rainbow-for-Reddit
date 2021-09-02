@@ -1,7 +1,10 @@
 package com.rainbow.app.profile
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ScrollableTabRow
+import androidx.compose.material.Tab
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,12 +16,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.app.components.BannerImage
 import com.rainbow.app.components.ProfileImage
-import com.rainbow.app.post.PostScreenType
-import com.rainbow.app.post.Posts
-import com.rainbow.app.utils.*
+import com.rainbow.app.post.PostListType
+import com.rainbow.app.post.PostList
+import com.rainbow.app.utils.UIState
+import com.rainbow.app.utils.composed
+import com.rainbow.app.utils.defaultPadding
+import com.rainbow.app.utils.toUIState
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.User
-import io.kamel.image.lazyImageResource
+import io.kamel.image.lazyPainterResource
 
 enum class ProfileTab {
     Overview, Comments, Submitted, Saved, Hidden, Upvoted, Downvoted;
@@ -36,9 +42,9 @@ fun ProfileScreen() {
 
     state.composed { user ->
 
-        val bannerImageResource = lazyImageResource(user.bannerImageUrl!!)
+        val bannerImageResource = lazyPainterResource(user.bannerImageUrl!!)
 
-        val profileImageResource = lazyImageResource(user.imageUrl!!)
+        val profileImageResource = lazyPainterResource(user.imageUrl!!)
 
         val bannerImageHeight = 200.dp
 
@@ -145,8 +151,8 @@ fun ProfileScreen() {
                     }
                 }
 
-                Posts(
-                    PostScreenType.User("LoneWalker20"),
+                PostList(
+                    PostListType.User(user.name),
                     onSelectPost = {
 
                     }

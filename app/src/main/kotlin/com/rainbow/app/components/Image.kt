@@ -5,17 +5,16 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.rainbow.app.comment.RainbowProgressIndicator
 import com.rainbow.app.utils.shadow
 import io.kamel.core.Resource
 import io.kamel.image.KamelImage
 
 @Composable
-fun BannerImage(resource: Resource<ImageBitmap>, bannerColor: Color, modifier: Modifier = Modifier) {
+fun BannerImage(resource: Resource<Painter>, bannerColor: Color, modifier: Modifier = Modifier) {
     KamelImage(
         resource,
         contentDescription = null,
@@ -28,7 +27,7 @@ fun BannerImage(resource: Resource<ImageBitmap>, bannerColor: Color, modifier: M
 }
 
 @Composable
-fun ProfileImage(resource: Resource<ImageBitmap>, primaryColor: Color, modifier: Modifier = Modifier) {
+fun ProfileImage(resource: Resource<Painter>, primaryColor: Color, modifier: Modifier = Modifier) {
     KamelImage(
         resource,
         contentDescription = null,

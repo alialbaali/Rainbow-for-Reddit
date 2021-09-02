@@ -18,12 +18,12 @@ import androidx.compose.ui.unit.dp
 import com.rainbow.app.components.BannerImage
 import com.rainbow.app.components.ProfileImage
 import com.rainbow.app.post.PostContent
-import com.rainbow.app.post.PostScreenType
+import com.rainbow.app.post.PostListType
 import com.rainbow.app.subreddit.SubredditViewModel.SubredditIntent
 import com.rainbow.app.utils.*
 import com.rainbow.domain.models.bannerColor
 import com.rainbow.domain.models.primaryColor
-import io.kamel.image.lazyImageResource
+import io.kamel.image.lazyPainterResource
 
 @Composable
 fun SubredditScreen(subredditName: String, onPostClick: (String) -> Unit, modifier: Modifier = Modifier) {
@@ -38,9 +38,9 @@ fun SubredditScreen(subredditName: String, onPostClick: (String) -> Unit, modifi
 
     state.subreddit.composed { subreddit ->
 
-        val bannerImageResource = lazyImageResource(subreddit.bannerImageUrl.toString())
+        val bannerImageResource = lazyPainterResource(subreddit.bannerImageUrl.toString())
 
-        val profileImageResource = lazyImageResource(subreddit.imageUrl.toString())
+        val profileImageResource = lazyPainterResource(subreddit.imageUrl.toString())
 
         val bannerImageHeight = 200.dp
 
@@ -159,7 +159,7 @@ fun SubredditScreen(subredditName: String, onPostClick: (String) -> Unit, modifi
 
             when (selectedTab) {
                 SubredditTab.Posts -> PostContent(
-                    PostScreenType.Subreddit(subredditName),
+                    PostListType.Subreddit(subredditName),
                 )
                 SubredditTab.Rules -> SubredditRulesTab(subredditName)
                 SubredditTab.Resources -> TODO()

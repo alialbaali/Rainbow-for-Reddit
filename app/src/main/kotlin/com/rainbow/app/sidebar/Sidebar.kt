@@ -3,16 +3,12 @@ package com.rainbow.app.sidebar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import com.rainbow.app.sidebar.SidebarItem.Profile
 import com.rainbow.app.sidebar.SidebarItem.Settings
-import com.rainbow.app.ui.dimensions
+import com.rainbow.app.ui.dpDimensions
 import com.rainbow.app.utils.defaultPadding
 
 @Composable
@@ -35,7 +31,7 @@ fun Sidebar(
     @Composable
     fun SidebarItem.background() =
         if (sidebarItem == this)
-            MaterialTheme.colors.primary.copy(0.075F)
+            MaterialTheme.colors.primary.copy(0.1F)
         else
             MaterialTheme.colors.background
 
@@ -53,7 +49,7 @@ fun Sidebar(
                 Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .clip(clipShape)
+                    .clip(itemShape)
                     .background(background()),
                 textStyle(),
                 iconColor(),
@@ -66,23 +62,23 @@ fun Sidebar(
                 .wrapContentHeight(),
             verticalArrangement = Arrangement.Center,
         ) {
-
-            SidebarItem.values().onEach { item ->
-                if (item != Profile && item != Settings)
+            SidebarItem.values()
+                .filter { item -> item != Profile && item != Settings }
+                .onEach { item ->
                     SidebarItem(
                         item,
                         isExpanded,
                         onClick,
                         Modifier
-                            .padding(vertical = MaterialTheme.dimensions.medium)
+                            .padding(vertical = MaterialTheme.dpDimensions.medium)
                             .fillMaxWidth()
                             .wrapContentHeight()
-                            .clip(item.clipShape)
+                            .clip(item.itemShape)
                             .background(item.background()),
                         item.textStyle(),
                         item.iconColor(),
                     )
-            }
+                }
         }
 
         with(Settings) {
@@ -93,7 +89,7 @@ fun Sidebar(
                 Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .clip(clipShape)
+                    .clip(itemShape)
                     .background(background()),
                 textStyle(),
                 iconColor(),
@@ -102,6 +98,7 @@ fun Sidebar(
     }
 }
 
-private inline val SidebarItem.clipShape
+private inline val SidebarItem.itemShape
     @Composable
     get() = MaterialTheme.shapes.large
+

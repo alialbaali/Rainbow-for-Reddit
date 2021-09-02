@@ -27,9 +27,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.app.award.Awards
-import com.rainbow.app.comment.RainbowProgressIndicator
+import com.rainbow.app.components.RainbowProgressIndicator
 import com.rainbow.app.components.*
-import com.rainbow.app.ui.dimensions
+import com.rainbow.app.ui.dpDimensions
 import com.rainbow.app.utils.RainbowIcons
 import com.rainbow.app.utils.defaultPadding
 import com.rainbow.app.utils.displayTime
@@ -41,8 +41,9 @@ import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
 
 @Composable
-fun Post(
+fun PostItem(
     post: Post,
+    onClick: (Post) -> Unit,
     onUpvote: (String) -> Unit,
     onDownvote: (String) -> Unit,
     onUnvote: (String) -> Unit,
@@ -52,8 +53,8 @@ fun Post(
 
     Card(
         modifier
-            .clickable { }
-            .defaultPadding(),
+            .defaultPadding()
+            .clickable { onClick(post) },
         elevation = 4.dp,
         shape = MaterialTheme.shapes.large,
     ) {
@@ -126,7 +127,7 @@ private fun PostInfo(
             Modifier
                 .clip(RoundedCornerShape(4.dp))
                 .clickable { }
-                .padding(MaterialTheme.dimensions.small),
+                .padding(MaterialTheme.dpDimensions.small),
             style = MaterialTheme.typography.subtitle2.copy(
                 color = MaterialTheme.colors.onBackground.copy(0.5F),
                 fontWeight = FontWeight.SemiBold,

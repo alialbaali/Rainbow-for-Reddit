@@ -5,9 +5,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
+import com.rainbow.app.message.MessagesScreen
 import com.rainbow.app.post.PostContent
-import com.rainbow.app.post.PostScreenType
+import com.rainbow.app.post.PostListType
 import com.rainbow.app.profile.ProfileScreen
+import com.rainbow.app.settings.SettingsScreen
 import com.rainbow.app.sidebar.SidebarItem
 import com.rainbow.app.sidebar.SidebarItem.*
 import com.rainbow.app.subreddit.Subreddits
@@ -18,19 +20,13 @@ fun Content(
     item: SidebarItem,
     modifier: Modifier = Modifier,
 ) {
-
     when (item) {
         Profile -> ProfileScreen()
-        Home -> PostContent(PostScreenType.Home)
+        Home -> PostContent(PostListType.Home)
         Subreddits -> Subreddits()
-        Messages -> {
-
-        }
-        Settings -> {
-
-        }
+        Messages -> MessagesScreen()
+        Settings -> SettingsScreen()
     }
-
 }
 
 @NonRestartableComposable

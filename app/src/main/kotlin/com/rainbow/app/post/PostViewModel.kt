@@ -6,11 +6,10 @@ import com.rainbow.app.utils.*
 import com.rainbow.data.Repos
 import com.rainbow.domain.ViewModel
 import com.rainbow.domain.models.Post
-import com.rainbow.domain.models.PostsSorting
+import com.rainbow.domain.models.PostListSorting
 import com.rainbow.domain.models.TimeSorting
 import com.rainbow.domain.repository.PostRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.map
 
@@ -67,20 +66,20 @@ class PostViewModel(
 
         data class GetSubredditPosts(
             val subredditName: String,
-            val postsSorting: PostsSorting,
+            val postsSorting: PostListSorting,
             val timeSorting: TimeSorting,
             val lastPostId: String?,
         ) : PostIntent()
 
         data class GetUserPosts(
             val userName: String,
-            val postsSorting: PostsSorting,
+            val postsSorting: PostListSorting,
             val timeSorting: TimeSorting,
             val lastPostId: String?,
         ) : PostIntent()
 
         data class GetHomePosts(
-            val postsSorting: PostsSorting,
+            val postsSorting: PostListSorting,
             val timeSorting: TimeSorting,
             val lastPostId: String?,
         ) : PostIntent()

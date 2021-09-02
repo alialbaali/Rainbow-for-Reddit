@@ -15,7 +15,7 @@ import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.sidebar.SidebarItem.*
-import com.rainbow.app.ui.dimensions
+import com.rainbow.app.ui.dpDimensions
 import com.rainbow.app.utils.defaultPadding
 
 enum class SidebarItem {
@@ -51,7 +51,7 @@ fun SidebarItem(
             .clickable { onClick(item) }
             .defaultPadding()
             .layoutId(item.ordinal),
-        Arrangement.spacedBy(MaterialTheme.dimensions.large),
+        Arrangement.spacedBy(MaterialTheme.dpDimensions.large),
         Alignment.CenterVertically,
     ) {
 

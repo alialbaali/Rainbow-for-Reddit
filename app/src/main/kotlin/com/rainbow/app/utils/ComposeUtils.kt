@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.GraphicsLayerScope
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.rainbow.app.comment.RainbowProgressIndicator
+import com.rainbow.app.components.RainbowProgressIndicator
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
