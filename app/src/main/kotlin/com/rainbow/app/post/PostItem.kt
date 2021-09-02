@@ -4,7 +4,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,8 +38,7 @@ import com.rainbow.domain.models.Post.Type
 import com.rainbow.domain.models.Vote
 import com.rainbow.domain.models.userDisplayName
 import io.kamel.image.KamelImage
-import io.kamel.image.lazyImageResource
-
+import io.kamel.image.lazyPainterResource
 
 @Composable
 fun Post(
@@ -54,7 +52,7 @@ fun Post(
 
     Card(
         modifier
-            .clickable {  }
+            .clickable { }
             .defaultPadding(),
         elevation = 4.dp,
         shape = MaterialTheme.shapes.large,
@@ -187,7 +185,7 @@ private fun TextPost(text: Type.Text, modifier: Modifier = Modifier) {
 private fun ImagePost(image: Type.Image, modifier: Modifier = Modifier) {
     if (image.url.endsWith("jpg") || image.url.endsWith("png")) {
 
-        val imageResource = lazyImageResource(image.url)
+        val imageResource = lazyPainterResource(image.url)
 
         val imageShape = MaterialTheme.shapes.medium
 
@@ -367,3 +365,26 @@ private fun VoteCommands(
 
     }
 }
+
+//@Preview
+//@Composable
+//private fun PostPreview() {
+//    Post(
+//        post = Post(
+//            id = "",
+//            userId = "",
+//            userName = "",
+//            "",
+//            "",
+//            "",
+//            upvotesCount = 30UL,
+//            upvotesRatio = 99.0,
+//            commentsCount = 0UL,
+//            creationDate = LocalDateTime.now(),
+//        ),
+//        {},
+//        {},
+//        {},
+//        {}
+//    )
+//}
