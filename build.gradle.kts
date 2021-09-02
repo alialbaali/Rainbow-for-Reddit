@@ -6,13 +6,14 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath(kotlin("gradle-plugin", "1.5.0"))
-        classpath ("com.squareup.sqldelight:gradle-plugin:1.5.0")
+        classpath(kotlin("gradle-plugin", "1.5.30"))
+        classpath("com.squareup.sqldelight:gradle-plugin:1.5.1")
     }
 }
 
 allprojects {
     repositories {
+        google()
         mavenCentral()
         maven(url = "https://kotlin.bintray.com/kotlinx/")
         jcenter()
