@@ -130,4 +130,4 @@ data class RemoteUser(
     val totalKarma: Int? = null, // 2820
     @SerialName("verified")
     val verified: Boolean? = null // true
-) : Thing
+)

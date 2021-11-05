@@ -5,6 +5,7 @@ import com.rainbow.remote.Listing
 import com.rainbow.remote.toList
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.*
 
 @Serializable
 data class RemoteComment internal constructor(
@@ -14,8 +15,8 @@ data class RemoteComment internal constructor(
 //    val approvedAtUtc: Any? = null, // null
 //    @SerialName("approved_by")
 //    val approvedBy: Any? = null, // null
-    @SerialName("archived")
-    val archived: Boolean? = null, // false
+//    @SerialName("archived")
+//    val archived: Boolean? = null, // false
 //    @SerialName("associated_award")
 //    val associatedAward: Any? = null, // null
     @SerialName("author")
@@ -24,8 +25,8 @@ data class RemoteComment internal constructor(
     val authorFlairBackgroundColor: String? = null, // null
     @SerialName("author_flair_css_class")
     val authorFlairCssClass: String? = null, // null
-    @SerialName("author_flair_richtext")
-    val authorFlairRichtext: List<String>? = null,
+//    @SerialName("author_flair_richtext")
+//    val authorFlairRichtext: List<String>? = null,
     @SerialName("author_flair_template_id")
     val authorFlairTemplateId: String? = null, // null
     @SerialName("author_flair_text")
@@ -36,10 +37,10 @@ data class RemoteComment internal constructor(
     val authorFlairType: String? = null, // text
     @SerialName("author_fullname")
     val authorFullname: String? = null, // t2_zvxev
-    @SerialName("author_patreon_flair")
-    val authorPatreonFlair: Boolean? = null, // false
-    @SerialName("author_premium")
-    val authorPremium: Boolean? = null, // false
+//    @SerialName("author_patreon_flair")
+//    val authorPatreonFlair: Boolean? = null, // false
+//    @SerialName("author_premium")
+//    val authorPremium: Boolean? = null, // false
 //    @SerialName("awarders")
 //    val awarders: List<Unit>? = null,
 //    @SerialName("banned_at_utc")
@@ -52,10 +53,10 @@ data class RemoteComment internal constructor(
     val bodyHtml: String? = null, // &lt;div class="md"&gt;&lt;p&gt;More generally, you might be interested by this article on &lt;a href="https://en.wikipedia.org/wiki/Almost_integer"&gt;almost integers&lt;/a&gt;, which includes Ramanujan’s constant exp(pi* sqrt(163)), which is surprisingly close to an integer !&lt;/p&gt;&lt;/div&gt;
     @SerialName("can_gild")
     val canGild: Boolean? = null, // true
-    @SerialName("can_mod_post")
-    val canModPost: Boolean? = null, // false
-    @SerialName("collapsed")
-    val collapsed: Boolean? = null, // false
+//    @SerialName("can_mod_post")
+//    val canModPost: Boolean? = null, // false
+//    @SerialName("collapsed")
+//    val collapsed: Boolean? = null, // false
 //    @SerialName("collapsed_because_crowd_control")
 //    val collapsedBecauseCrowdControl: Any? = null, // null
 //    @SerialName("collapsed_reason")
@@ -70,12 +71,12 @@ data class RemoteComment internal constructor(
     val createdUtc: Double? = null, // 1612444773.0
     @SerialName("depth")
     val depth: Int? = null, // 0
-    @SerialName("distinguished")
-    val distinguished: Boolean? = null, // null
+//    @SerialName("distinguished")
+//    val distinguished: Boolean? = null, // null
     @SerialName("downs")
     val downs: Int? = null, // 0
-    @SerialName("edited")
-    val edited: Boolean? = null, // false
+//    @SerialName("edited")
+//    val edited: Boolean? = null, // false
     @SerialName("gilded")
     val gilded: Int? = null, // 0
 //    @SerialName("gildings")
@@ -142,7 +143,7 @@ data class RemoteComment internal constructor(
     val ups: Int? = null, // 33
 //    @SerialName("user_reports")
 //    val userReports: List<Any>? = null
-) : Thing
+)
 
 val RemoteComment.replies: List<RemoteComment>?
     get() = replies?.data?.toList()

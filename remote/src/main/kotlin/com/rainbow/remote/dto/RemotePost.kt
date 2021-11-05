@@ -3,11 +3,6 @@ package com.rainbow.remote.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
-import kotlinx.serialization.modules.subclass
 
 @Serializable
 data class RemotePost(
@@ -221,4 +216,4 @@ data class RemotePost(
     val whitelistStatus: String? = null, // all_ads
     @SerialName("wls")
     val wls: Int? = null // 6
-) : Thing
+)
