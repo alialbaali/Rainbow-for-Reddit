@@ -112,7 +112,8 @@ data class RemoteComment internal constructor(
 //    @SerialName("removal_reason")
     val removalReason: String? = null, // null
     @SerialName("replies")
-    internal val replies: Item<Listing<RemoteComment>>? = null, // null
+    @Serializable(RepliesTransformingSerializer::class)
+    internal val replies: Item<Listing<RemoteComment>>? = null,
 //    @SerialName("report_reasons")
 //    val reportReasons: Any? = null, // null
     @SerialName("saved")
@@ -147,3 +148,15 @@ data class RemoteComment internal constructor(
 
 val RemoteComment.replies: List<RemoteComment>?
     get() = replies?.data?.toList()
+
+private object RepliesTransformingSerializer : JsonTransformingSerializer<Item<Listing<RemoteComment>>>(
+    Item.serializer(Listing.serializer(RemoteComment.serializer()))
+) {
+    override fun transformDeserialize(element: JsonElement): JsonElement {
+        val result = if (element is JsonPrimitive)
+            JsonObject(mapOf("data" to JsonObject(mapOf("children" to JsonArray(emptyList())))))
+        else
+            element
+        return super.transformDeserialize(result)
+    }
+}
