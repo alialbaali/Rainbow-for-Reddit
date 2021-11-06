@@ -9,6 +9,7 @@ private const val DefaultUserImageUrl = ""
 data class User(
     val id: String,
     val name: String,
+    val description: String?,
     val postKarma: Long,
     val commentKarma: Long,
     val imageUrl: String? = DefaultUserImageUrl,

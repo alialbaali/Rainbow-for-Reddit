@@ -41,12 +41,13 @@ object Repos {
     object Post : PostRepository by PostRepository(
         RemotePostDataSource(),
         RainbowDatabase.localPostQueries,
+        RainbowDatabase.localImagePostQueries,
         DefaultDispatcher,
         RemoteMappers.PostMapper,
         LocalMappers.PostMapper,
     )
 
-    object SubredditRepo : SubredditRepository by SubredditRepository(
+    object Subreddit : SubredditRepository by SubredditRepository(
         RemoteSubredditDataSource(),
         RainbowDatabase.localSubredditQueries,
         DefaultDispatcher,
@@ -54,13 +55,16 @@ object Repos {
         LocalMappers.SubredditMapper,
     )
 
+    @OptIn(ExperimentalSettingsApi::class)
     object Comment : CommentRepository by CommentRepository(
         RemoteCommentDataSource(),
+        RainbowDatabase.localCommentQueries,
+        settings,
         DefaultDispatcher,
         RemoteMappers.CommentMapper,
     )
 
-    object RuleRepo : RuleRepository by RuleRepository(
+    object Rule : RuleRepository by RuleRepository(
         RemoteRuleDataSource(),
         DefaultDispatcher,
         RemoteMappers.RuleMapper

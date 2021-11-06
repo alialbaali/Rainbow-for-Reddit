@@ -1,6 +1,7 @@
 package com.rainbow.data.repository
 
 import com.rainbow.data.Mapper
+import com.rainbow.data.utils.SettingsKeys
 import com.rainbow.domain.models.User
 import com.rainbow.domain.repository.UserRepository
 import com.rainbow.remote.dto.RemoteUser
@@ -48,6 +49,7 @@ private class UserRepositoryImpl(
         return remoteDataSource.getCurrentUser()
             .map { remoteMapper.map(it) }
             .map { localMapper.map(it) }
+            .onSuccess { settings.putString(SettingsKeys.UserName, it.name) }
     }
 
     override suspend fun getUser(userName: String): Result<User> = withContext(dispatcher) {

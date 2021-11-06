@@ -7,8 +7,15 @@ import com.rainbow.domain.models.Vote
 import com.rainbow.sql.LocalPost
 import com.rainbow.sql.LocalSubreddit
 import com.rainbow.sql.LocalUser
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 internal object LocalMappers {
+
+    fun PostMapper(): Mapper<LocalPost, Post> {
+        return PostMapper
+    }
 
     val PostMapper = Mapper<LocalPost, Post> {
         Post(
@@ -16,7 +23,7 @@ internal object LocalMappers {
             userId = it.user_id,
             userName = it.user_name,
             title = it.title,
-            type = it.body?.let {
+            type = it.body?.let { it ->
                 Post.Type.Text(it)
             } ?: Post.Type.None,
             subredditId = it.subreddit_id,
@@ -32,7 +39,7 @@ internal object LocalMappers {
             isMine = it.is_mine,
             isSaved = it.is_saved,
             isPinned = it.is_pinned,
-            creationDate = it.creation_date,
+            creationDate = it.creation_date.toLocalDateTime(),
             vote = it.vote?.let {
                 if (it)
                     Vote.Up
@@ -56,7 +63,7 @@ internal object LocalMappers {
             isNSFW = it.is_nsfw,
             isSubscribed = it.is_subscribed,
             isFavorite = it.is_favorite,
-            creationDate = it.creation_date,
+            creationDate = it.creation_date.toLocalDateTime(),
             colors = Subreddit.Colors.Default,
         )
     }
@@ -66,13 +73,18 @@ internal object LocalMappers {
         User(
             it.id,
             it.name,
+            it.description,
             it.post_karma,
             it.comment_karma,
             it.image_url,
             it.banner_image_url,
             it.is_nsfw,
-            it.creation_date
+            it.creation_date.toLocalDateTime(),
         )
     }
 
 }
+
+fun Long.toLocalDateTime() = Instant
+    .fromEpochSeconds(this)
+    .toLocalDateTime(TimeZone.currentSystemDefault())
