@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS LocalUser (
 id TEXT NOT NULL PRIMARY KEY,
 name TEXT NOT NULL,
+description TEXT,
 post_karma INTEGER NOT NULL,
 comment_karma INTEGER NOT NULL,
 image_url TEXT,
