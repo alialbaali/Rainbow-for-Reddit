@@ -1,6 +1,4 @@
-import kotlinx.datetime.LocalDateTime;
-
-CREATE TABLE LocalPost
+CREATE TABLE IF NOT EXISTS LocalPost
 (
     id             TEXT                  NOT NULL PRIMARY KEY,
     user_id        TEXT                  NOT NULL,
@@ -21,7 +19,7 @@ CREATE TABLE LocalPost
     is_mine        INTEGER AS Boolean    NOT NULL,
     is_saved       INTEGER AS Boolean    NOT NULL,
     vote           INTEGER AS Boolean,
-    creation_date  TEXT AS LocalDateTime NOT NULL
+    creation_date  INTEGER NOT NULL
 );
 
 selectAll:

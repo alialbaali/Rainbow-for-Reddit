@@ -1,6 +1,4 @@
-import kotlinx.datetime.LocalDateTime;
-
-CREATE TABLE LocalSubreddit (
+CREATE TABLE IF NOT EXISTS LocalSubreddit (
 id TEXT NOT NULL PRIMARY KEY,
 name TEXT NOT NULL,
 title TEXT NOT NULL,
@@ -11,7 +9,7 @@ banner_image_url TEXT,
 is_nsfw INTEGER AS Boolean NOT NULL,
 is_subscribed INTEGER AS Boolean NOT NULL,
 is_favorite INTEGER AS Boolean NOT NULL,
-creation_date TEXT AS LocalDateTime NOT NULL
+creation_date INTEGER NOT NULL
 );
 
 selectAll:
