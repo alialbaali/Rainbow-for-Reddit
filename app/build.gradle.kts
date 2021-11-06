@@ -16,6 +16,8 @@ dependencies {
     implementation(project(":data"))
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.2.1")
     implementation("com.alialbaali.kamel:kamel-image:0.3.0")
+    implementation("com.arkivanov.decompose:extensions-compose-jetbrains:0.4.0")
+    implementation("com.arkivanov.decompose:decompose:0.4.0")
 }
 
 compose.desktop {
