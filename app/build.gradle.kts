@@ -2,7 +2,7 @@ import org.jetbrains.compose.compose
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.compose") version "1.0.0-alpha4-build331"
+    id("org.jetbrains.compose") version "1.0.0-beta1"
 }
 
 repositories {
@@ -15,7 +15,7 @@ dependencies {
     implementation(compose.materialIconsExtended)
     implementation(project(":data"))
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.2.1")
-    implementation("com.alialbaali.kamel:kamel-image:0.2.2")
+    implementation("com.alialbaali.kamel:kamel-image:0.3.0")
 }
 
 compose.desktop {
