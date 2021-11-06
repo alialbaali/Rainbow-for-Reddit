@@ -39,14 +39,62 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
         }.mapCatching { it.toList() }
     }
 
-    override suspend fun getUserPosts(
+    override suspend fun getUserSubmittedPosts(
         userName: String,
         postsSorting: String,
         timeSorting: String,
         limit: Int,
-        after: String?,
+        after: String?
     ): Result<List<RemotePost>> {
-        return client.get<Listing<RemotePost>>(Posts.UserPosts(userName, postsSorting)) {
+        return client.get<Listing<RemotePost>>(Posts.UserSubmittedPosts(userName, postsSorting)) {
+            parameter(Keys.Time, timeSorting)
+        }.mapCatching { it.toList() }
+    }
+
+    override suspend fun getUserUpvotedPosts(
+        userName: String,
+        postsSorting: String,
+        timeSorting: String,
+        limit: Int,
+        after: String?
+    ): Result<List<RemotePost>> {
+        return client.get<Listing<RemotePost>>(Posts.UserUpvotedPosts(userName, postsSorting)) {
+            parameter(Keys.Time, timeSorting)
+        }.mapCatching { it.toList() }
+    }
+
+    override suspend fun getUserDownvotedPosts(
+        userName: String,
+        postsSorting: String,
+        timeSorting: String,
+        limit: Int,
+        after: String?
+    ): Result<List<RemotePost>> {
+        return client.get<Listing<RemotePost>>(Posts.UserDownvotedPosts(userName, postsSorting)) {
+            parameter(Keys.Time, timeSorting)
+        }.mapCatching { it.toList() }
+    }
+
+    override suspend fun getUserHiddenPosts(
+        userName: String,
+        postsSorting: String,
+        timeSorting: String,
+        limit: Int,
+        after: String?
+    ): Result<List<RemotePost>> {
+        return client.get<Listing<RemotePost>>(Posts.UserHiddenPosts(userName, postsSorting)) {
+            parameter(Keys.Time, timeSorting)
+        }.mapCatching { it.toList() }
+    }
+
+    override suspend fun getUserSavedPosts(
+        userName: String,
+        postsSorting: String,
+        timeSorting: String,
+        limit: Int,
+        after: String?
+    ): Result<List<RemotePost>> {
+        return client.get<Listing<RemotePost>>(Posts.UserSavedPosts(userName, postsSorting)) {
             parameter(Keys.Time, timeSorting)
         }.mapCatching { it.toList() }
     }

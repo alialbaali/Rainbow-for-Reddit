@@ -68,8 +68,24 @@ internal sealed class Endpoint(val path: String) {
             Endpoint("$SubredditPath$subredditName/$postsSorting")
 
         // https://oauth.reddit.com/user/{user-name}/submitted/{post-sorting}
-        class UserPosts(userName: String, postsSorting: String) :
+        class UserSubmittedPosts(userName: String, postsSorting: String) :
             Endpoint("$UserPath$userName/submitted/$postsSorting")
+
+        // https://oauth.reddit.com/user/{user-name}/upvoted/{post-sorting}
+        class UserUpvotedPosts(userName: String, postsSorting: String) :
+            Endpoint("$UserPath$userName/upvoted/$postsSorting")
+
+        // https://oauth.reddit.com/user/{user-name}/downvoted/{post-sorting}
+        class UserDownvotedPosts(userName: String, postsSorting: String) :
+            Endpoint("$UserPath$userName/downvoted/$postsSorting")
+
+        // https://oauth.reddit.com/user/{user-name}/hidden/{post-sorting}
+        class UserHiddenPosts(userName: String, postsSorting: String) :
+            Endpoint("$UserPath$userName/hidden/$postsSorting")
+
+        // https://oauth.reddit.com/user/{user-name}/saved/{post-sorting}
+        class UserSavedPosts(userName: String, postsSorting: String) :
+            Endpoint("$UserPath$userName/saved/$postsSorting")
 
         object GetPost : Endpoint(ActionPath + "info")
 

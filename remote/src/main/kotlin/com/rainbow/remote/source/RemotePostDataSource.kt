@@ -19,7 +19,39 @@ interface RemotePostDataSource {
         after: String?,
     ): Result<List<RemotePost>>
 
-    suspend fun getUserPosts(
+    suspend fun getUserSubmittedPosts(
+        userName: String,
+        postsSorting: String,
+        timeSorting: String,
+        limit: Int,
+        after: String?,
+    ): Result<List<RemotePost>>
+
+    suspend fun getUserUpvotedPosts(
+        userName: String,
+        postsSorting: String,
+        timeSorting: String,
+        limit: Int,
+        after: String?,
+    ): Result<List<RemotePost>>
+
+    suspend fun getUserDownvotedPosts(
+        userName: String,
+        postsSorting: String,
+        timeSorting: String,
+        limit: Int,
+        after: String?,
+    ): Result<List<RemotePost>>
+
+    suspend fun getUserHiddenPosts(
+        userName: String,
+        postsSorting: String,
+        timeSorting: String,
+        limit: Int,
+        after: String?,
+    ): Result<List<RemotePost>>
+
+    suspend fun getUserSavedPosts(
         userName: String,
         postsSorting: String,
         timeSorting: String,
