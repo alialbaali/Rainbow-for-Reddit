@@ -7,26 +7,43 @@ enum class TimeSorting {
     companion object {
         val Default = Week
     }
-
 }
 
 enum class Theme {
     Dark, Light, System,
 }
 
+enum class PostLayout {
+    Card, Compact,
+}
+
 enum class Vote {
     Up, Down, None,
 }
 
-enum class PostListSorting {
-    New, Controversial, Top,
-    Hot, Rising;
+enum class UserPostSorting {
+    Hot, New, Top, Controversial;
 
     companion object {
         val Default = Hot
     }
+}
 
-    // TODO Comments, Returns Comments only and not Posts. Q/Should we enable it?
+enum class SubredditPostSorting {
+    Hot, Top, Controversial, Rising;
+
+    companion object {
+        val Default = Hot
+    }
+}
+
+enum class MainPostSorting {
+    Best, New, Controversial,
+    Top, Hot, Rising;
+
+    companion object {
+        val Default = Hot
+    }
 }
 
 enum class MessagesSorting {
