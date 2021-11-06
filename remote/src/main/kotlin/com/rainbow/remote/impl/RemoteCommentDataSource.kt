@@ -3,7 +3,6 @@ package com.rainbow.remote.impl
 import com.rainbow.remote.*
 import com.rainbow.remote.client.redditClient
 import com.rainbow.remote.dto.RemoteComment
-import com.rainbow.remote.dto.Thing
 import com.rainbow.remote.impl.Endpoint.Comments
 import com.rainbow.remote.source.RemoteCommentDataSource
 import io.ktor.client.*
@@ -14,13 +13,9 @@ fun RemoteCommentDataSource(client: HttpClient = redditClient): RemoteCommentDat
 
 private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommentDataSource {
 
-    @Suppress("UNCHECKED_CAST")
     override suspend fun getPostComments(postId: String): Result<List<RemoteComment>> {
-        client.plainRequest<List<Item<Listing<Thing>>>>(Comments.PostComments(postId))
-            .also(::println)
-//            .mapCatching { it.getOrNull(1) as? Item<Listing<RemoteComment>>? }
-//            .mapCatching { it?.data?.toList() ?: emptyList() }
-        return Result.success(emptyList())
+        return client.plainRequest<List<Item<Listing<RemoteComment>>>>(Comments.PostComments(postId.asPostId()))
+            .mapCatching { it.map { it.data.toList() }[1] }
     }
 
     override suspend fun getUserComments(userId: String): Result<List<RemoteComment>> {
@@ -85,11 +80,5 @@ private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommen
         }
     }
 
-}
-
-suspend fun main() {
-    RemoteCommentDataSource()
-        .getPostComments("lmktus")
-        .getOrThrow()
-
+    private fun String.asPostId() = substringAfter('_')
 }
