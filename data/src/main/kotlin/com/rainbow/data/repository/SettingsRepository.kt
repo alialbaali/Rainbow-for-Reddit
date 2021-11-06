@@ -1,5 +1,7 @@
 package com.rainbow.data.repository
 
+import com.rainbow.data.utils.SettingsKeys
+import com.rainbow.domain.models.PostLayout
 import com.rainbow.domain.models.Theme
 import com.rainbow.domain.repository.SettingsRepository
 import com.russhwolf.settings.ExperimentalSettingsApi
@@ -21,14 +23,23 @@ private class SettingsRepositoryImpl(
     private val dispatcher: CoroutineDispatcher
 ) : SettingsRepository {
 
-    override val theme: Flow<Theme> = settings.getStringFlow(SettingsDefaults.Theme, Theme.System.name)
+    override val theme: Flow<Theme> = settings.getStringFlow(SettingsKeys.Theme, Theme.System.name)
         .map { Theme.valueOf(it) }
 
     override suspend fun setTheme(theme: Theme) = withContext(dispatcher) {
-        settings.putString(SettingsDefaults.Theme, theme.name)
+        settings.putString(SettingsKeys.Theme, theme.name)
     }
-}
 
-private object SettingsDefaults {
-    const val Theme = "Theme"
+    override val isFullHeight: Flow<Boolean> = settings.getBooleanFlow(SettingsKeys.IsFullHeight)
+
+    override suspend fun setIsFullHeight(value: Boolean) = withContext(dispatcher) {
+        settings.putBoolean(SettingsKeys.IsFullHeight, value)
+    }
+
+    override val postLayout: Flow<PostLayout> = settings.getStringFlow(SettingsKeys.PostLayout, PostLayout.Card.name)
+        .map { PostLayout.valueOf(it) }
+
+    override suspend fun setPostLayout(value: PostLayout) = withContext(dispatcher) {
+        settings.putString(SettingsKeys.PostLayout, value.name)
+    }
 }
