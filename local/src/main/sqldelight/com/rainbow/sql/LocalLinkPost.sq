@@ -1,4 +1,15 @@
-CREATE TABLE LocalLinkPost (
+CREATE TABLE IF NOT EXISTS LocalLinkPost (
 id TEXT NOT NULL PRIMARY KEY REFERENCES LocalPost(id),
 url TEXT NOT NULL
 );
+insert:
+INSERT INTO LocalLinkPost
+VALUES ?;
+
+selectById:
+SELECT *
+FROM LocalLinkPost
+WHERE id = ?;
+
+clear:
+DELETE FROM LocalLinkPost;
