@@ -8,12 +8,13 @@ import io.kamel.image.lazyPainterResource
 
 @Composable
 fun Award(award: Award, modifier: Modifier = Modifier) {
-    val imageResource = lazyPainterResource(award.imageUrl)
-
+    val painterResource = lazyPainterResource(award.imageUrl)
     KamelImage(
-        resource = imageResource,
+        resource = painterResource,
         contentDescription = award.name,
         modifier = modifier,
-        crossfade = true,
+        onFailure = {
+            throw it
+        }
     )
 }

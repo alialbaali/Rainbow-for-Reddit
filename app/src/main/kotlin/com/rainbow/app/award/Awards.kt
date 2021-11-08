@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.rainbow.app.ui.dpDimensions
 import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.domain.models.Award
 
@@ -21,8 +20,7 @@ fun Awards(awards: List<Award>) {
         modifier = Modifier
             .clip(RoundedCornerShape(4.dp))
             .background(MaterialTheme.colors.primaryVariant.copy(0.05F))
-            .border(2.dp, MaterialTheme.colors.primaryVariant.copy(0.1F))
-            .padding(MaterialTheme.dpDimensions.small),
+            .border(2.dp, MaterialTheme.colors.primaryVariant.copy(0.1F)),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         awards
@@ -35,13 +33,7 @@ fun Awards(awards: List<Award>) {
                         .padding(2.dp),
                 )
             }
-
         Spacer(modifier = Modifier.width(4.dp))
-
-        val awardsCount = awards.count()
-
-        val text = if (awardsCount == 1) RainbowStrings.Award else RainbowStrings.Awards
-
-        Text("$awardsCount $text")
+        Text(awards.count().toString())
     }
 }
