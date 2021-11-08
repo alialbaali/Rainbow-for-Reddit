@@ -6,30 +6,29 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import com.rainbow.app.sidebar.SidebarItem.Profile
-import com.rainbow.app.sidebar.SidebarItem.Settings
+import com.rainbow.app.navigation.Screen
 import com.rainbow.app.ui.dpDimensions
 import com.rainbow.app.utils.defaultPadding
 
 @Composable
 fun Sidebar(
-    sidebarItem: SidebarItem,
+    sidebarItem: Screen.SidebarItem,
     isExpanded: Boolean,
-    onClick: (SidebarItem) -> Unit,
+    onClick: (Screen.SidebarItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     @Composable
-    fun SidebarItem.iconColor() =
+    fun Screen.SidebarItem.iconColor() =
         if (sidebarItem == this)
             MaterialTheme.colors.primary
         else
             MaterialTheme.colors.onBackground.copy(0.5F)
 
     @Composable
-    fun SidebarItem.textStyle() = MaterialTheme.typography.subtitle2.copy(iconColor())
+    fun Screen.SidebarItem.textStyle() = MaterialTheme.typography.subtitle2.copy(iconColor())
 
     @Composable
-    fun SidebarItem.background() =
+    fun Screen.SidebarItem.background() =
         if (sidebarItem == this)
             MaterialTheme.colors.primary.copy(0.1F)
         else
@@ -41,7 +40,7 @@ fun Sidebar(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
 
-        with(Profile) {
+        with(Screen.SidebarItem.Profile) {
             SidebarItem(
                 this,
                 isExpanded,
@@ -62,8 +61,8 @@ fun Sidebar(
                 .wrapContentHeight(),
             verticalArrangement = Arrangement.Center,
         ) {
-            SidebarItem.values()
-                .filter { item -> item != Profile && item != Settings }
+            Screen.SidebarItem.All
+                .filter { item -> item !is Screen.SidebarItem.Profile && item !is Screen.SidebarItem.Settings }
                 .onEach { item ->
                     SidebarItem(
                         item,
@@ -81,7 +80,7 @@ fun Sidebar(
                 }
         }
 
-        with(Settings) {
+        with(Screen.SidebarItem.Settings) {
             SidebarItem(
                 this,
                 isExpanded,
@@ -98,7 +97,7 @@ fun Sidebar(
     }
 }
 
-private inline val SidebarItem.itemShape
+private inline val Screen.SidebarItem.itemShape
     @Composable
     get() = MaterialTheme.shapes.large
 
