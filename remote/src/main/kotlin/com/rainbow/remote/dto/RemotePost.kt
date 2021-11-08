@@ -110,8 +110,8 @@ data class RemotePost(
     val linkFlairType: String? = null, // text
     @SerialName("locked")
     val locked: Boolean? = null, // false
-//    @SerialName("media")
-//    val media: Any? = null, // null
+    @SerialName("media")
+    val media: Media? = null, // null
 //    @SerialName("media_embed")
 //    val mediaEmbed: MediaEmbed? = null,
 //    @SerialName("media_only")
