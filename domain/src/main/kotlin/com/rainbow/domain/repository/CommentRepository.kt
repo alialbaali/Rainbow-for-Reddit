@@ -1,14 +1,15 @@
 package com.rainbow.domain.repository
 
 import com.rainbow.domain.models.Comment
+import kotlinx.coroutines.flow.Flow
 
 interface CommentRepository {
 
-    suspend fun getMyComments(): Result<List<Comment>>
+    fun getCurrentUserComments(): Flow<Result<List<Comment>>>
 
-    suspend fun getPostsComments(postId: String): Result<List<Comment>>
+    fun getPostsComments(postId: String): Flow<Result<List<Comment>>>
 
-    suspend fun getUserComments(userId: String): Result<List<Comment>>
+    suspend fun getUserComments(userId: String): Flow<Result<List<Comment>>>
 
     suspend fun createComment(comment: Comment): Result<Comment>
 
