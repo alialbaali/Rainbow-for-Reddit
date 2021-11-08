@@ -12,6 +12,8 @@ data class User(
     val description: String?,
     val postKarma: Long,
     val commentKarma: Long,
+    val awardeeKarma: Long,
+    val awarderKarma: Long,
     val imageUrl: String? = DefaultUserImageUrl,
     val bannerImageUrl: String?,
     val isNSFW: Boolean = false,

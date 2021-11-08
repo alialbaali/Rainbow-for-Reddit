@@ -4,20 +4,13 @@ import com.rainbow.domain.models.Award
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.Rule
 import com.rainbow.remote.dto.*
-import com.rainbow.sql.LocalImagePost
 import com.rainbow.sql.LocalPost
 import com.rainbow.sql.LocalSubreddit
 import com.rainbow.sql.LocalUser
 import io.ktor.http.*
 
 internal object RemoteMappers {
-
-    val ImagePostMapper = Mapper<RemotePost, LocalImagePost> { remotePost ->
-        with(remotePost) {
-            LocalImagePost(id!!, url!!)
-        }
-    }
-
+    
     val PostMapper = Mapper<RemotePost, LocalPost> { remotePost ->
         with(remotePost) {
             LocalPost(
@@ -62,9 +55,11 @@ internal object RemoteMappers {
             LocalUser(
                 id = id!!,
                 name = name!!,
-                description = it.subreddit?.publicDescription,
+                description = it.subreddit?.publicDescription?.takeIf { it.isNotBlank() },
                 post_karma = linkKarma?.toLong() ?: 0,
                 comment_karma = commentKarma?.toLong() ?: 0,
+                awardee_karma = awardeeKarma?.toLong() ?: 0,
+                awarder_karma = awarderKarma?.toLong() ?: 0,
                 is_nsfw = subreddit?.over18 ?: false,
                 creation_date = created!!.toLong(),
                 image_url = iconImg!!,
@@ -84,7 +79,7 @@ internal object RemoteMappers {
                 subredditName = subreddit ?: "",
                 body = body ?: "",
                 upvotesCount = ups?.toULong() ?: 0UL,
-                creationDate = created!!.toLong().toLocalDateTime(),
+                creationDate = (created?.toLong() ?: 0).toLocalDateTime(),
                 awards = allAwardings?.quickMap(AwardMapper) ?: emptyList()
             )
         }

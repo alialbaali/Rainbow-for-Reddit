@@ -76,6 +76,8 @@ internal object LocalMappers {
             it.description,
             it.post_karma,
             it.comment_karma,
+            it.awardee_karma,
+            it.awarder_karma,
             it.image_url,
             it.banner_image_url,
             it.is_nsfw,
