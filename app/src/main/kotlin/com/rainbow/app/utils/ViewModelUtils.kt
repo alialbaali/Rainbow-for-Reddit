@@ -4,10 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
-import com.rainbow.app.comment.CommentViewModel
-import com.rainbow.app.post.PostViewModel
-import com.rainbow.app.profile.ProfileViewModel
-import com.rainbow.app.subreddit.SubredditViewModel
 import com.rainbow.domain.ViewModel
 import com.rainbow.domain.ViewModel.Intent
 import com.rainbow.domain.ViewModel.State
@@ -21,13 +17,6 @@ fun <I : Intent, S : State> rememberViewModel(viewModel: ViewModel<I, S>): ViewM
         CompositionScopedViewModelController(viewModel)
     }
     return wrapper.viewModel
-}
-
-object ViewModels {
-    val Post by lazy { PostViewModel() }
-    val Subreddit by lazy { SubredditViewModel() }
-    val Comment by lazy { CommentViewModel() }
-    val Profile by lazy { ProfileViewModel() }
 }
 
 private class CompositionScopedViewModelController<I : Intent, S : State>(
