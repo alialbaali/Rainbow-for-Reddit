@@ -1,11 +1,28 @@
 package com.rainbow.app.navigation
 
-sealed class Screen {
+import com.arkivanov.essenty.parcelable.Parcelable
 
-    data class Subreddit(val subredditName: String) : Screen()
+sealed interface Screen : Parcelable {
+    data class Subreddit(val subredditName: String) : Screen
+    data class User(val userName: String) : Screen
+    sealed interface SidebarItem : Screen {
+        object Profile : SidebarItem
+        object Home : SidebarItem
+        object Subreddits : SidebarItem
+        object Messages : SidebarItem
+        object Settings : SidebarItem
 
-    data class User(val userName: String) : Screen()
-
-    object Profile : Screen()
-
+        companion object {
+            val All = mutableListOf(Profile, Home, Subreddits, Messages, Settings)
+        }
+    }
 }
+
+val Screen.SidebarItem.name
+    get() = when (this) {
+        Screen.SidebarItem.Profile -> "Profile"
+        Screen.SidebarItem.Home -> "Home"
+        Screen.SidebarItem.Subreddits -> "Subreddits"
+        Screen.SidebarItem.Messages -> "Messages"
+        Screen.SidebarItem.Settings -> "Settings"
+    }
