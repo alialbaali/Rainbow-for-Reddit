@@ -1,18 +1,16 @@
 package com.rainbow.app.utils
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.GraphicsLayerScope
-import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.components.RainbowProgressIndicator
@@ -23,30 +21,59 @@ import kotlinx.datetime.toLocalDateTime
 
 val RainbowIcons = Icons.Rounded
 
-inline fun Modifier.onHoverChanged(enabled: Boolean = true, crossinline onValueChange: (Boolean) -> Unit): Modifier {
-    return if (enabled)
-        pointerMoveFilter(
-            onExit = {
-                onValueChange(false)
-                false
-            },
-            onEnter = {
-                onValueChange(true)
-                false
-            }
-        )
-    else
-        this
+val ImageBorderSize = 6.dp
+
+@NonRestartableComposable
+@Composable
+inline fun <T> PagingEffect(
+    iterable: Iterable<T>,
+    currentIndex: Int,
+    crossinline block: (T) -> Unit
+) {
+    SideEffect {
+        iterable.onIndex(currentIndex, block)
+    }
 }
 
+inline fun <T> Iterable<T>.onIndex(currentIndex: Int, block: (T) -> Unit) {
+    withIndex().last().apply {
+        if (index == currentIndex)
+            block(value)
+    }
+}
 
-fun Modifier.defaultPadding() = padding(16.dp)
+@Composable
+@NonRestartableComposable
+fun OneTimeEffect(
+    key1: Any?,
+    effect: DisposableEffectScope.() -> Unit
+) {
+    DisposableEffect(key1) {
+        effect()
+        onDispose {
+
+        }
+    }
+}
+
+val ShapeModifier
+    @Composable
+    get() = Modifier
+        .border(1.dp, MaterialTheme.colors.onBackground.copy(0.1F), MaterialTheme.shapes.large)
+        .background(MaterialTheme.colors.background, MaterialTheme.shapes.large)
+        .clip(MaterialTheme.shapes.large)
+
+
+fun Modifier.defaultPadding(
+    start: Dp = 16.dp,
+    top: Dp = 16.dp,
+    end: Dp = 16.dp,
+    bottom: Dp = 16.dp
+) = padding(start, top, end, bottom)
 
 val LocalDateTime.displayTime: String
     get() {
-
         val currentDateTime = LocalDateTime.now()
-
         return when (val dayDiff = currentDateTime.dayOfYear - dayOfYear) {
             0 -> when (val hourDiff = currentDateTime.hour - hour) {
                 0 -> when (val minuteDiff = currentDateTime.minute - minute) {
@@ -70,27 +97,24 @@ var GraphicsLayerScope.shadow: Dp
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 inline fun <T> UIState<T>.composed(
+    modifier: Modifier = Modifier,
     actionLabel: String = "Hide",
+    onEmpty: @Composable () -> Unit = {},
     onSuccess: @Composable (T) -> Unit,
 ) {
-
     when (this) {
-        is UIState.Loading -> RainbowProgressIndicator()
+        is UIState.Loading -> RainbowProgressIndicator(modifier)
         is UIState.Success -> onSuccess(value)
         is UIState.Failure -> {
-
-            val snackbarHostState = remember { SnackbarHostState() }
-
-            SnackbarHost(snackbarHostState, modifier = Modifier.defaultPadding())
-
-            LaunchedEffect(Unit) {
-                snackbarHostState.showSnackbar(exception.message.toString(), actionLabel)
-            }
-
+            throw exception
+            //            val snackbarHostState = remember { SnackbarHostState() }
+//            SnackbarHost(snackbarHostState, modifier = Modifier.defaultPadding())
+//            LaunchedEffect(Unit) {
+//                snackbarHostState.showSnackbar(exception.message.toString(), actionLabel)
+//            }
         }
-
+        UIState.Empty -> onEmpty()
     }
-
 }
 
 fun LocalDateTime.Companion.now() = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())

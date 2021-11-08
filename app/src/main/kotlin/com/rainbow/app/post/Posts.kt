@@ -3,7 +3,7 @@ package com.rainbow.app.post
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Text
-import com.rainbow.app.PagingEffect
+import com.rainbow.app.utils.PagingEffect
 import com.rainbow.app.components.RainbowProgressIndicator
 import com.rainbow.app.utils.OneTimeEffect
 import com.rainbow.app.utils.UIState

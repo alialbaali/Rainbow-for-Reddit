@@ -12,7 +12,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.rainbow.app.PagingEffect
+import com.rainbow.app.utils.PagingEffect
 import com.rainbow.app.comment.PostCommentItem
 import com.rainbow.app.components.RainbowProgressIndicator
 import com.rainbow.app.utils.ShapeModifier
