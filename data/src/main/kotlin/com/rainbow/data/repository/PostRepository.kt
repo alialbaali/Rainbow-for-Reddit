@@ -2,14 +2,15 @@ package com.rainbow.data.repository
 
 import com.rainbow.data.Mapper
 import com.rainbow.data.quickMap
+import com.rainbow.data.removeParameters
 import com.rainbow.data.utils.DefaultLimit
 import com.rainbow.domain.models.*
 import com.rainbow.domain.models.Post.Type
 import com.rainbow.domain.repository.PostRepository
 import com.rainbow.remote.dto.RemotePost
 import com.rainbow.remote.source.RemotePostDataSource
-import com.rainbow.sql.LocalImagePost
-import com.rainbow.sql.LocalImagePostQueries
+import com.rainbow.sql.LocalLinkPost
+import com.rainbow.sql.LocalLinkPostQueries
 import com.rainbow.sql.LocalPost
 import com.rainbow.sql.LocalPostQueries
 import com.squareup.sqldelight.runtime.coroutines.asFlow
@@ -21,17 +22,17 @@ import kotlinx.coroutines.withContext
 internal fun PostRepository(
     remoteDataSource: RemotePostDataSource,
     localPostQueries: LocalPostQueries,
-    localImagePostQueries: LocalImagePostQueries,
+    localLinkPostQueries: LocalLinkPostQueries,
     dispatcher: CoroutineDispatcher,
     remoteMapper: Mapper<RemotePost, LocalPost>,
     localMapper: Mapper<LocalPost, Post>,
 ): PostRepository =
-    PostRepositoryImpl(remoteDataSource, localPostQueries, localImagePostQueries, dispatcher, remoteMapper, localMapper)
+    PostRepositoryImpl(remoteDataSource, localPostQueries, localLinkPostQueries, dispatcher, remoteMapper, localMapper)
 
 private class PostRepositoryImpl(
     private val remoteDataSource: RemotePostDataSource,
     private val localPostQueries: LocalPostQueries,
-    private val localImagePostQueries: LocalImagePostQueries,
+    private val localLinkPostQueries: LocalLinkPostQueries,
     private val dispatcher: CoroutineDispatcher,
     private val remoteMapper: Mapper<RemotePost, LocalPost>,
     private val localMapper: Mapper<LocalPost, Post>,
@@ -49,7 +50,7 @@ private class PostRepositoryImpl(
             timeSorting.name.lowercase(),
             DefaultLimit,
             lastPostId
-        ).savePostsAndImages(this)
+        ).savePostsAndLinks(this)
     }.flowOn(dispatcher)
 
     override fun getUserUpvotedPosts(
@@ -66,7 +67,7 @@ private class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             )
-            .savePostsAndImages(this)
+            .savePostsAndLinks(this)
     }.flowOn(dispatcher)
 
     override fun getUserDownvotedPosts(
@@ -83,7 +84,7 @@ private class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             )
-            .savePostsAndImages(this)
+            .savePostsAndLinks(this)
     }.flowOn(dispatcher)
 
     override fun getUserHiddenPosts(
@@ -100,7 +101,7 @@ private class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             )
-            .savePostsAndImages(this)
+            .savePostsAndLinks(this)
     }.flowOn(dispatcher)
 
     override fun getUserSavedPosts(
@@ -117,7 +118,7 @@ private class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             )
-            .savePostsAndImages(this)
+            .savePostsAndLinks(this)
     }.flowOn(dispatcher)
 
     override fun getHomePosts(
@@ -132,7 +133,7 @@ private class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             )
-            .savePostsAndImages(this)
+            .savePostsAndLinks(this)
     }.flowOn(dispatcher)
 
     override fun getSubredditPosts(
@@ -141,32 +142,14 @@ private class PostRepositoryImpl(
         timeSorting: TimeSorting,
         lastPostId: String?,
     ): Flow<Result<List<Post>>> = flow {
-        withContext(dispatcher) {
-            remoteDataSource.getSubredditPosts(
-                subredditName,
-                postsSorting.name.lowercase(),
-                timeSorting.name.lowercase(),
-                DefaultLimit,
-                lastPostId,
-            ).mapCatching { it.quickMap(remoteMapper) }
-                .onSuccess {
-                    localPostQueries.transaction {
-                        localPostQueries.clear()
-                        it.forEach { localPost ->
-                            localPostQueries.insert(localPost)
-                        }
-                    }
-                    localPostQueries.selectAll()
-                        .asFlow()
-                        .mapToList(dispatcher)
-                        .map { it.quickMap(localMapper) }
-                        .map { Result.success(it) }
-                        .also { emitAll(it) }
-                }.onFailure {
-                    emit(Result.failure<List<Post>>(it))
-                }
-        }
-    }
+        remoteDataSource.getSubredditPosts(
+            subredditName,
+            postsSorting.name.lowercase(),
+            timeSorting.name.lowercase(),
+            DefaultLimit,
+            lastPostId,
+        ).savePostsAndLinks(this)
+    }.flowOn(dispatcher)
 
     override fun getPost(postId: String): Flow<Result<Post>> = flow {
         localPostQueries.selectById(postId)
@@ -246,21 +229,25 @@ private class PostRepositoryImpl(
             .onSuccess { localPostQueries.downvote(postId) }
     }
 
-    private suspend fun Result<List<RemotePost>>.savePostsAndImages(collector: FlowCollector<Result<List<Post>>>) {
+    private suspend fun Result<List<RemotePost>>.savePostsAndLinks(collector: FlowCollector<Result<List<Post>>>) {
         onSuccess {
-            localImagePostQueries.clear()
             it.forEach {
                 val id = it.name
                 val url = it.url
-                if (id != null && url != null)
-                    localImagePostQueries.insert(LocalImagePost(id, url))
+                if (id != null && localLinkPostQueries.selectById(id).executeAsOneOrNull() == null)
+                    if (!url.isNullOrBlank() && (url.endsWith("jpg") || url.endsWith("png") || url.endsWith("gif")))
+                        localLinkPostQueries.insert(LocalLinkPost(id, url))
+                    else if (!it.media?.oembed?.thumbnailUrl.isNullOrBlank())
+                        localLinkPostQueries.insert(LocalLinkPost(id, it.media?.oembed?.thumbnailUrl!!))
+                    else if (!it.media?.oembed?.url.isNullOrBlank())
+                        localLinkPostQueries.insert(LocalLinkPost(id, it.media?.oembed?.url!!))
             }
         }
             .mapCatching { it.quickMap(remoteMapper) }
             .onSuccess {
-                localPostQueries.transaction {
-                    localPostQueries.clear()
-                    it.forEach { localPost -> localPostQueries.insert(localPost) }
+                it.forEach { localPost ->
+                    if (localPostQueries.selectById(localPost.id).executeAsOneOrNull() == null)
+                        localPostQueries.insert(localPost)
                 }
             }.onFailure { collector.emit(Result.failure<List<Post>>(it)) }
 
@@ -270,14 +257,22 @@ private class PostRepositoryImpl(
             .map {
                 it.map {
                     val post = localMapper.map(it)
-                    localImagePostQueries.selectById(it.id)
+                    localLinkPostQueries.selectById(it.id)
                         .executeAsOneOrNull()
                         ?.url
-                        ?.let { post.copy(type = Type.Image(it)) } ?: post
+                        ?.removeParameters()
+                        ?.let { link ->
+                            val type = when {
+                                link.endsWith("jpg") || link.endsWith("png") -> Type.Image(link)
+                                link.endsWith("gif") -> Type.Gif(link)
+                                link.endsWith("mp4") -> Type.Video(link)
+                                else -> Type.Link(link)
+                            }
+                            post.copy(type = type)
+                        } ?: post
                 }
             }
             .map { Result.success(it) }
             .also { collector.emitAll(it) }
     }
-
 }
