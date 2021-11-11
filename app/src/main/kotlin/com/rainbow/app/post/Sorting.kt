@@ -10,10 +10,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.utils.RainbowIcons
 import com.rainbow.app.utils.defaultPadding
-import com.rainbow.domain.models.MainPostSorting
-import com.rainbow.domain.models.SubredditPostSorting
-import com.rainbow.domain.models.TimeSorting
-import com.rainbow.domain.models.UserPostSorting
+import com.rainbow.domain.models.*
 
 val UserPostSorting.isTimeSorting get() = this == UserPostSorting.Top || this == UserPostSorting.Controversial
 val SubredditPostSorting.isTimeSorting get() = this == SubredditPostSorting.Top || this == SubredditPostSorting.Controversial
@@ -125,6 +122,15 @@ val <T> T.icon
             MainPostSorting.Top -> RainbowIcons.BarChart
             MainPostSorting.Hot -> RainbowIcons.Whatshot
             MainPostSorting.Rising -> RainbowIcons.TrendingUp
+        }
+        is PostCommentSorting -> when (this) {
+            PostCommentSorting.Top -> RainbowIcons.BarChart
+            PostCommentSorting.Best -> RainbowIcons.Star
+            PostCommentSorting.New -> RainbowIcons.BrightnessLow
+            PostCommentSorting.Old -> RainbowIcons.Timelapse
+            PostCommentSorting.Controversial -> RainbowIcons.TrendingDown
+            PostCommentSorting.QA -> RainbowIcons.Comment
+            PostCommentSorting.Confidence -> RainbowIcons.Label
         }
         else -> null
     }

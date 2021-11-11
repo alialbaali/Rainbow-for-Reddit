@@ -70,6 +70,14 @@ enum class UserSort {
 typealias ProfileSort = UserSort
 
 
+enum class PostCommentSorting {
+    Confidence, Top, Best, New, Old, Controversial, QA;
+
+    companion object {
+        val Default = Top
+    }
+}
+
 enum class MoreChildren {
     confidence, top, new, controversial, old, random, qa, live
 }
