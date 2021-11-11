@@ -25,11 +25,10 @@ inline fun PostItem(
 
     Column(
         modifier
-            .padding(vertical = 8.dp)
             .then(ShapeModifier)
             .clickable { onClick(post) }
             .defaultPadding(),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
 
         PostInfo(
@@ -41,16 +40,12 @@ inline fun PostItem(
                 .wrapContentHeight()
         )
 
-        Spacer(Modifier.height(8.dp))
-
         PostTitle(
             title = post.title,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
         )
-
-        Spacer(Modifier.height(8.dp))
 
         PostContent(
             post = post,
@@ -63,8 +58,6 @@ inline fun PostItem(
                 )
                 .fillMaxWidth()
         )
-
-        Spacer(Modifier.height(8.dp))
 
         PostCommands(
             post,
