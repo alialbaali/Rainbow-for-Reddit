@@ -2,6 +2,7 @@ package com.rainbow.app.post
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -9,27 +10,27 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material.icons.rounded.Person
-import androidx.compose.material.icons.rounded.Share
-import androidx.compose.material.icons.rounded.VisibilityOff
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.app.award.Awards
 import com.rainbow.app.components.*
 import com.rainbow.app.utils.RainbowIcons
+import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.app.utils.defaultPadding
 import com.rainbow.app.utils.imageUrl
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.Post
-import com.rainbow.domain.models.Vote
 import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
 import kotlinx.coroutines.launch
@@ -54,11 +55,15 @@ inline fun PostInfo(
         modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        SubredditName(post.subredditName, Modifier.clickable { onSubredditNameClick(post.subredditName) })
+        SubredditName(post.subredditName, onSubredditNameClick)
         Dot()
-        UserName(post.userName, Modifier.clickable { onUserNameClick(post.userName) })
+        UserName(post.userName, onUserNameClick)
         Dot()
         CreationDate(post.creationDate)
+        if (post.isNSFW) {
+            Dot()
+            Text(RainbowStrings.NSFW, fontWeight = FontWeight.Medium, fontSize = 14.sp, color = Color.Red)
+        }
         if (post.awards.isNotEmpty()) {
             Dot()
             Awards(post.awards)
@@ -80,13 +85,38 @@ fun PostContent(post: Post, modifier: Modifier = Modifier) {
 
 @Composable
 fun TextPost(text: Post.Type.Text, modifier: Modifier = Modifier) {
-    Text(
-        buildAnnotatedString {
-            append(text.body.trim())
-        },
-        modifier = modifier,
-        style = MaterialTheme.typography.body1
-    )
+    var maxLines by remember { mutableStateOf(15) }
+    var shouldLimitLines by remember { mutableStateOf(false) }
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Text(
+            buildAnnotatedString {
+                append(text.body.trim())
+            },
+            modifier = Modifier.animateContentSize(),
+            maxLines = if (shouldLimitLines) maxLines else Int.MAX_VALUE,
+            style = MaterialTheme.typography.body1,
+            overflow = TextOverflow.Ellipsis,
+            onTextLayout = {  if (it.lineCount > 15) shouldLimitLines = true }
+        )
+        if (shouldLimitLines)
+            Box(
+                Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .border(1.dp, MaterialTheme.colors.onBackground.copy(0.1F), CircleShape)
+                    .background(MaterialTheme.colors.background, CircleShape)
+                    .clip(CircleShape)
+                    .clickable { if (maxLines == Int.MAX_VALUE) maxLines = 15 else maxLines = Int.MAX_VALUE }
+                    .padding(horizontal = 16.dp, vertical = 4.dp)
+                    .wrapContentSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                val imageVector = if (maxLines == Int.MAX_VALUE)
+                    RainbowIcons.KeyboardArrowUp
+                else
+                    RainbowIcons.KeyboardArrowDown
+                Icon(imageVector, imageVector.name)
+            }
+    }
 }
 
 @Composable
@@ -103,9 +133,7 @@ fun ImagePost(image: Post.Type.Image, modifier: Modifier = Modifier) {
             .animateContentSize()
             .clickable { isDialogVisible = true },
         contentScale = ContentScale.Fit,
-        onLoading = {
-            RainbowProgressIndicator()
-        },
+        onLoading = { RainbowProgressIndicator(modifier) },
         crossfade = true,
         onFailure = {
             throw it
@@ -136,7 +164,7 @@ fun LinkPost(link: Post.Type.Link, modifier: Modifier = Modifier) {
             contentDescription = link.url,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
-            onLoading = { RainbowProgressIndicator() },
+            onLoading = { RainbowProgressIndicator(modifier) },
             crossfade = true,
             onFailure = {
                 throw it
@@ -230,80 +258,5 @@ fun PostCommands(post: Post, modifier: Modifier = Modifier) {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun PostVoteCommands(post: Post, modifier: Modifier = Modifier) {
-
-    val scope = rememberCoroutineScope()
-
-    Row(
-        modifier,
-        Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-
-        UpvoteButton(
-            onClick = {
-                when (post.vote) {
-                    Vote.Up -> scope.launch {
-                        Repos.Post.unvotePost(post.id)
-                    }
-                    else -> scope.launch {
-                        Repos.Post.upvotePost(post.id)
-                    }
-                }
-            },
-            tint = when (post.vote) {
-                Vote.Up -> MaterialTheme.colors.primary
-                else -> MaterialTheme.colors.onBackground
-            },
-            modifier = Modifier
-                .background(
-                    when (post.vote) {
-                        Vote.Up -> MaterialTheme.colors.primary.copy(0.1F)
-                        else -> MaterialTheme.colors.background
-                    },
-                    CircleShape,
-                )
-        )
-
-        Spacer(Modifier.width(8.dp))
-
-        val votesCount = when (post.vote) {
-            Vote.Up -> post.upvotesCount.inc()
-            Vote.Down -> post.upvotesCount.dec()
-            Vote.None -> post.upvotesCount
-        }
-
-        Text(votesCount.toString())
-
-        Spacer(Modifier.width(8.dp))
-
-        DownvoteButton(
-            onClick = {
-                when (post.vote) {
-                    Vote.Down -> scope.launch {
-                        Repos.Post.unvotePost(post.id)
-                    }
-                    else -> scope.launch {
-                        Repos.Post.downvotePost(post.id)
-                    }
-                }
-            },
-            tint = when (post.vote) {
-                Vote.Down -> MaterialTheme.colors.secondary
-                else -> MaterialTheme.colors.onBackground
-            },
-            modifier = Modifier
-                .background(
-                    when (post.vote) {
-                        Vote.Down -> MaterialTheme.colors.secondary.copy(0.1F)
-                        else -> MaterialTheme.colors.background
-                    },
-                    CircleShape,
-                )
-        )
     }
 }
