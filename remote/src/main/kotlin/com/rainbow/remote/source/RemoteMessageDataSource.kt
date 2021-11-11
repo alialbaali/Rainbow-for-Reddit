@@ -4,7 +4,19 @@ import com.rainbow.remote.dto.RemoteMessage
 
 interface RemoteMessageDataSource {
 
-    suspend fun getMessages(messagesSorting: String): Result<List<RemoteMessage>>
+    suspend fun getInbox(): Result<List<RemoteMessage>>
+
+    suspend fun getUnreadInbox(): Result<List<RemoteMessage>>
+
+    suspend fun getSent(): Result<List<RemoteMessage>>
+
+    suspend fun getMessages(): Result<List<RemoteMessage>>
+
+    suspend fun getMentions(): Result<List<RemoteMessage>>
+
+    suspend fun getPostReplies(): Result<List<RemoteMessage>>
+
+    suspend fun getCommentReplies(): Result<List<RemoteMessage>>
 
     suspend fun sendMessage(subject: String, text: String, toUserIdPrefixed: String): Result<Unit>
 

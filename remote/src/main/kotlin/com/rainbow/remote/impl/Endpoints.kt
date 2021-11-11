@@ -144,8 +144,20 @@ internal sealed class Endpoint(val path: String) {
 
     object Messages {
 
-        // https://oauth.reddit.com/message/{message-sorting}
-        class Get(messagesSorting: String) : Endpoint("$MessagePath$messagesSorting")
+        // https://oauth.reddit.com/message/inbox
+        object Inbox : Endpoint(MessagePath + "inbox")
+
+        object UnreadInbox : Endpoint(MessagePath + "unread")
+
+        object Sent : Endpoint(MessagePath + "sent")
+
+        object Messages : Endpoint(MessagePath + "messages")
+
+        object Mentions : Endpoint(MessagePath + "mentions")
+
+        object PostReplies : Endpoint(MessagePath + "selfreply")
+
+        object CommentReplies : Endpoint(MessagePath + "comments")
 
         // https://oauth.reddit.com/api/compose
         object Compose : Endpoint(ActionPath + "compose")
@@ -154,7 +166,7 @@ internal sealed class Endpoint(val path: String) {
         object Read : Endpoint(ActionPath + "read_message")
 
         // https://oauth.reddit.com/api/unread_message
-        object UnRead : Endpoint(ActionPath + "unread_message")
+        object Unread : Endpoint(ActionPath + "unread_message")
 
         // https://oauth.reddit.com/api/read_all_messages
         object ReadAll : Endpoint(ActionPath + "read_all_messages")

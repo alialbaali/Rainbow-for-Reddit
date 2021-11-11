@@ -4,6 +4,8 @@ import com.rainbow.data.Mapper
 import com.rainbow.data.quickMap
 import com.rainbow.data.utils.SettingsKeys
 import com.rainbow.domain.models.Comment
+import com.rainbow.domain.models.PostCommentSorting
+import com.rainbow.domain.models.TimeSorting
 import com.rainbow.domain.repository.CommentRepository
 import com.rainbow.remote.dto.RemoteComment
 import com.rainbow.remote.source.RemoteCommentDataSource
@@ -40,8 +42,11 @@ private class CommentRepositoryImpl(
             .also { emit(it) }
     }
 
-    override fun getPostsComments(postId: String): Flow<Result<List<Comment>>> = flow {
-        remoteCommentDataSource.getPostComments(postId)
+    override fun getPostsComments(
+        postId: String,
+        commentsSorting: PostCommentSorting,
+    ): Flow<Result<List<Comment>>> = flow {
+        remoteCommentDataSource.getPostComments(postId, commentsSorting.name.lowercase())
             .mapCatching { it.quickMap(mapper) }
             .also { emit(it) }
     }

@@ -1,5 +1,6 @@
 package com.rainbow.domain.repository
 
+import com.rainbow.domain.models.Moderator
 import com.rainbow.domain.models.Subreddit
 import com.rainbow.domain.models.SubredditsSearchSorting
 import kotlinx.coroutines.flow.Flow
@@ -9,6 +10,8 @@ interface SubredditRepository {
     fun getMySubreddits(lastSubredditId: String?): Flow<Result<List<Subreddit>>>
 
     fun getSubreddit(subredditName: String): Flow<Result<Subreddit>>
+
+    fun getSubredditModerators(subredditName: String): Flow<Result<List<Moderator>>>
 
     suspend fun subscribeSubreddit(subredditName: String): Result<Unit>
 

@@ -1,8 +1,6 @@
 package com.rainbow.data
 
-import com.rainbow.domain.models.Award
-import com.rainbow.domain.models.Comment
-import com.rainbow.domain.models.Moderator
+import com.rainbow.domain.models.*
 import com.rainbow.domain.models.Rule
 import com.rainbow.remote.dto.*
 import com.rainbow.sql.LocalPost
@@ -133,6 +131,27 @@ internal object RemoteMappers {
                 name!!,
                 modPermissions?.map { Moderator.Permission.valueOf(it.replaceFirstChar { it.uppercase() }) }!!,
                 date!!.toLong().toLocalDateTime()
+            )
+        }
+    }
+
+    val MessageMapper = Mapper<RemoteMessage, Message> {
+        with(it) {
+            Message(
+                name!!,
+                authorFullname ?: "",
+                author!!,
+                subject!!,
+                body!!,
+                new!!,
+                when (type) {
+                    "unknown" -> Message.Type.Message
+                    "post_reply" -> Message.Type.PostReply
+                    "comment_reply" -> Message.Type.CommentReply
+                    "username_mention" -> Message.Type.Mention
+                    else -> Message.Type.Message
+                },
+                created!!.toLong().toLocalDateTime(),
             )
         }
     }

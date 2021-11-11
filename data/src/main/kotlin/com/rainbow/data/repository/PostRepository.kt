@@ -4,6 +4,8 @@ import com.rainbow.data.Mapper
 import com.rainbow.data.quickMap
 import com.rainbow.data.removeParameters
 import com.rainbow.data.utils.DefaultLimit
+import com.rainbow.data.utils.PostListing
+import com.rainbow.data.utils.SettingsKeys
 import com.rainbow.domain.models.*
 import com.rainbow.domain.models.Post.Type
 import com.rainbow.domain.repository.PostRepository
@@ -13,26 +15,40 @@ import com.rainbow.sql.LocalLinkPost
 import com.rainbow.sql.LocalLinkPostQueries
 import com.rainbow.sql.LocalPost
 import com.rainbow.sql.LocalPostQueries
+import com.russhwolf.settings.ExperimentalSettingsApi
+import com.russhwolf.settings.coroutines.FlowSettings
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
+@OptIn(ExperimentalSettingsApi::class)
 internal fun PostRepository(
     remoteDataSource: RemotePostDataSource,
     localPostQueries: LocalPostQueries,
     localLinkPostQueries: LocalLinkPostQueries,
+    settings: FlowSettings,
     dispatcher: CoroutineDispatcher,
     remoteMapper: Mapper<RemotePost, LocalPost>,
     localMapper: Mapper<LocalPost, Post>,
 ): PostRepository =
-    PostRepositoryImpl(remoteDataSource, localPostQueries, localLinkPostQueries, dispatcher, remoteMapper, localMapper)
+    PostRepositoryImpl(
+        remoteDataSource,
+        localPostQueries,
+        localLinkPostQueries,
+        settings,
+        dispatcher,
+        remoteMapper,
+        localMapper
+    )
 
+@OptIn(ExperimentalSettingsApi::class)
 private class PostRepositoryImpl(
     private val remoteDataSource: RemotePostDataSource,
     private val localPostQueries: LocalPostQueries,
     private val localLinkPostQueries: LocalLinkPostQueries,
+    private val settings: FlowSettings,
     private val dispatcher: CoroutineDispatcher,
     private val remoteMapper: Mapper<RemotePost, LocalPost>,
     private val localMapper: Mapper<LocalPost, Post>,
@@ -50,7 +66,7 @@ private class PostRepositoryImpl(
             timeSorting.name.lowercase(),
             DefaultLimit,
             lastPostId
-        ).savePostsAndLinks(this)
+        ).savePostsAndLinks(this, PostListing.Submitted, postsSorting, timeSorting)
     }.flowOn(dispatcher)
 
     override fun getUserUpvotedPosts(
@@ -67,7 +83,7 @@ private class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             )
-            .savePostsAndLinks(this)
+            .savePostsAndLinks(this, PostListing.Upvoted, postsSorting, timeSorting)
     }.flowOn(dispatcher)
 
     override fun getUserDownvotedPosts(
@@ -84,7 +100,7 @@ private class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             )
-            .savePostsAndLinks(this)
+            .savePostsAndLinks(this, PostListing.Downvoted, postsSorting, timeSorting)
     }.flowOn(dispatcher)
 
     override fun getUserHiddenPosts(
@@ -101,7 +117,7 @@ private class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             )
-            .savePostsAndLinks(this)
+            .savePostsAndLinks(this, PostListing.Hidden, postsSorting, timeSorting)
     }.flowOn(dispatcher)
 
     override fun getUserSavedPosts(
@@ -118,7 +134,7 @@ private class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             )
-            .savePostsAndLinks(this)
+            .savePostsAndLinks(this, PostListing.Saved, postsSorting, timeSorting)
     }.flowOn(dispatcher)
 
     override fun getHomePosts(
@@ -133,7 +149,7 @@ private class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             )
-            .savePostsAndLinks(this)
+            .savePostsAndLinks(this, PostListing.Home, postsSorting, timeSorting)
     }.flowOn(dispatcher)
 
     override fun getSubredditPosts(
@@ -148,7 +164,7 @@ private class PostRepositoryImpl(
             timeSorting.name.lowercase(),
             DefaultLimit,
             lastPostId,
-        ).savePostsAndLinks(this)
+        ).savePostsAndLinks(this, PostListing.Subreddit, postsSorting, timeSorting)
     }.flowOn(dispatcher)
 
     override fun getPost(postId: String): Flow<Result<Post>> = flow {
@@ -229,7 +245,12 @@ private class PostRepositoryImpl(
             .onSuccess { localPostQueries.downvote(postId) }
     }
 
-    private suspend fun Result<List<RemotePost>>.savePostsAndLinks(collector: FlowCollector<Result<List<Post>>>) {
+    private suspend fun <T : Enum<T>> Result<List<RemotePost>>.savePostsAndLinks(
+        collector: FlowCollector<Result<List<Post>>>,
+        listing: PostListing,
+        postSorting: Enum<T>,
+        timeSorting: TimeSorting,
+    ) {
         onSuccess {
             it.forEach {
                 val id = it.name
@@ -245,6 +266,15 @@ private class PostRepositoryImpl(
         }
             .mapCatching { it.quickMap(remoteMapper) }
             .onSuccess {
+                val isDifferentPostListing = settings.getStringOrNull(SettingsKeys.PostListing) != listing.name
+                val isDifferentPostSorting = settings.getStringOrNull(SettingsKeys.PostSorting) != postSorting.name
+                val isDifferentTimeSorting = settings.getStringOrNull(SettingsKeys.TimeSorting) != timeSorting.name
+                if (isDifferentPostListing || isDifferentPostSorting || isDifferentTimeSorting) {
+                    settings.putString(SettingsKeys.PostListing, listing.name)
+                    settings.putString(SettingsKeys.PostSorting, postSorting.name)
+                    settings.putString(SettingsKeys.TimeSorting, timeSorting.name)
+                    localPostQueries.clear()
+                }
                 it.forEach { localPost ->
                     if (localPostQueries.selectById(localPost.id).executeAsOneOrNull() == null)
                         localPostQueries.insert(localPost)

@@ -42,6 +42,7 @@ object Repos {
         RemotePostDataSource(),
         RainbowDatabase.localPostQueries,
         RainbowDatabase.localLinkPostQueries,
+        settings,
         DefaultDispatcher,
         RemoteMappers.PostMapper,
         LocalMappers.PostMapper,
@@ -49,10 +50,12 @@ object Repos {
 
     object Subreddit : SubredditRepository by SubredditRepository(
         RemoteSubredditDataSource(),
+        RemoteModeratorDataSource(),
         RainbowDatabase.localSubredditQueries,
         DefaultDispatcher,
         RemoteMappers.SubredditMapper,
         LocalMappers.SubredditMapper,
+        RemoteMappers.ModeratorMapper,
     )
 
     @OptIn(ExperimentalSettingsApi::class)
@@ -68,6 +71,12 @@ object Repos {
         RemoteRuleDataSource(),
         DefaultDispatcher,
         RemoteMappers.RuleMapper
+    )
+
+    object Message : MessageRepository by MessageRepositoryImpl(
+        RemoteMessageDataSource(),
+        DefaultDispatcher,
+        RemoteMappers.MessageMapper
     )
 
 }
