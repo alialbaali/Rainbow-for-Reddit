@@ -164,7 +164,7 @@ internal sealed class Endpoint(val path: String) {
 
     }
 
-    object Mods {
+    object Moderators {
 
         // https://oauth.reddit.com/r/{subreddit-name}/about/moderators
         class Get(subredditName: String) : Endpoint("$SubredditPath$subredditName/about/moderators")
