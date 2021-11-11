@@ -18,6 +18,7 @@ dependencies {
     implementation("com.alialbaali.kamel:kamel-image:0.3.0")
     implementation("com.arkivanov.decompose:extensions-compose-jetbrains:0.4.0")
     implementation("com.arkivanov.decompose:decompose:0.4.0")
+    implementation("org.jsoup:jsoup:1.14.3")
 }
 
 compose.desktop {
