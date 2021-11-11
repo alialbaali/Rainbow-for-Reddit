@@ -2,6 +2,7 @@ package com.rainbow.data
 
 import com.rainbow.domain.models.Award
 import com.rainbow.domain.models.Comment
+import com.rainbow.domain.models.Moderator
 import com.rainbow.domain.models.Rule
 import com.rainbow.remote.dto.*
 import com.rainbow.sql.LocalPost
@@ -10,7 +11,7 @@ import com.rainbow.sql.LocalUser
 import io.ktor.http.*
 
 internal object RemoteMappers {
-    
+
     val PostMapper = Mapper<RemotePost, LocalPost> { remotePost ->
         with(remotePost) {
             LocalPost(
@@ -70,19 +71,24 @@ internal object RemoteMappers {
 
     val CommentMapper = Mapper<RemoteComment, Comment> {
         with(it) {
-            Comment(
-                id = id ?: "",
-                postId = linkId ?: "",
-                userId = authorFullname ?: "",
-                subredditId = subredditId ?: "",
-                userName = author ?: "",
-                subredditName = subreddit ?: "",
-                body = body ?: "",
-                upvotesCount = ups?.toULong() ?: 0UL,
-                creationDate = (created?.toLong() ?: 0).toLocalDateTime(),
-                awards = allAwardings?.quickMap(AwardMapper) ?: emptyList()
-            )
+            toComment()
         }
+    }
+
+    private fun RemoteComment.toComment(): Comment {
+        return Comment(
+            id = id ?: "",
+            postId = linkId ?: "",
+            userId = authorFullname ?: "",
+            subredditId = subredditId ?: "",
+            userName = author ?: "",
+            subredditName = subreddit ?: "",
+            body = body ?: "",
+            upvotesCount = ups?.toULong() ?: 0UL,
+            creationDate = (created?.toLong() ?: 0).toLocalDateTime(),
+            awards = allAwardings?.quickMap(AwardMapper) ?: emptyList(),
+            replies = replies?.quickMap(CommentMapper) ?: emptyList()
+        )
     }
 
     val SubredditMapper = Mapper<RemoteSubreddit, LocalSubreddit> {
@@ -109,18 +115,27 @@ internal object RemoteMappers {
     }
 
     val RuleMapper = Mapper<RemoteRule, Rule> {
-        TODO()
-//        with(it) {
-//            Rule(
-//                shortName!!,
-//                description!!,
-//                priority!!.toInt(),
-//                violationReason!!,
-//                created!!.toLong(),
-//            )
-//        }
+        with(it) {
+            Rule(
+                shortName!!,
+                description!!,
+                priority!!.toInt(),
+                violationReason!!,
+                createdUtc!!.toLong().toLocalDateTime(),
+            )
+        }
     }
 
+    val ModeratorMapper = Mapper<RemoteModerator, Moderator> {
+        with(it) {
+            Moderator(
+                id!!,
+                name!!,
+                modPermissions?.map { Moderator.Permission.valueOf(it.replaceFirstChar { it.uppercase() }) }!!,
+                date!!.toLong().toLocalDateTime()
+            )
+        }
+    }
 }
 
 fun String.removeHashtagPrefix() = removePrefix("#")
