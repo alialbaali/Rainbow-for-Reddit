@@ -36,6 +36,7 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
     ): Result<List<RemotePost>> {
         return client.get<Listing<RemotePost>>(Posts.SubredditPosts(subredditName, postsSorting)) {
             parameter(Keys.Time, timeSorting)
+            parameter(Keys.After, after)
         }.mapCatching { it.toList() }
     }
 
@@ -48,6 +49,7 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
     ): Result<List<RemotePost>> {
         return client.get<Listing<RemotePost>>(Posts.UserSubmittedPosts(userName, postsSorting)) {
             parameter(Keys.Time, timeSorting)
+            parameter(Keys.After, after)
         }.mapCatching { it.toList() }
     }
 
@@ -60,6 +62,7 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
     ): Result<List<RemotePost>> {
         return client.get<Listing<RemotePost>>(Posts.UserUpvotedPosts(userName, postsSorting)) {
             parameter(Keys.Time, timeSorting)
+            parameter(Keys.After, after)
         }.mapCatching { it.toList() }
     }
 
@@ -72,6 +75,7 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
     ): Result<List<RemotePost>> {
         return client.get<Listing<RemotePost>>(Posts.UserDownvotedPosts(userName, postsSorting)) {
             parameter(Keys.Time, timeSorting)
+            parameter(Keys.After, after)
         }.mapCatching { it.toList() }
     }
 
@@ -84,6 +88,7 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
     ): Result<List<RemotePost>> {
         return client.get<Listing<RemotePost>>(Posts.UserHiddenPosts(userName, postsSorting)) {
             parameter(Keys.Time, timeSorting)
+            parameter(Keys.After, after)
         }.mapCatching { it.toList() }
     }
 
@@ -96,6 +101,7 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
     ): Result<List<RemotePost>> {
         return client.get<Listing<RemotePost>>(Posts.UserSavedPosts(userName, postsSorting)) {
             parameter(Keys.Time, timeSorting)
+            parameter(Keys.After, after)
         }.mapCatching { it.toList() }
     }
 
