@@ -1,169 +1,208 @@
 package com.rainbow.app.profile
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ScrollableTabRow
-import androidx.compose.material.Tab
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rainbow.app.components.BannerImage
-import com.rainbow.app.components.ProfileImage
-import com.rainbow.app.post.PostListType
-import com.rainbow.app.post.PostList
-import com.rainbow.app.utils.UIState
-import com.rainbow.app.utils.composed
-import com.rainbow.app.utils.defaultPadding
-import com.rainbow.app.utils.toUIState
+import com.rainbow.app.comment.comments
+import com.rainbow.app.components.DefaultTabRow
+import com.rainbow.app.components.HeaderDescription
+import com.rainbow.app.components.HeaderItem
+import com.rainbow.app.post.Sorting
+import com.rainbow.app.post.posts
+import com.rainbow.app.utils.*
 import com.rainbow.data.Repos
-import com.rainbow.domain.models.User
-import io.kamel.image.lazyPainterResource
+import com.rainbow.domain.models.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.datetime.toJavaLocalDateTime
+import java.time.format.DateTimeFormatter
 
-enum class ProfileTab {
-    Overview, Comments, Submitted, Saved, Hidden, Upvoted, Downvoted;
+private enum class ProfileTab {
+    Overview, Submitted, Saved, Hidden, Upvoted, Downvoted, Comments;
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ProfileScreen() {
-
+fun ProfileScreen(
+    onPostClick: (Post) -> Unit,
+    onUserNameClick: (String) -> Unit,
+    onSubredditNameClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var selectedTab by remember { mutableStateOf(ProfileTab.Submitted) }
+    var postSorting by remember { mutableStateOf(UserPostSorting.Default) }
+    var timeSorting by remember { mutableStateOf(TimeSorting.Default) }
+    var lastPost by remember(postSorting, timeSorting) { mutableStateOf<Post?>(null) }
+    val scrollingState = rememberLazyListState()
+    val postLayout by Repos.Settings.postLayout.collectAsState(PostLayout.Card)
     val state by produceState<UIState<User>>(UIState.Loading) {
         Repos.User.getCurrentUser()
             .toUIState()
             .also { value = it }
     }
 
-
-    state.composed { user ->
-
-        val bannerImageResource = lazyPainterResource(user.bannerImageUrl!!)
-
-        val profileImageResource = lazyPainterResource(user.imageUrl!!)
-
-        val bannerImageHeight = 200.dp
-
-        val profileImageSize = 200.dp
-
-        val profileImageOffset = bannerImageHeight - profileImageSize / 2
-
-        val bannerImageGradientHeight = bannerImageHeight.div(2.dp)
-
-        val bannerImageGradient = Brush.verticalGradient(
-            0F to Color.Transparent,
-            1.0F to Color.Black,
-            startY = bannerImageGradientHeight
-        )
-
-        var currentTab by remember { mutableStateOf(ProfileTab.Overview) }
-
-        Row {
-
-            Column(
-                Modifier
-                    .weight(1F)
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(bannerImageHeight + profileImageSize / 2)
-                ) {
-
-                    Column(Modifier.fillMaxWidth()) {
-
-                        BannerImage(
-                            resource = bannerImageResource,
-                            bannerColor = Color.Black.copy(0.1F),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(bannerImageHeight)
-                                .drawWithContent {
-                                    drawContent()
-                                    drawRect(
-                                        bannerImageGradient,
-                                        topLeft = Offset(0F, bannerImageGradientHeight)
-                                    )
-                                }
-                        )
-
-//                        Surface(
-//                            Modifier
-//                                .fillMaxWidth()
-//                                .height(100.dp),
-//                        ) {
-//
-//                            Surface(
-//                                Modifier
-//                                    .fillMaxWidth()
-//                                    .wrapContentHeight()
-//                                    .height(100.dp)
-////                                    .offset(profileImageOffset * 2)
-//                                ,
-//                            ) {
-//
-//
-//                            }
-//
-//
-//                        }
-
-                    }
-
-                    ProfileImage(
-                        resource = profileImageResource,
-                        primaryColor = Color.Black.copy(0.1F),
-                        modifier = Modifier
-                            .size(profileImageSize)
-                            .defaultPadding()
-                            .offset(y = profileImageOffset)
-                    )
-
-                    Text(
-                        user.name,
-                        fontSize = 36.sp,
-                        color = MaterialTheme.colors.background,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.Center)
-                            .offset(x = profileImageOffset * 2, y = -profileImageOffset / 4)
-                    )
-
-                }
-
-                ScrollableTabRow(currentTab.ordinal) {
-                    ProfileTab.values().forEach { tab ->
-                        Tab(
-                            tab == currentTab,
-                            { currentTab = tab },
-                            text = {
-                                Text(tab.name)
-                            }
-                        )
-                    }
-                }
-
-                PostList(
-                    PostListType.User(user.name),
-                    onSelectPost = {
-
-                    }
+    state.composed(modifier) { user ->
+        val postsState by producePostsState(user.name, selectedTab, postSorting, timeSorting, lastPost)
+        val commentsState by produceState<UIState<List<Comment>>>(UIState.Loading, selectedTab) {
+            if (selectedTab == ProfileTab.Comments)
+                Repos.Comment.getCurrentUserComments()
+                    .map { it.toUIState() }
+                    .collect { value = it }
+        }
+        LazyColumn(modifier, scrollingState, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            item { Header(user) }
+            item {
+                DefaultTabRow(
+                    selectedTab = selectedTab,
+                    onTabClick = { selectedTab = it },
                 )
-
             }
+            item {
+                Sorting(
+                    postSorting,
+                    onSortingUpdate = { postSorting = it },
+                    timeSorting,
+                    onTimeSortingUpdate = { timeSorting = it },
+                )
+            }
+            when (selectedTab) {
+                ProfileTab.Overview -> {
+                }
+                ProfileTab.Comments -> comments(commentsState, onUserNameClick, onSubredditNameClick)
+                else -> posts(
+                    postsState,
+                    postLayout,
+                    onPostClick,
+                    onUserNameClick,
+                    onSubredditNameClick,
+                    onLoadMore = { lastPost = it }
+                )
+            }
+        }
+        VerticalScrollbar(rememberScrollbarAdapter(scrollingState))
+    }
+}
 
-//            PostScreen(Modifier.weight(1F))
-
+@Composable
+fun Header(user: User, modifier: Modifier = Modifier) {
+    Column(
+        modifier
+            .then(ShapeModifier)
+            .heightIn(min = 350.dp)
+            .fillMaxWidth()
+    ) {
+        HeaderItem(user.bannerImageUrl.toString(), user.imageUrl.toString(), user.name)
+        HeaderDescription(
+            user,
+            Modifier
+                .fillMaxWidth()
+                .defaultPadding(start = 232.dp)
+        )
+        Row(Modifier.fillMaxWidth().defaultPadding(start = 232.dp)) {
+            Column(Modifier.weight(1F)) {
+                Text(RainbowStrings.PostKarma, fontWeight = FontWeight.Medium, color = Color.DarkGray, fontSize = 16.sp)
+                Text(user.postKarma.toString(), fontSize = 14.sp)
+            }
+            Column(Modifier.weight(1F)) {
+                Text(
+                    RainbowStrings.CommentKarma,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.DarkGray,
+                    fontSize = 16.sp
+                )
+                Text(user.commentKarma.toString(), fontSize = 14.sp)
+            }
         }
 
-    }
+        Row(Modifier.fillMaxWidth().defaultPadding(start = 232.dp)) {
+            Column(Modifier.weight(1F)) {
+                Text(
+                    RainbowStrings.AwardeeKarma,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.DarkGray,
+                    fontSize = 16.sp
+                )
+                Text(user.awardeeKarma.toString(), fontSize = 14.sp)
+            }
+            Column(Modifier.weight(1F)) {
+                Text(
+                    RainbowStrings.AwarderKarma,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.DarkGray,
+                    fontSize = 16.sp
+                )
+                Text(user.awarderKarma.toString(), fontSize = 14.sp)
+            }
+        }
 
+        Text(
+            user.creationDate.toJavaLocalDateTime().format(DateTimeFormatter.ISO_DATE_TIME),
+            modifier = Modifier
+                .defaultPadding(start = 232.dp),
+        )
+    }
+}
+
+@Composable
+private fun producePostsState(
+    userName: String,
+    currentTab: ProfileTab,
+    postSorting: UserPostSorting,
+    timeSorting: TimeSorting,
+    lastPost: Post?,
+): State<UIState<List<Post>>> {
+    return produceState<UIState<List<Post>>>(
+        UIState.Loading,
+        currentTab,
+        postSorting,
+        timeSorting,
+        lastPost
+    ) {
+        if (lastPost == null)
+            value = UIState.Loading
+        when (currentTab) {
+            ProfileTab.Submitted -> Repos.Post.getUserSubmittedPosts(
+                userName,
+                postSorting,
+                timeSorting,
+                lastPost?.id
+            )
+            ProfileTab.Saved -> Repos.Post.getUserSavedPosts(
+                userName,
+                postSorting,
+                timeSorting,
+                lastPost?.id
+            )
+            ProfileTab.Hidden -> Repos.Post.getUserHiddenPosts(
+                userName,
+                postSorting,
+                timeSorting,
+                lastPost?.id
+            )
+            ProfileTab.Upvoted -> Repos.Post.getUserUpvotedPosts(
+                userName,
+                postSorting,
+                timeSorting,
+                lastPost?.id
+            )
+            ProfileTab.Downvoted -> Repos.Post.getUserDownvotedPosts(
+                userName,
+                postSorting,
+                timeSorting,
+                lastPost?.id
+            )
+            else -> emptyFlow()
+        }.map { it.toUIState() }.collect { value = it }
+    }
 }
