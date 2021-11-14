@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun RainbowProgressIndicator(modifier: Modifier = Modifier) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator()
     }
 }
