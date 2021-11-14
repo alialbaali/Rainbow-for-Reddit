@@ -19,7 +19,6 @@ fun UpvoteButton(
     enabled: Boolean = true,
 ) = VoteButton(onClick, imageVector, modifier, enabled, tint)
 
-
 @Composable
 fun DownvoteButton(
     onClick: () -> Unit,
@@ -28,7 +27,6 @@ fun DownvoteButton(
     tint: Color = Color.Black,
     enabled: Boolean = true,
 ) = VoteButton(onClick, imageVector, modifier, enabled, tint)
-
 
 @Composable
 private fun VoteButton(
@@ -39,6 +37,6 @@ private fun VoteButton(
     tint: Color = Color.Black,
 ) {
     IconButton(onClick, modifier, enabled) {
-        Icon(imageVector = imageVector, tint = tint, contentDescription = null )
+        Icon(imageVector = imageVector, tint = tint, contentDescription = imageVector.name)
     }
 }
