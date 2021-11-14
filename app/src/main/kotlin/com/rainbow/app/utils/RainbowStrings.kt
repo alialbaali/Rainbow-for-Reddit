@@ -39,4 +39,5 @@ object RainbowStrings {
     const val AwarderKarma = "Awarder karma"
     const val PostKarma = "Post karma"
     const val CommentKarma = "Comment karma"
+    const val ViewMore = "View more"
 }
