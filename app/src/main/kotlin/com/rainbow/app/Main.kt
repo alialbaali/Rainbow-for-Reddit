@@ -35,12 +35,16 @@ fun main() = application {
                         }
                     },
                     onUserNameClick = { userName ->
-                        router.push(Screen.User(userName))
-                        forwardStack.clear()
+                        if ((child.configuration as? Screen.User)?.userName != userName) {
+                            router.push(Screen.User(userName))
+                            forwardStack.clear()
+                        }
                     },
                     onSubredditNameClick = { subredditName ->
-                        router.push(Screen.Subreddit(subredditName))
-                        forwardStack.clear()
+                        if ((child.configuration as? Screen.Subreddit)?.subredditName != subredditName) {
+                            router.push(Screen.Subreddit(subredditName))
+                            forwardStack.clear()
+                        }
                     },
                     onBackClick = {
                         router.navigate {
