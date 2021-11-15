@@ -25,7 +25,7 @@ private const val KEY_STATE = "STATE"
 
 @Composable
 fun <C : Parcelable> rememberRouter(
-    initialConfiguration: () -> C,
+    initialConfiguration: C,
     configurationClass: KClass<out C>,
     handleBackButton: Boolean = false, // <-- Add this line
 ): Router<C, Any> {
@@ -33,7 +33,7 @@ fun <C : Parcelable> rememberRouter(
 
     return remember {
         context.router(
-            initialConfiguration = initialConfiguration,
+            initialConfiguration = { initialConfiguration },
             configurationClass = configurationClass,
             handleBackButton = handleBackButton // <-- Add this line
         ) { configuration, _ -> configuration }

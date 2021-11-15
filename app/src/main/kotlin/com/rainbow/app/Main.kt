@@ -24,7 +24,7 @@ fun main() = application {
 @Composable
 private fun ContentScreen() {
     val router = rememberRouter(
-        initialConfiguration = { Screen.SidebarItem.Home },
+        initialConfiguration = Screen.SidebarItem.Home,
         configurationClass = Screen::class,
     )
     val forwardStack by remember { mutableStateOf<MutableList<Screen>>(mutableListOf()) }
