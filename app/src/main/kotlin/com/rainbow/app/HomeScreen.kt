@@ -22,9 +22,9 @@ import kotlinx.coroutines.flow.map
 
 @Composable
 inline fun HomeScreen(
+    crossinline onPostClick: (Post) -> Unit,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
-    crossinline onPostClick: (Post) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var postSorting by remember { mutableStateOf(MainPostSorting.Default) }

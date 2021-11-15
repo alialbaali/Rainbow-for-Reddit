@@ -14,17 +14,20 @@ import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.rainbow.app.search.SearchTextField
+import com.rainbow.app.navigation.Screen
+import com.rainbow.app.navigation.name
 import com.rainbow.app.utils.RainbowIcons
 import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.app.utils.defaultPadding
 
 @Composable
 fun RainbowTopAppBar(
-    title: String,
+    screen: Screen,
     onSidebarClick: () -> Unit,
     onBackClick: () -> Unit,
     onForwardClick: () -> Unit,
+    isBackEnabled: Boolean,
+    isForwardEnabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -45,18 +48,24 @@ fun RainbowTopAppBar(
 
             IconButton(
                 onClick = onBackClick,
+                enabled = isBackEnabled
             ) {
                 Icon(RainbowIcons.ArrowBack, RainbowStrings.ShowMenu)
             }
 
             IconButton(
                 onClick = onForwardClick,
+                enabled = isForwardEnabled
             ) {
                 Icon(RainbowIcons.ArrowForward, RainbowStrings.ShowMenu)
             }
 
             Text(
-                title,
+                when (screen) {
+                    is Screen.SidebarItem -> screen.name
+                    is Screen.Subreddit -> screen.subredditName
+                    is Screen.User -> screen.userName
+                },
                 style = MaterialTheme.typography.h6
             )
 
