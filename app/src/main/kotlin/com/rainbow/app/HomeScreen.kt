@@ -26,6 +26,7 @@ inline fun HomeScreen(
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
     noinline onCommentsClick: () -> Unit,
+    noinline onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var postSorting by remember { mutableStateOf(MainPostSorting.Default) }
@@ -56,6 +57,7 @@ inline fun HomeScreen(
             onUserNameClick,
             onSubredditNameClick,
             onCommentsClick,
+            onShowSnackbar,
             onLoadMore = { lastPost = it }
         )
     }

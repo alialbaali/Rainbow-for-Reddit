@@ -6,7 +6,11 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.components.RainbowTopAppBar
@@ -42,44 +46,62 @@ fun Rainbow(
     var message by remember { mutableStateOf<UIState<Message>>(UIState.Loading) }
     var isSidebarExpanded by remember { mutableStateOf(true) }
     var isAddCommentFocusable by remember { mutableStateOf(false) }
-    Column(modifier.background(MaterialTheme.colors.background)) {
-        RainbowTopAppBar(
-            screen,
-            onSidebarClick = { isSidebarExpanded = !isSidebarExpanded },
-            onBackClick,
-            onForwardClick,
-            isBackEnabled,
-            isForwardEnabled,
-        )
-        Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            StartContent(
+    var snackbarMessage by remember { mutableStateOf<String?>(null) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(snackbarMessage) {
+        snackbarMessage?.let {
+            snackbarHostState.showSnackbar(it)
+            snackbarMessage = null
+        }
+    }
+    Box(modifier.background(MaterialTheme.colors.background)) {
+        Column {
+            RainbowTopAppBar(
                 screen,
-                backStack,
-                isSidebarExpanded,
-                onSidebarClick,
-                Modifier
-                    .wrapContentWidth(unbounded = true)
-                    .fillMaxHeight(),
+                onSidebarClick = { isSidebarExpanded = !isSidebarExpanded },
+                onBackClick,
+                onForwardClick,
+                isBackEnabled,
+                isForwardEnabled,
             )
-            CenterContent(
-                screen,
-                onPostClick = { post = UIState.Success(it) },
-                onUserNameClick,
-                onSubredditNameClick,
-                onMessageClick = { message = UIState.Success(it) },
-                { isAddCommentFocusable = true },
-                Modifier.weight(1F),
-            )
-            EndContent(
-                screen,
-                post,
-                message,
-                isAddCommentFocusable,
-                onUserNameClick,
-                onSubredditNameClick,
-                { isAddCommentFocusable = true },
-                Modifier.weight(1F)
-            )
+            Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                StartContent(
+                    screen,
+                    backStack,
+                    isSidebarExpanded,
+                    onSidebarClick,
+                    Modifier
+                        .wrapContentWidth(unbounded = true)
+                        .fillMaxHeight(),
+                )
+                CenterContent(
+                    screen,
+                    onPostClick = { post = UIState.Success(it) },
+                    onUserNameClick,
+                    onSubredditNameClick,
+                    onMessageClick = { message = UIState.Success(it) },
+                    onCommentsClick = { isAddCommentFocusable = true },
+                    onShowSnackbar = {snackbarMessage = it},
+                    Modifier.weight(1F),
+                )
+                EndContent(
+                    screen,
+                    post,
+                    message,
+                    isAddCommentFocusable,
+                    onUserNameClick,
+                    onSubredditNameClick,
+                    onCommentsClick = { isAddCommentFocusable = true },
+                    onShowSnackbar = { snackbarMessage = it },
+                    Modifier.weight(1F),
+                )
+            }
+        }
+        SnackbarHost(
+            snackbarHostState,
+            Modifier.align(Alignment.BottomCenter),
+        ) {
+            Snackbar(it, Modifier.fillMaxWidth(0.5F))
         }
     }
 }
@@ -109,6 +131,7 @@ private fun RowScope.CenterContent(
     onSubredditNameClick: (String) -> Unit,
     onMessageClick: (Message) -> Unit,
     onCommentsClick: () -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (screen) {
@@ -119,6 +142,7 @@ private fun RowScope.CenterContent(
                     onUserNameClick,
                     onSubredditNameClick,
                     onCommentsClick,
+                    onShowSnackbar,
                     modifier,
                 )
                 Screen.SidebarItem.Home -> HomeScreen(
@@ -126,6 +150,7 @@ private fun RowScope.CenterContent(
                     onUserNameClick,
                     onSubredditNameClick,
                     onCommentsClick,
+                    onShowSnackbar,
                     modifier,
                 )
                 Screen.SidebarItem.Subreddits -> CurrentUserSubredditsScreen(onSubredditNameClick)
@@ -144,6 +169,7 @@ private fun RowScope.CenterContent(
                 onUserNameClick,
                 onSubredditNameClick,
                 onCommentsClick,
+                onShowSnackbar,
                 modifier,
             )
         }
@@ -154,6 +180,7 @@ private fun RowScope.CenterContent(
                 onUserNameClick,
                 onSubredditNameClick,
                 onCommentsClick,
+                onShowSnackbar,
                 modifier,
             )
         }
@@ -170,6 +197,7 @@ private fun RowScope.EndContent(
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
     onCommentsClick: () -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (screen) {
@@ -181,6 +209,7 @@ private fun RowScope.EndContent(
                 onUserNameClick,
                 onSubredditNameClick,
                 onCommentsClick,
+                onShowSnackbar,
                 modifier
             )
         }

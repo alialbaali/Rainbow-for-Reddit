@@ -5,10 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -255,6 +252,7 @@ fun GifPost(gif: Post.Type.Gif, modifier: Modifier = Modifier) {
 fun PostActions(
     post: Post,
     onCommentsClick: () -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -305,7 +303,7 @@ fun PostActions(
         }
 
         Column {
-            IconButton(onClick = { isMenuExpanded = true }, Modifier.defaultShape()) {
+            IconButton(onClick = { isMenuExpanded = true }, Modifier.defaultShape(shape = CircleShape)) {
                 Icon(RainbowIcons.MoreVert, contentDescription = "More")
             }
 
@@ -328,16 +326,11 @@ fun PostActions(
                     onclick = {
                         clipboardManager.setText(AnnotatedString(post.url))
                         isMenuExpanded = false
+                        onShowSnackbar(RainbowStrings.LinkIsCopied)
                     }
                 )
 
-                RainbowMenuItem(
-                    "Share",
-                    RainbowIcons.Share,
-                    onclick = {},
-                )
-
-                RainbowMenuItem("Hide", RainbowIcons.VisibilityOff, onclick = {})
+                RainbowMenuItem(RainbowStrings.Hide, RainbowIcons.VisibilityOff, onclick = {})
             }
         }
     }

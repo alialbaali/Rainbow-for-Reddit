@@ -17,6 +17,7 @@ inline fun CompactPostItem(
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
     noinline onCommentsClick: () -> Unit,
+    noinline onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isTextPost = remember(post) { post.type is Post.Type.Text }
@@ -71,6 +72,7 @@ inline fun CompactPostItem(
         PostActions(
             post,
             onCommentsClick,
+            onShowSnackbar,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
