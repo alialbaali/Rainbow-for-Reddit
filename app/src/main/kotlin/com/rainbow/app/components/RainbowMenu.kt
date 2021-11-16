@@ -34,9 +34,9 @@ fun RainbowMenu(
 fun RainbowMenuItem(
     text: String,
     imageVector: ImageVector,
+    onclick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    onclick: () -> Unit,
 ) {
     DropdownMenuItem(onclick, modifier, enabled) {
         Icon(imageVector, contentDescription = text)

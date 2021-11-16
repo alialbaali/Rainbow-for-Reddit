@@ -31,6 +31,7 @@ data class Post(
     val userFlairs: List<Flair> = emptyList(),
     val userFlairBackgroundColor: Long,
     val userFlairTextColor: Flair.TextColor,
+    val url: String,
     val creationDate: LocalDateTime,
 ) {
     sealed interface Type {

@@ -73,18 +73,10 @@ fun CommentCommands(comment: Comment, modifier: Modifier = Modifier) {
                 expanded = isMenuExpanded,
                 onDismissRequest = { isMenuExpanded = false },
             ) {
-                RainbowMenuItem("Share", RainbowIcons.Share) {
-
-                }
-                RainbowMenuItem("View User", RainbowIcons.Person) {
-
-                }
-                RainbowMenuItem("Reply", RainbowIcons.Send) {
-
-                }
-                RainbowMenuItem("Block User", RainbowIcons.Block) {
-
-                }
+                RainbowMenuItem("Share", RainbowIcons.Share, onclick = {})
+                RainbowMenuItem("View User", RainbowIcons.Person, onclick = {})
+                RainbowMenuItem("Reply", RainbowIcons.Send, onclick = {})
+                RainbowMenuItem("Block User", RainbowIcons.Block, onclick = {})
             }
         }
     }

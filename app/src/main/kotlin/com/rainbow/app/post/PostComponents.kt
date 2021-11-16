@@ -258,6 +258,7 @@ fun PostActions(
 
     var isMenuExpanded by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val uriHandler = LocalUriHandler.current
 
     Row(
         modifier,
@@ -310,22 +311,21 @@ fun PostActions(
                 onDismissRequest = { isMenuExpanded = false },
             ) {
                 RainbowMenuItem(
-                    "Share",
-                    RainbowIcons.Share,
-                ) {
-
-                }
+                    RainbowStrings.OpenInBrowser,
+                    RainbowIcons.OpenInBrowser,
+                    onclick = {
+                        uriHandler.openUri(post.url)
+                        isMenuExpanded = false
+                    }
+                )
 
                 RainbowMenuItem(
-                    post.userName,
-                    RainbowIcons.Person
-                ) {
+                    "Share",
+                    RainbowIcons.Share,
+                    onclick = {},
+                )
 
-                }
-
-                RainbowMenuItem("Hide", RainbowIcons.VisibilityOff) {
-
-                }
+                RainbowMenuItem("Hide", RainbowIcons.VisibilityOff, onclick = {})
             }
         }
     }

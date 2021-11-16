@@ -88,6 +88,7 @@ internal object RemoteMappers {
                         "light" -> false
                         else -> true
                     },
+                    url = permalink!!.toRedditUrl()
                 )
             }
         }
@@ -212,6 +213,7 @@ internal object RemoteMappers {
         }
     }
 
+    private fun String.toRedditUrl() = "https://www.reddit.com$this"
     private fun String.removeAmp() = replace("amp;", "&")
 }
 
