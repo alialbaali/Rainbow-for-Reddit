@@ -89,7 +89,10 @@ internal object RemoteMappers {
                         "light" -> false
                         else -> true
                     },
-                    url = permalink!!.toRedditUrl()
+                    url = permalink!!.toRedditUrl(),
+                    is_read = localPostQueries.selectById(it.name!!)
+                        .executeAsOneOrNull()
+                        ?.is_read ?: false,
                 )
             }
         }

@@ -40,6 +40,7 @@ inline fun CompactPostItem(
         if (isTextPost) {
             PostTitle(
                 title = post.title,
+                isRead = post.isRead,
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
@@ -57,6 +58,7 @@ inline fun CompactPostItem(
             ) {
                 PostTitle(
                     title = post.title,
+                    isRead = post.isRead,
                     modifier = Modifier
                         .wrapContentWidth()
                         .wrapContentHeight()

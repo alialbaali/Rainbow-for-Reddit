@@ -231,6 +231,10 @@ internal class PostRepositoryImpl(
             .onSuccess { localPostQueries.unhide(postId) }
     }
 
+    override suspend fun readPost(postId: String): Result<Unit> = withContext(dispatcher) {
+        localPostQueries.read(postId).let { Result.success(it) }
+    }
+
     private suspend fun <T : Enum<T>> Result<List<RemotePost>>.savePostsAndLinks(
         collector: FlowCollector<Result<List<Post>>>,
         listing: PostListing,

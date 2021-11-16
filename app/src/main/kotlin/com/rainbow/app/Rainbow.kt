@@ -26,8 +26,10 @@ import com.rainbow.app.subreddit.SubredditScreen
 import com.rainbow.app.user.UserScreen
 import com.rainbow.app.utils.UIState
 import com.rainbow.app.utils.composed
+import com.rainbow.data.Repos
 import com.rainbow.domain.models.Message
 import com.rainbow.domain.models.Post
+import kotlinx.coroutines.launch
 
 @Composable
 fun Rainbow(
@@ -44,6 +46,7 @@ fun Rainbow(
 ) {
     var post by remember { mutableStateOf<UIState<Post>>(UIState.Loading) }
     var message by remember { mutableStateOf<UIState<Message>>(UIState.Loading) }
+    val scope = rememberCoroutineScope()
     var isSidebarExpanded by remember { mutableStateOf(true) }
     var isAddCommentFocusable by remember { mutableStateOf(false) }
     var snackbarMessage by remember { mutableStateOf<String?>(null) }
@@ -76,7 +79,12 @@ fun Rainbow(
                 )
                 CenterContent(
                     screen,
-                    onPostClick = { post = UIState.Success(it) },
+                    onPostClick = {
+                        post = UIState.Success(it)
+                        scope.launch {
+                            Repos.Post.readPost(it.id)
+                        }
+                    },
                     onUserNameClick,
                     onSubredditNameClick,
                     onMessageClick = { message = UIState.Success(it) },

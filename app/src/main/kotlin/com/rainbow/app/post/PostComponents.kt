@@ -5,10 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -34,12 +31,14 @@ import io.kamel.image.lazyPainterResource
 import kotlinx.coroutines.launch
 
 @Composable
-fun PostTitle(title: String, modifier: Modifier = Modifier) {
-    Text(
-        text = title,
-        modifier = modifier,
-        style = MaterialTheme.typography.h5,
-    )
+fun PostTitle(title: String, isRead: Boolean, modifier: Modifier = Modifier) {
+    PostIsReadProvider(isRead) {
+        Text(
+            text = title,
+            modifier = modifier,
+            style = MaterialTheme.typography.h5,
+        )
+    }
 }
 
 @Composable
@@ -96,7 +95,7 @@ inline fun PostInfo(
 @Composable
 fun PostContent(post: Post, modifier: Modifier = Modifier) {
     when (val type = post.type) {
-        is Post.Type.Text -> TextPost(type, modifier)
+        is Post.Type.Text -> TextPost(type, post.isRead, modifier)
         is Post.Type.Link -> LinkPost(type, modifier)
         is Post.Type.Gif -> GifPost(type, modifier)
         is Post.Type.Image -> ImagePost(type, modifier)
@@ -106,20 +105,22 @@ fun PostContent(post: Post, modifier: Modifier = Modifier) {
 
 
 @Composable
-fun TextPost(text: Post.Type.Text, modifier: Modifier = Modifier) {
+fun TextPost(text: Post.Type.Text, isRead: Boolean, modifier: Modifier = Modifier) {
     var maxLines by remember { mutableStateOf(15) }
     var shouldLimitLines by remember { mutableStateOf(false) }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Text(
-            buildAnnotatedString {
-                append(text.body.trim())
-            },
-            modifier = Modifier.animateContentSize(),
-            maxLines = if (shouldLimitLines) maxLines else Int.MAX_VALUE,
-            style = MaterialTheme.typography.body1,
-            overflow = TextOverflow.Ellipsis,
-            onTextLayout = { if (it.lineCount > 15) shouldLimitLines = true }
-        )
+        PostIsReadProvider(isRead) {
+            Text(
+                buildAnnotatedString {
+                    append(text.body.trim())
+                },
+                modifier = Modifier.animateContentSize(),
+                maxLines = if (shouldLimitLines) maxLines else Int.MAX_VALUE,
+                style = MaterialTheme.typography.body1,
+                overflow = TextOverflow.Ellipsis,
+                onTextLayout = { if (it.lineCount > 15) shouldLimitLines = true }
+            )
+        }
         if (shouldLimitLines)
             Box(
                 Modifier
@@ -359,5 +360,12 @@ fun PostActions(
                     )
             }
         }
+    }
+}
+
+@Composable
+private fun PostIsReadProvider(isRead: Boolean, content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalContentAlpha provides if (isRead) ContentAlpha.medium else ContentAlpha.high) {
+        content()
     }
 }

@@ -75,6 +75,7 @@ fun PostScreen(
 
                 PostTitle(
                     title = post.title,
+                    isRead = false,
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()

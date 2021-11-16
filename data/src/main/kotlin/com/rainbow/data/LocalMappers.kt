@@ -89,7 +89,8 @@ internal object LocalMappers {
                 userFlairs = userFlairs,
                 userFlairBackgroundColor = it.user_flair_background_color.toLongColor(),
                 userFlairTextColor = if (it.user_flair_text_color) Flair.TextColor.Dark else Flair.TextColor.Light,
-                url = it.url
+                url = it.url,
+                isRead = it.is_read
             )
         }
 

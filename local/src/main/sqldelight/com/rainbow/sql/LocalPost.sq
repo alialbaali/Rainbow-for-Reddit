@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS LocalPost
     is_mine        INTEGER AS Boolean    NOT NULL,
     is_saved       INTEGER AS Boolean    NOT NULL,
     is_hidden       INTEGER  AS Boolean NOT NULL,
+    is_read INTEGER AS Boolean NOT NULL,
     vote           INTEGER AS Boolean,
     flair_text_color INTEGER AS Boolean NOT NULL,
     flair_background_color TEXT NOT NULL,
@@ -66,6 +67,11 @@ WHERE id = ?;
 unhide:
 UPDATE LocalPost
 SET is_hidden = 0
+WHERE id = ?;
+
+read:
+UPDATE LocalPost
+SET is_read = 1
 WHERE id = ?;
 
 clear:

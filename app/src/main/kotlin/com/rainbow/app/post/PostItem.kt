@@ -44,6 +44,7 @@ inline fun PostItem(
 
         PostTitle(
             title = post.title,
+            isRead = post.isRead,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()

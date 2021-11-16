@@ -69,4 +69,6 @@ interface PostRepository {
 
     suspend fun unHidePost(postId: String): Result<Unit>
 
+    suspend fun readPost(postId: String): Result<Unit>
+
 }
