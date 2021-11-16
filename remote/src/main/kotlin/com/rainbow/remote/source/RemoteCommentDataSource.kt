@@ -4,7 +4,10 @@ import com.rainbow.remote.dto.RemoteComment
 
 interface RemoteCommentDataSource {
 
-    suspend fun getPostComments(postId: String): Result<List<RemoteComment>>
+    suspend fun getPostComments(
+        postId: String,
+        commentsSorting: String,
+    ): Result<List<RemoteComment>>
 
     suspend fun getUserComments(userId: String): Result<List<RemoteComment>>
 
