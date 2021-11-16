@@ -16,6 +16,7 @@ inline fun CompactPostItem(
     crossinline onClick: (Post) -> Unit,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
+    noinline onCommentsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isTextPost = remember(post) { post.type is Post.Type.Text }
@@ -25,6 +26,7 @@ inline fun CompactPostItem(
             .then(ShapeModifier)
             .clickable { onClick(post) }
             .defaultPadding(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         PostInfo(
             post = post,
@@ -66,11 +68,12 @@ inline fun CompactPostItem(
                 )
             }
         }
-        PostCommands(
+        PostActions(
             post,
+            onCommentsClick,
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight()
+                .wrapContentHeight(),
         )
     }
 }

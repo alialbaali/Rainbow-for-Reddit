@@ -16,6 +16,7 @@ inline fun LazyListScope.posts(
     crossinline onPostClick: (Post) -> Unit,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
+    noinline onCommentsClick: () -> Unit,
     crossinline onLoadMore: (Post) -> Unit,
 ) {
     when (postsState) {
@@ -35,13 +36,15 @@ inline fun LazyListScope.posts(
                         post,
                         onPostClick,
                         onUserNameClick,
-                        onSubredditNameClick
+                        onSubredditNameClick,
+                        onCommentsClick,
                     )
                     PostLayout.Compact -> CompactPostItem(
                         post,
                         onPostClick,
                         onUserNameClick,
-                        onSubredditNameClick
+                        onSubredditNameClick,
+                        onCommentsClick,
                     )
                 }
                 PagingEffect(posts, index, onLoadMore)

@@ -5,15 +5,16 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusOrder
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.comment.AddComment
 import com.rainbow.app.comment.postComments
-import com.rainbow.app.utils.ShapeModifier
-import com.rainbow.app.utils.UIState
-import com.rainbow.app.utils.defaultPadding
-import com.rainbow.app.utils.toUIState
+import com.rainbow.app.utils.*
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.Post
@@ -25,9 +26,11 @@ import kotlinx.coroutines.flow.map
 @Composable
 fun PostScreen(
     post: Post,
-    modifier: Modifier = Modifier,
+    isAddCommentFocusable: Boolean,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
+    onCommentsClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var commentsSorting by remember { mutableStateOf(PostCommentSorting.Default) }
     var timeSorting by remember { mutableStateOf(TimeSorting.Default) }
@@ -40,16 +43,23 @@ fun PostScreen(
         timeSorting,
         lastComment
     ) {
+        value = UIState.Loading
         Repos.Comment.getPostsComments(post.id, commentsSorting)
             .map { it.toUIState() }
             .collect { value = it }
+    }
+
+    var repliesVisibility by remember(state) { mutableStateOf(emptyMap<Comment, Boolean>()) }
+    val focusRequester = remember(post) { FocusRequester() }
+    SideEffect {
+        if (isAddCommentFocusable)
+            focusRequester.requestFocus()
     }
     LazyColumn(
         modifier
             .then(ShapeModifier)
             .defaultPadding(),
         scrollingState,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -76,26 +86,61 @@ fun PostScreen(
                         .fillMaxWidth()
                 )
 
-                PostCommands(
+                PostActions(
                     post,
+                    onCommentsClick,
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
                 )
             }
-        }
-        item {
+            Spacer(Modifier.height(16.dp))
+            AddComment(
+                post,
+                Modifier
+                    .fillParentMaxWidth()
+                    .focusOrder(focusRequester)
+            )
+            Spacer(Modifier.height(16.dp))
             Sorting(
                 commentsSorting,
                 onSortingUpdate = { commentsSorting = it },
                 timeSorting,
                 onTimeSortingUpdate = { timeSorting = it }
             )
+            Spacer(Modifier.height(16.dp))
+            if (state.isSuccess)
+                Row(Modifier.fillParentMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    TextButton(
+                        onClick = {
+                            repliesVisibility = state.asSuccess().value
+                                .associateWith { false }
+                        }
+                    ) {
+                        Text("Collapse all")
+                    }
+
+                    TextButton(
+                        onClick = {
+                            repliesVisibility = state.asSuccess().value
+                                .associateWith { true }
+                        }
+                    ) {
+                        Text("Expand all")
+                    }
+                }
+            Spacer(Modifier.height(16.dp))
         }
-        item {
-            AddComment(post, Modifier.fillParentMaxWidth())
-        }
-        postComments(state, onLoadMore = { lastComment = it }, onUserNameClick, onSubredditNameClick)
+        postComments(
+            state,
+            repliesVisibility,
+            setRepliesVisibility = { id, isVisible ->
+                repliesVisibility = repliesVisibility.toMutableMap().apply { this[id] = isVisible }
+            },
+            onLoadMore = { lastComment = it },
+            onUserNameClick,
+            onSubredditNameClick
+        )
     }
     VerticalScrollbar(rememberScrollbarAdapter(scrollingState))
 }

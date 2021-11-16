@@ -25,10 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.app.award.Awards
 import com.rainbow.app.components.*
-import com.rainbow.app.utils.RainbowIcons
-import com.rainbow.app.utils.RainbowStrings
-import com.rainbow.app.utils.defaultPadding
-import com.rainbow.app.utils.imageUrl
+import com.rainbow.app.utils.*
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.Post
 import io.kamel.image.KamelImage
@@ -96,7 +93,7 @@ fun TextPost(text: Post.Type.Text, modifier: Modifier = Modifier) {
             maxLines = if (shouldLimitLines) maxLines else Int.MAX_VALUE,
             style = MaterialTheme.typography.body1,
             overflow = TextOverflow.Ellipsis,
-            onTextLayout = {  if (it.lineCount > 15) shouldLimitLines = true }
+            onTextLayout = { if (it.lineCount > 15) shouldLimitLines = true }
         )
         if (shouldLimitLines)
             Box(
@@ -193,11 +190,15 @@ fun VideoPost(video: Post.Type.Video, modifier: Modifier = Modifier) {
 
 @Composable
 fun GifPost(gif: Post.Type.Gif, modifier: Modifier = Modifier) {
-    Gif(gif.url, gif.url, modifier)
+//    Gif(gif.url, gif.url, modifier)
 }
 
 @Composable
-fun PostCommands(post: Post, modifier: Modifier = Modifier) {
+fun PostActions(
+    post: Post,
+    onCommentsClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
 
     var isMenuExpanded by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
@@ -228,10 +229,23 @@ fun PostCommands(post: Post, modifier: Modifier = Modifier) {
             }
         )
 
-        Text("${post.commentsCount} Comments", style = MaterialTheme.typography.subtitle1)
+        Row(
+            Modifier
+                .defaultShape()
+                .clickable(onClick = onCommentsClick)
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(RainbowIcons.QuestionAnswer, contentDescription = RainbowIcons.QuestionAnswer.name)
+            Text(
+                text = post.commentsCount.toString(),
+                fontSize = 14.sp,
+            )
+        }
 
         Column {
-            IconButton(onClick = { isMenuExpanded = true }) {
+            IconButton(onClick = { isMenuExpanded = true }, Modifier.defaultShape()) {
                 Icon(RainbowIcons.MoreVert, contentDescription = "More")
             }
 

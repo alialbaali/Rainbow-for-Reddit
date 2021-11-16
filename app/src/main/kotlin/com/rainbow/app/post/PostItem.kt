@@ -18,6 +18,7 @@ inline fun PostItem(
     crossinline onClick: (Post) -> Unit,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
+    noinline onCommentsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -59,8 +60,9 @@ inline fun PostItem(
                 .fillMaxWidth()
         )
 
-        PostCommands(
+        PostActions(
             post,
+            onCommentsClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
