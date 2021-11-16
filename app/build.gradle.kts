@@ -19,6 +19,7 @@ dependencies {
     implementation("com.arkivanov.decompose:extensions-compose-jetbrains:0.4.0")
     implementation("com.arkivanov.decompose:decompose:0.4.0")
     implementation("org.jsoup:jsoup:1.14.3")
+    implementation("uk.co.caprica:vlcj:4.7.0")
 }
 
 compose.desktop {

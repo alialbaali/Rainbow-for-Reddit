@@ -26,6 +26,8 @@ internal object RemoteMappers {
                         if (url != null)
                             localLinkQueries.insert(LocalLink(id, url))
                     }
+                else if (it.isVideo == true && it.media?.redditVideo?.fallbackUrl != null)
+                    localLinkQueries.insert(LocalLink(id, it.media?.redditVideo?.fallbackUrl!!))
 
             it.allAwardings?.quickMap(AwardMapper(it.name!!))?.let {
                 it.forEach {
@@ -80,7 +82,8 @@ internal object RemoteMappers {
                         "light" -> false
                         else -> true
                     },
-                    user_flair_background_color = authorFlairBackgroundColor.takeIf { !it.isNullOrBlank() } ?: "#FFF5F5F5",
+                    user_flair_background_color = authorFlairBackgroundColor.takeIf { !it.isNullOrBlank() }
+                        ?: "#FFF5F5F5",
                     user_flair_text_color = when (authorFlairTextColor) {
                         "light" -> false
                         else -> true

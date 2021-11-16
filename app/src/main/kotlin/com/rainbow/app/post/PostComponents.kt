@@ -241,7 +241,7 @@ fun LinkPost(link: Post.Type.Link, modifier: Modifier = Modifier) {
 
 @Composable
 fun VideoPost(video: Post.Type.Video, modifier: Modifier = Modifier) {
-
+//    Video(video.url, modifier)
 }
 
 @Composable
