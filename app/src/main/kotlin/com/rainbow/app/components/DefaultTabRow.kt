@@ -6,10 +6,10 @@ import androidx.compose.material.Tab
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.rainbow.app.utils.ShapeModifier
+import com.rainbow.app.utils.defaultShape
 
 @Composable
-inline fun <reified T: Enum<T>> DefaultTabRow(
+inline fun <reified T : Enum<T>> DefaultTabRow(
     selectedTab: T,
     crossinline onTabClick: (T) -> Unit,
     modifier: Modifier = Modifier
@@ -19,7 +19,7 @@ inline fun <reified T: Enum<T>> DefaultTabRow(
         values.indexOf(selectedTab),
         backgroundColor = MaterialTheme.colors.background,
         modifier = modifier
-            .then(ShapeModifier),
+            .defaultShape(),
         divider = {},
         contentColor = MaterialTheme.colors.primary,
     ) {

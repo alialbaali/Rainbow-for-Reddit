@@ -11,8 +11,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.app.components.UserName
-import com.rainbow.app.utils.ShapeModifier
 import com.rainbow.app.utils.defaultPadding
+import com.rainbow.app.utils.defaultShape
 import com.rainbow.domain.models.Message
 
 @Composable
@@ -24,7 +24,7 @@ inline fun MessageItem(
 ) {
     Column(
         modifier
-            .then(ShapeModifier)
+            .defaultShape()
             .clickable { onClick(message) }
             .defaultPadding()
             .fillMaxWidth(),

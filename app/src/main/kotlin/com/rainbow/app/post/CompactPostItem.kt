@@ -6,8 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.rainbow.app.utils.ShapeModifier
 import com.rainbow.app.utils.defaultPadding
+import com.rainbow.app.utils.defaultShape
 import com.rainbow.domain.models.Post
 
 @Composable
@@ -23,7 +23,7 @@ inline fun CompactPostItem(
     Column(
         modifier
             .padding(vertical = 8.dp)
-            .then(ShapeModifier)
+            .defaultShape()
             .clickable { onClick(post) }
             .defaultPadding(),
         verticalArrangement = Arrangement.spacedBy(8.dp),

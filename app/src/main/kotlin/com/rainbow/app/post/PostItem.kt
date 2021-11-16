@@ -7,8 +7,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.rainbow.app.utils.ShapeModifier
 import com.rainbow.app.utils.defaultPadding
+import com.rainbow.app.utils.defaultShape
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.Post
 
@@ -26,7 +26,7 @@ inline fun PostItem(
 
     Column(
         modifier
-            .then(ShapeModifier)
+            .defaultShape()
             .clickable { onClick(post) }
             .defaultPadding(),
         verticalArrangement = Arrangement.spacedBy(8.dp)

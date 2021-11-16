@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.GraphicsLayerScope
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.components.RainbowProgressIndicator
@@ -56,13 +57,17 @@ fun OneTimeEffect(
     }
 }
 
-val ShapeModifier
-    @Composable
-    get() = Modifier
-        .border(1.dp, MaterialTheme.colors.onBackground.copy(0.1F), MaterialTheme.shapes.large)
-        .background(MaterialTheme.colors.background, MaterialTheme.shapes.large)
-        .clip(MaterialTheme.shapes.large)
-
+@Composable
+fun Modifier.defaultShape(
+    borderWidth: Dp = 1.dp,
+    borderColor: Color = MaterialTheme.colors.onBackground.copy(0.1F),
+    shape: Shape = MaterialTheme.shapes.large,
+) = this.then(
+    Modifier
+        .border(borderWidth, borderColor, shape)
+        .background(MaterialTheme.colors.background, shape)
+        .clip(shape)
+)
 
 fun Modifier.defaultPadding(
     start: Dp = 16.dp,

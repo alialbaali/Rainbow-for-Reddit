@@ -135,7 +135,7 @@ private fun Header(subreddit: Subreddit, modifier: Modifier = Modifier) {
     val scope = rememberCoroutineScope()
     Column(
         modifier
-            .then(ShapeModifier)
+            .defaultShape()
             .heightIn(min = 350.dp)
             .fillMaxWidth()
     ) {
@@ -196,7 +196,8 @@ private fun LazyListScope.moderators(moderatorsState: UIState<List<Moderator>>) 
         is UIState.Success -> {
             item {
                 Column(
-                    ShapeModifier
+                    Modifier
+                        .defaultShape()
                         .defaultPadding()
                         .fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -218,7 +219,8 @@ private fun LazyListScope.rules(rulesState: UIState<List<Rule>>) {
         is UIState.Success -> {
             item {
                 Column(
-                    ShapeModifier
+                    Modifier
+                        .defaultShape()
                         .fillMaxWidth()
                         .defaultPadding(),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -253,7 +255,8 @@ private fun ModeratorItem(moderator: Moderator, modifier: Modifier = Modifier) {
                     text = permission.name,
                     fontWeight = FontWeight.Medium,
                     fontSize = 14.sp,
-                    modifier = ShapeModifier
+                    modifier = modifier
+                        .defaultShape()
                         .padding(8.dp)
                 )
             }

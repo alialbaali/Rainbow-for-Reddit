@@ -57,7 +57,7 @@ fun PostScreen(
     }
     LazyColumn(
         modifier
-            .then(ShapeModifier)
+            .defaultShape()
             .defaultPadding(),
         scrollingState,
     ) {

@@ -4,10 +4,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Text
+import androidx.compose.ui.Modifier
 import com.rainbow.app.components.RainbowProgressIndicator
-import com.rainbow.app.utils.ShapeModifier
 import com.rainbow.app.utils.UIState
 import com.rainbow.app.utils.defaultPadding
+import com.rainbow.app.utils.defaultShape
 import com.rainbow.domain.models.Comment
 
 
@@ -25,7 +26,8 @@ inline fun LazyListScope.comments(
                 comment = comment,
                 onUserNameClick,
                 onSubredditNameClick,
-                modifier = ShapeModifier
+                modifier = Modifier
+                    .defaultShape()
                     .fillParentMaxWidth()
                     .clickable {}
                     .defaultPadding(),

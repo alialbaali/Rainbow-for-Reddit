@@ -100,7 +100,7 @@ fun ProfileScreen(
 fun Header(user: User, modifier: Modifier = Modifier) {
     Column(
         modifier
-            .then(ShapeModifier)
+            .defaultShape()
             .heightIn(min = 350.dp)
             .fillMaxWidth()
     ) {

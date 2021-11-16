@@ -1,6 +1,6 @@
 package com.rainbow.remote.routes.utils
 
-import com.rainbow.remote.redditClient
+import com.rainbow.remote.client.redditClient
 import io.ktor.client.engine.mock.*
 import io.ktor.client.features.*
 import io.ktor.client.features.json.*

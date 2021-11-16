@@ -38,7 +38,7 @@ fun SubredditItem(
     Column(
         modifier
             .heightIn(min = 150.dp)
-            .then(ShapeModifier)
+            .defaultShape()
             .clickable { onClick(subreddit) },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
