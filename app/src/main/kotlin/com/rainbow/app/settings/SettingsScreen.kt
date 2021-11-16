@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 fun SettingsScreen() {
     Column {
         ThemeOption()
+        PostFullHeightOption()
+        PostLayoutOption()
         LogoutButton()
     }
 }

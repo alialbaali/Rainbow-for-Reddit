@@ -15,12 +15,12 @@ import com.rainbow.data.Repos
 import kotlinx.coroutines.launch
 
 @Composable
-fun LogoutButton() {
+fun LogoutButton(modifier: Modifier = Modifier) {
     var isDialogShown by remember { mutableStateOf(false) }
 
     OutlinedButton(
         onClick = { isDialogShown = true },
-        modifier = Modifier.defaultPadding(),
+        modifier = modifier.defaultPadding(),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colors.error),
         border = ButtonDefaults.outlinedBorder.copy(brush = SolidColor(MaterialTheme.colors.error)),
     ) {
