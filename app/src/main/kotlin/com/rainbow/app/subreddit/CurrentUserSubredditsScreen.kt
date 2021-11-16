@@ -22,11 +22,12 @@ fun CurrentUserSubredditsScreen(
             .collect { value = it }
     }
 
-    state.composed { subreddits ->
+    state.composed(modifier) { subreddits ->
         Subreddits(
             subreddits,
             onClick = { onClick(it.name) },
-            onLoadMore = { lastSubreddit = it }
+            onLoadMore = { lastSubreddit = it },
+            modifier
         )
     }
 
