@@ -100,8 +100,8 @@ data class RemotePost(
     val linkFlairBackgroundColor: String? = null,
     @SerialName("link_flair_css_class")
     val linkFlairCssClass: String? = null, // null
-//    @SerialName("link_flair_richtext")
-//    val linkFlairRichtext: List<String>? = null,
+    @SerialName("link_flair_richtext")
+    val linkFlairRichtext: List<FlairRichText>? = null,
     @SerialName("link_flair_text")
     val linkFlairText: String? = null, // null
     @SerialName("link_flair_text_color")

@@ -57,6 +57,10 @@ inline fun PostInfo(
         UserName(post.userName, onUserNameClick)
         Dot()
         CreationDate(post.creationDate)
+        post.flair?.let { flair ->
+            Dot()
+            Flair(flair)
+        }
         if (post.isNSFW) {
             Dot()
             Text(RainbowStrings.NSFW, fontWeight = FontWeight.Medium, fontSize = 14.sp, color = Color.Red)

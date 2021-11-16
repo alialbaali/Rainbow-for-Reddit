@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS LocalFlair (
+id TEXT NOT NULL,
+url TEXT NOT NULL
+);
+
+selectById:
+SELECT * FROM LocalFlair
+WHERE id = ?;
+
+insert:
+INSERT INTO LocalFlair
+VALUES ?;

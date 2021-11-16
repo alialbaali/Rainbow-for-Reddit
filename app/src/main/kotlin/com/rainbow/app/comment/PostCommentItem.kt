@@ -1,61 +1,68 @@
 package com.rainbow.app.comment
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.rounded.Block
-import androidx.compose.material.icons.rounded.Person
-import androidx.compose.material.icons.rounded.Send
-import androidx.compose.material.icons.rounded.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.rainbow.app.components.RainbowMenu
-import com.rainbow.app.components.RainbowMenuItem
-import com.rainbow.app.components.VoteActions
-import com.rainbow.app.utils.RainbowIcons
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.application
+import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.domain.models.Comment
 
 @Composable
-fun PostCommentItem(
+inline fun PostCommentItem(
     comment: Comment,
+    crossinline onClick: () -> Unit,
+    crossinline onUserNameClick: (String) -> Unit,
+    crossinline onSubredditNameClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier) {
-        CommentInfo(comment)
-        Spacer(Modifier.height(8.dp))
+    Column(
+        modifier
+            .clickable { onClick() }
+            .padding(bottom = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        CommentInfo(comment, onUserNameClick, onSubredditNameClick, isSubredditNameEnabled = false)
         Text(comment.body, color = MaterialTheme.colors.onBackground)
-        Spacer(Modifier.height(8.dp))
-        Row {
-            VoteActions(
-                vote = comment.vote,
-                votesCount = comment.upvotesCount.toLong(),
-                onUpvote = {},
-                onDownvote = {},
-                onUnvote = {}
-            )
-            RainbowMenu(
-                expanded = false,
-                onDismissRequest = {},
-            ) {
+        CommentCommands(comment)
+    }
+}
 
-                RainbowMenuItem("Share", RainbowIcons.Share) {
-
+fun main() = application {
+    Window({ exitApplication() }) {
+        LazyColumn {
+            item {
+                Row {
+                    Box(
+                        Modifier
+                            .background(Color.Blue)
+                            .width(5.dp)
+                            .fillMaxHeight(),
+                    )
+                    Text("Hello world!")
                 }
-                RainbowMenuItem("View User", RainbowIcons.Person) {
-
-                }
-                RainbowMenuItem("Reply", RainbowIcons.Send) {
-
-                }
-                RainbowMenuItem("Block User", RainbowIcons.Block) {
-
-                }
-
             }
         }
     }
+}
+
+@Composable
+fun ViewMoreCommentItem(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Text(
+        RainbowStrings.ViewMore,
+        modifier
+            .clip(MaterialTheme.shapes.large)
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(vertical = 16.dp),
+        color = MaterialTheme.colors.onBackground
+    )
 }
