@@ -38,6 +38,7 @@ fun ProfileScreen(
     onPostClick: (Post) -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
+    onCommentsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var selectedTab by remember { mutableStateOf(ProfileTab.Submitted) }
@@ -86,6 +87,7 @@ fun ProfileScreen(
                     onPostClick,
                     onUserNameClick,
                     onSubredditNameClick,
+                    onCommentsClick,
                     onLoadMore = { lastPost = it }
                 )
             }

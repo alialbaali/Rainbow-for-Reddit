@@ -33,6 +33,7 @@ fun UserScreen(
     onPostClick: (Post) -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
+    onCommentsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var selectedTab by remember { mutableStateOf(UserTab.Overview) }
@@ -85,6 +86,7 @@ fun UserScreen(
                     onPostClick,
                     onUserNameClick,
                     onSubredditNameClick,
+                    onCommentsClick,
                     onLoadMore = { lastPost = it }
                 )
                 UserTab.Comments -> comments(commentsState, onUserNameClick, onSubredditNameClick)

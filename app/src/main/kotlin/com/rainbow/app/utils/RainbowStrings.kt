@@ -40,4 +40,5 @@ object RainbowStrings {
     const val PostKarma = "Post karma"
     const val CommentKarma = "Comment karma"
     const val ViewMore = "View more"
+    const val Search = "Search"
 }

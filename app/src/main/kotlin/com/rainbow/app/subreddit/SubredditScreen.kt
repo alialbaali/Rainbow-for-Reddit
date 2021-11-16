@@ -49,6 +49,7 @@ fun SubredditScreen(
     onPostClick: (Post) -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
+    onCommentsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollingState = rememberLazyListState()
@@ -117,6 +118,7 @@ fun SubredditScreen(
                 onPostClick,
                 onUserNameClick,
                 onSubredditNameClick,
+                onCommentsClick,
                 onLoadMore = { lastPost = it }
             )
             SubredditTab.Rules -> rules(rulesState)

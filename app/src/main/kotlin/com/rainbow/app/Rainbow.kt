@@ -41,6 +41,7 @@ fun Rainbow(
     var post by remember { mutableStateOf<UIState<Post>>(UIState.Loading) }
     var message by remember { mutableStateOf<UIState<Message>>(UIState.Loading) }
     var isSidebarExpanded by remember { mutableStateOf(true) }
+    var isAddCommentFocusable by remember { mutableStateOf(false) }
     Column(modifier.background(MaterialTheme.colors.background)) {
         RainbowTopAppBar(
             screen,
@@ -66,14 +67,17 @@ fun Rainbow(
                 onUserNameClick,
                 onSubredditNameClick,
                 onMessageClick = { message = UIState.Success(it) },
+                { isAddCommentFocusable = true },
                 Modifier.weight(1F),
             )
             EndContent(
                 screen,
                 post,
                 message,
+                isAddCommentFocusable,
                 onUserNameClick,
                 onSubredditNameClick,
+                { isAddCommentFocusable = true },
                 Modifier.weight(1F)
             )
         }
@@ -104,6 +108,7 @@ private fun RowScope.CenterContent(
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
     onMessageClick: (Message) -> Unit,
+    onCommentsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (screen) {
@@ -113,12 +118,14 @@ private fun RowScope.CenterContent(
                     onPostClick,
                     onUserNameClick,
                     onSubredditNameClick,
+                    onCommentsClick,
                     modifier,
                 )
                 Screen.SidebarItem.Home -> HomeScreen(
                     onPostClick,
                     onUserNameClick,
                     onSubredditNameClick,
+                    onCommentsClick,
                     modifier,
                 )
                 Screen.SidebarItem.Subreddits -> CurrentUserSubredditsScreen(onSubredditNameClick)
@@ -136,6 +143,7 @@ private fun RowScope.CenterContent(
                 onPostClick,
                 onUserNameClick,
                 onSubredditNameClick,
+                onCommentsClick,
                 modifier,
             )
         }
@@ -145,6 +153,7 @@ private fun RowScope.CenterContent(
                 onPostClick,
                 onUserNameClick,
                 onSubredditNameClick,
+                onCommentsClick,
                 modifier,
             )
         }
@@ -157,12 +166,23 @@ private fun RowScope.EndContent(
     screen: Screen,
     post: UIState<Post>,
     message: UIState<Message>,
+    isAddCommentFocusable: Boolean,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
+    onCommentsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (screen) {
         Screen.SidebarItem.Messages -> message.composed(modifier) { MessageScreen(it, modifier) }
-        else -> post.composed(modifier) { PostScreen(it, onUserNameClick, onSubredditNameClick, modifier) }
+        else -> post.composed(modifier) {
+            PostScreen(
+                it,
+                isAddCommentFocusable,
+                onUserNameClick,
+                onSubredditNameClick,
+                onCommentsClick,
+                modifier
+            )
+        }
     }
 }

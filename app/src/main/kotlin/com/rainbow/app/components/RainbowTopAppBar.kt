@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rainbow.app.navigation.Screen
 import com.rainbow.app.navigation.name
+import com.rainbow.app.search.SearchTextField
 import com.rainbow.app.utils.RainbowIcons
 import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.app.utils.defaultPadding
@@ -38,7 +39,6 @@ fun RainbowTopAppBar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(
                 onClick = onSidebarClick,
@@ -68,8 +68,7 @@ fun RainbowTopAppBar(
                 },
                 style = MaterialTheme.typography.h6
             )
-
-//            SearchTextField()
         }
+        SearchTextField()
     }
 }
