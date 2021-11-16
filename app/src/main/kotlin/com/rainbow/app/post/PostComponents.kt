@@ -2,7 +2,6 @@ package com.rainbow.app.post
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -103,9 +102,7 @@ fun TextPost(text: Post.Type.Text, modifier: Modifier = Modifier) {
             Box(
                 Modifier
                     .align(Alignment.CenterHorizontally)
-                    .border(1.dp, MaterialTheme.colors.onBackground.copy(0.1F), CircleShape)
-                    .background(MaterialTheme.colors.background, CircleShape)
-                    .clip(CircleShape)
+                    .defaultShape(shape = CircleShape)
                     .clickable { if (maxLines == Int.MAX_VALUE) maxLines = 15 else maxLines = Int.MAX_VALUE }
                     .padding(horizontal = 16.dp, vertical = 4.dp)
                     .wrapContentSize(),
