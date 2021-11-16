@@ -25,7 +25,9 @@ data class Post(
     val isSaved: Boolean = false,
     val vote: Vote = Vote.None,
     val awards: List<Award> = emptyList(),
-    val flair: Flair? = null,
+    val flairs: List<Flair> = emptyList(),
+    val flairBackgroundColor: Long,
+    val flairTextColor: Flair.TextColor,
     val creationDate: LocalDateTime,
 ) {
     sealed interface Type {

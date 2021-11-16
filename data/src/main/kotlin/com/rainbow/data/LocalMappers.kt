@@ -21,7 +21,15 @@ internal object LocalMappers {
 
     val RainbowDatabase.LocalPostMapper: Mapper<LocalPost, Post>
         get() = Mapper {
-            val imageFlair = localFlairQueries.selectById(it.id).executeAsList().map { it.url }
+            val flairs = localPostFlairQueries.selectById(it.id).executeAsList()
+                .mapNotNull { localFlair ->
+                    if (localFlair.text != null)
+                        Flair.TextFlair(localFlair.text!!)
+                    else if (localFlair.url != null)
+                        Flair.ImageFlair(localFlair.url!!)
+                    else
+                        null
+                }
             Post(
                 id = it.id,
                 userId = it.user_id,
@@ -34,7 +42,9 @@ internal object LocalMappers {
                         val validLinks = links.mapNotNull { it.removeParameters() }
                         when {
                             links.isEmpty() -> Post.Type.None
-                            links.any { it.contains("jpg") } || links.any { it.contains("png") } -> Post.Type.Image(links)
+                            links.any { it.contains("jpg") } || links.any { it.contains("png") } -> {
+                                Post.Type.Image(links)
+                            }
                             validLinks.any { it.endsWith("gif") } -> Post.Type.Gif(validLinks.first { it.endsWith("gif") })
                             validLinks.any { it.endsWith("mp4") } -> Post.Type.Video(validLinks.first { it.endsWith("mp4") })
                             else -> Post.Type.Link(links.first())
@@ -63,19 +73,9 @@ internal object LocalMappers {
                 awards = localAwardQueries.selectById(it.id)
                     .executeAsList()
                     .quickMap(AwardMapper),
-                flair = if (it.flair_background_color != null && it.flair_text_color != null && it.flair_text != null)
-                    Flair.TextFlair(
-                        it.flair_text!!,
-                        it.flair_background_color!!.toLongColor(),
-                        if (it.flair_text_color!!) Flair.TextFlair.TextColor.Dark else Flair.TextFlair.TextColor.Light
-                    )
-                else if (imageFlair.isNotEmpty())
-                    if (it.flair_background_color != null)
-                        Flair.ImageFlair(imageFlair, it.flair_background_color!!.toLongColor())
-                    else
-                        null
-                else
-                    null
+                flairs = flairs,
+                flairBackgroundColor = it.flair_background_color.toLongColor(),
+                flairTextColor = if (it.flair_text_color) Flair.TextColor.Dark else Flair.TextColor.Light
             )
         }
 

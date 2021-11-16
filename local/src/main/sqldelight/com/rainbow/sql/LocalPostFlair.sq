@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS LocalPostFlair (
+id TEXT,
+url TEXT,
+text TEXT
+);
+
+selectById:
+SELECT * FROM LocalPostFlair
+WHERE id = ?;
+
+insert:
+INSERT INTO LocalPostFlair
+VALUES ?;

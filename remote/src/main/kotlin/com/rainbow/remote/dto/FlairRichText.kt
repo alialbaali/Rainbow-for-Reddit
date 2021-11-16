@@ -9,6 +9,8 @@ data class FlairRichText(
     val name: String? = null,
     @SerialName("e")
     val emoji: String? = null,
+    @SerialName("t")
+    val text: String? = null,
     @SerialName("u")
     val url: String? = null,
 )

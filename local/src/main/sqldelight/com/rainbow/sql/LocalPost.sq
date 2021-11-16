@@ -21,9 +21,8 @@ CREATE TABLE IF NOT EXISTS LocalPost
     is_mine        INTEGER AS Boolean    NOT NULL,
     is_saved       INTEGER AS Boolean    NOT NULL,
     vote           INTEGER AS Boolean,
-    flair_text          TEXT,
-    flair_text_color INTEGER AS Boolean,
-    flair_background_color TEXT,
+    flair_text_color INTEGER AS Boolean NOT NULL,
+    flair_background_color TEXT NOT NULL,
     creation_date  INTEGER NOT NULL
 );
 

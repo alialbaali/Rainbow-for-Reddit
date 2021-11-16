@@ -22,7 +22,7 @@ internal object RemoteMappers {
                 else if (!it.media?.oembed?.url.isNullOrBlank())
                     localLinkQueries.insert(LocalLink(id, it.media?.oembed?.url!!))
                 else if (!it.mediaMetadata.isNullOrEmpty())
-                    it.mediaMetadata?.values?.map { it.source?.url?.removeAmp() }?.also(::println)?.forEach { url ->
+                    it.mediaMetadata?.values?.map { it.source?.url?.removeAmp() }?.forEach { url ->
                         if (url != null)
                             localLinkQueries.insert(LocalLink(id, url))
                     }
@@ -32,11 +32,15 @@ internal object RemoteMappers {
                     localAwardQueries.insert(it)
                 }
             }
-//            if (!it.linkFlairRichtext.isNullOrEmpty()) {
-//                it.linkFlairRichtext!!.forEach { flair ->
-//                    localFlairQueries.insert(LocalFlair(it.name!!, flair.url!!))
-//                }
-//            }
+            if (!it.linkFlairText.isNullOrBlank() && !it.linkFlairRichtext.isNullOrEmpty())
+                it.linkFlairRichtext!!.forEach { flair ->
+                    if (flair.text != null)
+                        localPostFlairQueries.insert(LocalPostFlair(it.name!!, url = null, flair.text))
+                    else if (flair.url != null)
+                        localPostFlairQueries.insert(LocalPostFlair(it.name!!, flair.url!!, text = null))
+                }
+            else if (!it.linkFlairText.isNullOrBlank() && it.linkFlairRichtext.isNullOrEmpty())
+                localPostFlairQueries.insert(LocalPostFlair(it.name!!, url = null, it.linkFlairText))
 
             with(it) {
                 LocalPost(
@@ -60,9 +64,7 @@ internal object RemoteMappers {
                     vote = likes,
                     is_nsfw = false,
                     is_edited = false,
-                    flair_text = linkFlairText.takeIf { !it.isNullOrBlank() },
-                    flair_background_color = linkFlairBackgroundColor.takeIf { !it.isNullOrBlank() }
-                        ?: if (linkFlairText.isNullOrBlank()) null else "#FFF5F5F5",
+                    flair_background_color = linkFlairBackgroundColor.takeIf { !it.isNullOrBlank() } ?: "#FFF5F5F5",
                     flair_text_color = when (linkFlairTextColor) {
                         "light" -> false
                         else -> true

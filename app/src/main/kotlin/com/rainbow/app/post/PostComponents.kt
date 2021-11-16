@@ -56,9 +56,18 @@ inline fun PostInfo(
         UserName(post.userName, onUserNameClick)
         Dot()
         CreationDate(post.creationDate)
-        post.flair?.let { flair ->
+        if (post.flairs.isNotEmpty()) {
             Dot()
-            Flair(flair)
+            Row(
+                Modifier
+                    .background(Color(post.flairBackgroundColor), CircleShape)
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+
+            ) {
+                post.flairs.forEach { flair ->
+                    Flair(flair, post.flairTextColor)
+                }
+            }
         }
         if (post.isNSFW) {
             Dot()
@@ -150,8 +159,7 @@ fun ImagePost(image: Post.Type.Image, modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxSize()
                 .align(Alignment.Center)
-                .background(MaterialTheme.colors.surface)
-            ,
+                .background(MaterialTheme.colors.surface),
             contentScale = ContentScale.Fit,
             onLoading = { RainbowProgressIndicator(modifier) },
             crossfade = true,
