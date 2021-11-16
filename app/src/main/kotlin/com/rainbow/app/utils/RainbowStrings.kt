@@ -44,5 +44,8 @@ object RainbowStrings {
     const val OpenInBrowser = "Open in browser"
     const val CopyLink = "Copy link"
     const val Hide = "Hide"
+    const val UnHide = "UnHide"
     const val LinkIsCopied = "Link has been copied to clipboard."
+    const val PostIsHidden = "Post has been hidden."
+    const val PostIsUnHidden = "Post has been unhidden."
 }

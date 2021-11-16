@@ -81,7 +81,7 @@ fun Rainbow(
                     onSubredditNameClick,
                     onMessageClick = { message = UIState.Success(it) },
                     onCommentsClick = { isAddCommentFocusable = true },
-                    onShowSnackbar = {snackbarMessage = it},
+                    onShowSnackbar = { snackbarMessage = it },
                     Modifier.weight(1F),
                 )
                 EndContent(

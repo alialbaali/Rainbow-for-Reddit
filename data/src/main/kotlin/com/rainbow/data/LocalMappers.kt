@@ -72,6 +72,7 @@ internal object LocalMappers {
                 isMine = it.is_mine,
                 isSaved = it.is_saved,
                 isPinned = it.is_pinned,
+                isHidden = it.is_hidden,
                 creationDate = it.creation_date.toLocalDateTime(),
                 vote = it.vote?.let {
                     if (it)

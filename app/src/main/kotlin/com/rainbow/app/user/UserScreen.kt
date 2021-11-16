@@ -53,6 +53,7 @@ fun UserScreen(
             if (lastPost == null)
                 value = UIState.Loading
             Repos.Post.getUserSubmittedPosts(user.name, postSorting, timeSorting, lastPost?.id)
+                .map { it.map { it.filterNot { it.isHidden } } }
                 .map { it.toUIState() }
                 .collect { value = it }
         }

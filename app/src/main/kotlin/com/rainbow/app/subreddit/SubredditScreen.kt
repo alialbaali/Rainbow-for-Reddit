@@ -75,6 +75,7 @@ fun SubredditScreen(
         if (lastPost == null)
             value = UIState.Loading
         Repos.Post.getSubredditPosts(subredditName, postSorting, timeSorting, lastPost?.id)
+            .map { it.map { it.filterNot { it.isHidden } } }
             .map { it.toUIState() }
             .onEach { value = it }
             .launchIn(this)

@@ -38,6 +38,7 @@ inline fun HomeScreen(
         if (lastPost == null)
             value = UIState.Loading
         Repos.Post.getHomePosts(postSorting, timeSorting, lastPost?.id)
+            .map { it.map { it.filterNot { it.isHidden } } }
             .map { it.toUIState() }
             .collect { value = it }
     }

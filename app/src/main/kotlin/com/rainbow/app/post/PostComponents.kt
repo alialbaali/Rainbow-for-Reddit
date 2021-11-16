@@ -5,7 +5,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -330,7 +333,30 @@ fun PostActions(
                     }
                 )
 
-                RainbowMenuItem(RainbowStrings.Hide, RainbowIcons.VisibilityOff, onclick = {})
+                if (post.isHidden)
+                    RainbowMenuItem(
+                        RainbowStrings.UnHide,
+                        RainbowIcons.Visibility,
+                        onclick = {
+                            scope.launch {
+                                Repos.Post.unHidePost(post.id)
+                                isMenuExpanded = false
+                                onShowSnackbar(RainbowStrings.PostIsUnHidden)
+                            }
+                        }
+                    )
+                else
+                    RainbowMenuItem(
+                        RainbowStrings.Hide,
+                        RainbowIcons.VisibilityOff,
+                        onclick = {
+                            scope.launch {
+                                Repos.Post.hidePost(post.id)
+                                isMenuExpanded = false
+                                onShowSnackbar(RainbowStrings.PostIsHidden)
+                            }
+                        }
+                    )
             }
         }
     }

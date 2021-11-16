@@ -207,6 +207,8 @@ private fun producePostsState(
                 lastPost?.id
             )
             else -> emptyFlow()
-        }.map { it.toUIState() }.collect { value = it }
+        }.map { it.map { it.filterNot { it.isHidden } } }
+            .map { it.toUIState() }
+            .collect { value = it }
     }
 }

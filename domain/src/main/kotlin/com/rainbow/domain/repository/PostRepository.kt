@@ -65,4 +65,8 @@ interface PostRepository {
 
     suspend fun downvotePost(postId: String): Result<Unit>
 
+    suspend fun hidePost(postId: String): Result<Unit>
+
+    suspend fun unHidePost(postId: String): Result<Unit>
+
 }

@@ -74,8 +74,8 @@ data class RemotePost(
     val gilded: Int? = null, // 0
 //    @SerialName("gildings")
 //    val gildings: Gildings? = null,
-//    @SerialName("hidden")
-//    val hidden: Boolean? = null, // false
+    @SerialName("hidden")
+    val hidden: Boolean? = null, // false
 //    @SerialName("hide_score")
 //    val hideScore: Boolean? = null, // false
     @SerialName("id")

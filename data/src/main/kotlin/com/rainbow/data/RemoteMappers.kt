@@ -74,6 +74,7 @@ internal object RemoteMappers {
                     is_pinned = pinned!!,
                     creation_date = created!!.toLong(),
                     is_mine = isSelf!!,
+                    is_hidden = hidden!!,
                     vote = likes,
                     is_nsfw = false,
                     is_edited = false,

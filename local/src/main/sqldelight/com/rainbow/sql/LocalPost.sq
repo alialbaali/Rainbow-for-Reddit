@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS LocalPost
     is_edited      INTEGER AS Boolean    NOT NULL,
     is_mine        INTEGER AS Boolean    NOT NULL,
     is_saved       INTEGER AS Boolean    NOT NULL,
+    is_hidden       INTEGER  AS Boolean NOT NULL,
     vote           INTEGER AS Boolean,
     flair_text_color INTEGER AS Boolean NOT NULL,
     flair_background_color TEXT NOT NULL,
@@ -55,6 +56,16 @@ WHERE id = ?;
 unvote:
 UPDATE LocalPost
 SET vote = NULL
+WHERE id = ?;
+
+hide:
+UPDATE LocalPost
+SET is_hidden = 1
+WHERE id = ?;
+
+unhide:
+UPDATE LocalPost
+SET is_hidden = 0
 WHERE id = ?;
 
 clear:

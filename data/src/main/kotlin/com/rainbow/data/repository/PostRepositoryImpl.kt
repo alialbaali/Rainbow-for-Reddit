@@ -221,6 +221,16 @@ internal class PostRepositoryImpl(
             .onSuccess { localPostQueries.downvote(postId) }
     }
 
+    override suspend fun hidePost(postId: String): Result<Unit> = withContext(dispatcher) {
+        remoteDataSource.hidePost(postId)
+            .onSuccess { localPostQueries.hide(postId) }
+    }
+
+    override suspend fun unHidePost(postId: String): Result<Unit> = withContext(dispatcher) {
+        remoteDataSource.unHidePost(postId)
+            .onSuccess { localPostQueries.unhide(postId) }
+    }
+
     private suspend fun <T : Enum<T>> Result<List<RemotePost>>.savePostsAndLinks(
         collector: FlowCollector<Result<List<Post>>>,
         listing: PostListing,
