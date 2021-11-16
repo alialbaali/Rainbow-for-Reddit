@@ -187,7 +187,7 @@ internal class PostRepositoryImpl(
                 is Type.Image -> remoteDataSource.submitUrlPost(
                     subredditName,
                     title,
-                    postType.url,
+                    postType.urls.first(),
                     isNSFW,
                     isSpoiler
                 )

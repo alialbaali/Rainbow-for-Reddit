@@ -21,11 +21,23 @@ internal object RemoteMappers {
                     localLinkQueries.insert(LocalLink(id, it.media?.oembed?.thumbnailUrl!!))
                 else if (!it.media?.oembed?.url.isNullOrBlank())
                     localLinkQueries.insert(LocalLink(id, it.media?.oembed?.url!!))
+                else if (!it.mediaMetadata.isNullOrEmpty())
+                    it.mediaMetadata?.values?.map { it.source?.url?.removeAmp() }?.also(::println)?.forEach { url ->
+                        if (url != null)
+                            localLinkQueries.insert(LocalLink(id, url))
+                    }
+
             it.allAwardings?.quickMap(AwardMapper(it.name!!))?.let {
                 it.forEach {
                     localAwardQueries.insert(it)
                 }
             }
+//            if (!it.linkFlairRichtext.isNullOrEmpty()) {
+//                it.linkFlairRichtext!!.forEach { flair ->
+//                    localFlairQueries.insert(LocalFlair(it.name!!, flair.url!!))
+//                }
+//            }
+
             with(it) {
                 LocalPost(
                     id = name!!,
@@ -178,6 +190,8 @@ internal object RemoteMappers {
             )
         }
     }
+
+    private fun String.removeAmp() = replace("amp;", "&")
 }
 
 fun String.removeHashtagPrefix() = removePrefix("#")

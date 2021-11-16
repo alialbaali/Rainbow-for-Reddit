@@ -120,23 +120,59 @@ fun TextPost(text: Post.Type.Text, modifier: Modifier = Modifier) {
 @Composable
 fun ImagePost(image: Post.Type.Image, modifier: Modifier = Modifier) {
     var isDialogVisible by remember { mutableStateOf(false) }
-    val painterResource = lazyPainterResource(image.url)
+    var imageUrl by remember(image) { mutableStateOf(image.urls.first()) }
+    var currentImageIndex by remember(image) { mutableStateOf(0) }
+    val painterResource = lazyPainterResource(imageUrl)
     val imageShape = MaterialTheme.shapes.medium
 
-    KamelImage(
-        painterResource,
-        contentDescription = null,
-        modifier = modifier
+    Box(
+        modifier
             .clip(imageShape)
             .animateContentSize()
             .clickable { isDialogVisible = true },
-        contentScale = ContentScale.Fit,
-        onLoading = { RainbowProgressIndicator(modifier) },
-        crossfade = true,
-        onFailure = {
-            throw it
-        }
-    )
+    ) {
+        if (image.urls.count() > 1)
+            IconButton(
+                onClick = {
+                    if (currentImageIndex > 0) {
+                        currentImageIndex -= 1
+                        imageUrl = image.urls[currentImageIndex]
+                    }
+                },
+                Modifier.align(Alignment.CenterStart),
+                enabled = currentImageIndex != 0
+            ) {
+                Icon(RainbowIcons.ArrowBackIos, RainbowIcons.ArrowBackIos.name)
+            }
+        KamelImage(
+            painterResource,
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxSize()
+                .align(Alignment.Center)
+                .background(MaterialTheme.colors.surface)
+            ,
+            contentScale = ContentScale.Fit,
+            onLoading = { RainbowProgressIndicator(modifier) },
+            crossfade = true,
+            onFailure = {
+                throw it
+            }
+        )
+        if (image.urls.count() > 1)
+            IconButton(
+                onClick = {
+                    if (currentImageIndex < image.urls.size - 1) {
+                        currentImageIndex += 1
+                        imageUrl = image.urls[currentImageIndex]
+                    }
+                },
+                Modifier.align(Alignment.CenterEnd),
+                enabled = currentImageIndex != image.urls.size - 1
+            ) {
+                Icon(RainbowIcons.ArrowForwardIos, RainbowIcons.ArrowForwardIos.name)
+            }
+    }
 
     ImageWindow(
         painterResource,

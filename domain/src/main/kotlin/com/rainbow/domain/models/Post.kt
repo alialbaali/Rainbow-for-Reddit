@@ -33,7 +33,7 @@ data class Post(
         data class Text(val body: String) : Type
         data class Link(val url: String) : Type
         data class Gif(val url: String) : Type
-        data class Image(val url: String) : Type
+        data class Image(val urls: List<String>) : Type
         data class Video(val url: String) : Type
 
         companion object {

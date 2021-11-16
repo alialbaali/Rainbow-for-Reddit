@@ -28,16 +28,16 @@ internal object LocalMappers {
                 userName = it.user_name,
                 title = it.title,
                 type = it.body?.let { it -> Post.Type.Text(it) } ?: localLinkQueries.selectById(it.id)
-                    .executeAsOneOrNull()
-                    ?.url
-                    ?.removeParameters()
-                    .let { link ->
+                    .executeAsList()
+                    .map { it.url }
+                    .let { links ->
+                        val validLinks = links.mapNotNull { it.removeParameters() }
                         when {
-                            link == null -> Post.Type.None
-                            link.endsWith("jpg") || link.endsWith("png") -> Post.Type.Image(link)
-                            link.endsWith("gif") -> Post.Type.Gif(link)
-                            link.endsWith("mp4") -> Post.Type.Video(link)
-                            else -> Post.Type.Link(link)
+                            links.isEmpty() -> Post.Type.None
+                            links.any { it.contains("jpg") } || links.any { it.contains("png") } -> Post.Type.Image(links)
+                            validLinks.any { it.endsWith("gif") } -> Post.Type.Gif(validLinks.first { it.endsWith("gif") })
+                            validLinks.any { it.endsWith("mp4") } -> Post.Type.Video(validLinks.first { it.endsWith("mp4") })
+                            else -> Post.Type.Link(links.first())
                         }
                     },
                 subredditId = it.subreddit_id,

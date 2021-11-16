@@ -112,6 +112,8 @@ data class RemotePost(
     val locked: Boolean? = null, // false
     @SerialName("media")
     val media: Media? = null, // null
+    @SerialName("media_metadata")
+    val mediaMetadata: Map<String, GalleryMedia>? = null,
 //    @SerialName("media_embed")
 //    val mediaEmbed: MediaEmbed? = null,
 //    @SerialName("media_only")
