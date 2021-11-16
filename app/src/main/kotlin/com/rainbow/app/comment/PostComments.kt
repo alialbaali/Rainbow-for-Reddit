@@ -28,6 +28,7 @@ inline fun LazyListScope.postComments(
                     if (indexedComment.value.subredditId.isNotBlank()) {
                         PostCommentItem(
                             indexedComment.value,
+                            isRepliesVisible = repliesVisibility[indexedComment.value] ?: true,
                             onClick = {
                                 setRepliesVisibility(
                                     indexedComment.value,
@@ -75,6 +76,7 @@ fun LazyListScope.replies(
                 if (reply.subredditId.isNotBlank())
                     ReplyItem(
                         reply,
+                        isRepliesVisible(reply),
                         depth,
                         onClick = { setIsRepliesVisible(reply, !isRepliesVisible(reply)) },
                         onUserNameClick,

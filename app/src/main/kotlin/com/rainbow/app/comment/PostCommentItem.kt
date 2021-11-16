@@ -19,6 +19,7 @@ import com.rainbow.domain.models.Comment
 @Composable
 inline fun PostCommentItem(
     comment: Comment,
+    isRepliesVisible: Boolean,
     crossinline onClick: () -> Unit,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
@@ -32,7 +33,7 @@ inline fun PostCommentItem(
     ) {
         CommentInfo(comment, onUserNameClick, onSubredditNameClick, isSubredditNameEnabled = false)
         Text(comment.body, color = MaterialTheme.colors.onBackground)
-        CommentCommands(comment)
+        CommentActions(comment, isRepliesVisible)
     }
 }
 
