@@ -42,4 +42,5 @@ object RainbowStrings {
     const val ViewMore = "View more"
     const val Search = "Search"
     const val OpenInBrowser = "Open in browser"
+    const val CopyLink = "Copy link"
 }

@@ -16,7 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -259,6 +261,7 @@ fun PostActions(
     var isMenuExpanded by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val uriHandler = LocalUriHandler.current
+    val clipboardManager = LocalClipboardManager.current
 
     Row(
         modifier,
@@ -315,6 +318,15 @@ fun PostActions(
                     RainbowIcons.OpenInBrowser,
                     onclick = {
                         uriHandler.openUri(post.url)
+                        isMenuExpanded = false
+                    }
+                )
+
+                RainbowMenuItem(
+                    RainbowStrings.CopyLink,
+                    RainbowIcons.ContentCopy,
+                    onclick = {
+                        clipboardManager.setText(AnnotatedString(post.url))
                         isMenuExpanded = false
                     }
                 )
