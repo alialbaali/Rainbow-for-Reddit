@@ -2,7 +2,6 @@ package com.rainbow.data.repository
 
 import com.rainbow.data.Mapper
 import com.rainbow.data.quickMap
-import com.rainbow.data.removeParameters
 import com.rainbow.data.utils.DefaultLimit
 import com.rainbow.data.utils.PostListing
 import com.rainbow.data.utils.SettingsKeys
@@ -11,8 +10,6 @@ import com.rainbow.domain.models.Post.Type
 import com.rainbow.domain.repository.PostRepository
 import com.rainbow.remote.dto.RemotePost
 import com.rainbow.remote.source.RemotePostDataSource
-import com.rainbow.sql.LocalLinkPost
-import com.rainbow.sql.LocalLinkPostQueries
 import com.rainbow.sql.LocalPost
 import com.rainbow.sql.LocalPostQueries
 import com.russhwolf.settings.ExperimentalSettingsApi
@@ -24,30 +21,9 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalSettingsApi::class)
-internal fun PostRepository(
-    remoteDataSource: RemotePostDataSource,
-    localPostQueries: LocalPostQueries,
-    localLinkPostQueries: LocalLinkPostQueries,
-    settings: FlowSettings,
-    dispatcher: CoroutineDispatcher,
-    remoteMapper: Mapper<RemotePost, LocalPost>,
-    localMapper: Mapper<LocalPost, Post>,
-): PostRepository =
-    PostRepositoryImpl(
-        remoteDataSource,
-        localPostQueries,
-        localLinkPostQueries,
-        settings,
-        dispatcher,
-        remoteMapper,
-        localMapper
-    )
-
-@OptIn(ExperimentalSettingsApi::class)
-private class PostRepositoryImpl(
+internal class PostRepositoryImpl(
     private val remoteDataSource: RemotePostDataSource,
     private val localPostQueries: LocalPostQueries,
-    private val localLinkPostQueries: LocalLinkPostQueries,
     private val settings: FlowSettings,
     private val dispatcher: CoroutineDispatcher,
     private val remoteMapper: Mapper<RemotePost, LocalPost>,
@@ -251,20 +227,7 @@ private class PostRepositoryImpl(
         postSorting: Enum<T>,
         timeSorting: TimeSorting,
     ) {
-        onSuccess {
-            it.forEach {
-                val id = it.name
-                val url = it.url
-                if (id != null && localLinkPostQueries.selectById(id).executeAsOneOrNull() == null)
-                    if (!url.isNullOrBlank() && (url.endsWith("jpg") || url.endsWith("png") || url.endsWith("gif")))
-                        localLinkPostQueries.insert(LocalLinkPost(id, url))
-                    else if (!it.media?.oembed?.thumbnailUrl.isNullOrBlank())
-                        localLinkPostQueries.insert(LocalLinkPost(id, it.media?.oembed?.thumbnailUrl!!))
-                    else if (!it.media?.oembed?.url.isNullOrBlank())
-                        localLinkPostQueries.insert(LocalLinkPost(id, it.media?.oembed?.url!!))
-            }
-        }
-            .mapCatching { it.quickMap(remoteMapper) }
+        mapCatching { it.quickMap(remoteMapper) }
             .onSuccess {
                 val isDifferentPostListing = settings.getStringOrNull(SettingsKeys.PostListing) != listing.name
                 val isDifferentPostSorting = settings.getStringOrNull(SettingsKeys.PostSorting) != postSorting.name
@@ -284,24 +247,7 @@ private class PostRepositoryImpl(
         localPostQueries.selectAll()
             .asFlow()
             .mapToList(dispatcher)
-            .map {
-                it.map {
-                    val post = localMapper.map(it)
-                    localLinkPostQueries.selectById(it.id)
-                        .executeAsOneOrNull()
-                        ?.url
-                        ?.removeParameters()
-                        ?.let { link ->
-                            val type = when {
-                                link.endsWith("jpg") || link.endsWith("png") -> Type.Image(link)
-                                link.endsWith("gif") -> Type.Gif(link)
-                                link.endsWith("mp4") -> Type.Video(link)
-                                else -> Type.Link(link)
-                            }
-                            post.copy(type = type)
-                        } ?: post
-                }
-            }
+            .map { it.quickMap(localMapper) }
             .map { Result.success(it) }
             .also { collector.emitAll(it) }
     }

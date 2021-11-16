@@ -1,6 +1,9 @@
 package com.rainbow.data
 
+import com.rainbow.data.LocalMappers.LocalPostMapper
+import com.rainbow.data.RemoteMappers.RemotePostMapper
 import com.rainbow.data.repository.*
+import com.rainbow.data.repository.PostRepositoryImpl
 import com.rainbow.domain.repository.*
 import com.rainbow.local.RainbowDatabase
 import com.rainbow.remote.impl.*
@@ -38,14 +41,13 @@ object Repos {
         settings,
     )
 
-    object Post : PostRepository by PostRepository(
+    object Post : PostRepository by PostRepositoryImpl(
         RemotePostDataSource(),
         RainbowDatabase.localPostQueries,
-        RainbowDatabase.localLinkPostQueries,
         settings,
         DefaultDispatcher,
-        RemoteMappers.PostMapper,
-        LocalMappers.PostMapper,
+        RainbowDatabase.RemotePostMapper,
+        RainbowDatabase.LocalPostMapper,
     )
 
     object Subreddit : SubredditRepository by SubredditRepository(
