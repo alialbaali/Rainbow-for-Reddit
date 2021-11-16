@@ -1,27 +1,32 @@
 package com.rainbow.app.comment
 
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.*
 import androidx.compose.material.icons.rounded.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.rainbow.app.utils.RainbowIcons
+import com.rainbow.domain.models.Post
+import kotlinx.coroutines.launch
 
 @Composable
-fun AddComment(modifier: Modifier = Modifier) {
+fun AddComment(post: Post, modifier: Modifier = Modifier) {
 
-    var text by remember { mutableStateOf("") }
+    var text by remember(post) { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
 
-    TextField(
+    OutlinedTextField(
         value = text,
         onValueChange = { text = it },
         modifier,
         colors = TextFieldDefaults.outlinedTextFieldColors(backgroundColor = MaterialTheme.colors.background),
         trailingIcon = {
-            Icon(RainbowIcons.Send, contentDescription = "Comment")
-        }
+            IconButton(onClick = {
+                scope.launch {
+//                    Repos.Comment.createComment()
+                }
+            }) {
+                Icon(RainbowIcons.Send, contentDescription = "Comment")
+            }
+        },
     )
-
 }

@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS LocalComment (
+    id             TEXT                  NOT NULL PRIMARY KEY,
+    user_id        TEXT                  NOT NULL,
+    user_name      TEXT                  NOT NULL,
+    body           TEXT,
+    upvotes_count  INTEGER               NOT NULL,
+    upvotes_ratio  REAL                  NOT NULL,
+    vote           INTEGER AS Boolean,
+    creation_date  INTEGER NOT NULL
+);
