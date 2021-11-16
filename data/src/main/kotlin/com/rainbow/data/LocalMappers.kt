@@ -30,6 +30,15 @@ internal object LocalMappers {
                     else
                         null
                 }
+            val userFlairs = localPostFlairQueries.selectById(it.user_id).executeAsList()
+                .mapNotNull { localFlair ->
+                    if (localFlair.text != null)
+                        Flair.TextFlair(localFlair.text!!)
+                    else if (localFlair.url != null)
+                        Flair.ImageFlair(localFlair.url!!)
+                    else
+                        null
+                }
             Post(
                 id = it.id,
                 userId = it.user_id,
@@ -75,7 +84,10 @@ internal object LocalMappers {
                     .quickMap(AwardMapper),
                 flairs = flairs,
                 flairBackgroundColor = it.flair_background_color.toLongColor(),
-                flairTextColor = if (it.flair_text_color) Flair.TextColor.Dark else Flair.TextColor.Light
+                flairTextColor = if (it.flair_text_color) Flair.TextColor.Dark else Flair.TextColor.Light,
+                userFlairs = userFlairs,
+                userFlairBackgroundColor = it.user_flair_background_color.toLongColor(),
+                userFlairTextColor = if (it.user_flair_text_color) Flair.TextColor.Dark else Flair.TextColor.Light,
             )
         }
 

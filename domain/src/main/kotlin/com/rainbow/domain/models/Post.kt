@@ -28,6 +28,9 @@ data class Post(
     val flairs: List<Flair> = emptyList(),
     val flairBackgroundColor: Long,
     val flairTextColor: Flair.TextColor,
+    val userFlairs: List<Flair> = emptyList(),
+    val userFlairBackgroundColor: Long,
+    val userFlairTextColor: Flair.TextColor,
     val creationDate: LocalDateTime,
 ) {
     sealed interface Type {

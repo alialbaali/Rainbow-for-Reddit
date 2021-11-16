@@ -22,8 +22,8 @@ data class RemotePost(
     val authorFlairBackgroundColor: String? = null, // null
     @SerialName("author_flair_css_class")
     val authorFlairCssClass: String? = null, // null
-//    @SerialName("author_flair_richtext")
-//    val authorFlairRichtext: List<String>? = null,
+    @SerialName("author_flair_richtext")
+    val authorFlairRichtext: List<FlairRichText>? = null,
     @SerialName("author_flair_template_id")
     val authorFlairTemplateId: String? = null, // null
     @SerialName("author_flair_text")

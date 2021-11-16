@@ -42,6 +42,17 @@ internal object RemoteMappers {
             else if (!it.linkFlairText.isNullOrBlank() && it.linkFlairRichtext.isNullOrEmpty())
                 localPostFlairQueries.insert(LocalPostFlair(it.name!!, url = null, it.linkFlairText))
 
+            if (!it.authorFlairText.isNullOrBlank() && !it.authorFlairRichtext.isNullOrEmpty())
+                it.authorFlairRichtext!!.forEach { flair ->
+                    if (flair.text != null)
+                        if (flair.text != null)
+                            localPostFlairQueries.insert(LocalPostFlair(it.authorFullname!!, url = null, flair.text))
+                        else if (flair.url != null)
+                            localPostFlairQueries.insert(LocalPostFlair(it.authorFullname!!, flair.url!!, text = null))
+                }
+            else if (!it.authorFlairText.isNullOrBlank() && it.authorFlairRichtext.isNullOrEmpty())
+                localPostFlairQueries.insert(LocalPostFlair(it.authorFullname!!, url = null, it.authorFlairText))
+
             with(it) {
                 LocalPost(
                     id = name!!,
@@ -66,6 +77,11 @@ internal object RemoteMappers {
                     is_edited = false,
                     flair_background_color = linkFlairBackgroundColor.takeIf { !it.isNullOrBlank() } ?: "#FFF5F5F5",
                     flair_text_color = when (linkFlairTextColor) {
+                        "light" -> false
+                        else -> true
+                    },
+                    user_flair_background_color = authorFlairBackgroundColor.takeIf { !it.isNullOrBlank() } ?: "#FFF5F5F5",
+                    user_flair_text_color = when (authorFlairTextColor) {
                         "light" -> false
                         else -> true
                     },

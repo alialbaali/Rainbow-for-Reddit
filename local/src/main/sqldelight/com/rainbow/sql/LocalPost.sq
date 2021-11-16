@@ -23,6 +23,8 @@ CREATE TABLE IF NOT EXISTS LocalPost
     vote           INTEGER AS Boolean,
     flair_text_color INTEGER AS Boolean NOT NULL,
     flair_background_color TEXT NOT NULL,
+    user_flair_text_color INTEGER AS Boolean NOT NULL,
+    user_flair_background_color TEXT NOT NULL,
     creation_date  INTEGER NOT NULL
 );
 
