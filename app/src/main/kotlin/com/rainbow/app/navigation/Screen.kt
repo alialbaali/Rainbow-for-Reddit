@@ -5,6 +5,7 @@ import com.arkivanov.essenty.parcelable.Parcelable
 sealed interface Screen : Parcelable {
     data class Subreddit(val subredditName: String) : Screen
     data class User(val userName: String) : Screen
+    data class Search(val searchTerm: String): Screen
     sealed interface SidebarItem : Screen {
         object Profile : SidebarItem
         object Home : SidebarItem

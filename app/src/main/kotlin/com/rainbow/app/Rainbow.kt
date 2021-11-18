@@ -19,6 +19,7 @@ import com.rainbow.app.message.MessagesScreen
 import com.rainbow.app.navigation.Screen
 import com.rainbow.app.post.PostScreen
 import com.rainbow.app.profile.ProfileScreen
+import com.rainbow.app.search.SearchScreen
 import com.rainbow.app.settings.SettingsScreen
 import com.rainbow.app.sidebar.Sidebar
 import com.rainbow.app.subreddit.CurrentUserSubredditsScreen
@@ -38,6 +39,7 @@ fun Rainbow(
     onSidebarClick: (Screen.SidebarItem) -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
+    onSearchClick: (String) -> Unit,
     onBackClick: () -> Unit,
     onForwardClick: () -> Unit,
     isBackEnabled: Boolean,
@@ -61,7 +63,9 @@ fun Rainbow(
         Column {
             RainbowTopAppBar(
                 screen,
+                onSearchClick,
                 onSidebarClick = { isSidebarExpanded = !isSidebarExpanded },
+                onSubredditNameClick,
                 onBackClick,
                 onForwardClick,
                 isBackEnabled,
@@ -192,6 +196,15 @@ private fun RowScope.CenterContent(
                 modifier,
             )
         }
+        is Screen.Search -> SearchScreen(
+            screen.searchTerm,
+            onPostClick,
+            onUserNameClick,
+            onSubredditNameClick,
+            onCommentsClick,
+            onShowSnackbar,
+            modifier
+        )
     }
 }
 

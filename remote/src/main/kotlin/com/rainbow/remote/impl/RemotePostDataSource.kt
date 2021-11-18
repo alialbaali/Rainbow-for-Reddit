@@ -206,6 +206,12 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
         }
     }
 
+    override suspend fun searchPosts(searchTerm: String): Result<List<RemotePost>> {
+        return client.get<Listing<RemotePost>>(Posts.Search) {
+            parameter(Keys.Query, searchTerm)
+        }.mapCatching { it.toList() }
+    }
+
     private suspend fun HttpClient.submitPost(
         subredditName: String,
         title: String,

@@ -45,7 +45,7 @@ fun PostScreen(
         timeSorting,
         lastComment
     ) {
-        value = UIState.Loading
+//        value = UIState.Loading
         Repos.Comment.getPostsComments(post.id, commentsSorting)
             .map { it.toUIState() }
             .collect { value = it }

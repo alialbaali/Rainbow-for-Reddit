@@ -24,7 +24,9 @@ import com.rainbow.app.utils.defaultPadding
 @Composable
 fun RainbowTopAppBar(
     screen: Screen,
+    onSearchClick: (String) -> Unit,
     onSidebarClick: () -> Unit,
+    onSubredditNameClick: (String) -> Unit,
     onBackClick: () -> Unit,
     onForwardClick: () -> Unit,
     isBackEnabled: Boolean,
@@ -65,10 +67,11 @@ fun RainbowTopAppBar(
                     is Screen.SidebarItem -> screen.name
                     is Screen.Subreddit -> screen.subredditName
                     is Screen.User -> screen.userName
+                    is Screen.Search -> screen.searchTerm
                 },
                 style = MaterialTheme.typography.h6
             )
         }
-        SearchTextField()
+        SearchTextField(onSearchClick, onSubredditNameClick)
     }
 }

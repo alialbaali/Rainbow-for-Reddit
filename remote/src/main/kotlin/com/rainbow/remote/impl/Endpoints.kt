@@ -116,6 +116,8 @@ internal sealed class Endpoint(val path: String) {
         // https://oauth.reddit.com/api/submit
         object Submit : Endpoint(ActionPath + "submit")
 
+        object Search: Endpoint("search")
+
     }
 
     object Comments {

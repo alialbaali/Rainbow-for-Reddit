@@ -18,6 +18,7 @@ data class Subreddit(
     val colors: Colors,
     val isSubscribed: Boolean,
     val isFavorite: Boolean,
+    val type: Type = Type.Public,
     val creationDate: LocalDateTime,
 ) {
     data class Colors(
@@ -39,6 +40,10 @@ data class Subreddit(
                 DefaultKeyColor
             )
         }
+    }
+
+    enum class Type {
+        Public, Private
     }
 }
 

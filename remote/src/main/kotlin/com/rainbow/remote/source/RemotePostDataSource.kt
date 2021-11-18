@@ -99,4 +99,6 @@ interface RemotePostDataSource {
 
     suspend fun deletePost(postId: String): Result<Unit>
 
+    suspend fun searchPosts(searchTerm: String): Result<List<RemotePost>>
+
 }
