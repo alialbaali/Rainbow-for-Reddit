@@ -23,6 +23,8 @@ private class SettingsRepositoryImpl(
     private val dispatcher: CoroutineDispatcher
 ) : SettingsRepository {
 
+    override val isSidebarExpanded: Flow<Boolean> = settings.getBooleanFlow(SettingsKeys.IsSidebarExpanded)
+
     override val theme: Flow<Theme> = settings.getStringFlow(SettingsKeys.Theme, Theme.System.name)
         .map { Theme.valueOf(it) }
 
@@ -41,5 +43,9 @@ private class SettingsRepositoryImpl(
 
     override suspend fun setPostLayout(value: PostLayout) = withContext(dispatcher) {
         settings.putString(SettingsKeys.PostLayout, value.name)
+    }
+
+    override suspend fun setIsSidebarExpanded(value: Boolean) = withContext(dispatcher) {
+        settings.putBoolean(SettingsKeys.IsSidebarExpanded, value)
     }
 }

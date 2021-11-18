@@ -49,7 +49,7 @@ fun Rainbow(
     var post by remember { mutableStateOf<UIState<Post>>(UIState.Loading) }
     var message by remember { mutableStateOf<UIState<Message>>(UIState.Loading) }
     val scope = rememberCoroutineScope()
-    var isSidebarExpanded by remember { mutableStateOf(true) }
+    val isSidebarExpanded by Repos.Settings.isSidebarExpanded.collectAsState(true)
     var isAddCommentFocusable by remember { mutableStateOf(false) }
     var snackbarMessage by remember { mutableStateOf<String?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -64,7 +64,11 @@ fun Rainbow(
             RainbowTopAppBar(
                 screen,
                 onSearchClick,
-                onSidebarClick = { isSidebarExpanded = !isSidebarExpanded },
+                onSidebarClick = {
+                    scope.launch {
+                        Repos.Settings.setIsSidebarExpanded(!isSidebarExpanded)
+                    }
+                },
                 onSubredditNameClick,
                 onBackClick,
                 onForwardClick,

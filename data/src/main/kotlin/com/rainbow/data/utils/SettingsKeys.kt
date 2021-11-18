@@ -8,4 +8,5 @@ internal object SettingsKeys {
     const val PostListing = "PostListing"
     const val PostSorting = "PostSorting"
     const val TimeSorting = "TimeSorting"
+    const val IsSidebarExpanded = "IsSidebarExpanded"
 }
