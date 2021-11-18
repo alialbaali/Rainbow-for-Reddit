@@ -71,4 +71,5 @@ interface PostRepository {
 
     suspend fun readPost(postId: String): Result<Unit>
 
+    suspend fun searchPosts(searchTerm: String): Flow<Result<List<Post>>>
 }

@@ -74,12 +74,7 @@ internal object LocalMappers {
                 isPinned = it.is_pinned,
                 isHidden = it.is_hidden,
                 creationDate = it.creation_date.toLocalDateTime(),
-                vote = it.vote?.let {
-                    if (it)
-                        Vote.Up
-                    else
-                        Vote.Down
-                } ?: Vote.None,
+                vote = it.vote.toVote(),
                 awards = localAwardQueries.selectById(it.id)
                     .executeAsList()
                     .quickMap(AwardMapper),
@@ -127,6 +122,44 @@ internal object LocalMappers {
             it.is_nsfw,
             it.creation_date.toLocalDateTime(),
         )
+    }
+
+    class CommentMapper(private val database: RainbowDatabase) : Mapper<LocalComment, Comment> {
+        override fun map(input: LocalComment): Comment {
+            val replies = database.localCommentQueries.selectByParentId(input.id)
+                .executeAsList()
+                .quickMap(this)
+
+            val awards = database.localAwardQueries.selectById(input.id)
+                .executeAsList()
+                .quickMap(AwardMapper)
+
+            return with(input) {
+                Comment(
+                    id,
+                    parent_id,
+                    post_id,
+                    user_id,
+                    subreddit_id,
+                    user_name,
+                    subreddit_name,
+                    replies,
+                    body,
+                    upvotes_count.toULong(),
+                    awards,
+                    isEdited,
+                    isSaved,
+                    vote.toVote(),
+                    creation_date.toLocalDateTime(),
+                )
+            }
+        }
+    }
+
+    private fun Boolean?.toVote() = when (this) {
+        true -> Vote.Up
+        false -> Vote.Down
+        null -> Vote.None
     }
 
 }

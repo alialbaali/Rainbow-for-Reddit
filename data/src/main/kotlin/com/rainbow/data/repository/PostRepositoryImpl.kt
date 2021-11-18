@@ -235,6 +235,13 @@ internal class PostRepositoryImpl(
         localPostQueries.read(postId).let { Result.success(it) }
     }
 
+    override suspend fun searchPosts(searchTerm: String): Flow<Result<List<Post>>> = flow {
+        remoteDataSource.searchPosts(searchTerm)
+            .map { it.quickMap(remoteMapper) }
+            .map { it.quickMap(localMapper) }
+            .also { emit(it) }
+    }
+
     private suspend fun <T : Enum<T>> Result<List<RemotePost>>.savePostsAndLinks(
         collector: FlowCollector<Result<List<Post>>>,
         listing: PostListing,

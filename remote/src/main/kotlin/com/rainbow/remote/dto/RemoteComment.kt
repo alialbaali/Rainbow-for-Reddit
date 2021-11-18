@@ -5,6 +5,7 @@ import com.rainbow.remote.Listing
 import com.rainbow.remote.toList
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.*
 
 @Serializable
@@ -75,6 +76,7 @@ data class RemoteComment internal constructor(
 //    val distinguished: Boolean? = null, // null
     @SerialName("downs")
     val downs: Int? = null, // 0
+//    @Serializable(EditedTransformingSerializer::class)
 //    @SerialName("edited")
 //    val edited: Boolean? = null, // false
     @SerialName("gilded")
@@ -85,8 +87,8 @@ data class RemoteComment internal constructor(
     val id: String? = null, // glzfuit
     @SerialName("is_submitter")
     val isSubmitter: Boolean? = null, // false
-//    @SerialName("likes")
-//    val likes: Any? = null, // null
+    @SerialName("likes")
+    val likes: Boolean? = null, // null
     @SerialName("link_id")
     val linkId: String? = null, // t3_lcarmx
     @SerialName("locked")
@@ -157,6 +159,14 @@ private object RepliesTransformingSerializer : JsonTransformingSerializer<Item<L
             JsonObject(mapOf("data" to JsonObject(mapOf("children" to JsonArray(emptyList())))))
         else
             element
+        return super.transformDeserialize(result)
+    }
+}
+
+private object EditedTransformingSerializer : JsonTransformingSerializer<Boolean>(Boolean.serializer()) {
+    override fun transformDeserialize(element: JsonElement): JsonElement {
+        val edited = element.jsonPrimitive.booleanOrNull ?: true
+        val result = JsonObject(mapOf("edited" to JsonPrimitive(edited)))
         return super.transformDeserialize(result)
     }
 }

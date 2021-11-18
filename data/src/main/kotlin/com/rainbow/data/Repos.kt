@@ -1,9 +1,9 @@
 package com.rainbow.data
 
 import com.rainbow.data.LocalMappers.LocalPostMapper
+import com.rainbow.data.RemoteMappers.RemoteCommentMapper
 import com.rainbow.data.RemoteMappers.RemotePostMapper
 import com.rainbow.data.repository.*
-import com.rainbow.data.repository.PostRepositoryImpl
 import com.rainbow.domain.repository.*
 import com.rainbow.local.RainbowDatabase
 import com.rainbow.remote.impl.*
@@ -61,12 +61,13 @@ object Repos {
     )
 
     @OptIn(ExperimentalSettingsApi::class)
-    object Comment : CommentRepository by CommentRepository(
+    object Comment : CommentRepository by CommentRepositoryImpl(
         RemoteCommentDataSource(),
         RainbowDatabase.localCommentQueries,
         settings,
         DefaultDispatcher,
-        RemoteMappers.CommentMapper,
+        RainbowDatabase.RemoteCommentMapper,
+        LocalMappers.CommentMapper(RainbowDatabase),
     )
 
     object Rule : RuleRepository by RuleRepository(

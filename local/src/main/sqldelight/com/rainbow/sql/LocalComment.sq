@@ -1,10 +1,48 @@
 CREATE TABLE IF NOT EXISTS LocalComment (
     id             TEXT                  NOT NULL PRIMARY KEY,
+    parent_id TEXT NOT NULL,
+    post_id        TEXT                  NOT NULL,
     user_id        TEXT                  NOT NULL,
+    subreddit_id TEXT NOT NULL,
     user_name      TEXT                  NOT NULL,
-    body           TEXT,
+    subreddit_name TEXT NOT NULL ,
+    body           TEXT NOT NULL,
     upvotes_count  INTEGER               NOT NULL,
-    upvotes_ratio  REAL                  NOT NULL,
     vote           INTEGER AS Boolean,
+    isEdited INTEGER AS Boolean NOT NULL,
+    isSaved INTEGER AS Boolean NOT NULL,
     creation_date  INTEGER NOT NULL
 );
+
+selectAll:
+SELECT * FROM LocalComment;
+
+selectById:
+SELECT * FROM LocalComment
+WHERE id = ?;
+
+selectByParentId:
+SELECT * FROM LocalComment
+WHERE parent_id = ?;
+
+insert:
+INSERT INTO LocalComment
+VALUES ?;
+
+upvote:
+UPDATE LocalComment
+SET vote = 1
+WHERE id = ?;
+
+downvote:
+UPDATE LocalComment
+SET vote = 0
+WHERE id = ?;
+
+unvote:
+UPDATE LocalComment
+SET vote = NULL
+WHERE id = ?;
+
+clear:
+DELETE FROM LocalComment;

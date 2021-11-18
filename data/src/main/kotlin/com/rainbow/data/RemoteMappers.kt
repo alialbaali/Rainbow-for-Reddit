@@ -1,6 +1,5 @@
 package com.rainbow.data
 
-import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.Message
 import com.rainbow.domain.models.Moderator
 import com.rainbow.domain.models.Rule
@@ -128,26 +127,41 @@ internal object RemoteMappers {
         }
     }
 
-    val CommentMapper = Mapper<RemoteComment, Comment> {
-        with(it) {
-            toComment()
-        }
-    }
+    val RainbowDatabase.RemoteCommentMapper
+        get() = Mapper<RemoteComment, LocalComment> {
+            with(it) {
+                replies?.let { replies -> saveCommentReplies(replies) }
+                allAwardings?.let { awards ->
+                    if (name != null)
+                        awards.quickMap(AwardMapper(name!!))
+                            .forEach { award -> localAwardQueries.insert(award) }
+                }
 
-    private fun RemoteComment.toComment(): Comment {
-        return Comment(
-            id = name ?: "",
-            postId = linkId ?: "",
-            userId = authorFullname ?: "",
-            subredditId = subredditId ?: "",
-            userName = author ?: "",
-            subredditName = subreddit ?: "",
-            body = body ?: "",
-            upvotesCount = ups?.toULong() ?: 0UL,
-            creationDate = (created?.toLong() ?: 0).toLocalDateTime(),
-            awards = emptyList(),
-            replies = replies?.quickMap(CommentMapper) ?: emptyList()
-        )
+                LocalComment(
+                    id = name ?: "",
+                    parent_id = parentId!!,
+                    post_id = linkId ?: "",
+                    user_id = authorFullname ?: "",
+                    subreddit_id = subredditId ?: "",
+                    user_name = author ?: "",
+                    subreddit_name = subreddit ?: "",
+                    body = body ?: "",
+                    upvotes_count = ups?.toLong() ?: 0L,
+                    creation_date = created?.toLong() ?: 0,
+                    vote = likes,
+                    isEdited = false,
+                    isSaved = saved ?: false,
+                )
+            }
+        }
+
+    private fun RainbowDatabase.saveCommentReplies(replies: List<RemoteComment>) {
+        replies.forEach {
+            if (localCommentQueries.selectById(it.name!!).executeAsOneOrNull() == null) {
+                localCommentQueries.insert(RemoteCommentMapper.map(it))
+                it.replies?.let { saveCommentReplies(it) }
+            }
+        }
     }
 
     val SubredditMapper = Mapper<RemoteSubreddit, LocalSubreddit> {
