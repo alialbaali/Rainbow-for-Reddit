@@ -44,7 +44,6 @@ object Repos {
     object Post : PostRepository by PostRepositoryImpl(
         RemotePostDataSource(),
         RainbowDatabase.localPostQueries,
-        settings,
         DefaultDispatcher,
         RainbowDatabase.RemotePostMapper,
         RainbowDatabase.LocalPostMapper,

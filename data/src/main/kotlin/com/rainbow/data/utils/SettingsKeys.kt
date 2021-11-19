@@ -5,8 +5,5 @@ internal object SettingsKeys {
     const val Theme = "Theme"
     const val IsFullHeight = "IsFullHeight"
     const val PostLayout = "PostLayout"
-    const val PostListing = "PostListing"
-    const val PostSorting = "PostSorting"
-    const val TimeSorting = "TimeSorting"
     const val IsSidebarExpanded = "IsSidebarExpanded"
 }
