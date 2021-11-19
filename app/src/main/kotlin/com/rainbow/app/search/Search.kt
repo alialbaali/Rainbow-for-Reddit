@@ -46,15 +46,15 @@ fun SearchTextField(
             onValueChange = { searchTerm = it },
             placeholder = { Text(RainbowStrings.Search) },
             trailingIcon = {
-                IconButton(onClick = { onSearchClick(searchTerm) }) {
+                IconButton(onClick = { searchTerm.takeIf { it.isNotBlank() }?.let(onSearchClick) }) {
                     Icon(RainbowIcons.Search, RainbowIcons.Search.name)
                 }
             },
             singleLine = true,
             modifier = Modifier.onKeyEvent {
                 if (it.key == Key.Enter)
-                    onSearchClick(searchTerm)
-                true
+                    searchTerm.takeIf { it.isNotBlank() }?.let(onSearchClick)
+                false
             }
         )
 //        DropdownMenu(true, onDismissRequest = { isExpanded = false }) {
