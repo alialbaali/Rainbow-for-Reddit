@@ -14,3 +14,6 @@ WHERE item_id = ?;
 insert:
 INSERT INTO LocalAward
 VALUES ?;
+
+clear:
+DELETE FROM LocalAward;

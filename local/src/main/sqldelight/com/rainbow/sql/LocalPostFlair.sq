@@ -11,3 +11,6 @@ WHERE id = ?;
 insert:
 INSERT INTO LocalPostFlair
 VALUES ?;
+
+clear:
+DELETE FROM LocalPostFlair;
