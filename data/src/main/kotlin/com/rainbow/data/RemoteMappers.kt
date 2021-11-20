@@ -11,53 +11,14 @@ internal object RemoteMappers {
 
     val RainbowDatabase.RemotePostMapper
         get() = Mapper<RemotePost, LocalPost> {
-            val id = it.name
-            val url = it.url
-            if (id != null && localLinkQueries.selectById(id).executeAsOneOrNull() == null)
-                if (!url.isNullOrBlank() && (url.endsWith("jpg") || url.endsWith("png") || url.endsWith("gif")))
-                    localLinkQueries.insert(LocalLink(id, url))
-                else if (!it.media?.oembed?.thumbnailUrl.isNullOrBlank())
-                    localLinkQueries.insert(LocalLink(id, it.media?.oembed?.thumbnailUrl!!))
-                else if (!it.media?.oembed?.url.isNullOrBlank())
-                    localLinkQueries.insert(LocalLink(id, it.media?.oembed?.url!!))
-                else if (!it.mediaMetadata.isNullOrEmpty())
-                    it.mediaMetadata?.values?.map { it.source?.url?.removeAmp() }?.forEach { url ->
-                        if (url != null)
-                            localLinkQueries.insert(LocalLink(id, url))
-                    }
-                else if (it.isVideo == true && it.media?.redditVideo?.fallbackUrl != null)
-                    localLinkQueries.insert(LocalLink(id, it.media?.redditVideo?.fallbackUrl!!))
-
-            it.allAwardings?.quickMap(AwardMapper(it.name!!))?.let {
-                it.forEach {
-                    localAwardQueries.insert(it)
-                }
-            }
-            if (!it.linkFlairText.isNullOrBlank() && !it.linkFlairRichtext.isNullOrEmpty())
-                it.linkFlairRichtext!!.forEach { flair ->
-                    if (flair.text != null)
-                        localPostFlairQueries.insert(LocalPostFlair(it.name!!, url = null, flair.text))
-                    else if (flair.url != null)
-                        localPostFlairQueries.insert(LocalPostFlair(it.name!!, flair.url!!, text = null))
-                }
-            else if (!it.linkFlairText.isNullOrBlank() && it.linkFlairRichtext.isNullOrEmpty())
-                localPostFlairQueries.insert(LocalPostFlair(it.name!!, url = null, it.linkFlairText))
-
-            if (!it.authorFlairText.isNullOrBlank() && !it.authorFlairRichtext.isNullOrEmpty())
-                it.authorFlairRichtext!!.forEach { flair ->
-                    if (flair.text != null)
-                        if (flair.text != null)
-                            localPostFlairQueries.insert(LocalPostFlair(it.authorFullname!!, url = null, flair.text))
-                        else if (flair.url != null)
-                            localPostFlairQueries.insert(LocalPostFlair(it.authorFullname!!, flair.url!!, text = null))
-                }
-            else if (!it.authorFlairText.isNullOrBlank() && it.authorFlairRichtext.isNullOrEmpty())
-                localPostFlairQueries.insert(LocalPostFlair(it.authorFullname!!, url = null, it.authorFlairText))
-
+            savePostAwards(it)
+            savePostLinks(it)
+            savePostFlairs(it.name, it.linkFlairText, it.linkFlairRichtext)
+            savePostUserFlairs(it.name, it.authorFullname, it.authorFlairText, it.authorFlairRichtext)
             with(it) {
                 LocalPost(
                     id = name!!,
-                    user_id = authorFullname!!,
+                    user_id = authorFullname ?: "",
                     user_name = author!!,
                     subreddit_id = subredditId!!,
                     subreddit_name = subreddit!!,
@@ -233,6 +194,76 @@ internal object RemoteMappers {
 
     private fun String.toRedditUrl() = "https://www.reddit.com$this"
     private fun String.removeAmp() = replace("amp;", "&")
+
+    private fun RainbowDatabase.savePostAwards(remotePost: RemotePost) {
+        remotePost.allAwardings?.quickMap(AwardMapper(remotePost.name!!))?.let {
+            it.forEach {
+                localAwardQueries.insert(it)
+            }
+        }
+    }
+
+    private fun RainbowDatabase.savePostLinks(remotePost: RemotePost) {
+        val id = remotePost.name
+        val url = remotePost.url
+        if (id != null && localLinkQueries.selectById(id).executeAsOneOrNull() == null)
+            if (!url.isNullOrBlank() && (url.endsWith("jpg") || url.endsWith("png") || url.endsWith("gif")))
+                localLinkQueries.insert(LocalLink(id, url))
+            else if (!remotePost.media?.oembed?.thumbnailUrl.isNullOrBlank())
+                localLinkQueries.insert(LocalLink(id, remotePost.media?.oembed?.thumbnailUrl!!))
+            else if (!remotePost.media?.oembed?.url.isNullOrBlank())
+                localLinkQueries.insert(LocalLink(id, remotePost.media?.oembed?.url!!))
+            else if (!remotePost.mediaMetadata.isNullOrEmpty())
+                remotePost.mediaMetadata?.values?.map { it.source?.url?.removeAmp() }?.forEach { url ->
+                    if (url != null)
+                        localLinkQueries.insert(LocalLink(id, url))
+                }
+            else if (remotePost.isVideo == true && remotePost.media?.redditVideo?.fallbackUrl != null)
+                localLinkQueries.insert(LocalLink(id, remotePost.media?.redditVideo?.fallbackUrl!!))
+    }
+
+    private fun RainbowDatabase.savePostFlairs(
+        id: String?,
+        flairText: String?,
+        flairRichText: List<FlairRichText>?
+    ) {
+        if (!flairText.isNullOrBlank() && !flairRichText.isNullOrEmpty())
+            flairRichText.forEach { flair ->
+                if (localPostFlairQueries.selectById(id!!)
+                        .executeAsList()
+                        .none { it.text == flair.text && it.url == flair.url }
+                )
+                    if (flair.text != null)
+                        localPostFlairQueries.insert(LocalPostFlair(id, null, url = null, flair.text))
+                    else if (flair.url != null)
+                        localPostFlairQueries.insert(LocalPostFlair(id, null, flair.url!!, text = null))
+            }
+        else if (!flairText.isNullOrBlank() && flairRichText.isNullOrEmpty())
+            if (localPostFlairQueries.selectById(id!!).executeAsList().none { it.text == flairText })
+                localPostFlairQueries.insert(LocalPostFlair(id, null, url = null, flairText))
+    }
+
+    private fun RainbowDatabase.savePostUserFlairs(
+        id: String?,
+        userId: String?,
+        flairText: String?,
+        flairRichText: List<FlairRichText>?
+    ) {
+        if (!flairText.isNullOrBlank() && !flairRichText.isNullOrEmpty())
+            flairRichText.forEach { flair ->
+                if (localPostFlairQueries.selectByIdAndUserId(id!!, userId)
+                        .executeAsList()
+                        .none { it.text == flair.text && it.url == flair.url }
+                )
+                    if (flair.text != null)
+                        localPostFlairQueries.insert(LocalPostFlair(id, userId, url = null, flair.text))
+                    else if (flair.url != null)
+                        localPostFlairQueries.insert(LocalPostFlair(id, userId, flair.url!!, text = null))
+            }
+        else if (!flairText.isNullOrBlank() && flairRichText.isNullOrEmpty())
+            if (localPostFlairQueries.selectByIdAndUserId(id!!, userId).executeAsList().none { it.text == flairText })
+                localPostFlairQueries.insert(LocalPostFlair(id, userId, url = null, flairText))
+    }
 }
 
 fun String.removeHashtagPrefix() = removePrefix("#")

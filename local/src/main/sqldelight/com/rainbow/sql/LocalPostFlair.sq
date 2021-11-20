@@ -1,12 +1,17 @@
 CREATE TABLE IF NOT EXISTS LocalPostFlair (
-id TEXT,
+id TEXT NOT NULL,
+user_id TEXT,
 url TEXT,
 text TEXT
 );
 
 selectById:
 SELECT * FROM LocalPostFlair
-WHERE id = ?;
+WHERE id = ? AND user_id IS NULL;
+
+selectByIdAndUserId:
+SELECT * FROM LocalPostFlair
+WHERE id = ? AND user_id = ?;
 
 insert:
 INSERT INTO LocalPostFlair

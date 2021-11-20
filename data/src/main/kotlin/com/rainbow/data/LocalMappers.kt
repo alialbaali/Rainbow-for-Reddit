@@ -30,7 +30,7 @@ internal object LocalMappers {
                     else
                         null
                 }
-            val userFlairs = localPostFlairQueries.selectById(it.user_id).executeAsList()
+            val userFlairs = localPostFlairQueries.selectByIdAndUserId(it.id, it.user_id).executeAsList()
                 .mapNotNull { localFlair ->
                     if (localFlair.text != null)
                         Flair.TextFlair(localFlair.text!!)
