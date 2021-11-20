@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.utils.defaultPadding
 import com.rainbow.app.utils.defaultShape
@@ -13,10 +14,10 @@ import com.rainbow.domain.models.Post
 @Composable
 inline fun CompactPostItem(
     post: Post,
+    focusRequester: FocusRequester,
     crossinline onClick: (Post) -> Unit,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
-    noinline onCommentsClick: () -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -73,7 +74,7 @@ inline fun CompactPostItem(
         }
         PostActions(
             post,
-            onCommentsClick,
+            focusRequester,
             onShowSnackbar,
             modifier = Modifier
                 .fillMaxWidth()

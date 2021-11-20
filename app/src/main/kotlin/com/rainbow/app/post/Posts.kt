@@ -3,6 +3,7 @@ package com.rainbow.app.post
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Text
+import androidx.compose.ui.focus.FocusRequester
 import com.rainbow.app.components.RainbowProgressIndicator
 import com.rainbow.app.utils.OneTimeEffect
 import com.rainbow.app.utils.PagingEffect
@@ -13,10 +14,10 @@ import com.rainbow.domain.models.PostLayout
 inline fun LazyListScope.posts(
     postsState: UIState<List<Post>>,
     postLayout: PostLayout,
+    focusRequester: FocusRequester,
     crossinline onPostClick: (Post) -> Unit,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
-    noinline onCommentsClick: () -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
     crossinline onLoadMore: (Post) -> Unit,
 ) {
@@ -35,18 +36,18 @@ inline fun LazyListScope.posts(
                 when (postLayout) {
                     PostLayout.Card -> PostItem(
                         post,
+                        focusRequester,
                         onPostClick,
                         onUserNameClick,
                         onSubredditNameClick,
-                        onCommentsClick,
                         onShowSnackbar,
                     )
                     PostLayout.Compact -> CompactPostItem(
                         post,
+                        focusRequester,
                         onPostClick,
                         onUserNameClick,
                         onSubredditNameClick,
-                        onCommentsClick,
                         onShowSnackbar,
                     )
                 }

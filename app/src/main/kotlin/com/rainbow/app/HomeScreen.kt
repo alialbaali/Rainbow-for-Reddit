@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.post.Sorting
 import com.rainbow.app.post.posts
@@ -22,10 +23,10 @@ import kotlinx.coroutines.flow.map
 
 @Composable
 inline fun HomeScreen(
+    focusRequester: FocusRequester,
     crossinline onPostClick: (Post) -> Unit,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
-    noinline onCommentsClick: () -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -54,10 +55,10 @@ inline fun HomeScreen(
         posts(
             state,
             postLayout,
+            focusRequester,
             onPostClick,
             onUserNameClick,
             onSubredditNameClick,
-            onCommentsClick,
             onShowSnackbar,
             onLoadMore = { lastPost = it }
         )

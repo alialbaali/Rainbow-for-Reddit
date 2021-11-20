@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.components.DefaultTabRow
 import com.rainbow.app.post.posts
@@ -31,10 +32,10 @@ enum class SearchTab {
 @Composable
 fun SearchScreen(
     searchTerm: String,
+    focusRequester: FocusRequester,
     onPostClick: (Post) -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
-    onCommentsClick: () -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -69,10 +70,10 @@ fun SearchScreen(
                 posts(
                     postsState,
                     postLayout,
+                    focusRequester,
                     onPostClick,
                     onUserNameClick,
                     onSubredditNameClick,
-                    onCommentsClick,
                     onShowSnackbar,
                     onLoadMore = {}
                 )

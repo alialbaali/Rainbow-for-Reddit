@@ -12,6 +12,7 @@ import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.components.RainbowTopAppBar
 import com.rainbow.app.message.MessageScreen
@@ -50,7 +51,7 @@ fun Rainbow(
     var message by remember { mutableStateOf<UIState<Message>>(UIState.Loading) }
     val scope = rememberCoroutineScope()
     val isSidebarExpanded by Repos.Settings.isSidebarExpanded.collectAsState(true)
-    var isAddCommentFocusable by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
     var snackbarMessage by remember { mutableStateOf<String?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(snackbarMessage) {
@@ -87,6 +88,7 @@ fun Rainbow(
                 )
                 CenterContent(
                     screen,
+                    focusRequester,
                     onPostClick = {
                         post = UIState.Success(it)
                         scope.launch {
@@ -96,7 +98,6 @@ fun Rainbow(
                     onUserNameClick,
                     onSubredditNameClick,
                     onMessageClick = { message = UIState.Success(it) },
-                    onCommentsClick = { isAddCommentFocusable = true },
                     onShowSnackbar = { snackbarMessage = it },
                     Modifier.weight(1F),
                 )
@@ -104,10 +105,9 @@ fun Rainbow(
                     screen,
                     post,
                     message,
-                    isAddCommentFocusable,
+                    focusRequester,
                     onUserNameClick,
                     onSubredditNameClick,
-                    onCommentsClick = { isAddCommentFocusable = true },
                     onShowSnackbar = { snackbarMessage = it },
                     Modifier.weight(1F),
                 )
@@ -142,11 +142,11 @@ private fun RowScope.StartContent(
 @Composable
 private fun RowScope.CenterContent(
     screen: Screen,
+    focusRequester: FocusRequester,
     onPostClick: (Post) -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
     onMessageClick: (Message) -> Unit,
-    onCommentsClick: () -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -154,18 +154,18 @@ private fun RowScope.CenterContent(
         is Screen.SidebarItem -> {
             when (screen) {
                 Screen.SidebarItem.Profile -> ProfileScreen(
+                    focusRequester,
                     onPostClick,
                     onUserNameClick,
                     onSubredditNameClick,
-                    onCommentsClick,
                     onShowSnackbar,
                     modifier,
                 )
                 Screen.SidebarItem.Home -> HomeScreen(
+                    focusRequester,
                     onPostClick,
                     onUserNameClick,
                     onSubredditNameClick,
-                    onCommentsClick,
                     onShowSnackbar,
                     modifier,
                 )
@@ -181,10 +181,10 @@ private fun RowScope.CenterContent(
         is Screen.Subreddit -> {
             SubredditScreen(
                 subredditName = screen.subredditName,
+                focusRequester,
                 onPostClick,
                 onUserNameClick,
                 onSubredditNameClick,
-                onCommentsClick,
                 onShowSnackbar,
                 modifier,
             )
@@ -192,20 +192,20 @@ private fun RowScope.CenterContent(
         is Screen.User -> {
             UserScreen(
                 userName = screen.userName,
+                focusRequester,
                 onPostClick,
                 onUserNameClick,
                 onSubredditNameClick,
-                onCommentsClick,
                 onShowSnackbar,
                 modifier,
             )
         }
         is Screen.Search -> SearchScreen(
             screen.searchTerm,
+            focusRequester,
             onPostClick,
             onUserNameClick,
             onSubredditNameClick,
-            onCommentsClick,
             onShowSnackbar,
             modifier
         )
@@ -218,10 +218,9 @@ private fun RowScope.EndContent(
     screen: Screen,
     post: UIState<Post>,
     message: UIState<Message>,
-    isAddCommentFocusable: Boolean,
+    focusRequester: FocusRequester,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
-    onCommentsClick: () -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -230,10 +229,9 @@ private fun RowScope.EndContent(
         else -> post.composed(modifier) {
             PostScreen(
                 it,
-                isAddCommentFocusable,
+                focusRequester,
                 onUserNameClick,
                 onSubredditNameClick,
-                onCommentsClick,
                 onShowSnackbar,
                 modifier
             )

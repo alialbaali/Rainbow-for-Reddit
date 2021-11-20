@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -255,7 +256,7 @@ fun GifPost(gif: Post.Type.Gif, modifier: Modifier = Modifier) {
 @Composable
 fun PostActions(
     post: Post,
-    onCommentsClick: () -> Unit,
+    focusRequester: FocusRequester,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -294,7 +295,7 @@ fun PostActions(
         Row(
             Modifier
                 .defaultShape()
-                .clickable(onClick = onCommentsClick)
+                .clickable { focusRequester.requestFocus() }
                 .padding(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,

@@ -14,6 +14,7 @@ import androidx.compose.material.icons.rounded.Done
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -46,10 +47,10 @@ enum class SubredditTab {
 @Composable
 fun SubredditScreen(
     subredditName: String,
+    focusRequester: FocusRequester,
     onPostClick: (Post) -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
-    onCommentsClick: () -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -117,10 +118,10 @@ fun SubredditScreen(
             SubredditTab.Posts -> posts(
                 postsState,
                 postLayout,
+                focusRequester,
                 onPostClick,
                 onUserNameClick,
                 onSubredditNameClick,
-                onCommentsClick,
                 onShowSnackbar,
                 onLoadMore = { lastPost = it }
             )

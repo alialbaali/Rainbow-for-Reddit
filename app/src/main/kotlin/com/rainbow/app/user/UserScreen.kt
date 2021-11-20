@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.comment.comments
 import com.rainbow.app.components.DefaultTabRow
@@ -30,10 +31,10 @@ private enum class UserTab {
 @Composable
 fun UserScreen(
     userName: String,
+    focusRequester: FocusRequester,
     onPostClick: (Post) -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
-    onCommentsClick: () -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -85,10 +86,10 @@ fun UserScreen(
                 UserTab.Submitted -> posts(
                     postsState,
                     postLayout,
+                    focusRequester,
                     onPostClick,
                     onUserNameClick,
                     onSubredditNameClick,
-                    onCommentsClick,
                     onShowSnackbar,
                     onLoadMore = { lastPost = it }
                 )

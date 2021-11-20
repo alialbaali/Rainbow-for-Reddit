@@ -9,6 +9,7 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,10 +36,10 @@ private enum class ProfileTab {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProfileScreen(
+    focusRequester: FocusRequester,
     onPostClick: (Post) -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
-    onCommentsClick: () -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -85,10 +86,10 @@ fun ProfileScreen(
                 else -> posts(
                     postsState,
                     postLayout,
+                    focusRequester,
                     onPostClick,
                     onUserNameClick,
                     onSubredditNameClick,
-                    onCommentsClick,
                     onShowSnackbar,
                     onLoadMore = { lastPost = it }
                 )

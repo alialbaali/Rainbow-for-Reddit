@@ -1,13 +1,16 @@
 package com.rainbow.app.components
 
-import androidx.compose.desktop.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.application
 import java.awt.Dialog
 import java.awt.FileDialog
 import java.io.File
 import javax.swing.JFileChooser
+import javax.swing.UIManager
 
+//
 @Composable
 inline fun FileChooser(
     title: String,
@@ -33,15 +36,17 @@ inline fun FileChooser(
     }
 }
 
-fun main() = Window {
-
-    JFileChooser()
-        .apply {
-            showDialog(ComposeWindow(), "Select")
-        }
+fun main() = application {
+    Window({ exitApplication() }) {
+        JFileChooser()
+            .apply {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
+                showDialog(ComposeWindow(), "Select")
+            }
 
 //    FileChooser("Select an image to upload", multiSelectionEnabled = true) {
 //        it.onEach(::println)
 //    }
 
+    }
 }

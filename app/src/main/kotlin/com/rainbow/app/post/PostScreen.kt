@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.*
@@ -27,10 +26,9 @@ import kotlinx.coroutines.flow.map
 @Composable
 fun PostScreen(
     post: Post,
-    isAddCommentFocusable: Boolean,
+    focusRequester: FocusRequester,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
-    onCommentsClick: () -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -51,11 +49,6 @@ fun PostScreen(
             .collect { value = it }
     }
     var repliesVisibility by remember(state) { mutableStateOf(emptyMap<Comment, Boolean>()) }
-    val focusRequester = remember(post) { FocusRequester() }
-    SideEffect {
-        if (isAddCommentFocusable)
-            focusRequester.requestFocus()
-    }
     LazyColumn(
         modifier
             .defaultShape()
@@ -90,7 +83,7 @@ fun PostScreen(
 
                 PostActions(
                     post,
-                    onCommentsClick,
+                    focusRequester,
                     onShowSnackbar,
                     modifier = Modifier
                         .fillMaxWidth()
