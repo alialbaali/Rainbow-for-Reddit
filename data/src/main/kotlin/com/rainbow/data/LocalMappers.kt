@@ -15,6 +15,7 @@ internal object LocalMappers {
             it.name,
             it.description,
             it.url,
+            it.count.toInt(),
             it.price
         )
     }

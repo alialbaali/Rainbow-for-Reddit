@@ -65,6 +65,7 @@ internal object RemoteMappers {
                 name = name!!,
                 description = description!!,
                 url = staticIconUrl!!,
+                count = count?.toLong() ?: 0L,
                 price = coinPrice!!.toLong()
             )
         }
