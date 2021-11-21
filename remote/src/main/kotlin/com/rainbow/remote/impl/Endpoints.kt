@@ -127,6 +127,8 @@ internal sealed class Endpoint(val path: String) {
 
         class UserComments(userName: String) : Endpoint("$UserPath$userName/comments")
 
+        object Replies: Endpoint("${ActionPath}morechildren")
+
         // https://oauth.reddit.com/api/save
         object Save : Endpoint(ActionPath + "save")
 

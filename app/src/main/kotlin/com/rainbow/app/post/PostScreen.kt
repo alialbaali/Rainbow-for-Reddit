@@ -22,6 +22,7 @@ import com.rainbow.domain.models.PostCommentSorting
 import com.rainbow.domain.models.TimeSorting
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 @Composable
 fun PostScreen(
@@ -36,6 +37,7 @@ fun PostScreen(
     var timeSorting by remember { mutableStateOf(TimeSorting.Default) }
     var lastComment by remember(commentsSorting, timeSorting) { mutableStateOf<Comment?>(null) }
     val scrollingState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
     val state by produceState<UIState<List<Comment>>>(
         UIState.Loading,
         post.id,
@@ -137,7 +139,12 @@ fun PostScreen(
             },
             onLoadMore = { lastComment = it },
             onUserNameClick,
-            onSubredditNameClick
+            onSubredditNameClick,
+            onRequestMoreComments = {
+                scope.launch {
+                    Repos.Comment.getMoreComments(post.id, it, commentsSorting)
+                }
+            }
         )
     }
     VerticalScrollbar(rememberScrollbarAdapter(scrollingState))

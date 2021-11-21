@@ -100,7 +100,7 @@ internal object RemoteMappers {
 
                 LocalComment(
                     id = name ?: "",
-                    parent_id = parentId!!,
+                    parent_id = parentId ?: "",
                     post_id = linkId ?: "",
                     user_id = authorFullname ?: "",
                     subreddit_id = subredditId ?: "",
@@ -112,6 +112,7 @@ internal object RemoteMappers {
                     vote = likes,
                     isEdited = false,
                     isSaved = saved ?: false,
+                    more_replies = children.takeIf { !it.isNullOrEmpty() }?.joinToString()
                 )
             }
         }

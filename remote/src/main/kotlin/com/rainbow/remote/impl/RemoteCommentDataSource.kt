@@ -27,8 +27,17 @@ private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommen
             .mapCatching { it.toList() }
     }
 
-    override suspend fun getCommentReplies(sort: String): Result<List<RemoteComment>> {
-        TODO("Not yet implemented")
+    override suspend fun getMoreComments(
+        postId: String,
+        childrenIds: List<String>,
+        commentsSorting: String
+    ): Result<List<RemoteComment>> {
+        return client.plainRequest<Map<String, Item<Map<String, List<Item<RemoteComment>>>>>>(Comments.Replies) {
+            parameter(Keys.Sort, commentsSorting)
+            parameter(Keys.PostId, postId)
+            parameter(Keys.ApiType, Values.Json)
+            parameter(Keys.Children, childrenIds.take(100).joinToString())
+        }.map { it["json"]?.data?.get("things")?.map { it.data } ?: emptyList() }
     }
 
     override suspend fun submitComment(postId: String?, parentCommentId: String?, text: String): Result<Unit> {

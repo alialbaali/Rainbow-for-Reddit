@@ -26,6 +26,9 @@ internal object Keys {
     const val FlairId = "flair_template_id"
     const val isFlairEnabled = "flair_enabled"
     const val Reason = "reason"
+    const val PostId = "link_id"
+    const val ApiType = "api_type"
+    const val Children = "children"
 }
 
 internal object Values {
@@ -36,4 +39,5 @@ internal object Values {
     const val Downvote = -1
     const val Url = "link"
     const val Self = "self"
+    const val Json = "json"
 }

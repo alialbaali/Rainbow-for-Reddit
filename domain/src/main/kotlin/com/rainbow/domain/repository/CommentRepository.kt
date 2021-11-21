@@ -15,6 +15,8 @@ interface CommentRepository {
 
     suspend fun getUserComments(userId: String): Flow<Result<List<Comment>>>
 
+    suspend fun getMoreComments(postId: String, children: List<String>, commentsSorting: PostCommentSorting)
+
     suspend fun createComment(comment: Comment): Result<Comment>
 
     suspend fun deleteComment(commentId: String): Result<Unit>

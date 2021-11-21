@@ -89,6 +89,17 @@ internal class CommentRepositoryImpl(
             .also { emitAll(it) }
     }
 
+    override suspend fun getMoreComments(postId: String, children: List<String>, commentsSorting: PostCommentSorting) {
+        remoteCommentDataSource.getMoreComments(postId, children, commentsSorting.name.lowercase())
+            .map { it.quickMap(remoteMapper) }
+            .onSuccess {
+                it.forEach {
+                    localCommentQueries.deleteById(it.id)
+                    localCommentQueries.insert(it)
+                }
+            }
+    }
+
     override suspend fun createComment(comment: Comment): Result<Comment> = withContext(dispatcher) {
         TODO("Not yet implemented")
     }

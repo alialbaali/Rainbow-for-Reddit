@@ -144,6 +144,7 @@ internal object LocalMappers {
                     user_name,
                     subreddit_name,
                     replies,
+                    moreReplies = more_replies?.split(',') ?: emptyList(),
                     body,
                     upvotes_count.toULong(),
                     awards,

@@ -145,7 +145,11 @@ data class RemoteComment internal constructor(
     @SerialName("ups")
     val ups: Int? = null, // 33
 //    @SerialName("user_reports")
-//    val userReports: List<Any>? = null
+//    val userReports: List<Any>? = null,
+    @SerialName("children")
+    val children: List<String>? = null,
+    @SerialName("count")
+    val count: Int? = null, // 1
 )
 
 val RemoteComment.replies: List<RemoteComment>?

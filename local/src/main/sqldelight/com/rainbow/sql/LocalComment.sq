@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS LocalComment (
     user_name      TEXT                  NOT NULL,
     subreddit_name TEXT NOT NULL ,
     body           TEXT NOT NULL,
+    more_replies  TEXT,
     upvotes_count  INTEGER               NOT NULL,
     vote           INTEGER AS Boolean,
     isEdited INTEGER AS Boolean NOT NULL,
@@ -42,6 +43,10 @@ WHERE id = ?;
 unvote:
 UPDATE LocalComment
 SET vote = NULL
+WHERE id = ?;
+
+deleteById:
+DELETE FROM LocalComment
 WHERE id = ?;
 
 clear:

@@ -17,6 +17,7 @@ inline fun LazyListScope.postComments(
     crossinline onLoadMore: (Comment) -> Unit,
     noinline onUserNameClick: (String) -> Unit,
     noinline onSubredditNameClick: (String) -> Unit,
+    noinline onRequestMoreComments: (List<String>) -> Unit,
 ) {
     when (commentsState) {
         is UIState.Empty -> item { Text("No comments found.") }
@@ -26,7 +27,7 @@ inline fun LazyListScope.postComments(
             val comments = commentsState.value
             comments.withIndex().forEach { indexedComment ->
                 item {
-                    if (indexedComment.value.subredditId.isNotBlank()) {
+                    if (indexedComment.value.moreReplies.isEmpty()) {
                         PostCommentItem(
                             indexedComment.value,
                             postUserName,
@@ -42,7 +43,11 @@ inline fun LazyListScope.postComments(
                         )
                         PagingEffect(comments, indexedComment.index, onLoadMore)
                     } else {
-                        ViewMoreCommentItem(onClick = {})
+                        ViewMoreCommentItem(
+                            onClick = {
+                                onRequestMoreComments(indexedComment.value.moreReplies)
+                            }
+                        )
                     }
                 }
                 replies(
@@ -53,6 +58,7 @@ inline fun LazyListScope.postComments(
                     setIsRepliesVisible = { reply, isVisible -> setRepliesVisibility(reply, isVisible) },
                     onUserNameClick,
                     onSubredditNameClick,
+                    onRequestMoreComments,
                 )
             }
         }
@@ -67,6 +73,7 @@ fun LazyListScope.replies(
     setIsRepliesVisible: (Comment, Boolean) -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
+    onRequestMoreComments: (List<String>) -> Unit,
     depth: Int = 1,
     modifier: Modifier = Modifier
 ) {
@@ -77,7 +84,7 @@ fun LazyListScope.replies(
                 enter = fadeIn() + expandVertically(),
                 exit = fadeOut() + shrinkVertically(),
             ) {
-                if (reply.subredditId.isNotBlank())
+                if (reply.moreReplies.isEmpty())
                     ReplyItem(
                         reply,
                         postUserName,
@@ -90,7 +97,9 @@ fun LazyListScope.replies(
                     )
                 else
                     ViewMoreReplyItem(
-                        onClick = {},
+                        onClick = {
+                            onRequestMoreComments(reply.moreReplies)
+                        },
                         depth,
                         modifier
                     )
@@ -104,6 +113,7 @@ fun LazyListScope.replies(
             setIsRepliesVisible,
             onUserNameClick,
             onSubredditNameClick,
+            onRequestMoreComments,
             depth = depth + 1,
             modifier
         )

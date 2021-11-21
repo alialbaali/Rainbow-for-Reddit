@@ -11,7 +11,7 @@ interface RemoteCommentDataSource {
 
     suspend fun getUserComments(userId: String): Result<List<RemoteComment>>
 
-    suspend fun getCommentReplies(sort: String): Result<List<RemoteComment>>
+    suspend fun getMoreComments(postId: String, childrenIds: List<String>, commentsSorting: String): Result<List<RemoteComment>>
 
     suspend fun submitComment(postId: String?, parentCommentId: String?, text: String): Result<Unit>
 

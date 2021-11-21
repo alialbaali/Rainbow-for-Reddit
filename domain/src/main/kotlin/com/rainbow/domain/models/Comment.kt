@@ -13,6 +13,7 @@ data class Comment(
     val userName: String,
     val subredditName: String,
     val replies: List<Comment> = emptyList(),
+    val moreReplies: List<String> = emptyList(),
     val body: String,
     val upvotesCount: ULong,
     val awards: List<Award> = emptyList(),
