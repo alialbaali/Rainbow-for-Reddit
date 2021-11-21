@@ -1,9 +1,6 @@
 package com.rainbow.app.comment
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.rounded.Block
@@ -30,7 +27,7 @@ inline fun CommentItem(
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
-    Column(modifier) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         CommentInfo(comment, onUserNameClick, onSubredditNameClick, isSubredditNameEnabled = true)
         Text(comment.body, color = MaterialTheme.colors.onBackground)
         Row {

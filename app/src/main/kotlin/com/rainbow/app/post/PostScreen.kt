@@ -129,6 +129,7 @@ fun PostScreen(
         }
         postComments(
             state,
+            post.userName,
             repliesVisibility,
             setRepliesVisibility = { id, isVisible ->
                 repliesVisibility = repliesVisibility.toMutableMap().apply { this[id] = isVisible }

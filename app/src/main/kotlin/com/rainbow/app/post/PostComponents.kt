@@ -117,7 +117,7 @@ fun TextPost(text: Post.Type.Text, isRead: Boolean, modifier: Modifier = Modifie
                 },
                 modifier = Modifier.animateContentSize(),
                 maxLines = if (shouldLimitLines) maxLines else Int.MAX_VALUE,
-                style = MaterialTheme.typography.body1,
+                style = MaterialTheme.typography.subtitle1,
                 overflow = TextOverflow.Ellipsis,
                 onTextLayout = { if (it.lineCount > 15) shouldLimitLines = true }
             )

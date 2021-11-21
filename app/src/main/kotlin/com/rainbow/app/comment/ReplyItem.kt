@@ -20,6 +20,7 @@ import com.rainbow.domain.models.Comment
 @Composable
 inline fun ReplyItem(
     reply: Comment,
+    postUserName: String,
     isRepliesVisible: Boolean,
     depth: Int,
     noinline onClick: () -> Unit,
@@ -59,7 +60,7 @@ inline fun ReplyItem(
                 .padding(bottom = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            CommentInfo(reply, onUserNameClick, onSubredditNameClick, isSubredditNameEnabled = false)
+            PostCommentInfo(reply, postUserName, onUserNameClick, onSubredditNameClick, isSubredditNameEnabled = false)
             Text(reply.body, color = MaterialTheme.colors.onBackground)
             CommentActions(reply, isRepliesVisible)
         }

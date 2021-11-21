@@ -20,6 +20,30 @@ import com.rainbow.domain.models.Comment
 import kotlinx.coroutines.launch
 
 @Composable
+inline fun PostCommentInfo(
+    comment: Comment,
+    postUserName: String,
+    crossinline onUserNameClick: (String) -> Unit,
+    crossinline onSubredditNameClick: (String) -> Unit,
+    isSubredditNameEnabled: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Row(modifier, verticalAlignment = Alignment.CenterVertically) {
+        if (isSubredditNameEnabled) {
+            SubredditName(comment.subredditName, onSubredditNameClick)
+            Dot()
+        }
+        CommentUserName(comment.userName, postUserName, onUserNameClick)
+        Dot()
+        CreationDate(comment.creationDate)
+        if (comment.awards.isNotEmpty()) {
+            Dot()
+            Awards(comment.awards)
+        }
+    }
+}
+
+@Composable
 inline fun CommentInfo(
     comment: Comment,
     crossinline onUserNameClick: (String) -> Unit,

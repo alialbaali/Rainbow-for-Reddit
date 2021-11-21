@@ -59,6 +59,7 @@ inline fun <reified T : Enum<T>> PostsSorting(
         OutlinedButton(
             onClick = { isMenuVisible = !isMenuVisible },
             shape = MaterialTheme.shapes.medium,
+            colors = ButtonDefaults.outlinedButtonColors(backgroundColor = MaterialTheme.colors.background)
         ) {
             Text(
                 sorting.name,

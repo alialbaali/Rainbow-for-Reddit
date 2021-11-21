@@ -11,6 +11,7 @@ import com.rainbow.domain.models.Comment
 
 inline fun LazyListScope.postComments(
     commentsState: UIState<List<Comment>>,
+    postUserName: String,
     repliesVisibility: Map<Comment, Boolean>,
     noinline setRepliesVisibility: (Comment, Boolean) -> Unit,
     crossinline onLoadMore: (Comment) -> Unit,
@@ -28,6 +29,7 @@ inline fun LazyListScope.postComments(
                     if (indexedComment.value.subredditId.isNotBlank()) {
                         PostCommentItem(
                             indexedComment.value,
+                            postUserName,
                             isRepliesVisible = repliesVisibility[indexedComment.value] ?: true,
                             onClick = {
                                 setRepliesVisibility(
@@ -45,6 +47,7 @@ inline fun LazyListScope.postComments(
                 }
                 replies(
                     indexedComment.value.replies,
+                    postUserName,
                     isVisible = repliesVisibility[indexedComment.value] ?: true,
                     isRepliesVisible = { repliesVisibility[it] ?: true },
                     setIsRepliesVisible = { reply, isVisible -> setRepliesVisibility(reply, isVisible) },
@@ -58,6 +61,7 @@ inline fun LazyListScope.postComments(
 
 fun LazyListScope.replies(
     replies: List<Comment>,
+    postUserName: String,
     isVisible: Boolean,
     isRepliesVisible: (Comment) -> Boolean,
     setIsRepliesVisible: (Comment, Boolean) -> Unit,
@@ -76,6 +80,7 @@ fun LazyListScope.replies(
                 if (reply.subredditId.isNotBlank())
                     ReplyItem(
                         reply,
+                        postUserName,
                         isRepliesVisible(reply),
                         depth,
                         onClick = { setIsRepliesVisible(reply, !isRepliesVisible(reply)) },
@@ -93,6 +98,7 @@ fun LazyListScope.replies(
         }
         replies(
             reply.replies,
+            postUserName,
             isVisible = isRepliesVisible(reply) && isVisible,
             isRepliesVisible,
             setIsRepliesVisible,
