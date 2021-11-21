@@ -19,3 +19,13 @@ val darkColors = darkColors(
     secondary = Color(0xFFE29578),
     secondaryVariant = Color(0xFFFFDDD2),
 )
+
+val RainbowColors = listOf(
+    Color(0xFF9C27B0), // Violet
+    Color(0xFF3F51B5), // Indigo
+    Color(0xFF2196F3), // Blue
+    Color(0xFF4CAF50), // Green
+    Color(0xFFFFEB3B), // Yellow
+    Color(0xFFFF9800), // Orange
+    Color(0xFFF44336), // Red
+)
