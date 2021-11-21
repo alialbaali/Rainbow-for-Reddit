@@ -36,7 +36,7 @@ internal object RemoteMappers {
                     is_mine = isSelf!!,
                     is_hidden = hidden!!,
                     vote = likes,
-                    is_nsfw = false,
+                    is_nsfw = over18!!,
                     is_edited = false,
                     flair_background_color = linkFlairBackgroundColor.takeIf { !it.isNullOrBlank() } ?: "#FFF5F5F5",
                     flair_text_color = when (linkFlairTextColor) {

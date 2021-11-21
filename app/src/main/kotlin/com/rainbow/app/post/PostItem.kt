@@ -31,7 +31,7 @@ inline fun PostItem(
             .defaultShape()
             .clickable { onClick(post) }
             .defaultPadding(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
 
         PostInfo(

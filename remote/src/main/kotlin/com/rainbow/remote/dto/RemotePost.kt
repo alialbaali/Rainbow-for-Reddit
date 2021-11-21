@@ -138,8 +138,8 @@ data class RemotePost(
     val numDuplicates: Int? = null, // 1
     @SerialName("num_reports")
     val numReports: Int? = null, // null
-//    @SerialName("over_18")
-//    val over18: Boolean? = null, // false
+    @SerialName("over_18")
+    val over18: Boolean? = null, // false
     @SerialName("parent_whitelist_status")
     val parentWhitelistStatus: String? = null, // all_ads
     @SerialName("permalink")

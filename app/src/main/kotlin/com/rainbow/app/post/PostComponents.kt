@@ -99,7 +99,7 @@ fun PostContent(post: Post, modifier: Modifier = Modifier) {
         is Post.Type.Text -> TextPost(type, post.isRead, modifier)
         is Post.Type.Link -> LinkPost(type, modifier)
         is Post.Type.Gif -> GifPost(type, modifier)
-        is Post.Type.Image -> ImagePost(type, modifier)
+        is Post.Type.Image -> ImagePost(type, post.isNSFW, modifier)
         is Post.Type.Video -> VideoPost(type, modifier)
     }
 }
@@ -142,7 +142,7 @@ fun TextPost(text: Post.Type.Text, isRead: Boolean, modifier: Modifier = Modifie
 }
 
 @Composable
-fun ImagePost(image: Post.Type.Image, modifier: Modifier = Modifier) {
+fun ImagePost(image: Post.Type.Image, isNSFW: Boolean, modifier: Modifier = Modifier) {
     var isDialogVisible by remember { mutableStateOf(false) }
     var imageUrl by remember(image) { mutableStateOf(image.urls.first()) }
     var currentImageIndex by remember(image) { mutableStateOf(0) }
@@ -195,6 +195,8 @@ fun ImagePost(image: Post.Type.Image, modifier: Modifier = Modifier) {
             ) {
                 Icon(RainbowIcons.ArrowForwardIos, RainbowIcons.ArrowForwardIos.name)
             }
+        if (isNSFW)
+            NSFWBox()
     }
 
     ImageWindow(

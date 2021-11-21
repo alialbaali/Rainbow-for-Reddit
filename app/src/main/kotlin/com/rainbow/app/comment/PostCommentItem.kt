@@ -29,7 +29,7 @@ inline fun PostCommentItem(
         modifier
             .clickable { onClick() }
             .padding(bottom = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         CommentInfo(comment, onUserNameClick, onSubredditNameClick, isSubredditNameEnabled = false)
         Text(comment.body, color = MaterialTheme.colors.onBackground)
