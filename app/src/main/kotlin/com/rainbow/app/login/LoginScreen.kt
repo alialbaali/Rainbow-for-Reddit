@@ -82,7 +82,7 @@ private fun createAuthenticationUrl(uuid: UUID): String {
             append("client_id", "cpKMrRbh8b06TQ")
             append("response_type", "code")
             append("state", uuid.toString())
-            append("redirect_uri", "http://localhost:8080")
+            append("redirect_uri", "https://rainbowforreddit.herokuapp.com/")
             append("duration", "permanent")
             append(
                 "scope",

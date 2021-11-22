@@ -23,9 +23,8 @@ internal val rainbowClient by lazy {
 
         defaultRequest {
             url {
-                protocol = URLProtocol.HTTP
-                host = "0.0.0.0"
-                port = 8080
+                protocol = URLProtocol.HTTPS
+                host = "rainbowforreddit.herokuapp.com"
             }
         }
 

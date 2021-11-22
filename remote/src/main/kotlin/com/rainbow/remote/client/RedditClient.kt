@@ -18,7 +18,7 @@ private const val RefreshTokenUrl = "https://www.reddit.com/api/v1/access_token"
 private const val UploadUri = "https://reddit-uploaded-media.s3-accelerate.amazonaws.com/"
 private const val GrantTypeKey = "grant_type"
 private const val RefreshTokenKey = "refresh_token"
-private const val RedirectUrl = "http://localhost:8080"
+private const val RedirectUrl = "https://rainbowforreddit.herokuapp.com/"
 private const val AccessTokenKey = "access_token"
 
 internal val redditClient by lazy {
