@@ -310,9 +310,7 @@ fun PostActions(
         }
 
         Column {
-            IconButton(onClick = { isMenuExpanded = true }, Modifier.defaultShape(shape = CircleShape)) {
-                Icon(RainbowIcons.MoreVert, contentDescription = "More")
-            }
+            MenuIconButton(onClick = { isMenuExpanded = true })
 
             RainbowMenu(
                 expanded = isMenuExpanded,
