@@ -20,9 +20,9 @@ fun RainbowTheme(content: @Composable () -> Unit) {
         Theme.Dark -> darkColors
         Theme.Light -> lightColors
         Theme.System -> if (isSystemInDarkTheme())
-            lightColors
-        else
             darkColors
+        else
+            lightColors
     }
 
     CompositionLocalProvider(LocalScrollbarStyle provides DefaultScrollbarStyle) {
