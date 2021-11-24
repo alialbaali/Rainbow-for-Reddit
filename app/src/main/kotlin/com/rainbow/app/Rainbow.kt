@@ -50,7 +50,6 @@ fun Rainbow(
     var post by remember { mutableStateOf<UIState<Post>>(UIState.Loading) }
     var message by remember { mutableStateOf<UIState<Message>>(UIState.Loading) }
     val scope = rememberCoroutineScope()
-    val isSidebarExpanded by Repos.Settings.isSidebarExpanded.collectAsState(true)
     val focusRequester = remember { FocusRequester() }
     var snackbarMessage by remember { mutableStateOf<String?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -61,56 +60,52 @@ fun Rainbow(
         }
     }
     Box(modifier.background(MaterialTheme.colors.background)) {
-        Column {
-            RainbowTopAppBar(
+        Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            StartContent(
                 screen,
-                onSearchClick,
-                onSidebarClick = {
-                    scope.launch {
-                        Repos.Settings.setIsSidebarExpanded(!isSidebarExpanded)
-                    }
-                },
-                onSubredditNameClick,
-                onBackClick,
-                onForwardClick,
-                isBackEnabled,
-                isForwardEnabled,
+                backStack,
+                onSidebarClick,
+                Modifier
+                    .wrapContentWidth(unbounded = true)
+                    .fillMaxHeight(),
             )
-            Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                StartContent(
+            Column(Modifier.fillMaxSize()) {
+                RainbowTopAppBar(
                     screen,
-                    backStack,
-                    isSidebarExpanded,
-                    onSidebarClick,
-                    Modifier
-                        .wrapContentWidth(unbounded = true)
-                        .fillMaxHeight(),
-                )
-                CenterContent(
-                    screen,
-                    focusRequester,
-                    onPostClick = {
-                        post = UIState.Success(it)
-                        scope.launch {
-                            Repos.Post.readPost(it.id)
-                        }
-                    },
-                    onUserNameClick,
+                    onSearchClick,
                     onSubredditNameClick,
-                    onMessageClick = { message = UIState.Success(it) },
-                    onShowSnackbar = { snackbarMessage = it },
-                    Modifier.weight(1F),
+                    onBackClick,
+                    onForwardClick,
+                    isBackEnabled,
+                    isForwardEnabled,
                 )
-                EndContent(
-                    screen,
-                    post,
-                    message,
-                    focusRequester,
-                    onUserNameClick,
-                    onSubredditNameClick,
-                    onShowSnackbar = { snackbarMessage = it },
-                    Modifier.weight(1F),
-                )
+                Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    CenterContent(
+                        screen,
+                        focusRequester,
+                        onPostClick = {
+                            post = UIState.Success(it)
+                            scope.launch {
+                                Repos.Post.readPost(it.id)
+                            }
+                        },
+                        onUserNameClick,
+                        onSubredditNameClick,
+                        onMessageClick = { message = UIState.Success(it) },
+                        onShowSnackbar = { snackbarMessage = it },
+                        Modifier.weight(1F),
+                    )
+                    EndContent(
+                        screen,
+                        post,
+                        message,
+                        focusRequester,
+                        onUserNameClick,
+                        onSubredditNameClick,
+                        onShowSnackbar = { snackbarMessage = it },
+                        Modifier.weight(1F),
+                    )
+                }
             }
         }
         SnackbarHost(
@@ -123,16 +118,14 @@ fun Rainbow(
 }
 
 @Composable
-private fun RowScope.StartContent(
+private fun StartContent(
     screen: Screen,
     backStack: List<Screen>,
-    isExpanded: Boolean,
     onSidebarClick: (Screen.SidebarItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Sidebar(
         screen as? Screen.SidebarItem ?: backStack.last { it is Screen.SidebarItem } as Screen.SidebarItem,
-        isExpanded,
         onSidebarClick,
         modifier
             .animateContentSize(spring(stiffness = Spring.StiffnessLow)),
@@ -140,7 +133,7 @@ private fun RowScope.StartContent(
 }
 
 @Composable
-private fun RowScope.CenterContent(
+private fun CenterContent(
     screen: Screen,
     focusRequester: FocusRequester,
     onPostClick: (Post) -> Unit,
@@ -169,7 +162,7 @@ private fun RowScope.CenterContent(
                     onShowSnackbar,
                     modifier,
                 )
-                Screen.SidebarItem.Subreddits -> CurrentUserSubredditsScreen(onSubredditNameClick)
+                Screen.SidebarItem.Subreddits -> CurrentUserSubredditsScreen(onSubredditNameClick, onShowSnackbar)
                 Screen.SidebarItem.Messages -> MessagesScreen(
                     onMessageClick,
                     onUserNameClick,
@@ -214,7 +207,7 @@ private fun RowScope.CenterContent(
 
 
 @Composable
-private fun RowScope.EndContent(
+private fun EndContent(
     screen: Screen,
     post: UIState<Post>,
     message: UIState<Message>,

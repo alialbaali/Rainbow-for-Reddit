@@ -40,7 +40,7 @@ fun RainbowMenuItem(
 ) {
     DropdownMenuItem(onclick, modifier, enabled) {
         Icon(imageVector, contentDescription = text)
-        Spacer(Modifier.width(8.dp))
+        Spacer(Modifier.width(16.dp))
         Text(text)
     }
 }

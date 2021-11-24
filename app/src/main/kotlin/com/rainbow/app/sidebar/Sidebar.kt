@@ -2,21 +2,37 @@ package com.rainbow.app.sidebar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.unit.dp
 import com.rainbow.app.navigation.Screen
 import com.rainbow.app.ui.dpDimensions
+import com.rainbow.app.utils.RainbowIcons
+import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.app.utils.defaultPadding
+import com.rainbow.data.Repos
+import kotlinx.coroutines.launch
 
 @Composable
 fun Sidebar(
     sidebarItem: Screen.SidebarItem,
-    isExpanded: Boolean,
     onClick: (Screen.SidebarItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isExpanded by Repos.Settings.isSidebarExpanded.collectAsState(true)
+    val scope = rememberCoroutineScope()
+
     @Composable
     fun Screen.SidebarItem.iconColor() =
         if (sidebarItem == this)
@@ -36,63 +52,77 @@ fun Sidebar(
 
     Column(
         modifier
+            .padding(end = 4.dp)
+            .shadow(2.dp, RoundedCornerShape(topEnd = 4.dp, bottomEnd = 4.dp))
+            .background(MaterialTheme.colors.background)
             .defaultPadding(),
-        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = if (isExpanded) Alignment.Start else Alignment.CenterHorizontally
     ) {
-
-        with(Screen.SidebarItem.Profile) {
-            SidebarItem(
-                this,
-                isExpanded,
-                onClick,
-                Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .clip(itemShape)
-                    .background(background()),
-                textStyle(),
-                iconColor(),
-            )
-        }
-
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Screen.SidebarItem.All
-                .filter { item -> item !is Screen.SidebarItem.Profile && item !is Screen.SidebarItem.Settings }
-                .onEach { item ->
-                    SidebarItem(
-                        item,
-                        isExpanded,
-                        onClick,
-                        Modifier
-                            .padding(vertical = MaterialTheme.dpDimensions.medium)
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                            .clip(item.itemShape)
-                            .background(item.background()),
-                        item.textStyle(),
-                        item.iconColor(),
-                    )
+        IconButton(
+            onClick = {
+                scope.launch {
+                    Repos.Settings.setIsSidebarExpanded(!isExpanded)
                 }
+            },
+        ) {
+            Icon(RainbowIcons.Menu, RainbowStrings.ShowMenu)
         }
 
-        with(Screen.SidebarItem.Settings) {
-            SidebarItem(
-                this,
-                isExpanded,
-                onClick,
+        Column(Modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceBetween) {
+            with(Screen.SidebarItem.Profile) {
+                SidebarItem(
+                    this,
+                    isExpanded,
+                    onClick,
+                    Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .clip(itemShape)
+                        .background(background()),
+                    textStyle(),
+                    iconColor(),
+                )
+            }
+
+            Column(
                 Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight()
-                    .clip(itemShape)
-                    .background(background()),
-                textStyle(),
-                iconColor(),
-            )
+                    .wrapContentHeight(),
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Screen.SidebarItem.All
+                    .filter { item -> item !is Screen.SidebarItem.Profile && item !is Screen.SidebarItem.Settings }
+                    .onEach { item ->
+                        SidebarItem(
+                            item,
+                            isExpanded,
+                            onClick,
+                            Modifier
+                                .padding(vertical = MaterialTheme.dpDimensions.medium)
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                                .clip(item.itemShape)
+                                .background(item.background()),
+                            item.textStyle(),
+                            item.iconColor(),
+                        )
+                    }
+            }
+
+            with(Screen.SidebarItem.Settings) {
+                SidebarItem(
+                    this,
+                    isExpanded,
+                    onClick,
+                    Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .clip(itemShape)
+                        .background(background()),
+                    textStyle(),
+                    iconColor(),
+                )
+            }
         }
     }
 }
