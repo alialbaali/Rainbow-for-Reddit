@@ -31,7 +31,7 @@ fun Awards(awards: List<Award>) {
                     modifier = Modifier.size(20.dp),
                 )
             }
-            Text(awards.count().toString())
+            Text(awards.sumOf { it.count }.toString())
         }
         DropdownMenu(isHovered, onDismissRequest = {}, focusable = false) {
             awards.forEach { award ->
