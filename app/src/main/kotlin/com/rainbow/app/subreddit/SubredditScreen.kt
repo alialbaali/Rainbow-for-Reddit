@@ -1,19 +1,18 @@
 package com.rainbow.app.subreddit
 
 import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.material.Icon
-import androidx.compose.material.IconToggleButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.rounded.Done
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -30,7 +29,6 @@ import com.rainbow.domain.models.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import kotlinx.datetime.toJavaLocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -95,7 +93,7 @@ fun SubredditScreen(
     LazyColumn(modifier, scrollingState, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         item {
             state.composed { subreddit ->
-                Header(subreddit, Modifier.padding(bottom = 8.dp))
+                Header(subreddit, onShowSnackbar, Modifier.padding(bottom = 8.dp))
             }
         }
         item {
@@ -128,15 +126,14 @@ fun SubredditScreen(
             SubredditTab.Rules -> rules(rulesState)
             SubredditTab.Resources -> TODO()
             SubredditTab.RelatedSubreddits -> TODO()
-            SubredditTab.Moderators -> moderators(moderatorsState)
+            SubredditTab.Moderators -> moderators(moderatorsState, onUserNameClick)
         }
     }
     VerticalScrollbar(rememberScrollbarAdapter(scrollingState))
 }
 
 @Composable
-private fun Header(subreddit: Subreddit, modifier: Modifier = Modifier) {
-    val scope = rememberCoroutineScope()
+private fun Header(subreddit: Subreddit, onShowSnackbar: (String) -> Unit, modifier: Modifier = Modifier) {
     Column(
         modifier
             .defaultShape()
@@ -155,44 +152,21 @@ private fun Header(subreddit: Subreddit, modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .defaultPadding(start = 232.dp),
-            verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-
             Text(
                 text = subreddit.description,
-                modifier = Modifier
-                    .fillMaxWidth(0.75F),
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.subtitle1,
                 overflow = TextOverflow.Ellipsis,
             )
 
-            IconToggleButton(
-                checked = subreddit.isSubscribed,
-                onCheckedChange = {
-                    scope.launch {
-                        if (it)
-                            Repos.Subreddit.subscribeSubreddit(subreddit.name)
-                        else
-                            Repos.Subreddit.unSubscribeSubreddit(subreddit.name)
-                    }
-                }
-            ) {
-                Row {
-                    if (subreddit.isSubscribed) {
-                        Text("Subscribed")
-                        Spacer(Modifier.width(8.dp))
-                        Icon(RainbowIcons.Done, contentDescription = null)
-                    } else {
-                        Text("Subscribe")
-                    }
-                }
-            }
+            SubscribeButton(subreddit, onShowSnackbar)
         }
     }
 }
 
-private fun LazyListScope.moderators(moderatorsState: UIState<List<Moderator>>) {
+
+private fun LazyListScope.moderators(moderatorsState: UIState<List<Moderator>>, onModeratorClick: (String) -> Unit) {
     when (moderatorsState) {
         is UIState.Empty -> item { Text("No moderators found.") }
         is UIState.Failure -> throw moderatorsState.exception
@@ -207,7 +181,7 @@ private fun LazyListScope.moderators(moderatorsState: UIState<List<Moderator>>) 
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     moderatorsState.value.forEach {
-                        ModeratorItem(it, Modifier.fillMaxWidth())
+                        ModeratorItem(it, onModeratorClick, Modifier.fillMaxWidth())
                     }
                 }
             }
@@ -247,19 +221,25 @@ private fun RuleItem(rule: Rule, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ModeratorItem(moderator: Moderator, modifier: Modifier = Modifier) {
+private fun ModeratorItem(moderator: Moderator, onModeratorClick: (String) -> Unit, modifier: Modifier = Modifier) {
     Row(
-        modifier,
+        modifier
+            .clip(MaterialTheme.shapes.large)
+            .clickable { onModeratorClick(moderator.name) },
         horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(moderator.name, fontWeight = FontWeight.Medium, fontSize = 18.sp)
             moderator.permissions.forEach { permission ->
                 Text(
                     text = permission.name,
                     fontWeight = FontWeight.Medium,
                     fontSize = 14.sp,
-                    modifier = modifier
+                    modifier = Modifier
                         .defaultShape()
                         .padding(8.dp)
                 )
