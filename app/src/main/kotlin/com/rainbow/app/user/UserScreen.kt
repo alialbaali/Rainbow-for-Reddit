@@ -38,7 +38,7 @@ fun UserScreen(
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var selectedTab by remember { mutableStateOf(UserTab.Overview) }
+    var selectedTab by remember { mutableStateOf(UserTab.Submitted) }
     var postSorting by remember { mutableStateOf(UserPostSorting.Default) }
     var timeSorting by remember { mutableStateOf(TimeSorting.Default) }
     var lastPost by remember(postSorting, timeSorting) { mutableStateOf<Post?>(null) }
