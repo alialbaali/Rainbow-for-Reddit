@@ -36,7 +36,11 @@ private suspend inline fun <reified T> HttpResponse.receiveAsResponse() =
     if (status.isSuccess())
         receive<Item<T>>()
     else
-        receive<Error>()
+        try {
+            receive<Error>()
+        } catch (exception: NoTransformationFoundException) {
+            Error(status.description, status.value)
+        }
 
 private inline fun <reified T> Response<T>.toResult(): Result<T> = when (this) {
     is Item -> Result.success(data)
