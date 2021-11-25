@@ -10,6 +10,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowForward
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +33,7 @@ fun RainbowTopAppBar(
     onForwardClick: () -> Unit,
     isBackEnabled: Boolean,
     isForwardEnabled: Boolean,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -58,6 +60,13 @@ fun RainbowTopAppBar(
                 modifier = Modifier.defaultShape(shape = CircleShape)
             ) {
                 Icon(RainbowIcons.ArrowForward, RainbowStrings.ShowMenu)
+            }
+
+            IconButton(
+                onClick = onRefresh,
+                Modifier.defaultShape(shape = CircleShape)
+            ) {
+                Icon(RainbowIcons.Refresh, RainbowStrings.Refresh)
             }
 
             Text(

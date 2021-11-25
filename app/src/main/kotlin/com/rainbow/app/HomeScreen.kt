@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.map
 @Composable
 inline fun HomeScreen(
     focusRequester: FocusRequester,
+    refreshContent: Int,
     crossinline onPostClick: (Post) -> Unit,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
@@ -35,7 +36,7 @@ inline fun HomeScreen(
     var lastPost by remember(postSorting, timeSorting) { mutableStateOf<Post?>(null) }
     val scrollingState = rememberLazyListState()
     val postLayout by Repos.Settings.postLayout.collectAsState(PostLayout.Card)
-    val state by produceState<UIState<List<Post>>>(UIState.Loading, postSorting, timeSorting, lastPost) {
+    val state by produceState<UIState<List<Post>>>(UIState.Loading, postSorting, timeSorting, lastPost, refreshContent) {
         if (lastPost == null)
             value = UIState.Loading
         Repos.Post.getHomePosts(postSorting, timeSorting, lastPost?.id)

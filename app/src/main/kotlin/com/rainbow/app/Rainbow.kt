@@ -53,6 +53,7 @@ fun Rainbow(
     val focusRequester = remember { FocusRequester() }
     var snackbarMessage by remember { mutableStateOf<String?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
+    var refreshContent by remember { mutableStateOf(0) }
     LaunchedEffect(snackbarMessage) {
         snackbarMessage?.let {
             snackbarHostState.showSnackbar(it)
@@ -78,11 +79,13 @@ fun Rainbow(
                     onForwardClick,
                     isBackEnabled,
                     isForwardEnabled,
+                    onRefresh = { refreshContent += 1 }
                 )
                 Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     CenterContent(
                         screen,
                         focusRequester,
+                        refreshContent,
                         onPostClick = {
                             post = UIState.Success(it)
                             scope.launch {
@@ -136,6 +139,7 @@ private fun StartContent(
 private fun CenterContent(
     screen: Screen,
     focusRequester: FocusRequester,
+    refreshContent: Int,
     onPostClick: (Post) -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
@@ -156,6 +160,7 @@ private fun CenterContent(
                 )
                 Screen.SidebarItem.Home -> HomeScreen(
                     focusRequester,
+                    refreshContent,
                     onPostClick,
                     onUserNameClick,
                     onSubredditNameClick,
