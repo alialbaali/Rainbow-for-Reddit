@@ -224,6 +224,12 @@ internal sealed class Endpoint(val path: String) {
         class User(userName: String) : Endpoint("$UserPath$userName/trophies")
     }
 
+    object Wiki {
+        class Index(subredditName: String): Endpoint("$SubredditPath$subredditName/wiki/index")
+
+        class Page(subredditName: String, pageName: String): Endpoint("$SubredditPath$subredditName/wiki/$pageName")
+    }
+
 }
 
 internal operator fun Endpoint.getValue(thisObj: Any?, property: KProperty<*>): String = path
