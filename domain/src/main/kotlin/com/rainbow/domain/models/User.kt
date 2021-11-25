@@ -1,6 +1,6 @@
 package com.rainbow.domain.models
 
-import com.rainbow.domain.utils.OauthUrl
+import com.rainbow.domain.utils.RedditUrl
 import com.rainbow.domain.utils.asUserDisplayName
 import kotlinx.datetime.LocalDateTime
 
@@ -27,7 +27,7 @@ val User.redditUrl
     get() = "/user/$name"
 
 val User.fullUrl
-    get() = OauthUrl + redditUrl
+    get() = RedditUrl + redditUrl
 
 val User.displayName
     get() = name.asUserDisplayName()

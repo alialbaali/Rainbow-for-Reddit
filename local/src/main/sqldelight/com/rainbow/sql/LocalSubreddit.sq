@@ -4,6 +4,7 @@ name TEXT NOT NULL,
 title TEXT NOT NULL,
 description TEXT NOT NULL,
 subscribers_count INTEGER NOT NULL,
+active_subscribers_count INTEGER NOT NULL,
 image_url TEXT,
 banner_image_url TEXT,
 is_nsfw INTEGER AS Boolean NOT NULL,
@@ -23,6 +24,26 @@ WHERE name = ?;
 insert:
 INSERT INTO LocalSubreddit
 VALUES ?;
+
+subscribe:
+UPDATE LocalSubreddit
+SET is_subscribed = 1
+WHERE name = ?;
+
+unsubscribe:
+UPDATE LocalSubreddit
+SET is_subscribed = 0
+WHERE name = ?;
+
+favorite:
+UPDATE LocalSubreddit
+SET is_favorite = 1
+WHERE name = ?;
+
+unfavorite:
+UPDATE LocalSubreddit
+SET is_favorite = 0
+WHERE name = ?;
 
 clear:
 DELETE FROM LocalSubreddit;

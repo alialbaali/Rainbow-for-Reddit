@@ -35,7 +35,7 @@ inline fun ReplyItem(
                 .clickable(onClick = onClick)
                 .onSizeChanged { contentSize = it }
                 .padding(bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             PostCommentInfo(reply, postUserName, onUserNameClick, onSubredditNameClick, isSubredditNameEnabled = false)
             Text(reply.body, color = MaterialTheme.colors.onBackground)
