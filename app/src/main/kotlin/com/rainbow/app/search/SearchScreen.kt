@@ -8,7 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.components.DefaultTabRow
+import com.rainbow.app.post.Sorting
 import com.rainbow.app.post.posts
+import com.rainbow.app.subreddit.SubredditType
 import com.rainbow.app.subreddit.Subreddits
 import com.rainbow.app.utils.UIState
 import com.rainbow.app.utils.composed
@@ -64,7 +66,7 @@ fun SearchScreen(
 
         when (selectedTab) {
             SearchTab.Subreddits -> subredditsState.composed {
-                Subreddits(it, { onSubredditNameClick(it.name) }, onLoadMore = {})
+                Subreddits(it, SubredditType.Search, { onSubredditNameClick(it.name) }, onLoadMore = {}, onShowSnackbar)
             }
             SearchTab.Posts -> LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 posts(

@@ -1,5 +1,6 @@
 package com.rainbow.app.search
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.rounded.Search
@@ -12,7 +13,9 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.rainbow.app.components.RainbowProgressIndicator
+import com.rainbow.app.components.TextImage
 import com.rainbow.app.utils.*
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.Subreddit
@@ -29,13 +32,17 @@ fun SearchTextField(
     onSubredditNameClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var isExpanded by remember { mutableStateOf(false) }
     var searchTerm by remember { mutableStateOf("") }
     val state by produceState<UIState<List<Subreddit>>>(UIState.Empty, searchTerm) {
         if (searchTerm.isNotBlank()) {
+            isExpanded = true
             value = UIState.Loading
             Repos.Subreddit.searchSubreddit(searchTerm, SubredditsSearchSorting.Activity)
                 .map { it.toUIState() }
                 .collect { value = it }
+        } else {
+            isExpanded = false
         }
     }
     var width by remember { mutableStateOf(0) }
@@ -60,43 +67,47 @@ fun SearchTextField(
                 }
         )
         DropdownMenu(
-            searchTerm.isNotBlank(),
-            onDismissRequest = { },
+            isExpanded,
+            onDismissRequest = { isExpanded = false },
             focusable = false,
             Modifier.width(width.dp)
         ) {
             when (state) {
-                is UIState.Loading -> {
-                    RainbowProgressIndicator()
-                }
+                is UIState.Loading -> RainbowProgressIndicator()
                 is UIState.Success -> {
                     state.asSuccess().value
                         .takeIf { it.isNotEmpty() }
                         ?.take(10)
-                        ?.onEach {
+                        ?.onEach { subreddit ->
                             DropdownMenuItem(
                                 onClick = {
-                                    onSubredditNameClick(it.name)
-//                                isExpanded = false
+                                    onSubredditNameClick(subreddit.name)
+                                    isExpanded = false
                                 }
                             ) {
-                                val painterResource = lazyPainterResource(it.imageUrl ?: it.bannerImageUrl.toString())
+                                val painterResource =
+                                    lazyPainterResource(subreddit.imageUrl ?: subreddit.bannerImageUrl.toString())
+                                val ImageModifier = Modifier.size(24.dp).clip(MaterialTheme.shapes.small)
                                 KamelImage(
                                     painterResource,
-                                    it.name,
-                                    Modifier.size(24.dp).clip(MaterialTheme.shapes.small)
+                                    subreddit.name,
+                                    ImageModifier,
+                                    onLoading = { RainbowProgressIndicator() },
+                                    onFailure = {
+                                        TextImage(
+                                            subreddit.name,
+                                            ImageModifier.background(MaterialTheme.colors.secondary),
+                                            fontSize = 16.sp
+                                        )
+                                    }
                                 )
                                 Spacer(Modifier.width(16.dp))
-                                Text(it.name)
+                                Text(subreddit.name)
                             }
                         } ?: Text("No matching subreddits.", Modifier.padding(16.dp))
                 }
-                is UIState.Failure -> {
-                    Text("Failed loading subreddits.")
-                }
-                UIState.Empty -> {
-                    Text("Loading")
-                }
+                is UIState.Failure -> Text("Failed loading subreddits.")
+                UIState.Empty -> Text("Loading")
             }
         }
     }
