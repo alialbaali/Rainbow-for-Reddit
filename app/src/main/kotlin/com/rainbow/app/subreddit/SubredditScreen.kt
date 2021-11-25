@@ -34,8 +34,7 @@ import java.time.format.DateTimeFormatter
 
 
 enum class SubredditTab {
-    Posts, Rules, Resources,
-    RelatedSubreddits, Moderators;
+    Posts, Wiki, Rules, Moderators;
 
     companion object {
         val Default = Posts
@@ -90,6 +89,11 @@ fun SubredditScreen(
             .onEach { value = it }
             .launchIn(this)
     }
+    val wikiState by produceState<UIState<WikiPage>>(UIState.Loading, subredditName) {
+        Repos.Subreddit.getWikiIndex(subredditName)
+            .toUIState()
+            .also { value = it }
+    }
     LazyColumn(modifier, scrollingState, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         item {
             state.composed { subreddit ->
@@ -123,13 +127,32 @@ fun SubredditScreen(
                 onShowSnackbar,
                 onLoadMore = { lastPost = it }
             )
+            SubredditTab.Wiki -> wiki(wikiState)
             SubredditTab.Rules -> rules(rulesState)
-            SubredditTab.Resources -> TODO()
-            SubredditTab.RelatedSubreddits -> TODO()
             SubredditTab.Moderators -> moderators(moderatorsState, onUserNameClick)
         }
     }
     VerticalScrollbar(rememberScrollbarAdapter(scrollingState))
+}
+
+private fun LazyListScope.wiki(wikiState: UIState<WikiPage>) {
+    when (wikiState) {
+        is UIState.Empty -> item { Text("Empty") }
+        is UIState.Failure -> item { Text("Failed to load") }
+        is UIState.Loading -> item { RainbowProgressIndicator() }
+        is UIState.Success -> item {
+            Column(
+                Modifier
+                    .defaultShape()
+                    .defaultPadding()
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(wikiState.value.content)
+                Text("Revisioned by ${wikiState.value.revisionBy.name} on ${wikiState.value.revisionDate}")
+            }
+        }
+    }
 }
 
 @Composable
