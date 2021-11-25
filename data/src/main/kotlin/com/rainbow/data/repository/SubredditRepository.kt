@@ -19,26 +19,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
-internal fun SubredditRepository(
-    remoteSubredditDataSource: RemoteSubredditDataSource,
-    remoteModeratorDataSource: RemoteModeratorDataSource,
-    localSubredditQueries: LocalSubredditQueries,
-    dispatcher: CoroutineDispatcher,
-    remoteSubredditMapper: Mapper<RemoteSubreddit, LocalSubreddit>,
-    localSubredditMapper: Mapper<LocalSubreddit, Subreddit>,
-    remoteModeratorMapper: Mapper<RemoteModerator, Moderator>,
-): SubredditRepository =
-    SubredditRepositoryImpl(
-        remoteSubredditDataSource,
-        remoteModeratorDataSource,
-        localSubredditQueries,
-        dispatcher,
-        remoteSubredditMapper,
-        localSubredditMapper,
-        remoteModeratorMapper,
-    )
-
-private class SubredditRepositoryImpl(
+internal class SubredditRepositoryImpl(
     private val remoteSubredditDataSource: RemoteSubredditDataSource,
     private val remoteModeratorDataSource: RemoteModeratorDataSource,
     private val queries: LocalSubredditQueries,
@@ -49,28 +30,23 @@ private class SubredditRepositoryImpl(
 ) : SubredditRepository {
 
     override fun getMySubreddits(lastSubredditId: String?): Flow<Result<List<Subreddit>>> = flow {
-        val result = remoteSubredditDataSource.getMySubreddits(DefaultLimit, lastSubredditId)
+        remoteSubredditDataSource.getMySubreddits(DefaultLimit, lastSubredditId)
             .mapCatching { it.quickMap(remoteSubredditMapper) }
-            .mapCatching { it.quickMap(localSubredditMapper) }
-            .onFailure { throw it }
-//            .onSuccess {
-//                queries.transaction {
-//                    queries.clear()
-//                    it.forEach { queries.insert(it) }
-//                }
-//            }
-//            .onFailure {
-//                emit(Result.failure<List<Subreddit>>(it))
-//            }
-        emit(result)
-
-//        queries.selectAll()
-//            .asFlow()
-//            .mapToList()
-//            .map { it.quickMap(localMapper) }
-//            .map { Result.success(it) }
-//            .also { emitAll(it) }
-
+            .onSuccess {
+                if (lastSubredditId == null)
+                    queries.clear()
+                it.forEach { subreddit ->
+                    if (queries.selectByName(subreddit.name).executeAsOneOrNull() == null)
+                        queries.insert(subreddit)
+                }
+            }
+            .onFailure { emit(Result.failure<List<Subreddit>>(it)) }
+        queries.selectAll()
+            .asFlow()
+            .mapToList()
+            .map { it.quickMap(localSubredditMapper) }
+            .map { Result.success(it) }
+            .also { emitAll(it) }
     }.flowOn(dispatcher)
 
     override fun getSubreddit(subredditName: String): Flow<Result<Subreddit>> = flow {
@@ -104,18 +80,22 @@ private class SubredditRepositoryImpl(
 
     override suspend fun subscribeSubreddit(subredditName: String): Result<Unit> = withContext(dispatcher) {
         remoteSubredditDataSource.subscribeSubreddit(subredditName)
+            .onSuccess { queries.subscribe(subredditName) }
     }
 
     override suspend fun unSubscribeSubreddit(subredditName: String): Result<Unit> = withContext(dispatcher) {
         remoteSubredditDataSource.unSubscribeSubreddit(subredditName)
+            .onSuccess { queries.unsubscribe(subredditName) }
     }
 
     override suspend fun favoriteSubreddit(subredditName: String): Result<Unit> = withContext(dispatcher) {
         remoteSubredditDataSource.favoriteSubreddit(subredditName)
+            .onSuccess { queries.favorite(subredditName) }
     }
 
     override suspend fun unFavoriteSubreddit(subredditName: String): Result<Unit> = withContext(dispatcher) {
         remoteSubredditDataSource.unFavoriteSubreddit(subredditName)
+            .onSuccess { queries.unfavorite(subredditName) }
     }
 
     override suspend fun getSubredditSubmitText(subredditName: String): Result<String> = withContext(dispatcher) {

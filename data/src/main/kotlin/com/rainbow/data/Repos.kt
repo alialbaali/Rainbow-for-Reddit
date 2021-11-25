@@ -49,7 +49,7 @@ object Repos {
         RainbowDatabase.LocalPostMapper,
     )
 
-    object Subreddit : SubredditRepository by SubredditRepository(
+    object Subreddit : SubredditRepository by SubredditRepositoryImpl(
         RemoteSubredditDataSource(),
         RemoteModeratorDataSource(),
         RainbowDatabase.localSubredditQueries,
