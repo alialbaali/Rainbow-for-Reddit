@@ -13,10 +13,11 @@ import kotlinx.coroutines.flow.map
 @Composable
 fun CurrentUserSubredditsScreen(
     onClick: (String) -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var lastSubreddit by remember { mutableStateOf<Subreddit?>(null) }
-    val state by produceState<UIState<List<Subreddit>>>(UIState.Loading, lastSubreddit?.id) {
+    val state by produceState<UIState<List<Subreddit>>>(UIState.Loading, lastSubreddit) {
         Repos.Subreddit.getMySubreddits(lastSubreddit?.id)
             .map { it.toUIState() }
             .collect { value = it }
@@ -25,10 +26,11 @@ fun CurrentUserSubredditsScreen(
     state.composed(modifier) { subreddits ->
         Subreddits(
             subreddits,
+            SubredditType.Default,
             onClick = { onClick(it.name) },
             onLoadMore = { lastSubreddit = it },
+            onShowSnackbar,
             modifier
         )
     }
-
 }
