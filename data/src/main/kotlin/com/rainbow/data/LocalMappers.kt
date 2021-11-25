@@ -97,7 +97,7 @@ internal object LocalMappers {
             title = it.title,
             description = it.description,
             subscribersCount = it.subscribers_count,
-            activeSubscribersCount = 0L,
+            activeSubscribersCount = it.active_subscribers_count,
             imageUrl = it.image_url,
             bannerImageUrl = it.banner_image_url,
             isNSFW = it.is_nsfw,

@@ -1,6 +1,6 @@
 package com.rainbow.domain.models
 
-import com.rainbow.domain.utils.OauthUrl
+import com.rainbow.domain.utils.RedditUrl
 import com.rainbow.domain.utils.asSubredditDisplayName
 import com.rainbow.domain.utils.colorOf
 import kotlinx.datetime.LocalDateTime
@@ -54,7 +54,7 @@ val Subreddit.redditUrl
     get() = "/r/$name"
 
 val Subreddit.fullUrl
-    get() = OauthUrl + redditUrl
+    get() = RedditUrl + redditUrl
 
 val Subreddit.primaryColor
     get() = colors.primary

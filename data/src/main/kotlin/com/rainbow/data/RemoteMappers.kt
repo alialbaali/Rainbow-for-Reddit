@@ -146,6 +146,7 @@ internal object RemoteMappers {
                 is_favorite = userHasFavorited ?: false,
                 is_subscribed = userIsSubscriber ?: false,
                 creation_date = created!!.toLong(),
+                active_subscribers_count = activeUserCount?.toLong() ?: 0,
             )
         }
     }
