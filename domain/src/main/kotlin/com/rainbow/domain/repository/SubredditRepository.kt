@@ -3,6 +3,7 @@ package com.rainbow.domain.repository
 import com.rainbow.domain.models.Moderator
 import com.rainbow.domain.models.Subreddit
 import com.rainbow.domain.models.SubredditsSearchSorting
+import com.rainbow.domain.models.WikiPage
 import kotlinx.coroutines.flow.Flow
 
 interface SubredditRepository {
@@ -24,6 +25,10 @@ interface SubredditRepository {
     suspend fun getSubredditSubmitText(subredditName: String): Result<String>
 
     suspend fun getSubredditPostRequirements(subredditName: String): Result<String>
+
+    suspend fun getWikiIndex(subredditName: String): Result<WikiPage>
+
+    suspend fun getWikiPage(subredditName: String, pageName: String): Result<WikiPage>
 
     fun searchSubreddit(subredditName: String, sorting: SubredditsSearchSorting): Flow<Result<List<Subreddit>>>
 

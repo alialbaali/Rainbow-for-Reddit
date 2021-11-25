@@ -14,3 +14,14 @@ creation_date INTEGER NOT NULL
 
 selectAll:
 SELECT * FROM LocalUser;
+
+selectById:
+SELECT * FROM LocalUser
+WHERE id = ?;
+
+insert:
+INSERT INTO LocalUser
+VALUES ?;
+
+clear:
+DELETE FROM LocalUser;

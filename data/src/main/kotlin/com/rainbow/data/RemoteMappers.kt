@@ -3,6 +3,7 @@ package com.rainbow.data
 import com.rainbow.domain.models.Message
 import com.rainbow.domain.models.Moderator
 import com.rainbow.domain.models.Rule
+import com.rainbow.domain.models.WikiPage
 import com.rainbow.remote.dto.*
 import com.rainbow.sql.*
 import io.ktor.http.*
@@ -74,7 +75,7 @@ internal object RemoteMappers {
     val UserMapper = Mapper<RemoteUser, LocalUser> {
         with(it) {
             LocalUser(
-                id = id!!,
+                id = subreddit?.name!!,
                 name = name!!,
                 description = it.subreddit?.publicDescription?.takeIf { it.isNotBlank() },
                 post_karma = linkKarma?.toLong() ?: 0,
@@ -194,6 +195,21 @@ internal object RemoteMappers {
             )
         }
     }
+
+    val RainbowDatabase.WikiPageMapper
+        get() = Mapper<RemoteWikiPage, WikiPage> {
+            with(it) {
+                localUserQueries.clear()
+                revisionBy?.let { user -> localUserQueries.insert(UserMapper.map(user)) }
+                WikiPage(
+                    contentMd ?: "",
+                    localUserQueries.selectById(revisionBy?.subreddit?.name!!)
+                        .executeAsOne()
+                        .let { LocalMappers.UserMapper.map(it) },
+                    revisionDate!!.toLong().toLocalDateTime(),
+                )
+            }
+        }
 
     private fun String.toRedditUrl() = "https://www.reddit.com$this"
     private fun String.removeAmp() = replace("amp;", "&")

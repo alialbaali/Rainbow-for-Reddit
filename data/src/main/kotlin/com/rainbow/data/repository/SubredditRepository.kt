@@ -6,11 +6,14 @@ import com.rainbow.data.utils.DefaultLimit
 import com.rainbow.domain.models.Moderator
 import com.rainbow.domain.models.Subreddit
 import com.rainbow.domain.models.SubredditsSearchSorting
+import com.rainbow.domain.models.WikiPage
 import com.rainbow.domain.repository.SubredditRepository
 import com.rainbow.remote.dto.RemoteModerator
 import com.rainbow.remote.dto.RemoteSubreddit
+import com.rainbow.remote.dto.RemoteWikiPage
 import com.rainbow.remote.source.RemoteModeratorDataSource
 import com.rainbow.remote.source.RemoteSubredditDataSource
+import com.rainbow.remote.source.RemoteWikiDataSource
 import com.rainbow.sql.LocalSubreddit
 import com.rainbow.sql.LocalSubredditQueries
 import com.squareup.sqldelight.runtime.coroutines.asFlow
@@ -22,11 +25,13 @@ import kotlinx.coroutines.withContext
 internal class SubredditRepositoryImpl(
     private val remoteSubredditDataSource: RemoteSubredditDataSource,
     private val remoteModeratorDataSource: RemoteModeratorDataSource,
+    private val remoteWikiDataSource: RemoteWikiDataSource,
     private val queries: LocalSubredditQueries,
     private val dispatcher: CoroutineDispatcher,
     private val remoteSubredditMapper: Mapper<RemoteSubreddit, LocalSubreddit>,
     private val localSubredditMapper: Mapper<LocalSubreddit, Subreddit>,
     private val remoteModeratorMapper: Mapper<RemoteModerator, Moderator>,
+    private val remoteWikiPageMapper: Mapper<RemoteWikiPage, WikiPage>,
 ) : SubredditRepository {
 
     override fun getMySubreddits(lastSubredditId: String?): Flow<Result<List<Subreddit>>> = flow {
@@ -105,6 +110,16 @@ internal class SubredditRepositoryImpl(
     override suspend fun getSubredditPostRequirements(subredditName: String): Result<String> = withContext(dispatcher) {
         remoteSubredditDataSource.getSubredditPostRequirements(subredditName)
             .mapCatching { it.guidelinesText ?: "" }
+    }
+
+    override suspend fun getWikiIndex(subredditName: String): Result<WikiPage> = withContext(dispatcher) {
+        remoteWikiDataSource.getWikiIndex(subredditName)
+            .map { remoteWikiPageMapper.map(it) }
+    }
+
+    override suspend fun getWikiPage(subredditName: String, pageName: String): Result<WikiPage>  = withContext(dispatcher) {
+        remoteWikiDataSource.getWikiPage(subredditName, pageName)
+            .map { remoteWikiPageMapper.map(it) }
     }
 
     override fun searchSubreddit(

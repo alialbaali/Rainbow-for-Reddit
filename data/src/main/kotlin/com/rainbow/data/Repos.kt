@@ -3,6 +3,7 @@ package com.rainbow.data
 import com.rainbow.data.LocalMappers.LocalPostMapper
 import com.rainbow.data.RemoteMappers.RemoteCommentMapper
 import com.rainbow.data.RemoteMappers.RemotePostMapper
+import com.rainbow.data.RemoteMappers.WikiPageMapper
 import com.rainbow.data.repository.*
 import com.rainbow.domain.repository.*
 import com.rainbow.local.RainbowDatabase
@@ -52,11 +53,13 @@ object Repos {
     object Subreddit : SubredditRepository by SubredditRepositoryImpl(
         RemoteSubredditDataSource(),
         RemoteModeratorDataSource(),
+        RemoteWikiDataSourceImpl(),
         RainbowDatabase.localSubredditQueries,
         DefaultDispatcher,
         RemoteMappers.SubredditMapper,
         LocalMappers.SubredditMapper,
         RemoteMappers.ModeratorMapper,
+        RainbowDatabase.WikiPageMapper,
     )
 
     @OptIn(ExperimentalSettingsApi::class)
