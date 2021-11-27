@@ -1,24 +1,29 @@
 package com.rainbow.app.subreddit
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.rainbow.app.components.DefaultTabRow
+import com.rainbow.app.components.FlairItem
 import com.rainbow.app.components.HeaderItem
 import com.rainbow.app.components.RainbowProgressIndicator
 import com.rainbow.app.post.Sorting
@@ -29,6 +34,7 @@ import com.rainbow.domain.models.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.datetime.toJavaLocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -181,9 +187,123 @@ private fun Header(subreddit: Subreddit, onShowSnackbar: (String) -> Unit, modif
                 text = subreddit.description,
                 style = MaterialTheme.typography.subtitle1,
                 overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1F)
             )
-
+            SubredditFavoriteIconButton(subreddit, onShowSnackbar, enabled = subreddit.isSubscribed)
+            SelectFlairButton(subreddit.name)
             SubscribeButton(subreddit, onShowSnackbar)
+        }
+    }
+}
+
+@Composable
+private fun SelectFlairButton(subredditName: String, modifier: Modifier = Modifier) {
+    var isDialogVisible by remember { mutableStateOf(false) }
+    OutlinedButton(onClick = { isDialogVisible = true }, modifier) {
+        Text(RainbowStrings.Flair)
+    }
+    AnimatedVisibility(isDialogVisible) {
+        SelectFlairDialog(subredditName, onCloseRequest = { isDialogVisible = false })
+    }
+}
+
+@Composable
+private fun SelectFlairDialog(
+    subredditName: String,
+    onCloseRequest: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val scope = rememberCoroutineScope()
+    var state by remember { mutableStateOf<UIState<List<Pair<Flair, Boolean>>>>(UIState.Loading) }
+    LaunchedEffect(subredditName) {
+        val currentSelectedFlair = Repos.Subreddit.getCurrentSubredditFlair(subredditName)
+            .toUIState()
+            .getOrNull()
+        Repos.Subreddit.getSubredditFlairs(subredditName)
+            .map { it.associateWith { it.id == currentSelectedFlair?.id }.toList() }
+            .toUIState()
+            .also { state = it }
+    }
+
+
+    Dialog(onCloseRequest) {
+        state.composed(modifier) { flairs ->
+            val scrollState = rememberLazyListState()
+            var boxPadding by remember { mutableStateOf(0) }
+            Box(modifier.fillMaxSize()) {
+                LazyColumn(
+                    Modifier.padding(bottom = boxPadding.dp),
+                    state = scrollState,
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(16.dp)
+                ) {
+                    items(flairs) { flair ->
+                        SelectFlairItem(
+                            flair,
+                            onClick = { state = state.map { it.map { it.first to (it.first == flair.first) } } })
+                    }
+                }
+
+                VerticalScrollbar(
+                    rememberScrollbarAdapter(scrollState),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .align(Alignment.CenterEnd)
+                )
+
+                SelectFlairActions(
+                    onApply = {
+                        flairs.firstOrNull { it.second }?.let {
+                            scope.launch {
+                                Repos.Subreddit.selectFlair(subredditName, it.first.id)
+                            }
+                        }
+                        onCloseRequest()
+                    },
+                    onClear = {
+                        state = state.map { it.map { it.first to false } }
+                        scope.launch {
+                            Repos.Subreddit.unselectFlair(subredditName)
+                        }
+                        onCloseRequest()
+                    },
+                    Modifier
+                        .align(Alignment.BottomEnd)
+                        .onSizeChanged { boxPadding = it.height }
+                )
+            }
+        }
+
+    }
+}
+
+@Composable
+private fun SelectFlairItem(flair: Pair<Flair, Boolean>, onClick: (Flair) -> Unit, modifier: Modifier = Modifier) {
+    Row(
+        modifier
+            .fillMaxWidth()
+            .clip(MaterialTheme.shapes.medium)
+            .clickable { onClick(flair.first) },
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        RadioButton(flair.second, onClick = null)
+        FlairItem(flair.first)
+    }
+}
+
+@Composable
+private fun SelectFlairActions(onApply: () -> Unit, onClear: () -> Unit, modifier: Modifier = Modifier) {
+    Row(
+        modifier
+            .background(MaterialTheme.colors.background)
+            .wrapContentSize(Alignment.BottomEnd),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        OutlinedButton(onClick = onClear) {
+            Text(RainbowStrings.Clear)
+        }
+        Button(onApply) {
+            Text(RainbowStrings.Apply)
         }
     }
 }

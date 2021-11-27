@@ -56,6 +56,10 @@ object RainbowStrings {
     const val Todo = "TODO"
     const val FilterSubreddits = "Fitler subreddits"
     const val Refresh = "Refresh"
+    const val Apply = "Apply"
+    const val Clear = "Clear"
+    const val Flair = "Flair"
+    const val IsEnabled = "Is enabled"
 
     fun UnsubscribeMessage(subredditName: String) = "You have unsubscribed from $subredditName."
     fun SubscribeMessage(subredditName: String) = "You have subscribed to $subredditName."

@@ -90,7 +90,7 @@ fun SubredditItemHeader(subreddit: Subreddit) {
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun SubredditFavoriteIconButton(subreddit: Subreddit, onShowSnackbar: (String) -> Unit, modifier: Modifier = Modifier) {
+fun SubredditFavoriteIconButton(subreddit: Subreddit, onShowSnackbar: (String) -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
     val scope = rememberCoroutineScope()
     IconToggleButton(
         subreddit.isFavorite,
@@ -106,7 +106,8 @@ fun SubredditFavoriteIconButton(subreddit: Subreddit, onShowSnackbar: (String) -
             }
         },
         modifier = modifier
-            .defaultShape(shape = CircleShape)
+            .defaultShape(shape = CircleShape),
+        enabled = enabled
     ) {
         AnimatedContent(subreddit.isFavorite) { isFavorite ->
             Icon(
@@ -126,7 +127,7 @@ fun SubscribeButton(
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
-    OutlinedButton(
+    Button(
         onClick = {
             scope.launch {
                 if (subreddit.isSubscribed) {
@@ -139,7 +140,6 @@ fun SubscribeButton(
             }
         },
         modifier = modifier,
-        colors = ButtonDefaults.outlinedButtonColors(backgroundColor = MaterialTheme.colors.background)
     ) {
         AnimatedContent(subreddit.isSubscribed) { isSubscribed ->
             Icon(
@@ -150,7 +150,7 @@ fun SubscribeButton(
         Spacer(Modifier.width(16.dp))
         AnimatedContent(subreddit.isSubscribed) { isSubscribed ->
             Text(
-                if (isSubscribed) RainbowStrings.UnSubscribe else RainbowStrings.Subscribe,
+                if (isSubscribed) RainbowStrings.Subscribed else RainbowStrings.Subscribe,
                 fontWeight = FontWeight.Medium,
             )
         }

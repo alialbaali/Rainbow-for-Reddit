@@ -1,4 +1,5 @@
 import org.jetbrains.compose.compose
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     kotlin("jvm")
@@ -25,5 +26,8 @@ dependencies {
 compose.desktop {
     application {
         mainClass = "com.rainbow.app.MainKt"
+        nativeDistributions {
+            targetFormats(TargetFormat.Deb, TargetFormat.Msi, TargetFormat.Exe)
+        }
     }
 }
