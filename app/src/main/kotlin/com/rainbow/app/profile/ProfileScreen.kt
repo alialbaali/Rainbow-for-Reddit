@@ -29,7 +29,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.datetime.toJavaLocalDateTime
 import java.time.format.DateTimeFormatter
 
-private enum class ProfileTab {
+enum class ProfileTab {
     Overview, Submitted, Saved, Hidden, Upvoted, Downvoted, Comments;
 }
 
@@ -49,11 +49,7 @@ fun ProfileScreen(
     var lastPost by remember(postSorting, timeSorting) { mutableStateOf<Post?>(null) }
     val scrollingState = rememberLazyListState()
     val postLayout by Repos.Settings.postLayout.collectAsState(PostLayout.Card)
-    val state by produceState<UIState<User>>(UIState.Loading) {
-        Repos.User.getCurrentUser()
-            .toUIState()
-            .also { value = it }
-    }
+    val state by ProfileModel.currentUser.collectAsState()
 
     state.composed(modifier) { user ->
         val postsState by producePostsState(user.name, selectedTab, postSorting, timeSorting, lastPost)
