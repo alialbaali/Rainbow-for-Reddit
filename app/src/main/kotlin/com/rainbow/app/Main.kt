@@ -3,6 +3,7 @@ package com.rainbow.app
 import androidx.compose.runtime.*
 import androidx.compose.ui.window.application
 import com.arkivanov.decompose.extensions.compose.jetbrains.Children
+import com.arkivanov.decompose.router.bringToFront
 import com.arkivanov.decompose.router.push
 import com.arkivanov.decompose.router.replaceCurrent
 import com.rainbow.app.components.RainbowWindow
@@ -34,9 +35,8 @@ private fun ContentScreen() {
             screen = child.configuration,
             backStack = router.state.value.backStack.map { it.configuration },
             onSidebarClick = {
-                router.navigate { screens ->
-                    screens.filterNot { it is Screen.SidebarItem } + it
-                }
+                router.bringToFront(it)
+                forwardStack.clear()
             },
             onUserNameClick = { userName ->
                 if ((child.configuration as? Screen.User)?.userName != userName) {
