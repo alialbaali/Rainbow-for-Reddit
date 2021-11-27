@@ -1,7 +1,15 @@
 package com.rainbow.domain.models
 
-sealed interface Flair {
-    data class TextFlair(val text: String) : Flair
-    data class ImageFlair(val url: String) : Flair
+data class Flair(
+    val id: String,
+    val types: List<Type>,
+    val backgroundColor: Long,
+    val textColor: TextColor,
+) {
+    sealed interface Type {
+        data class Text(val text: String) : Type
+        data class Image(val url: String) : Type
+    }
+
     enum class TextColor { Light, Dark, }
 }

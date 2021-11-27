@@ -19,7 +19,7 @@ data class RemoteFlair(
     @SerialName("mod_only")
     val modOnly: Boolean? = null, // false
     @SerialName("richtext")
-    val richtext: List<String>? = null,
+    val richtext: List<FlairRichText>? = null,
     @SerialName("text")
     val text: String? = null, // Question
     @SerialName("text_color")

@@ -20,26 +20,22 @@ internal object LocalMappers {
         )
     }
 
+    val FlairMapper = Mapper<LocalPostFlair, Flair.Type> {
+        with(it) {
+            if (text != null)
+                Flair.Type.Text(text!!)
+            else
+                Flair.Type.Image(url!!)
+        }
+    }
+
     val RainbowDatabase.LocalPostMapper: Mapper<LocalPost, Post>
         get() = Mapper {
-            val flairs = localPostFlairQueries.selectById(it.id).executeAsList()
-                .mapNotNull { localFlair ->
-                    if (localFlair.text != null)
-                        Flair.TextFlair(localFlair.text!!)
-                    else if (localFlair.url != null)
-                        Flair.ImageFlair(localFlair.url!!)
-                    else
-                        null
-                }
-            val userFlairs = localPostFlairQueries.selectByIdAndUserId(it.id, it.user_id).executeAsList()
-                .mapNotNull { localFlair ->
-                    if (localFlair.text != null)
-                        Flair.TextFlair(localFlair.text!!)
-                    else if (localFlair.url != null)
-                        Flair.ImageFlair(localFlair.url!!)
-                    else
-                        null
-                }
+            val flairTypes = localPostFlairQueries.selectById(it.id).executeAsList()
+                .quickMap(FlairMapper)
+            val userFlairTypes = localPostFlairQueries.selectByIdAndUserId(it.id, it.user_id).executeAsList()
+                .quickMap(FlairMapper)
+
             Post(
                 id = it.id,
                 userId = it.user_id,
@@ -79,12 +75,18 @@ internal object LocalMappers {
                 awards = localAwardQueries.selectById(it.id)
                     .executeAsList()
                     .quickMap(AwardMapper),
-                flairs = flairs,
-                flairBackgroundColor = it.flair_background_color.toLongColor(),
-                flairTextColor = if (it.flair_text_color) Flair.TextColor.Dark else Flair.TextColor.Light,
-                userFlairs = userFlairs,
-                userFlairBackgroundColor = it.user_flair_background_color.toLongColor(),
-                userFlairTextColor = if (it.user_flair_text_color) Flair.TextColor.Dark else Flair.TextColor.Light,
+                flair = Flair(
+                    it.flair_id,
+                    flairTypes,
+                    it.flair_background_color.toLongColor(),
+                    if (it.flair_text_color) Flair.TextColor.Dark else Flair.TextColor.Light
+                ),
+                userFlair = Flair(
+                    it.user_flair_id,
+                    userFlairTypes,
+                    it.user_flair_background_color.toLongColor(),
+                    if (it.user_flair_text_color) Flair.TextColor.Dark else Flair.TextColor.Light
+                ),
                 url = it.url,
                 isRead = it.is_read
             )

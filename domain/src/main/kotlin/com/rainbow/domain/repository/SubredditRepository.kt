@@ -1,9 +1,6 @@
 package com.rainbow.domain.repository
 
-import com.rainbow.domain.models.Moderator
-import com.rainbow.domain.models.Subreddit
-import com.rainbow.domain.models.SubredditsSearchSorting
-import com.rainbow.domain.models.WikiPage
+import com.rainbow.domain.models.*
 import kotlinx.coroutines.flow.Flow
 
 interface SubredditRepository {
@@ -31,5 +28,13 @@ interface SubredditRepository {
     suspend fun getWikiPage(subredditName: String, pageName: String): Result<WikiPage>
 
     fun searchSubreddit(subredditName: String, sorting: SubredditsSearchSorting): Flow<Result<List<Subreddit>>>
+
+    suspend fun getSubredditFlairs(subredditName: String): Result<List<Flair>>
+
+    suspend fun getCurrentSubredditFlair(subredditName: String): Result<Flair>
+
+    suspend fun selectFlair(subredditName: String, flairId: String): Result<Unit>
+
+    suspend fun unselectFlair(subredditName: String): Result<Unit>
 
 }

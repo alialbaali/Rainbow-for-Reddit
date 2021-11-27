@@ -8,9 +8,9 @@ interface RemoteSubredditFlairDataSource {
 
     suspend fun getSubredditFlairs(subredditName: String): Result<List<RemoteFlair>>
 
-    suspend fun selectSubredditFlair(subredditName: String, flairId: String): Result<Unit>
+    suspend fun selectSubredditFlair(subredditName: String, userName: String, flairId: String): Result<Unit>
 
-    suspend fun unSelectSubredditFlair(subredditName: String): Result<Unit>
+    suspend fun unSelectSubredditFlair(subredditName: String, userName: String): Result<Unit>
 
     suspend fun enableSubredditFlair(subredditName: String): Result<Unit>
 

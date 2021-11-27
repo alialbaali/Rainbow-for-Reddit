@@ -50,11 +50,14 @@ object Repos {
         RainbowDatabase.LocalPostMapper,
     )
 
+    @OptIn(ExperimentalSettingsApi::class)
     object Subreddit : SubredditRepository by SubredditRepositoryImpl(
         RemoteSubredditDataSource(),
         RemoteModeratorDataSource(),
         RemoteWikiDataSourceImpl(),
+        RemoteSubredditFlairDataSource(),
         RainbowDatabase.localSubredditQueries,
+        settings,
         DefaultDispatcher,
         RemoteMappers.SubredditMapper,
         LocalMappers.SubredditMapper,

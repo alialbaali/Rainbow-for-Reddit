@@ -25,16 +25,16 @@ private class RemoteSubredditFlairDataSourceImpl(private val client: HttpClient)
         return client.plainRequest(Flairs.GetSubredditFlairs(subredditName))
     }
 
-    override suspend fun selectSubredditFlair(subredditName: String, flairId: String): Result<Unit> {
+    override suspend fun selectSubredditFlair(subredditName: String, userName: String, flairId: String): Result<Unit> {
         return client.submitForm(Flairs.SelectSubredditFlair(subredditName)) {
             parameter(Keys.FlairId, flairId)
-            parameter(Keys.Name, "LoneWalker20") // UserName
+            parameter(Keys.Name, userName)
         }
     }
 
-    override suspend fun unSelectSubredditFlair(subredditName: String): Result<Unit> {
+    override suspend fun unSelectSubredditFlair(subredditName: String, userName: String): Result<Unit> {
         return client.submitForm(Flairs.UnSelectSubredditFlair(subredditName)) {
-            parameter(Keys.Name, "LoneWalker20") // UserName
+            parameter(Keys.Name, userName)
         }
     }
 

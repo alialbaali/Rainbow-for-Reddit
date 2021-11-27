@@ -1,32 +1,38 @@
 package com.rainbow.data.repository
 
 import com.rainbow.data.Mapper
+import com.rainbow.data.RemoteMappers
 import com.rainbow.data.quickMap
 import com.rainbow.data.utils.DefaultLimit
-import com.rainbow.domain.models.Moderator
-import com.rainbow.domain.models.Subreddit
-import com.rainbow.domain.models.SubredditsSearchSorting
-import com.rainbow.domain.models.WikiPage
+import com.rainbow.data.utils.SettingsKeys
+import com.rainbow.domain.models.*
 import com.rainbow.domain.repository.SubredditRepository
 import com.rainbow.remote.dto.RemoteModerator
 import com.rainbow.remote.dto.RemoteSubreddit
 import com.rainbow.remote.dto.RemoteWikiPage
 import com.rainbow.remote.source.RemoteModeratorDataSource
 import com.rainbow.remote.source.RemoteSubredditDataSource
+import com.rainbow.remote.source.RemoteSubredditFlairDataSource
 import com.rainbow.remote.source.RemoteWikiDataSource
 import com.rainbow.sql.LocalSubreddit
 import com.rainbow.sql.LocalSubredditQueries
+import com.russhwolf.settings.ExperimentalSettingsApi
+import com.russhwolf.settings.coroutines.FlowSettings
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
+import com.squareup.sqldelight.runtime.coroutines.mapToOne
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
+@OptIn(ExperimentalSettingsApi::class)
 internal class SubredditRepositoryImpl(
     private val remoteSubredditDataSource: RemoteSubredditDataSource,
     private val remoteModeratorDataSource: RemoteModeratorDataSource,
     private val remoteWikiDataSource: RemoteWikiDataSource,
+    private val remoteSubredditFlairDataSource: RemoteSubredditFlairDataSource,
     private val queries: LocalSubredditQueries,
+    private val settings: FlowSettings,
     private val dispatcher: CoroutineDispatcher,
     private val remoteSubredditMapper: Mapper<RemoteSubreddit, LocalSubreddit>,
     private val localSubredditMapper: Mapper<LocalSubreddit, Subreddit>,
@@ -35,17 +41,18 @@ internal class SubredditRepositoryImpl(
 ) : SubredditRepository {
 
     override fun getMySubreddits(lastSubredditId: String?): Flow<Result<List<Subreddit>>> = flow {
-        remoteSubredditDataSource.getMySubreddits(DefaultLimit, lastSubredditId)
-            .mapCatching { it.quickMap(remoteSubredditMapper) }
-            .onSuccess {
-                if (lastSubredditId == null)
-                    queries.clear()
-                it.forEach { subreddit ->
-                    if (queries.selectByName(subreddit.name).executeAsOneOrNull() == null)
-                        queries.insert(subreddit)
+//        if (queries.selectAll().executeAsList().isEmpty())
+            remoteSubredditDataSource.getMySubreddits(DefaultLimit, lastSubredditId)
+                .mapCatching { it.quickMap(remoteSubredditMapper) }
+                .onSuccess {
+                    if (lastSubredditId == null)
+                        queries.clear()
+                    it.forEach { subreddit ->
+                        if (queries.selectByName(subreddit.name).executeAsOneOrNull() == null)
+                            queries.insert(subreddit)
+                    }
                 }
-            }
-            .onFailure { emit(Result.failure<List<Subreddit>>(it)) }
+                .onFailure { emit(Result.failure<List<Subreddit>>(it)) }
         queries.selectAll()
             .asFlow()
             .mapToList()
@@ -71,9 +78,11 @@ internal class SubredditRepositoryImpl(
             }
 
         queries.selectByName(subredditName)
-            .executeAsOne()
-            .let { localSubredditMapper.map(it) }
-            .also { emit(Result.success(it)) }
+            .asFlow()
+            .mapToOne()
+            .map { localSubredditMapper.map(it) }
+            .map { Result.success(it) }
+            .also { emitAll(it) }
 
     }.flowOn(dispatcher)
 
@@ -117,10 +126,11 @@ internal class SubredditRepositoryImpl(
             .map { remoteWikiPageMapper.map(it) }
     }
 
-    override suspend fun getWikiPage(subredditName: String, pageName: String): Result<WikiPage>  = withContext(dispatcher) {
-        remoteWikiDataSource.getWikiPage(subredditName, pageName)
-            .map { remoteWikiPageMapper.map(it) }
-    }
+    override suspend fun getWikiPage(subredditName: String, pageName: String): Result<WikiPage> =
+        withContext(dispatcher) {
+            remoteWikiDataSource.getWikiPage(subredditName, pageName)
+                .map { remoteWikiPageMapper.map(it) }
+        }
 
     override fun searchSubreddit(
         subredditName: String,
@@ -143,4 +153,24 @@ internal class SubredditRepositoryImpl(
             .also { emitAll(it) }
 
     }.flowOn(dispatcher)
+
+    override suspend fun getSubredditFlairs(subredditName: String): Result<List<Flair>> = withContext(dispatcher) {
+        remoteSubredditFlairDataSource.getSubredditFlairs(subredditName)
+            .map { it.quickMap(RemoteMappers.FlairMapper) }
+    }
+
+    override suspend fun getCurrentSubredditFlair(subredditName: String): Result<Flair> = withContext(dispatcher) {
+        remoteSubredditFlairDataSource.getCurrentSubredditFlair(subredditName)
+            .map { RemoteMappers.FlairMapper.map(it) }
+    }
+
+    override suspend fun selectFlair(subredditName: String, flairId: String): Result<Unit> = withContext(dispatcher) {
+        val userName = settings.getString(SettingsKeys.UserName)
+        remoteSubredditFlairDataSource.selectSubredditFlair(subredditName, userName, flairId)
+    }
+
+    override suspend fun unselectFlair(subredditName: String): Result<Unit> = withContext(dispatcher) {
+        val userName = settings.getString(SettingsKeys.UserName)
+        remoteSubredditFlairDataSource.unSelectSubredditFlair(subredditName, userName)
+    }
 }

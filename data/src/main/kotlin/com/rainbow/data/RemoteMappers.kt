@@ -1,9 +1,8 @@
 package com.rainbow.data
 
-import com.rainbow.domain.models.Message
-import com.rainbow.domain.models.Moderator
+import com.rainbow.data.utils.toLongColor
+import com.rainbow.domain.models.*
 import com.rainbow.domain.models.Rule
-import com.rainbow.domain.models.WikiPage
 import com.rainbow.remote.dto.*
 import com.rainbow.sql.*
 import io.ktor.http.*
@@ -39,11 +38,13 @@ internal object RemoteMappers {
                     vote = likes,
                     is_nsfw = over18!!,
                     is_edited = false,
+                    flair_id = it.linkFlairTemplateId ?: "",
                     flair_background_color = linkFlairBackgroundColor.takeIf { !it.isNullOrBlank() } ?: "#FFF5F5F5",
                     flair_text_color = when (linkFlairTextColor) {
                         "light" -> false
                         else -> true
                     },
+                    user_flair_id = it.authorFlairTemplateId ?: "",
                     user_flair_background_color = authorFlairBackgroundColor.takeIf { !it.isNullOrBlank() }
                         ?: "#FFF5F5F5",
                     user_flair_text_color = when (authorFlairTextColor) {
@@ -193,6 +194,24 @@ internal object RemoteMappers {
                 },
                 created!!.toLong().toLocalDateTime(),
             )
+        }
+    }
+
+    val FlairMapper = Mapper<RemoteFlair, Flair> {
+        with(it) {
+            val types = it.richtext.takeIf { !it.isNullOrEmpty() }
+                ?.map {
+                    if (!it.text.isNullOrBlank())
+                        Flair.Type.Text(it.text!!)
+                    else
+                        Flair.Type.Image(it.url!!)
+                } ?: emptyList()
+            val backgroundColor = backgroundColor.takeIf { !it.isNullOrBlank() } ?: "#FFF5F5F5"
+            val textColor = when (textColor) {
+                "light" -> Flair.TextColor.Light
+                else -> Flair.TextColor.Dark
+            }
+            Flair(id!!, types, backgroundColor.toLongColor(), textColor)
         }
     }
 

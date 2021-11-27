@@ -96,6 +96,8 @@ data class RemotePost(
     val isVideo: Boolean? = null, // false
     @SerialName("likes")
     val likes: Boolean? = null, // null
+    @SerialName("link_flair_template_id")
+    val linkFlairTemplateId : String? = null,
     @SerialName("link_flair_background_color")
     val linkFlairBackgroundColor: String? = null,
     @SerialName("link_flair_css_class")

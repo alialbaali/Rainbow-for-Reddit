@@ -56,31 +56,15 @@ inline fun PostInfo(
         SubredditName(post.subredditName, onSubredditNameClick)
         Dot()
         UserName(post.userName, onUserNameClick)
-        if (post.userFlairs.isNotEmpty()) {
+        if (post.userFlair.types.isNotEmpty()) {
             Dot()
-            Row(
-                Modifier
-                    .background(Color(post.userFlairBackgroundColor), CircleShape)
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
-            ) {
-                post.userFlairs.forEach { flair ->
-                    Flair(flair, post.userFlairTextColor)
-                }
-            }
+            FlairItem(post.userFlair)
         }
         Dot()
         CreationDate(post.creationDate)
-        if (post.flairs.isNotEmpty()) {
+        if (post.flair.types.isNotEmpty()) {
             Dot()
-            Row(
-                Modifier
-                    .background(Color(post.flairBackgroundColor), CircleShape)
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
-            ) {
-                post.flairs.forEach { flair ->
-                    Flair(flair, post.flairTextColor)
-                }
-            }
+            FlairItem(post.flair)
         }
         if (post.isNSFW) {
             Dot()
