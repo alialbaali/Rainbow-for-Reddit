@@ -40,7 +40,7 @@ import java.time.format.DateTimeFormatter
 
 
 enum class SubredditTab {
-    Posts, Wiki, Rules, Moderators;
+    Posts, Description, Wiki, Rules, Moderators;
 
     companion object {
         val Default = Posts
@@ -133,6 +133,7 @@ fun SubredditScreen(
                 onShowSnackbar,
                 onLoadMore = { lastPost = it }
             )
+            SubredditTab.Description -> description(state)
             SubredditTab.Wiki -> wiki(wikiState)
             SubredditTab.Rules -> rules(rulesState)
             SubredditTab.Moderators -> moderators(moderatorsState, onUserNameClick)
@@ -161,6 +162,20 @@ private fun LazyListScope.wiki(wikiState: UIState<WikiPage>) {
     }
 }
 
+private fun LazyListScope.description(state: UIState<Subreddit>) {
+    item {
+        state.composed {
+            Text(
+                it.longDescription,
+                Modifier
+                    .defaultShape()
+                    .defaultPadding()
+                    .fillMaxWidth(),
+            )
+        }
+    }
+}
+
 @Composable
 private fun Header(subreddit: Subreddit, onShowSnackbar: (String) -> Unit, modifier: Modifier = Modifier) {
     Column(
@@ -184,7 +199,7 @@ private fun Header(subreddit: Subreddit, onShowSnackbar: (String) -> Unit, modif
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                text = subreddit.description,
+                text = subreddit.shortDescription,
                 style = MaterialTheme.typography.subtitle1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1F)

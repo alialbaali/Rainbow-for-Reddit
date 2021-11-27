@@ -36,7 +36,7 @@ fun Subreddits(
             .takeIf { it.isNotBlank() }
             ?.let { searchTerm ->
                 subreddits.filter {
-                    it.name.contains(searchTerm, ignoreCase = true) || it.description.contains(searchTerm)
+                    it.name.contains(searchTerm, ignoreCase = true) || it.shortDescription.contains(searchTerm)
                 }
             } ?: subreddits
     }

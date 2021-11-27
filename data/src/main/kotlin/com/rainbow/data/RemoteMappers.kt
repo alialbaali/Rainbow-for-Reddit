@@ -138,9 +138,10 @@ internal object RemoteMappers {
 //            )
             LocalSubreddit(
                 id = id ?: "",
-                name = displayName,
-                title = title,
-                description = publicDescription,
+                name = displayName ?: "",
+                title = title ?: "",
+                short_description = publicDescription.takeIf { !it.isNullOrBlank() } ?: "",
+                long_description = description.takeIf { !it.isNullOrBlank() } ?: "",
                 subscribers_count = subscribers?.toLong() ?: 0,
                 image_url = communityIcon?.removeParameters() ?: iconImg?.removeParameters(),
                 banner_image_url = bannerBackgroundImage?.removeParameters() ?: mobileBannerImage?.removeParameters(),

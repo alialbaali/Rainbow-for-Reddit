@@ -62,7 +62,7 @@ data class RemoteSubreddit internal constructor(
     @SerialName("disable_contributor_requests")
     val disableContributorRequests: Boolean? = null, // false
     @SerialName("display_name")
-    val displayName: String, // AmongUs
+    val displayName: String? = null, // AmongUs
     @SerialName("display_name_prefixed")
     val displayNamePrefixed: String? = null, // r/AmongUs
 //    @SerialName("emojis_custom_size")
@@ -116,7 +116,7 @@ data class RemoteSubreddit internal constructor(
     @SerialName("primary_color")
     val primaryColor: String? = null, // #141414
     @SerialName("public_description")
-    val publicDescription: String, // Unofficial subreddit for the game Among Us by Innersloth. Play online or over local WiFi with 4-10 players as a crewmate or impostor. Crewmates can win by completing all tasks or discovering and voting the impostor off the ship. The Impostor can use sabotage to cause chaos, making for easier kills and better alibis. Choose from 3 maps and 1-3 impostors to better suit your own playstyle!
+    val publicDescription: String? = null, // Unofficial subreddit for the game Among Us by Innersloth. Play online or over local WiFi with 4-10 players as a crewmate or impostor. Crewmates can win by completing all tasks or discovering and voting the impostor off the ship. The Impostor can use sabotage to cause chaos, making for easier kills and better alibis. Choose from 3 maps and 1-3 impostors to better suit your own playstyle!
     @SerialName("public_description_html")
     val publicDescriptionHtml: String? = null, // &lt;!-- SC_OFF --&gt;&lt;div class="md"&gt;&lt;p&gt;Unofficial subreddit for the game Among Us by Innersloth. Play online or over local WiFi with 4-10 players as a crewmate or impostor. Crewmates can win by completing all tasks or discovering and voting the impostor off the ship. The Impostor can use sabotage to cause chaos, making for easier kills and better alibis. Choose from 3 maps and 1-3 impostors to better suit your own playstyle!&lt;/p&gt;&lt;/div&gt;&lt;!-- SC_ON --&gt;
     @SerialName("public_traffic")
@@ -150,7 +150,7 @@ data class RemoteSubreddit internal constructor(
     @SerialName("suggested_comment_sort")
     val suggestedCommentSort: String? = null, // top
     @SerialName("title")
-    val title: String, // Subreddit for the game Among Us by Innersloth.
+    val title: String? = null, // Subreddit for the game Among Us by Innersloth.
     @SerialName("url")
     val url: String? = null, // /r/AmongUs/
     @SerialName("user_can_flair_in_sr")

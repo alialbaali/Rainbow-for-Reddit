@@ -1,7 +1,5 @@
 package com.rainbow.app.subreddit
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,10 +22,8 @@ import com.rainbow.app.utils.RainbowIcons
 import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.app.utils.defaultShape
 import com.rainbow.app.utils.displayTime
-import com.rainbow.data.Repos
 import com.rainbow.domain.models.Subreddit
 import com.rainbow.domain.models.fullUrl
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -46,7 +42,7 @@ fun SearchSubredditItem(
     ) {
         SubredditItemHeader(subreddit)
         SubredditItemName(subreddit.name, Modifier.padding(horizontal = 16.dp))
-        SubredditItemDescription(subreddit.description, Modifier.padding(horizontal = 16.dp))
+        SubredditItemDescription(subreddit.shortDescription, Modifier.padding(horizontal = 16.dp))
         SubredditInfoItems(subreddit, Modifier.padding(horizontal = 16.dp))
         SubredditItemActions(subreddit, onShowSnackbar, Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp))
     }
