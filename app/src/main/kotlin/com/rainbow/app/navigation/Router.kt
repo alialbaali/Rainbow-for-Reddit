@@ -87,3 +87,9 @@ private fun rememberComponentContext(): ComponentContext {
 }
 
 val LocalBackPressedDispatcher = staticCompositionLocalOf<BackPressedDispatcher?> { null }
+
+fun <C : Any> Router<C, *>.bringToFrontIfContentMatches(configuration: C) {
+    navigate { stack ->
+        stack.filterNot { it == configuration } + configuration
+    }
+}

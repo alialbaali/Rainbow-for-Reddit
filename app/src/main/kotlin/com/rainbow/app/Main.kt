@@ -5,10 +5,10 @@ import androidx.compose.ui.window.application
 import com.arkivanov.decompose.extensions.compose.jetbrains.Children
 import com.arkivanov.decompose.router.bringToFront
 import com.arkivanov.decompose.router.push
-import com.arkivanov.decompose.router.replaceCurrent
 import com.rainbow.app.components.RainbowWindow
 import com.rainbow.app.login.LoginScreen
 import com.rainbow.app.navigation.Screen
+import com.rainbow.app.navigation.bringToFrontIfContentMatches
 import com.rainbow.app.navigation.rememberRouter
 import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.data.Repos
@@ -40,22 +40,20 @@ private fun ContentScreen() {
             },
             onUserNameClick = { userName ->
                 if ((child.configuration as? Screen.User)?.userName != userName) {
-                    router.push(Screen.User(userName))
+                    router.bringToFrontIfContentMatches(Screen.User(userName))
                     forwardStack.clear()
                 }
             },
             onSubredditNameClick = { subredditName ->
                 if ((child.configuration as? Screen.Subreddit)?.subredditName != subredditName) {
-                    router.push(Screen.Subreddit(subredditName))
+                    router.bringToFrontIfContentMatches(Screen.Subreddit(subredditName))
                     forwardStack.clear()
                 }
             },
-            onSearchClick = {
-                if ((child.configuration as? Screen.Search) == null) {
-                    router.push(Screen.Search(it))
+            onSearchClick = { searchTerm ->
+                if ((child.configuration as? Screen.Search)?.searchTerm != searchTerm) {
+                    router.bringToFrontIfContentMatches(Screen.Search(searchTerm))
                     forwardStack.clear()
-                } else {
-                    router.replaceCurrent(Screen.Search(it))
                 }
             },
             onBackClick = {
