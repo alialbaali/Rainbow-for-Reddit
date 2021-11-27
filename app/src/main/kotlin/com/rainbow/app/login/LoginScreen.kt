@@ -61,6 +61,7 @@ fun LoginScreen() {
                                     isButtonEnabled = true
                                     isSnackbarEnabled = true
                                 }
+                                .onSuccess { Repos.User.getCurrentUser() }
                                 .toUIState()
                         }
                         isButtonEnabled = false
