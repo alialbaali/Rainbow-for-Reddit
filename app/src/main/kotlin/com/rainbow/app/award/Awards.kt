@@ -43,7 +43,7 @@ fun Awards(awards: List<Award>) {
                 ) {
                     Award(award, Modifier.size(24.dp))
                     Spacer(Modifier.width(16.dp))
-                    Text(award.name)
+                    Text(award.name, Modifier.weight(1F))
                     Spacer(Modifier.width(16.dp))
                     Text(award.count.toString())
                 }
