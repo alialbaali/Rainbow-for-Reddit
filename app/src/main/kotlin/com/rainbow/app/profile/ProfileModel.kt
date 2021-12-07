@@ -19,7 +19,7 @@ object ProfileModel : Model() {
     private val mutableTab = MutableStateFlow(ProfileTab.Default)
     val tab get() = mutableTab.asStateFlow()
 
-    val postModel = PostModel(UserPostSorting.Default) { postSorting, timeSorting, lastPostId ->
+    val postModel = PostModel(UserPostSorting.Top) { postSorting, timeSorting, lastPostId ->
         when (tab.value) {
             ProfileTab.Overview -> Result.success(emptyList())
             ProfileTab.Submitted -> Repos.Post.getCurrentUserSubmittedPosts(

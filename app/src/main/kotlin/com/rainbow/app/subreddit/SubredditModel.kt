@@ -29,7 +29,7 @@ class SubredditModel private constructor(private val subredditName: String) : Mo
     private val mutableRules = MutableStateFlow<UIState<List<Rule>>>(UIState.Loading)
     val rules get() = mutableRules.asStateFlow()
 
-    val postModel = PostModel(SubredditPostSorting.Default) { postSorting, timeSorting, lastPostId ->
+    val postModel = PostModel(SubredditPostSorting.Controversial) { postSorting, timeSorting, lastPostId ->
         Repos.Post.getSubredditPosts(
             subredditName,
             postSorting,

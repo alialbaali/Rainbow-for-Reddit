@@ -1,11 +1,11 @@
 package com.rainbow.app.home
 
-import com.rainbow.app.utils.Model
 import com.rainbow.app.post.PostModel
+import com.rainbow.app.utils.Model
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.MainPostSorting
 
-object HomeModel : Model() {
+object HomeScreenModel : Model() {
 
     val postModel = PostModel(MainPostSorting.Default) { postSorting, timeSorting, lastPostId ->
         Repos.Post.getHomePosts(postSorting, timeSorting, lastPostId)

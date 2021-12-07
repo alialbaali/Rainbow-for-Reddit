@@ -1,10 +1,6 @@
 package com.rainbow.app.comment
 
-import com.rainbow.app.utils.Model
-import com.rainbow.app.utils.UIState
-import com.rainbow.app.utils.asSuccess
-import com.rainbow.app.utils.map
-import com.rainbow.app.utils.toUIState
+import com.rainbow.app.utils.*
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.PostCommentSorting
@@ -14,22 +10,26 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-object PostCommentModel : Model() {
+private val postCommentModels = mutableSetOf<PostCommentModel>()
 
-    private val mutableComments = MutableStateFlow<UIState<List<Comment>>>(UIState.Loading)
-    val comments get() = mutableComments.asStateFlow()
-
-    private val mutableCommentSorting = MutableStateFlow(PostCommentSorting.Default)
-    val commentsSorting get() = mutableCommentSorting.asStateFlow()
-
-    private val mutableTimeSorting = MutableStateFlow(TimeSorting.Default)
-    val timeSorting get() = mutableTimeSorting.asStateFlow()
+class PostCommentModel private constructor(private val postId: String) : CommentModel() {
 
     private val mutableCommentsVisibility = MutableStateFlow<Map<String, Boolean>>(emptyMap())
     val commentsVisibility get() = mutableCommentsVisibility.asStateFlow()
 
+    companion object {
+        fun getOrCreateInstance(postId: String): PostCommentModel {
+            return postCommentModels.find { it.postId == postId }
+                ?: PostCommentModel(postId).also { postCommentModels += it }
+        }
+    }
 
-    fun getComments(postId: String) {
+    init {
+        loadComments()
+    }
+
+    override fun loadComments() {
+        mutableComments.value = UIState.Loading
         scope.launch {
             mutableComments.value = Repos.Comment.getPostsComments(postId, commentsSorting.value).toUIState()
             if (comments.value.isSuccess)
@@ -66,53 +66,6 @@ object PostCommentModel : Model() {
                 replies = newReplies.toMutableList()
                     .replaceViewMore(commentId, comments)
             )
-        }
-    }
-
-    fun setTimeSorting(timeSorting: TimeSorting) {
-        mutableTimeSorting.value = timeSorting
-    }
-
-    fun setCommentSorting(commentSorting: PostCommentSorting) {
-        mutableCommentSorting.value = commentSorting
-    }
-
-    fun upvoteComment(commentId: String) {
-        scope.launch {
-            Repos.Comment.upvoteComment(commentId).onSuccess {
-                mutableComments.value = comments.value.map {
-                    it.voteComment(commentId, Vote.Up)
-                }
-            }
-        }
-    }
-
-    fun downvoteComment(commentId: String) {
-        scope.launch {
-            Repos.Comment.downvoteComment(commentId).onSuccess {
-                mutableComments.value = comments.value.map {
-                    it.voteComment(commentId, Vote.Down)
-                }
-            }
-        }
-    }
-
-    fun unvoteComment(commentId: String) {
-        scope.launch {
-            Repos.Comment.unvoteComment(commentId).onSuccess {
-                mutableComments.value = comments.value.map {
-                    it.voteComment(commentId, Vote.None)
-                }
-            }
-        }
-    }
-
-    private fun List<Comment>.voteComment(commentId: String, vote: Vote): List<Comment> {
-        return map { comment ->
-            if (comment.id == commentId)
-                comment.copy(vote = vote)
-            else
-                comment.copy(replies = comment.replies.voteComment(commentId, vote))
         }
     }
 
