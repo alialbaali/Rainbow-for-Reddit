@@ -18,7 +18,7 @@ private class RemoteSubredditDataSourceImpl(private val client: HttpClient) : Re
         return client.get(Subreddits.About(subredditName))
     }
 
-    override suspend fun getMySubreddits(limit: Int, after: String?): Result<List<RemoteSubreddit>> {
+    override suspend fun getCurrentUserSubreddits(limit: Int, after: String?): Result<List<RemoteSubreddit>> {
         return client.get<Listing<RemoteSubreddit>>(Subreddits.Mine) {
             parameter(Keys.Limit, limit)
             parameter(Keys.After, after)
@@ -80,5 +80,5 @@ private class RemoteSubredditDataSourceImpl(private val client: HttpClient) : Re
 
 suspend fun main() {
     RemoteSubredditDataSource()
-        .getMySubreddits(5, "").also(::println)
+        .getCurrentUserSubreddits(5, "").also(::println)
 }

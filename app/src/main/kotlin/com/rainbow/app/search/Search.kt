@@ -38,9 +38,7 @@ fun SearchTextField(
         if (searchTerm.isNotBlank()) {
             isExpanded = true
             value = UIState.Loading
-            Repos.Subreddit.searchSubreddit(searchTerm, SubredditsSearchSorting.Activity)
-                .map { it.toUIState() }
-                .collect { value = it }
+//            Repos.Subreddit.searchSubreddit(searchTerm, SubredditsSearchSorting.Activity)
         } else {
             isExpanded = false
         }

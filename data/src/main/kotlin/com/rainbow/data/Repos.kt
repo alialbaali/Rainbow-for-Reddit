@@ -1,12 +1,7 @@
 package com.rainbow.data
 
-import com.rainbow.data.LocalMappers.LocalPostMapper
-import com.rainbow.data.RemoteMappers.RemoteCommentMapper
-import com.rainbow.data.RemoteMappers.RemotePostMapper
-import com.rainbow.data.RemoteMappers.WikiPageMapper
 import com.rainbow.data.repository.*
 import com.rainbow.domain.repository.*
-import com.rainbow.local.RainbowDatabase
 import com.rainbow.remote.impl.*
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ExperimentalSettingsImplementation
@@ -34,20 +29,18 @@ object Repos {
     object Settings : SettingsRepository by SettingsRepository(settings, DefaultDispatcher)
 
     @OptIn(ExperimentalSettingsApi::class)
-    object User : UserRepository by UserRepository(
+    object User : UserRepository by UserRepositoryImpl(
         RemoteUserDataSource(),
-        DefaultDispatcher,
-        RemoteMappers.UserMapper,
-        LocalMappers.UserMapper,
         settings,
+        DefaultDispatcher,
+        Mappers.UserMapper,
     )
 
     object Post : PostRepository by PostRepositoryImpl(
         RemotePostDataSource(),
-        RainbowDatabase,
+        settings,
         DefaultDispatcher,
-        RainbowDatabase.RemotePostMapper,
-        RainbowDatabase.LocalPostMapper,
+        Mappers.PostMapper,
     )
 
     @OptIn(ExperimentalSettingsApi::class)
@@ -56,35 +49,27 @@ object Repos {
         RemoteModeratorDataSource(),
         RemoteWikiDataSourceImpl(),
         RemoteSubredditFlairDataSource(),
-        RainbowDatabase.localSubredditQueries,
+        RemoteRuleDataSource(),
         settings,
         DefaultDispatcher,
-        RemoteMappers.SubredditMapper,
-        LocalMappers.SubredditMapper,
-        RemoteMappers.ModeratorMapper,
-        RainbowDatabase.WikiPageMapper,
+        Mappers.SubredditMapper,
+        Mappers.ModeratorMapper,
+        Mappers.WikiPageMapper,
+        Mappers.RuleMapper,
     )
 
     @OptIn(ExperimentalSettingsApi::class)
     object Comment : CommentRepository by CommentRepositoryImpl(
         RemoteCommentDataSource(),
-        RainbowDatabase.localCommentQueries,
         settings,
         DefaultDispatcher,
-        RainbowDatabase.RemoteCommentMapper,
-        LocalMappers.CommentMapper(RainbowDatabase),
-    )
-
-    object Rule : RuleRepository by RuleRepository(
-        RemoteRuleDataSource(),
-        DefaultDispatcher,
-        RemoteMappers.RuleMapper
+        Mappers.CommentMapper,
     )
 
     object Message : MessageRepository by MessageRepositoryImpl(
         RemoteMessageDataSource(),
         DefaultDispatcher,
-        RemoteMappers.MessageMapper
+        Mappers.MessageMapper
     )
 
 }

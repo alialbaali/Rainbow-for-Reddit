@@ -1,59 +1,60 @@
 package com.rainbow.domain.repository
 
 import com.rainbow.domain.models.*
-import kotlinx.coroutines.flow.Flow
 
 interface PostRepository {
 
-    fun getUserSubmittedPosts(
+    suspend fun getCurrentUserSubmittedPosts(
+        postsSorting: UserPostSorting,
+        timeSorting: TimeSorting,
+        lastPostId: String?,
+    ): Result<List<Post>>
+
+    suspend fun getCurrentUserUpvotedPosts(
+        postsSorting: UserPostSorting,
+        timeSorting: TimeSorting,
+        lastPostId: String?,
+    ): Result<List<Post>>
+
+    suspend fun getCurrentUserDownvotedPosts(
+        postsSorting: UserPostSorting,
+        timeSorting: TimeSorting,
+        lastPostId: String?,
+    ): Result<List<Post>>
+
+    suspend fun getCurrentUserHiddenPosts(
+        postsSorting: UserPostSorting,
+        timeSorting: TimeSorting,
+        lastPostId: String?,
+    ): Result<List<Post>>
+
+    suspend fun getCurrentUserSavedPosts(
+        postsSorting: UserPostSorting,
+        timeSorting: TimeSorting,
+        lastPostId: String?,
+    ): Result<List<Post>>
+
+    suspend fun getUserSubmittedPosts(
         userName: String,
         postsSorting: UserPostSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
-    ): Flow<Result<List<Post>>>
+    ): Result<List<Post>>
 
-    fun getUserUpvotedPosts(
-        userName: String,
-        postsSorting: UserPostSorting,
-        timeSorting: TimeSorting,
-        lastPostId: String?,
-    ): Flow<Result<List<Post>>>
-
-    fun getUserDownvotedPosts(
-        userName: String,
-        postsSorting: UserPostSorting,
-        timeSorting: TimeSorting,
-        lastPostId: String?,
-    ): Flow<Result<List<Post>>>
-
-    fun getUserHiddenPosts(
-        userName: String,
-        postsSorting: UserPostSorting,
-        timeSorting: TimeSorting,
-        lastPostId: String?,
-    ): Flow<Result<List<Post>>>
-
-    fun getUserSavedPosts(
-        userName: String,
-        postsSorting: UserPostSorting,
-        timeSorting: TimeSorting,
-        lastPostId: String?,
-    ): Flow<Result<List<Post>>>
-
-    fun getHomePosts(
+    suspend fun getHomePosts(
         postsSorting: MainPostSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
-    ): Flow<Result<List<Post>>>
+    ): Result<List<Post>>
 
-    fun getSubredditPosts(
+    suspend fun getSubredditPosts(
         subredditName: String,
         postsSorting: SubredditPostSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
-    ): Flow<Result<List<Post>>>
+    ): Result<List<Post>>
 
-    fun getPost(postId: String): Flow<Result<Post>>
+    suspend fun getPost(postId: String): Result<Post>
 
     suspend fun createPost(post: Post): Result<Unit>
 
@@ -69,7 +70,5 @@ interface PostRepository {
 
     suspend fun unHidePost(postId: String): Result<Unit>
 
-    suspend fun readPost(postId: String): Result<Unit>
-
-    suspend fun searchPosts(searchTerm: String): Flow<Result<List<Post>>>
+    suspend fun searchPosts(searchTerm: String): Result<List<Post>>
 }

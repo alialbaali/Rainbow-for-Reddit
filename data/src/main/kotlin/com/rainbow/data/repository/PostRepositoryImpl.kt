@@ -3,161 +3,142 @@ package com.rainbow.data.repository
 import com.rainbow.data.Mapper
 import com.rainbow.data.quickMap
 import com.rainbow.data.utils.DefaultLimit
+import com.rainbow.data.utils.SettingsKeys
 import com.rainbow.domain.models.*
 import com.rainbow.domain.models.Post.Type
 import com.rainbow.domain.repository.PostRepository
 import com.rainbow.remote.dto.RemotePost
 import com.rainbow.remote.source.RemotePostDataSource
-import com.rainbow.sql.LocalPost
-import com.rainbow.sql.RainbowDatabase
-import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.squareup.sqldelight.runtime.coroutines.mapToList
+import com.russhwolf.settings.ExperimentalSettingsApi
+import com.russhwolf.settings.coroutines.FlowSettings
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
+@OptIn(ExperimentalSettingsApi::class)
 internal class PostRepositoryImpl(
     private val remoteDataSource: RemotePostDataSource,
-    private val database: RainbowDatabase,
+    private val settings: FlowSettings,
     private val dispatcher: CoroutineDispatcher,
-    private val remotePostMapper: Mapper<RemotePost, LocalPost>,
-    private val localPostMapper: Mapper<LocalPost, Post>,
+    private val mapper: Mapper<RemotePost, Post>,
 ) : PostRepository {
 
-    override fun getUserSubmittedPosts(
+    override suspend fun getCurrentUserSubmittedPosts(
+        postsSorting: UserPostSorting,
+        timeSorting: TimeSorting,
+        lastPostId: String?,
+    ): Result<List<Post>> = withContext(dispatcher) {
+        remoteDataSource.getUserSubmittedPosts(
+            settings.getString(SettingsKeys.UserName),
+            postsSorting.name.lowercase(),
+            timeSorting.name.lowercase(),
+            DefaultLimit,
+            lastPostId
+        ).mapCatching { it.quickMap(mapper) }
+    }
+
+    override suspend fun getCurrentUserUpvotedPosts(
+        postsSorting: UserPostSorting,
+        timeSorting: TimeSorting,
+        lastPostId: String?,
+    ): Result<List<Post>> = withContext(dispatcher) {
+        remoteDataSource.getUserUpvotedPosts(
+            settings.getString(SettingsKeys.UserName),
+            postsSorting.name.lowercase(),
+            timeSorting.name.lowercase(),
+            DefaultLimit,
+            lastPostId
+        ).mapCatching { it.quickMap(mapper) }
+    }
+
+    override suspend fun getCurrentUserDownvotedPosts(
+        postsSorting: UserPostSorting,
+        timeSorting: TimeSorting,
+        lastPostId: String?,
+    ): Result<List<Post>> = withContext(dispatcher) {
+        remoteDataSource.getUserDownvotedPosts(
+            settings.getString(SettingsKeys.UserName),
+            postsSorting.name.lowercase(),
+            timeSorting.name.lowercase(),
+            DefaultLimit,
+            lastPostId
+        ).mapCatching { it.quickMap(mapper) }
+    }
+
+    override suspend fun getCurrentUserHiddenPosts(
+        postsSorting: UserPostSorting,
+        timeSorting: TimeSorting,
+        lastPostId: String?,
+    ): Result<List<Post>> = withContext(dispatcher) {
+        remoteDataSource.getUserHiddenPosts(
+            settings.getString(SettingsKeys.UserName),
+            postsSorting.name.lowercase(),
+            timeSorting.name.lowercase(),
+            DefaultLimit,
+            lastPostId
+        ).mapCatching { it.quickMap(mapper) }
+    }
+
+    override suspend fun getCurrentUserSavedPosts(
+        postsSorting: UserPostSorting,
+        timeSorting: TimeSorting,
+        lastPostId: String?,
+    ): Result<List<Post>> = withContext(dispatcher) {
+        remoteDataSource.getUserSavedPosts(
+            settings.getString(SettingsKeys.UserName),
+            postsSorting.name.lowercase(),
+            timeSorting.name.lowercase(),
+            DefaultLimit,
+            lastPostId
+        ).mapCatching { it.quickMap(mapper) }
+    }
+
+    override suspend fun getUserSubmittedPosts(
         userName: String,
         postsSorting: UserPostSorting,
         timeSorting: TimeSorting,
-        lastPostId: String?
-    ): Flow<Result<List<Post>>> = flow {
+        lastPostId: String?,
+    ): Result<List<Post>> = withContext(dispatcher) {
         remoteDataSource.getUserSubmittedPosts(
             userName,
             postsSorting.name.lowercase(),
             timeSorting.name.lowercase(),
             DefaultLimit,
             lastPostId
-        ).savePosts(this, lastPostId)
-    }.flowOn(dispatcher)
+        ).mapCatching { it.quickMap(mapper) }
+    }
 
-    override fun getUserUpvotedPosts(
-        userName: String,
-        postsSorting: UserPostSorting,
-        timeSorting: TimeSorting,
-        lastPostId: String?
-    ): Flow<Result<List<Post>>> = flow {
-        remoteDataSource
-            .getUserUpvotedPosts(
-                userName,
-                postsSorting.name.lowercase(),
-                timeSorting.name.lowercase(),
-                DefaultLimit,
-                lastPostId,
-            )
-            .savePosts(this, lastPostId)
-    }.flowOn(dispatcher)
-
-    override fun getUserDownvotedPosts(
-        userName: String,
-        postsSorting: UserPostSorting,
-        timeSorting: TimeSorting,
-        lastPostId: String?
-    ): Flow<Result<List<Post>>> = flow {
-        remoteDataSource
-            .getUserDownvotedPosts(
-                userName,
-                postsSorting.name.lowercase(),
-                timeSorting.name.lowercase(),
-                DefaultLimit,
-                lastPostId,
-            )
-            .savePosts(this, lastPostId)
-    }.flowOn(dispatcher)
-
-    override fun getUserHiddenPosts(
-        userName: String,
-        postsSorting: UserPostSorting,
-        timeSorting: TimeSorting,
-        lastPostId: String?
-    ): Flow<Result<List<Post>>> = flow {
-        remoteDataSource
-            .getUserHiddenPosts(
-                userName,
-                postsSorting.name.lowercase(),
-                timeSorting.name.lowercase(),
-                DefaultLimit,
-                lastPostId,
-            )
-            .savePosts(this, lastPostId)
-    }.flowOn(dispatcher)
-
-    override fun getUserSavedPosts(
-        userName: String,
-        postsSorting: UserPostSorting,
-        timeSorting: TimeSorting,
-        lastPostId: String?
-    ): Flow<Result<List<Post>>> = flow {
-        remoteDataSource
-            .getUserSavedPosts(
-                userName,
-                postsSorting.name.lowercase(),
-                timeSorting.name.lowercase(),
-                DefaultLimit,
-                lastPostId,
-            )
-            .savePosts(this, lastPostId)
-    }.flowOn(dispatcher)
-
-    override fun getHomePosts(
+    override suspend fun getHomePosts(
         postsSorting: MainPostSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
-    ): Flow<Result<List<Post>>> = flow {
-        remoteDataSource
-            .getHomePosts(
-                postsSorting.name.lowercase(),
-                timeSorting.name.lowercase(),
-                DefaultLimit,
-                lastPostId,
-            )
-            .savePosts(this, lastPostId)
-    }.flowOn(dispatcher)
+    ): Result<List<Post>> = withContext(dispatcher) {
+        remoteDataSource.getHomePosts(
+            postsSorting.name.lowercase(),
+            timeSorting.name.lowercase(),
+            DefaultLimit,
+            lastPostId
+        ).mapCatching { it.quickMap(mapper) }
+    }
 
-    override fun getSubredditPosts(
+    override suspend fun getSubredditPosts(
         subredditName: String,
         postsSorting: SubredditPostSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
-    ): Flow<Result<List<Post>>> = flow {
+    ): Result<List<Post>> = withContext(dispatcher) {
         remoteDataSource.getSubredditPosts(
             subredditName,
             postsSorting.name.lowercase(),
             timeSorting.name.lowercase(),
             DefaultLimit,
-            lastPostId,
-        ).savePosts(this, lastPostId)
-    }.flowOn(dispatcher)
+            lastPostId
+        ).mapCatching { it.quickMap(mapper) }
+    }
 
-    override fun getPost(postId: String): Flow<Result<Post>> = flow {
-        database.localPostQueries.selectById(postId)
-            .executeAsOneOrNull()
-            .apply {
-                if (this == null) {
-                    remoteDataSource.getPost(postId)
-                        .mapCatching { remotePostMapper.map(it) }
-                        .onSuccess {
-                            database.localPostQueries.insert(it)
-                        }
-                        .onFailure {
-                            emit(Result.failure<Post>(it))
-                        }
-                }
-            }
-
-        database.localPostQueries.selectById(postId)
-            .executeAsOne()
-            .let { localPostMapper.map(it) }
-            .also { emit(Result.success(it)) }
-    }.flowOn(dispatcher)
+    override suspend fun getPost(postId: String): Result<Post> = withContext(dispatcher) {
+        remoteDataSource.getPost(postId)
+            .mapCatching { mapper.map(it) }
+    }
 
     override suspend fun createPost(post: Post): Result<Unit> = withContext(dispatcher) {
         with(post) {
@@ -202,62 +183,26 @@ internal class PostRepositoryImpl(
 
     override suspend fun upvotePost(postId: String): Result<Unit> = withContext(dispatcher) {
         remoteDataSource.upvotePost(postId)
-            .onSuccess { database.localPostQueries.upvote(postId) }
     }
 
     override suspend fun unvotePost(postId: String): Result<Unit> = withContext(dispatcher) {
         remoteDataSource.unvotePost(postId)
-            .onSuccess { database.localPostQueries.unvote(postId) }
     }
 
     override suspend fun downvotePost(postId: String): Result<Unit> = withContext(dispatcher) {
         remoteDataSource.downvotePost(postId)
-            .onSuccess { database.localPostQueries.downvote(postId) }
     }
 
     override suspend fun hidePost(postId: String): Result<Unit> = withContext(dispatcher) {
         remoteDataSource.hidePost(postId)
-            .onSuccess { database.localPostQueries.hide(postId) }
     }
 
     override suspend fun unHidePost(postId: String): Result<Unit> = withContext(dispatcher) {
         remoteDataSource.unHidePost(postId)
-            .onSuccess { database.localPostQueries.unhide(postId) }
     }
 
-    override suspend fun readPost(postId: String): Result<Unit> = withContext(dispatcher) {
-        database.localPostQueries.read(postId).let { Result.success(it) }
-    }
-
-    override suspend fun searchPosts(searchTerm: String): Flow<Result<List<Post>>> = flow {
+    override suspend fun searchPosts(searchTerm: String): Result<List<Post>> = withContext(dispatcher) {
         remoteDataSource.searchPosts(searchTerm)
-            .map { it.quickMap(remotePostMapper) }
-            .map { it.quickMap(localPostMapper) }
-            .also { emit(it) }
-    }
-
-    private suspend fun Result<List<RemotePost>>.savePosts(
-        collector: FlowCollector<Result<List<Post>>>,
-        lastPostId: String?,
-    ) {
-        onSuccess {
-            if (lastPostId == null) {
-                database.localPostQueries.clear()
-                database.localAwardQueries.clear()
-                database.localLinkQueries.clear()
-                database.localPostFlairQueries.clear()
-            }
-            it.quickMap(remotePostMapper).forEach { localPost ->
-                if (database.localPostQueries.selectById(localPost.id).executeAsOneOrNull() == null)
-                    database.localPostQueries.insert(localPost)
-            }
-        }.onFailure { collector.emit(Result.failure<List<Post>>(it)) }
-
-        database.localPostQueries.selectAll()
-            .asFlow()
-            .mapToList(dispatcher)
-            .map { it.quickMap(localPostMapper) }
-            .map { Result.success(it) }
-            .also { collector.emitAll(it) }
+            .map { it.quickMap(mapper) }
     }
 }

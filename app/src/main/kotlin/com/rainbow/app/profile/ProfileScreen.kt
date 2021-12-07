@@ -7,7 +7,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
@@ -18,61 +21,63 @@ import com.rainbow.app.comment.comments
 import com.rainbow.app.components.DefaultTabRow
 import com.rainbow.app.components.HeaderDescription
 import com.rainbow.app.components.HeaderItem
-import com.rainbow.app.post.Sorting
+import com.rainbow.app.post.PostModel
+import com.rainbow.app.post.PostSorting
 import com.rainbow.app.post.posts
 import com.rainbow.app.utils.*
-import com.rainbow.data.Repos
-import com.rainbow.domain.models.*
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.map
+import com.rainbow.domain.models.Comment
+import com.rainbow.domain.models.PostSorting
+import com.rainbow.domain.models.User
 import kotlinx.datetime.toJavaLocalDateTime
 import java.time.format.DateTimeFormatter
 
 enum class ProfileTab {
     Overview, Submitted, Saved, Hidden, Upvoted, Downvoted, Comments;
+
+    companion object {
+        val Default = Submitted
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProfileScreen(
     focusRequester: FocusRequester,
-    onPostClick: (Post) -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
     onShowSnackbar: (String) -> Unit,
+    setPostModel: (PostModel<PostSorting>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var selectedTab by remember { mutableStateOf(ProfileTab.Submitted) }
-    var postSorting by remember { mutableStateOf(UserPostSorting.Default) }
-    var timeSorting by remember { mutableStateOf(TimeSorting.Default) }
-    var lastPost by remember(postSorting, timeSorting) { mutableStateOf<Post?>(null) }
+    setPostModel(ProfileModel.postModel as PostModel<PostSorting>)
+    val selectedTab by ProfileModel.tab.collectAsState()
+    val postSorting by ProfileModel.postModel.postSorting.collectAsState()
+    val timeSorting by ProfileModel.postModel.timeSorting.collectAsState()
+    val postLayout by ProfileModel.postModel.postLayout.collectAsState()
+    val userState by ProfileModel.currentUser.collectAsState()
+    val postsState by ProfileModel.postModel.posts.collectAsState()
     val scrollingState = rememberLazyListState()
-    val postLayout by Repos.Settings.postLayout.collectAsState(PostLayout.Card)
-    val state by ProfileModel.currentUser.collectAsState()
-
-    state.composed(modifier) { user ->
-        val postsState by producePostsState(user.name, selectedTab, postSorting, timeSorting, lastPost)
+    userState.composed(onShowSnackbar, modifier) { user ->
         val commentsState by produceState<UIState<List<Comment>>>(UIState.Loading, selectedTab) {
-            if (selectedTab == ProfileTab.Comments)
-                Repos.Comment.getCurrentUserComments()
-                    .map { it.toUIState() }
-                    .collect { value = it }
+//            if (selectedTab == ProfileTab.Comments)
+//                Repos.Comment.getCurrentUserComments()
+//                    .map { it.toUIState() }
+//                    .collect { value = it }
         }
-        LazyColumn(modifier, scrollingState, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        LazyColumn(modifier, scrollingState, verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item { Header(user) }
             item {
                 DefaultTabRow(
                     selectedTab = selectedTab,
-                    onTabClick = { selectedTab = it },
+                    onTabClick = { ProfileModel.setTab(it) },
                 )
             }
             item {
-                Sorting(
+                PostSorting(
                     postSorting,
-                    onSortingUpdate = { postSorting = it },
+                    onSortingUpdate = { ProfileModel.postModel.setPostSorting(it) },
                     timeSorting,
-                    onTimeSortingUpdate = { timeSorting = it },
+                    onTimeSortingUpdate = { ProfileModel.postModel.setTimeSorting(it) },
                 )
             }
             when (selectedTab) {
@@ -81,13 +86,13 @@ fun ProfileScreen(
                 ProfileTab.Comments -> comments(commentsState, onUserNameClick, onSubredditNameClick)
                 else -> posts(
                     postsState,
+                    ProfileModel.postModel,
                     postLayout,
                     focusRequester,
-                    onPostClick,
                     onUserNameClick,
                     onSubredditNameClick,
                     onShowSnackbar,
-                    onLoadMore = { lastPost = it }
+                    onLoadMore = { ProfileModel.postModel.setLastPost(it) }
                 )
             }
         }
@@ -152,60 +157,5 @@ fun Header(user: User, modifier: Modifier = Modifier) {
             modifier = Modifier
                 .defaultPadding(start = 232.dp),
         )
-    }
-}
-
-@Composable
-private fun producePostsState(
-    userName: String,
-    currentTab: ProfileTab,
-    postSorting: UserPostSorting,
-    timeSorting: TimeSorting,
-    lastPost: Post?,
-): State<UIState<List<Post>>> {
-    return produceState<UIState<List<Post>>>(
-        UIState.Loading,
-        currentTab,
-        postSorting,
-        timeSorting,
-        lastPost
-    ) {
-        if (lastPost == null)
-            value = UIState.Loading
-        when (currentTab) {
-            ProfileTab.Submitted -> Repos.Post.getUserSubmittedPosts(
-                userName,
-                postSorting,
-                timeSorting,
-                lastPost?.id
-            )
-            ProfileTab.Saved -> Repos.Post.getUserSavedPosts(
-                userName,
-                postSorting,
-                timeSorting,
-                lastPost?.id
-            )
-            ProfileTab.Hidden -> Repos.Post.getUserHiddenPosts(
-                userName,
-                postSorting,
-                timeSorting,
-                lastPost?.id
-            )
-            ProfileTab.Upvoted -> Repos.Post.getUserUpvotedPosts(
-                userName,
-                postSorting,
-                timeSorting,
-                lastPost?.id
-            )
-            ProfileTab.Downvoted -> Repos.Post.getUserDownvotedPosts(
-                userName,
-                postSorting,
-                timeSorting,
-                lastPost?.id
-            )
-            else -> emptyFlow()
-        }.map { it.map { it.filterNot { it.isHidden } } }
-            .map { it.toUIState() }
-            .collect { value = it }
     }
 }

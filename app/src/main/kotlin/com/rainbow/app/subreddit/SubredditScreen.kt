@@ -25,19 +25,16 @@ import androidx.compose.ui.window.Dialog
 import com.rainbow.app.components.DefaultTabRow
 import com.rainbow.app.components.FlairItem
 import com.rainbow.app.components.HeaderItem
-import com.rainbow.app.components.RainbowProgressIndicator
-import com.rainbow.app.post.Sorting
+import com.rainbow.app.components.Markdown
+import com.rainbow.app.post.PostModel
+import com.rainbow.app.post.PostSorting
 import com.rainbow.app.post.posts
 import com.rainbow.app.utils.*
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.*
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.datetime.toJavaLocalDateTime
 import java.time.format.DateTimeFormatter
-
 
 enum class SubredditTab {
     Posts, Description, Wiki, Rules, Moderators;
@@ -51,103 +48,81 @@ enum class SubredditTab {
 fun SubredditScreen(
     subredditName: String,
     focusRequester: FocusRequester,
-    onPostClick: (Post) -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
     onShowSnackbar: (String) -> Unit,
-    modifier: Modifier = Modifier
+    setPostModel: (PostModel<PostSorting>) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
+    val model = remember { SubredditModel.getOrCreateInstance(subredditName) }
+    setPostModel(model.postModel as PostModel<PostSorting>)
     val scrollingState = rememberLazyListState()
-    var selectedTab by remember { mutableStateOf(SubredditTab.Default) }
-    var postSorting by remember { mutableStateOf(SubredditPostSorting.Default) }
-    var timeSorting by remember { mutableStateOf(TimeSorting.Default) }
-    var lastPost by remember(postSorting, timeSorting) { mutableStateOf<Post?>(null) }
-    val postLayout by Repos.Settings.postLayout.collectAsState(PostLayout.Card)
-    val state by produceState<UIState<Subreddit>>(UIState.Loading, subredditName) {
-        Repos.Subreddit.getSubreddit(subredditName)
-            .map { it.toUIState() }
-            .onEach { value = it }
-            .launchIn(this)
-    }
-    val postsState by produceState<UIState<List<Post>>>(
-        UIState.Loading,
-        subredditName,
-        postSorting,
-        timeSorting,
-        lastPost
-    ) {
-        if (lastPost == null)
-            value = UIState.Loading
-        Repos.Post.getSubredditPosts(subredditName, postSorting, timeSorting, lastPost?.id)
-            .map { it.map { it.filterNot { it.isHidden } } }
-            .map { it.toUIState() }
-            .onEach { value = it }
-            .launchIn(this)
-    }
-    val rulesState by produceState<UIState<List<Rule>>>(UIState.Loading, subredditName) {
-        Repos.Rule.getSubredditRules(subredditName)
-            .toUIState()
-            .also { value = it }
-    }
-    val moderatorsState by produceState<UIState<List<Moderator>>>(UIState.Loading, subredditName) {
-        Repos.Subreddit.getSubredditModerators(subredditName)
-            .map { it.toUIState() }
-            .onEach { value = it }
-            .launchIn(this)
-    }
-    val wikiState by produceState<UIState<WikiPage>>(UIState.Loading, subredditName) {
-        Repos.Subreddit.getWikiIndex(subredditName)
-            .toUIState()
-            .also { value = it }
-    }
+    val postSorting by model.postModel.postSorting.collectAsState()
+    val timeSorting by model.postModel.timeSorting.collectAsState()
+    val postLayout by model.postModel.postLayout.collectAsState()
+    val postsState by model.postModel.posts.collectAsState()
+    val moderatorsState by model.moderators.collectAsState()
+    val subredditState by model.subreddit.collectAsState()
+    val selectedTab by model.selectedTab.collectAsState()
+    val rulesState by model.rules.collectAsState()
+    val wikiState by model.wiki.collectAsState()
     LazyColumn(modifier, scrollingState, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         item {
-            state.composed { subreddit ->
+            subredditState.composed(onShowSnackbar) { subreddit ->
                 Header(subreddit, onShowSnackbar, Modifier.padding(bottom = 8.dp))
             }
         }
         item {
             DefaultTabRow(
                 selectedTab = selectedTab,
-                onTabClick = { selectedTab = it },
+                onTabClick = { model.selectTab(it) },
             )
         }
         item {
             if (selectedTab == SubredditTab.Posts)
-                Sorting(
+                PostSorting(
                     postSorting,
-                    onSortingUpdate = { postSorting = it },
+                    onSortingUpdate = { model.postModel.setPostSorting(it) },
                     timeSorting,
-                    onTimeSortingUpdate = { timeSorting = it },
+                    onTimeSortingUpdate = { model.postModel.setTimeSorting(it) },
                     Modifier.padding(top = 8.dp, bottom = 16.dp)
                 )
         }
         when (selectedTab) {
             SubredditTab.Posts -> posts(
                 postsState,
+                model.postModel,
                 postLayout,
                 focusRequester,
-                onPostClick,
                 onUserNameClick,
                 onSubredditNameClick,
                 onShowSnackbar,
-                onLoadMore = { lastPost = it }
+                onLoadMore = { model.postModel.setLastPost(it) }
             )
-            SubredditTab.Description -> description(state)
-            SubredditTab.Wiki -> wiki(wikiState)
-            SubredditTab.Rules -> rules(rulesState)
-            SubredditTab.Moderators -> moderators(moderatorsState, onUserNameClick)
+            SubredditTab.Description -> description(subredditState, onShowSnackbar)
+            SubredditTab.Wiki -> {
+                if (model.wiki.value.isLoading)
+                    model.loadWiki()
+                wiki(wikiState, onShowSnackbar)
+            }
+            SubredditTab.Rules -> {
+                if (model.rules.value.isLoading)
+                    model.loadRules()
+                rules(rulesState, onShowSnackbar)
+            }
+            SubredditTab.Moderators -> {
+                if (model.moderators.value.isLoading)
+                    model.loadModerators()
+                moderators(moderatorsState, onUserNameClick, onShowSnackbar)
+            }
         }
     }
     VerticalScrollbar(rememberScrollbarAdapter(scrollingState))
 }
 
-private fun LazyListScope.wiki(wikiState: UIState<WikiPage>) {
-    when (wikiState) {
-        is UIState.Empty -> item { Text("Empty") }
-        is UIState.Failure -> item { Text("Failed to load") }
-        is UIState.Loading -> item { RainbowProgressIndicator() }
-        is UIState.Success -> item {
+private fun LazyListScope.wiki(wikiState: UIState<WikiPage>, onShowSnackbar: (String) -> Unit) {
+    item {
+        wikiState.composed(onShowSnackbar) { wikiPage ->
             Column(
                 Modifier
                     .defaultShape()
@@ -155,22 +130,21 @@ private fun LazyListScope.wiki(wikiState: UIState<WikiPage>) {
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(wikiState.value.content)
-                Text("Revisioned by ${wikiState.value.revisionBy.name} on ${wikiState.value.revisionDate}")
+                Text(wikiPage.content)
+                Text("Revisioned by ${wikiPage.revisionBy.name} on ${wikiPage.revisionDate}")
             }
         }
     }
 }
 
-private fun LazyListScope.description(state: UIState<Subreddit>) {
+private fun LazyListScope.description(state: UIState<Subreddit>, onShowSnackbar: (String) -> Unit) {
     item {
-        state.composed {
-            Text(
+        state.composed(onShowSnackbar) {
+            Markdown(
                 it.longDescription,
-                Modifier
-                    .defaultShape()
+                Modifier.defaultShape()
                     .defaultPadding()
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
             )
         }
     }
@@ -205,20 +179,20 @@ private fun Header(subreddit: Subreddit, onShowSnackbar: (String) -> Unit, modif
                 modifier = Modifier.weight(1F)
             )
             SubredditFavoriteIconButton(subreddit, onShowSnackbar, enabled = subreddit.isSubscribed)
-            SelectFlairButton(subreddit.name)
+            SelectFlairButton(subreddit.name, onShowSnackbar)
             SubscribeButton(subreddit, onShowSnackbar)
         }
     }
 }
 
 @Composable
-private fun SelectFlairButton(subredditName: String, modifier: Modifier = Modifier) {
+private fun SelectFlairButton(subredditName: String, onShowSnackbar: (String) -> Unit, modifier: Modifier = Modifier) {
     var isDialogVisible by remember { mutableStateOf(false) }
     OutlinedButton(onClick = { isDialogVisible = true }, modifier) {
         Text(RainbowStrings.Flair)
     }
     AnimatedVisibility(isDialogVisible) {
-        SelectFlairDialog(subredditName, onCloseRequest = { isDialogVisible = false })
+        SelectFlairDialog(subredditName, onCloseRequest = { isDialogVisible = false }, onShowSnackbar)
     }
 }
 
@@ -226,7 +200,8 @@ private fun SelectFlairButton(subredditName: String, modifier: Modifier = Modifi
 private fun SelectFlairDialog(
     subredditName: String,
     onCloseRequest: () -> Unit,
-    modifier: Modifier = Modifier
+    onShowSnackbar: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
     var state by remember { mutableStateOf<UIState<List<Pair<Flair, Boolean>>>>(UIState.Loading) }
@@ -242,7 +217,7 @@ private fun SelectFlairDialog(
 
 
     Dialog(onCloseRequest) {
-        state.composed(modifier) { flairs ->
+        state.composed(onShowSnackbar, modifier) { flairs ->
             val scrollState = rememberLazyListState()
             var boxPadding by remember { mutableStateOf(0) }
             Box(modifier.fillMaxSize()) {
@@ -324,46 +299,40 @@ private fun SelectFlairActions(onApply: () -> Unit, onClear: () -> Unit, modifie
 }
 
 
-private fun LazyListScope.moderators(moderatorsState: UIState<List<Moderator>>, onModeratorClick: (String) -> Unit) {
-    when (moderatorsState) {
-        is UIState.Empty -> item { Text("No moderators found.") }
-        is UIState.Failure -> throw moderatorsState.exception
-        is UIState.Loading -> item { RainbowProgressIndicator() }
-        is UIState.Success -> {
-            item {
-                Column(
-                    Modifier
-                        .defaultShape()
-                        .defaultPadding()
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    moderatorsState.value.forEach {
-                        ModeratorItem(it, onModeratorClick, Modifier.fillMaxWidth())
-                    }
+private fun LazyListScope.moderators(
+    moderatorsState: UIState<List<Moderator>>,
+    onModeratorClick: (String) -> Unit,
+    onShowSnackbar: (String) -> Unit,
+) {
+    item {
+        moderatorsState.composed(onShowSnackbar) { moderators ->
+            Column(
+                Modifier
+                    .defaultShape()
+                    .defaultPadding()
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                moderators.forEach {
+                    ModeratorItem(it, onModeratorClick, Modifier.fillMaxWidth())
                 }
             }
         }
     }
 }
 
-private fun LazyListScope.rules(rulesState: UIState<List<Rule>>) {
-    when (rulesState) {
-        is UIState.Empty -> item { Text("No rules found.") }
-        is UIState.Failure -> item { Text("Failed to load rules.") }
-        is UIState.Loading -> item { RainbowProgressIndicator() }
-        is UIState.Success -> {
-            item {
-                Column(
-                    Modifier
-                        .defaultShape()
-                        .fillMaxWidth()
-                        .defaultPadding(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    rulesState.value.forEach {
-                        RuleItem(it, Modifier.fillMaxWidth())
-                    }
+private fun LazyListScope.rules(rulesState: UIState<List<Rule>>, onShowSnackbar: (String) -> Unit) {
+    item {
+        rulesState.composed(onShowSnackbar) { rules ->
+            Column(
+                Modifier
+                    .defaultShape()
+                    .fillMaxWidth()
+                    .defaultPadding(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                rules.forEach {
+                    RuleItem(it, Modifier.fillMaxWidth())
                 }
             }
         }

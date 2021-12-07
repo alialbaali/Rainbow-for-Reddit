@@ -15,9 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.components.RainbowTopAppBar
+import com.rainbow.app.home.HomeScreen
 import com.rainbow.app.message.MessageScreen
 import com.rainbow.app.message.MessagesScreen
 import com.rainbow.app.navigation.Screen
+import com.rainbow.app.post.PostModel
 import com.rainbow.app.post.PostScreen
 import com.rainbow.app.profile.ProfileScreen
 import com.rainbow.app.search.SearchScreen
@@ -28,10 +30,8 @@ import com.rainbow.app.subreddit.SubredditScreen
 import com.rainbow.app.user.UserScreen
 import com.rainbow.app.utils.UIState
 import com.rainbow.app.utils.composed
-import com.rainbow.data.Repos
 import com.rainbow.domain.models.Message
-import com.rainbow.domain.models.Post
-import kotlinx.coroutines.launch
+import com.rainbow.domain.models.PostSorting
 
 @Composable
 fun Rainbow(
@@ -45,11 +45,10 @@ fun Rainbow(
     onForwardClick: () -> Unit,
     isBackEnabled: Boolean,
     isForwardEnabled: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    var post by remember { mutableStateOf<UIState<Post>>(UIState.Loading) }
+    var currentPostModelState by remember(screen) { mutableStateOf<UIState<PostModel<PostSorting>>>(UIState.Loading) }
     var message by remember { mutableStateOf<UIState<Message>>(UIState.Loading) }
-    val scope = rememberCoroutineScope()
     val focusRequester = remember { FocusRequester() }
     var snackbarMessage by remember { mutableStateOf<String?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -86,21 +85,16 @@ fun Rainbow(
                         screen,
                         focusRequester,
                         refreshContent,
-                        onPostClick = {
-                            post = UIState.Success(it)
-                            scope.launch {
-                                Repos.Post.readPost(it.id)
-                            }
-                        },
                         onUserNameClick,
                         onSubredditNameClick,
                         onMessageClick = { message = UIState.Success(it) },
                         onShowSnackbar = { snackbarMessage = it },
+                        setPostModel = { currentPostModelState = UIState.Success(it) },
                         Modifier.weight(1F),
                     )
                     EndContent(
                         screen,
-                        post,
+                        currentPostModelState,
                         message,
                         focusRequester,
                         onUserNameClick,
@@ -125,7 +119,7 @@ private fun StartContent(
     screen: Screen,
     backStack: List<Screen>,
     onSidebarClick: (Screen.SidebarItem) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Sidebar(
         screen as? Screen.SidebarItem ?: backStack.last { it is Screen.SidebarItem } as Screen.SidebarItem,
@@ -140,71 +134,68 @@ private fun CenterContent(
     screen: Screen,
     focusRequester: FocusRequester,
     refreshContent: Int,
-    onPostClick: (Post) -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
     onMessageClick: (Message) -> Unit,
     onShowSnackbar: (String) -> Unit,
-    modifier: Modifier = Modifier
+    setPostModel: (PostModel<PostSorting>) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     when (screen) {
         is Screen.SidebarItem -> {
             when (screen) {
                 Screen.SidebarItem.Profile -> ProfileScreen(
                     focusRequester,
-                    onPostClick,
                     onUserNameClick,
                     onSubredditNameClick,
                     onShowSnackbar,
+                    setPostModel,
                     modifier,
                 )
                 Screen.SidebarItem.Home -> HomeScreen(
                     focusRequester,
                     refreshContent,
-                    onPostClick,
                     onUserNameClick,
                     onSubredditNameClick,
                     onShowSnackbar,
+                    setPostModel,
                     modifier,
                 )
                 Screen.SidebarItem.Subreddits -> CurrentUserSubredditsScreen(onSubredditNameClick, onShowSnackbar)
                 Screen.SidebarItem.Messages -> MessagesScreen(
                     onMessageClick,
                     onUserNameClick,
+                    onShowSnackbar,
                     modifier,
                 )
                 Screen.SidebarItem.Settings -> SettingsScreen()
             }
         }
-        is Screen.Subreddit -> {
-            SubredditScreen(
-                subredditName = screen.subredditName,
-                focusRequester,
-                onPostClick,
-                onUserNameClick,
-                onSubredditNameClick,
-                onShowSnackbar,
-                modifier,
-            )
-        }
-        is Screen.User -> {
-            UserScreen(
-                userName = screen.userName,
-                focusRequester,
-                onPostClick,
-                onUserNameClick,
-                onSubredditNameClick,
-                onShowSnackbar,
-                modifier,
-            )
-        }
-        is Screen.Search -> SearchScreen(
-            screen.searchTerm,
+        is Screen.Subreddit -> SubredditScreen(
+            subredditName = screen.subredditName,
             focusRequester,
-            onPostClick,
             onUserNameClick,
             onSubredditNameClick,
             onShowSnackbar,
+            setPostModel,
+            modifier,
+        )
+        is Screen.User -> UserScreen(
+            userName = screen.userName,
+            focusRequester,
+            onUserNameClick,
+            onSubredditNameClick,
+            onShowSnackbar,
+            setPostModel,
+            modifier,
+        )
+        is Screen.Search -> SearchScreen(
+            screen.searchTerm,
+            focusRequester,
+            onUserNameClick,
+            onSubredditNameClick,
+            onShowSnackbar,
+            setPostModel,
             modifier
         )
     }
@@ -214,19 +205,19 @@ private fun CenterContent(
 @Composable
 private fun EndContent(
     screen: Screen,
-    post: UIState<Post>,
+    currentPostModelState: UIState<PostModel<PostSorting>>,
     message: UIState<Message>,
     focusRequester: FocusRequester,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
     onShowSnackbar: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     when (screen) {
-        Screen.SidebarItem.Messages -> message.composed(modifier) { MessageScreen(it, modifier) }
-        else -> post.composed(modifier) {
+        Screen.SidebarItem.Messages -> message.composed(onShowSnackbar, modifier) { MessageScreen(it, modifier) }
+        else -> currentPostModelState.composed(onShowSnackbar, modifier) { postModel ->
             PostScreen(
-                it,
+                postModel,
                 focusRequester,
                 onUserNameClick,
                 onSubredditNameClick,
