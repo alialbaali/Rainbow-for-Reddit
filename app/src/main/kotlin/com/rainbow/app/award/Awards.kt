@@ -9,6 +9,7 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -16,7 +17,7 @@ import com.rainbow.domain.models.Award
 
 @Composable
 fun Awards(awards: List<Award>) {
-    val interactionSource = MutableInteractionSource()
+    val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
     Column(Modifier.wrapContentSize()) {
         Row(
@@ -33,7 +34,12 @@ fun Awards(awards: List<Award>) {
             }
             Text(awards.sumOf { it.count }.toString())
         }
-        DropdownMenu(isHovered, onDismissRequest = {}, focusable = false) {
+        DropdownMenu(
+            isHovered,
+            onDismissRequest = {},
+            focusable = false,
+            modifier = Modifier.hoverable(interactionSource)
+        ) {
             awards.forEach { award ->
                 DropdownMenuItem(
                     onClick = {},
