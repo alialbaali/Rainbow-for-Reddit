@@ -29,7 +29,9 @@ import com.rainbow.app.subreddit.CurrentUserSubredditsScreen
 import com.rainbow.app.subreddit.SubredditScreen
 import com.rainbow.app.user.UserScreen
 import com.rainbow.app.utils.UIState
+import com.rainbow.app.utils.asSuccess
 import com.rainbow.app.utils.composed
+import com.rainbow.app.utils.getOrNull
 import com.rainbow.domain.models.Message
 import com.rainbow.domain.models.PostSorting
 
@@ -53,6 +55,8 @@ fun Rainbow(
     var snackbarMessage by remember { mutableStateOf<String?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
     var refreshContent by remember { mutableStateOf(0) }
+    val postSorting = currentPostModelState.getOrNull()?.postSorting?.collectAsState()
+    var timeSorting = currentPostModelState.getOrNull()?.timeSorting?.collectAsState()
     LaunchedEffect(snackbarMessage) {
         snackbarMessage?.let {
             snackbarHostState.showSnackbar(it)
@@ -60,7 +64,7 @@ fun Rainbow(
         }
     }
     Box(modifier.background(MaterialTheme.colors.background)) {
-        Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        Row(Modifier.fillMaxSize()) {
             StartContent(
                 screen,
                 backStack,
@@ -72,10 +76,20 @@ fun Rainbow(
             Column(Modifier.fillMaxSize()) {
                 RainbowTopAppBar(
                     screen,
+                    postSorting?.value,
+                    timeSorting?.value,
                     onSearchClick,
                     onSubredditNameClick,
                     onBackClick,
                     onForwardClick,
+                    setPostSorting = {
+                        if (currentPostModelState.isSuccess)
+                            currentPostModelState.asSuccess().value.setPostSorting(it)
+                    },
+                    setTimeSorting = {
+                        if (currentPostModelState.isSuccess)
+                            currentPostModelState.asSuccess().value.setTimeSorting(it)
+                    },
                     isBackEnabled,
                     isForwardEnabled,
                     onRefresh = { refreshContent += 1 }
@@ -90,7 +104,8 @@ fun Rainbow(
                         onMessageClick = { message = UIState.Success(it) },
                         onShowSnackbar = { snackbarMessage = it },
                         setPostModel = { currentPostModelState = UIState.Success(it) },
-                        Modifier.weight(1F),
+                        Modifier.weight(1F)
+                            .padding(start = 16.dp),
                     )
                     EndContent(
                         screen,

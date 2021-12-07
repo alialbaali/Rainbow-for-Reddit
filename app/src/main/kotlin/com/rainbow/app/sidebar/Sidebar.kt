@@ -2,7 +2,6 @@ package com.rainbow.app.sidebar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -14,13 +13,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.RectangleShape
 import com.rainbow.app.navigation.Screen
 import com.rainbow.app.ui.dpDimensions
 import com.rainbow.app.utils.RainbowIcons
 import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.app.utils.defaultPadding
+import com.rainbow.app.utils.defaultSurfaceShape
 import com.rainbow.data.Repos
 import kotlinx.coroutines.launch
 
@@ -48,13 +47,11 @@ fun Sidebar(
         if (sidebarItem == this)
             MaterialTheme.colors.primary.copy(0.1F)
         else
-            MaterialTheme.colors.background
+            MaterialTheme.colors.surface
 
     Column(
         modifier
-            .padding(end = 4.dp)
-            .shadow(2.dp, RoundedCornerShape(topEnd = 4.dp, bottomEnd = 4.dp))
-            .background(MaterialTheme.colors.background)
+            .defaultSurfaceShape(shape = RectangleShape)
             .defaultPadding(),
         horizontalAlignment = if (isExpanded) Alignment.Start else Alignment.CenterHorizontally
     ) {

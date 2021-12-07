@@ -11,6 +11,8 @@ object RainbowStrings {
     const val Award = "Award"
     const val Awards = "Awards"
     const val ShowMenu = "Show menu"
+    const val NavigateBack = "Navigate back"
+    const val NavigateForward = "Navigate forward"
     const val CreatePost = "Create post"
     const val Me = "Me"
     const val Profile = "Profile"
@@ -60,6 +62,8 @@ object RainbowStrings {
     const val Clear = "Clear"
     const val Flair = "Flair"
     const val IsEnabled = "Is enabled"
+    const val CollapseComments = "Collapse comments"
+    const val ExpandComments = "Expand comments"
 
     fun UnsubscribeMessage(subredditName: String) = "You have unsubscribed from $subredditName."
     fun SubscribeMessage(subredditName: String) = "You have subscribed to $subredditName."

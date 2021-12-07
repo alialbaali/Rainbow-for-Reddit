@@ -22,7 +22,6 @@ import com.rainbow.app.components.DefaultTabRow
 import com.rainbow.app.components.HeaderDescription
 import com.rainbow.app.components.HeaderItem
 import com.rainbow.app.post.PostModel
-import com.rainbow.app.post.PostSorting
 import com.rainbow.app.post.posts
 import com.rainbow.app.utils.*
 import com.rainbow.domain.models.Comment
@@ -51,8 +50,6 @@ fun ProfileScreen(
 ) {
     setPostModel(ProfileModel.postModel as PostModel<PostSorting>)
     val selectedTab by ProfileModel.tab.collectAsState()
-    val postSorting by ProfileModel.postModel.postSorting.collectAsState()
-    val timeSorting by ProfileModel.postModel.timeSorting.collectAsState()
     val postLayout by ProfileModel.postModel.postLayout.collectAsState()
     val userState by ProfileModel.currentUser.collectAsState()
     val postsState by ProfileModel.postModel.posts.collectAsState()
@@ -70,14 +67,6 @@ fun ProfileScreen(
                 DefaultTabRow(
                     selectedTab = selectedTab,
                     onTabClick = { ProfileModel.setTab(it) },
-                )
-            }
-            item {
-                PostSorting(
-                    postSorting,
-                    onSortingUpdate = { ProfileModel.postModel.setPostSorting(it) },
-                    timeSorting,
-                    onTimeSortingUpdate = { ProfileModel.postModel.setTimeSorting(it) },
                 )
             }
             when (selectedTab) {
@@ -104,7 +93,7 @@ fun ProfileScreen(
 fun Header(user: User, modifier: Modifier = Modifier) {
     Column(
         modifier
-            .defaultShape()
+            .defaultSurfaceShape()
             .heightIn(min = 350.dp)
             .fillMaxWidth()
     ) {

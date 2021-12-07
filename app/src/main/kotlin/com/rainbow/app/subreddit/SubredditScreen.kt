@@ -27,7 +27,6 @@ import com.rainbow.app.components.FlairItem
 import com.rainbow.app.components.HeaderItem
 import com.rainbow.app.components.Markdown
 import com.rainbow.app.post.PostModel
-import com.rainbow.app.post.PostSorting
 import com.rainbow.app.post.posts
 import com.rainbow.app.utils.*
 import com.rainbow.data.Repos
@@ -57,8 +56,6 @@ fun SubredditScreen(
     val model = remember { SubredditModel.getOrCreateInstance(subredditName) }
     setPostModel(model.postModel as PostModel<PostSorting>)
     val scrollingState = rememberLazyListState()
-    val postSorting by model.postModel.postSorting.collectAsState()
-    val timeSorting by model.postModel.timeSorting.collectAsState()
     val postLayout by model.postModel.postLayout.collectAsState()
     val postsState by model.postModel.posts.collectAsState()
     val moderatorsState by model.moderators.collectAsState()
@@ -77,16 +74,6 @@ fun SubredditScreen(
                 selectedTab = selectedTab,
                 onTabClick = { model.selectTab(it) },
             )
-        }
-        item {
-            if (selectedTab == SubredditTab.Posts)
-                PostSorting(
-                    postSorting,
-                    onSortingUpdate = { model.postModel.setPostSorting(it) },
-                    timeSorting,
-                    onTimeSortingUpdate = { model.postModel.setTimeSorting(it) },
-                    Modifier.padding(top = 8.dp, bottom = 16.dp)
-                )
         }
         when (selectedTab) {
             SubredditTab.Posts -> posts(
@@ -125,7 +112,7 @@ private fun LazyListScope.wiki(wikiState: UIState<WikiPage>, onShowSnackbar: (St
         wikiState.composed(onShowSnackbar) { wikiPage ->
             Column(
                 Modifier
-                    .defaultShape()
+                    .defaultSurfaceShape()
                     .defaultPadding()
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -142,7 +129,7 @@ private fun LazyListScope.description(state: UIState<Subreddit>, onShowSnackbar:
         state.composed(onShowSnackbar) {
             Markdown(
                 it.longDescription,
-                Modifier.defaultShape()
+                Modifier.defaultSurfaceShape()
                     .defaultPadding()
                     .fillMaxWidth()
             )
@@ -154,7 +141,7 @@ private fun LazyListScope.description(state: UIState<Subreddit>, onShowSnackbar:
 private fun Header(subreddit: Subreddit, onShowSnackbar: (String) -> Unit, modifier: Modifier = Modifier) {
     Column(
         modifier
-            .defaultShape()
+            .defaultSurfaceShape()
             .heightIn(min = 350.dp)
             .fillMaxWidth()
     ) {
@@ -308,7 +295,7 @@ private fun LazyListScope.moderators(
         moderatorsState.composed(onShowSnackbar) { moderators ->
             Column(
                 Modifier
-                    .defaultShape()
+                    .defaultSurfaceShape()
                     .defaultPadding()
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -326,7 +313,7 @@ private fun LazyListScope.rules(rulesState: UIState<List<Rule>>, onShowSnackbar:
         rulesState.composed(onShowSnackbar) { rules ->
             Column(
                 Modifier
-                    .defaultShape()
+                    .defaultSurfaceShape()
                     .fillMaxWidth()
                     .defaultPadding(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -367,7 +354,7 @@ private fun ModeratorItem(moderator: Moderator, onModeratorClick: (String) -> Un
                     fontWeight = FontWeight.Medium,
                     fontSize = 14.sp,
                     modifier = Modifier
-                        .defaultShape()
+                        .defaultSurfaceShape()
                         .padding(8.dp)
                 )
             }

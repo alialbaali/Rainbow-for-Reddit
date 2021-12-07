@@ -12,13 +12,13 @@ import androidx.compose.ui.unit.dp
 import com.rainbow.app.comment.comments
 import com.rainbow.app.components.DefaultTabRow
 import com.rainbow.app.post.PostModel
-import com.rainbow.app.post.PostSorting
 import com.rainbow.app.post.posts
 import com.rainbow.app.profile.Header
 import com.rainbow.app.utils.UIState
 import com.rainbow.app.utils.composed
-import com.rainbow.data.Repos
-import com.rainbow.domain.models.*
+import com.rainbow.domain.models.Comment
+import com.rainbow.domain.models.PostLayout
+import com.rainbow.domain.models.PostSorting
 
 private enum class UserTab {
     Overview, Submitted, Comments,
@@ -35,12 +35,10 @@ fun UserScreen(
     modifier: Modifier = Modifier,
 ) {
     var selectedTab by remember { mutableStateOf(UserTab.Submitted) }
-    var postSorting by remember { mutableStateOf(UserPostSorting.Default) }
-    var timeSorting by remember { mutableStateOf(TimeSorting.Default) }
     val scrollingState = rememberLazyListState()
-    val model = remember { UserModel(userName) }
+    val model = remember { UserModel.getOrCreateInstance(userName) }
     setPostModel(model.postModel as PostModel<PostSorting>)
-    val postLayout by Repos.Settings.postLayout.collectAsState(PostLayout.Card)
+    val postLayout by model.postModel.postLayout.collectAsState(PostLayout.Card)
     val userState by model.user.collectAsState()
     val postsState by model.postModel.posts.collectAsState()
     val commentsState by produceState<UIState<List<Comment>>>(UIState.Loading) {
@@ -53,14 +51,6 @@ fun UserScreen(
                 DefaultTabRow(
                     selectedTab = selectedTab,
                     onTabClick = { selectedTab = it }
-                )
-            }
-            item {
-                PostSorting(
-                    postsSorting = postSorting,
-                    onSortingUpdate = { postSorting = it },
-                    timeSorting = timeSorting,
-                    onTimeSortingUpdate = { timeSorting = it }
                 )
             }
             when (selectedTab) {

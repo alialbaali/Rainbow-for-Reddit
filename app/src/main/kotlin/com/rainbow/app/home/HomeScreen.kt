@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import com.rainbow.app.components.RainbowLazyColumn
 import com.rainbow.app.post.PostModel
-import com.rainbow.app.post.PostSorting
 import com.rainbow.app.post.posts
 import com.rainbow.domain.models.PostSorting
 
@@ -27,14 +26,6 @@ inline fun HomeScreen(
     val postLayout by HomeModel.postModel.postLayout.collectAsState()
     val state by HomeModel.postModel.posts.collectAsState()
     RainbowLazyColumn(modifier) {
-        item {
-            PostSorting(
-                postsSorting = postSorting,
-                onSortingUpdate = { HomeModel.postModel.setPostSorting(it) },
-                timeSorting = timeSorting,
-                onTimeSortingUpdate = { HomeModel.postModel.setTimeSorting(it) }
-            )
-        }
         posts(
             state,
             HomeModel.postModel,

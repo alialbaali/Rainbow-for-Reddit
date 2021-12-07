@@ -29,6 +29,7 @@ enum class MessageTab {
 inline fun MessagesScreen(
     crossinline onMessageClick: (Message) -> Unit,
     crossinline onUserNameClick: (String) -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollingState = rememberLazyListState()
@@ -44,7 +45,7 @@ inline fun MessagesScreen(
             MessageTab.CommentMessages -> Repos.Message.getCommentMessages()
         }.toUIState()
     }
-    state.composed(modifier) { messages ->
+    state.composed(onShowSnackbar, modifier) { messages ->
         OneTimeEffect(messages) {
             messages.firstOrNull()?.let { onMessageClick(it) }
         }
