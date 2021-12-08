@@ -1,6 +1,6 @@
 package com.rainbow.domain.models
 
-enum class TimeSorting {
+enum class TimeSorting : Sorting {
     Hour, Day, Week,
     Month, Year, All;
 
@@ -21,29 +21,45 @@ enum class Vote {
     Up, Down, None,
 }
 
-enum class UserPostSorting {
+enum class UserPostSorting : PostSorting {
     Hot, New, Top, Controversial;
 
+    override val isTimeSorting: Boolean
+        get() = this == Top || this == Controversial
+
     companion object {
         val Default = Hot
     }
 }
 
-enum class SubredditPostSorting {
+enum class SubredditPostSorting : PostSorting {
     Hot, Top, Controversial, Rising;
 
+    override val isTimeSorting: Boolean
+        get() = this == Top || this == Controversial
+
     companion object {
         val Default = Hot
     }
 }
 
-enum class MainPostSorting {
+enum class MainPostSorting : PostSorting {
     Best, New, Controversial,
     Top, Hot, Rising;
 
+
+    override val isTimeSorting: Boolean
+        get() = this == Top || this == Controversial
+
     companion object {
         val Default = Hot
     }
+}
+
+sealed interface Sorting
+
+sealed interface PostSorting : Sorting {
+    val isTimeSorting: Boolean
 }
 
 enum class MessagesSorting {
