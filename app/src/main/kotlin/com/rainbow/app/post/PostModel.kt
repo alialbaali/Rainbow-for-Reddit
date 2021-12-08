@@ -19,11 +19,11 @@ class PostModel<T : PostSorting>(
             }
         }.stateIn(scope, SharingStarted.Lazily, UIState.Loading)
     val selectedPost
-        get() = mutablePosts.map {
+        get() = mutablePosts.map state@{
             it.map {
                 it.entries.firstOrNull {
                     it.value
-                }?.key
+                }?.key ?: return@state UIState.Empty
             }
         }.stateIn(scope, SharingStarted.Lazily, UIState.Loading)
 
@@ -68,7 +68,6 @@ class PostModel<T : PostSorting>(
                     else
                         it
                 }
-                .map { it.filterKeys { it.isHidden } }
                 .toUIState()
         }
     }
