@@ -1,6 +1,5 @@
 package com.rainbow.app.utils
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
@@ -10,7 +9,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.GraphicsLayerScope
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -29,14 +27,14 @@ val ImageBorderSize = 6.dp
 inline fun <T> PagingEffect(
     iterable: Iterable<T>,
     currentIndex: Int,
-    crossinline block: (T) -> Unit
+    crossinline block: (T) -> Unit,
 ) {
     SideEffect {
-        iterable.onIndex(currentIndex, block)
+        iterable.runOnIndex(currentIndex, block)
     }
 }
 
-inline fun <T> Iterable<T>.onIndex(currentIndex: Int, block: (T) -> Unit) {
+inline fun <T> Iterable<T>.runOnIndex(currentIndex: Int, block: (T) -> Unit) {
     withIndex().last().apply {
         if (index == currentIndex)
             block(value)
@@ -47,7 +45,7 @@ inline fun <T> Iterable<T>.onIndex(currentIndex: Int, block: (T) -> Unit) {
 @NonRestartableComposable
 fun OneTimeEffect(
     key1: Any?,
-    effect: DisposableEffectScope.() -> Unit
+    effect: DisposableEffectScope.() -> Unit,
 ) {
     DisposableEffect(key1) {
         effect()
@@ -58,7 +56,7 @@ fun OneTimeEffect(
 }
 
 @Composable
-fun Modifier.defaultShape(
+fun Modifier.defaultBackgroundShape(
     borderWidth: Dp = 1.dp,
     borderColor: Color = MaterialTheme.colors.onBackground.copy(0.1F),
     shape: Shape = MaterialTheme.shapes.large,
@@ -69,11 +67,23 @@ fun Modifier.defaultShape(
         .clip(shape)
 )
 
+@Composable
+fun Modifier.defaultSurfaceShape(
+    borderWidth: Dp = 1.dp,
+    borderColor: Color = MaterialTheme.colors.onBackground.copy(0.1F),
+    shape: Shape = MaterialTheme.shapes.large,
+) = this.then(
+    Modifier
+        .border(borderWidth, borderColor, shape)
+        .background(MaterialTheme.colors.surface, shape)
+        .clip(shape)
+)
+
 fun Modifier.defaultPadding(
     start: Dp = 16.dp,
     top: Dp = 16.dp,
     end: Dp = 16.dp,
-    bottom: Dp = 16.dp
+    bottom: Dp = 16.dp,
 ) = padding(start, top, end, bottom)
 
 val LocalDateTime.displayTime: String
@@ -93,35 +103,21 @@ val LocalDateTime.displayTime: String
         }
     }
 
-var GraphicsLayerScope.shadow: Dp
-    get() = shadowElevation.dp
-    set(value) {
-        shadowElevation = value.value
-    }
-
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
-inline fun <T> UIState<T>.composed(
+fun <T> UIState<T>.composed(
+    onShowSnackbar: ((String) -> Unit)?,
     modifier: Modifier = Modifier,
-    actionLabel: String = "Hide",
     onEmpty: @Composable () -> Unit = {},
+    onLoading: @Composable () -> Unit = { RainbowProgressIndicator(modifier) },
+    onFailure: @Composable (Throwable) -> Unit = { if (onShowSnackbar != null) onShowSnackbar(it.message.toString()) },
     onSuccess: @Composable (T) -> Unit,
 ) {
     when (this) {
-        is UIState.Loading -> RainbowProgressIndicator(modifier)
+        is UIState.Empty -> onEmpty()
+        is UIState.Loading -> onLoading()
         is UIState.Success -> onSuccess(value)
-        is UIState.Failure -> {
-            throw exception
-            //            val snackbarHostState = remember { SnackbarHostState() }
-//            SnackbarHost(snackbarHostState, modifier = Modifier.defaultPadding())
-//            LaunchedEffect(Unit) {
-//                snackbarHostState.showSnackbar(exception.message.toString(), actionLabel)
-//            }
-        }
-        UIState.Empty -> onEmpty()
+        is UIState.Failure -> onFailure(exception)
     }
 }
 
 fun LocalDateTime.Companion.now() = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-
-fun Modifier.handy() = border(5.dp, color = Color.Red)
