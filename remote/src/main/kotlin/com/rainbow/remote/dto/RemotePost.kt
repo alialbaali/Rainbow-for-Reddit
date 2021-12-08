@@ -97,7 +97,7 @@ data class RemotePost(
     @SerialName("likes")
     val likes: Boolean? = null, // null
     @SerialName("link_flair_template_id")
-    val linkFlairTemplateId : String? = null,
+    val linkFlairTemplateId: String? = null,
     @SerialName("link_flair_background_color")
     val linkFlairBackgroundColor: String? = null,
     @SerialName("link_flair_css_class")
@@ -219,5 +219,7 @@ data class RemotePost(
     @SerialName("whitelist_status")
     val whitelistStatus: String? = null, // all_ads
     @SerialName("wls")
-    val wls: Int? = null // 6
+    val wls: Int? = null, // 6
+    @SerialName("preview")
+    val preview: PreviewResponse? = null,
 )
