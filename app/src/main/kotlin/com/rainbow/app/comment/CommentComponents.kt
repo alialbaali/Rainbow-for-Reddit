@@ -15,9 +15,7 @@ import androidx.compose.ui.Modifier
 import com.rainbow.app.award.Awards
 import com.rainbow.app.components.*
 import com.rainbow.app.utils.RainbowIcons
-import com.rainbow.data.Repos
 import com.rainbow.domain.models.Comment
-import kotlinx.coroutines.launch
 
 @Composable
 inline fun PostCommentInfo(
@@ -26,7 +24,7 @@ inline fun PostCommentInfo(
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
     isSubredditNameEnabled: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
         if (isSubredditNameEnabled) {
@@ -49,7 +47,7 @@ inline fun CommentInfo(
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
     isSubredditNameEnabled: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
         if (isSubredditNameEnabled) {
@@ -59,6 +57,10 @@ inline fun CommentInfo(
         UserName(comment.userName, onUserNameClick)
         Dot()
         CreationDate(comment.creationDate)
+        if (comment.flair.types.isNotEmpty()) {
+            Dot()
+            FlairItem(comment.flair)
+        }
         if (comment.awards.isNotEmpty()) {
             Dot()
             Awards(comment.awards)
@@ -67,8 +69,7 @@ inline fun CommentInfo(
 }
 
 @Composable
-fun CommentActions(comment: Comment, isRepliesVisible: Boolean, modifier: Modifier = Modifier) {
-    val scope = rememberCoroutineScope()
+fun CommentActions(comment: Comment, commentModel: CommentModel, isRepliesVisible: Boolean, modifier: Modifier = Modifier) {
     var isMenuExpanded by remember { mutableStateOf(false) }
     Row(
         modifier.fillMaxWidth(),
@@ -78,21 +79,9 @@ fun CommentActions(comment: Comment, isRepliesVisible: Boolean, modifier: Modifi
         VoteActions(
             vote = comment.vote,
             votesCount = comment.upvotesCount.toLong(),
-            onUpvote = {
-                scope.launch {
-                    Repos.Comment.upvoteComment(comment.id)
-                }
-            },
-            onDownvote = {
-                scope.launch {
-                    Repos.Comment.downvoteComment(comment.id)
-                }
-            },
-            onUnvote = {
-                scope.launch {
-                    Repos.Comment.unvoteComment(comment.id)
-                }
-            }
+            onUpvote = { commentModel.upvoteComment(comment.id) },
+            onDownvote = { commentModel.downvoteComment(comment.id) },
+            onUnvote = { commentModel.unvoteComment(comment.id) }
         )
 
         AnimatedVisibility(comment.replies.isNotEmpty() && !isRepliesVisible) {

@@ -17,6 +17,7 @@ import com.rainbow.domain.models.Comment
 @Composable
 inline fun ReplyItem(
     reply: Comment,
+    commentModel: PostCommentModel,
     postUserName: String,
     isRepliesVisible: Boolean,
     depth: Int,
@@ -39,7 +40,7 @@ inline fun ReplyItem(
         ) {
             PostCommentInfo(reply, postUserName, onUserNameClick, onSubredditNameClick, isSubredditNameEnabled = false)
             Text(reply.body, color = MaterialTheme.colors.onBackground)
-            CommentActions(reply, isRepliesVisible)
+            CommentActions(reply, commentModel, isRepliesVisible)
         }
     }
 }

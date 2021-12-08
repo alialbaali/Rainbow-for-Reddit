@@ -20,7 +20,7 @@ import com.rainbow.domain.models.Comment
 import kotlinx.coroutines.launch
 
 @Composable
-inline fun CommentItem(
+inline fun UserCommentItem(
     comment: Comment,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,

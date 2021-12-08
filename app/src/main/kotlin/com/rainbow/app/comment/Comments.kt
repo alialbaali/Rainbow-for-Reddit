@@ -8,11 +8,11 @@ import androidx.compose.ui.Modifier
 import com.rainbow.app.components.RainbowProgressIndicator
 import com.rainbow.app.utils.UIState
 import com.rainbow.app.utils.defaultPadding
-import com.rainbow.app.utils.defaultShape
+import com.rainbow.app.utils.defaultSurfaceShape
 import com.rainbow.domain.models.Comment
 
 
-inline fun LazyListScope.comments(
+inline fun LazyListScope.userComments(
     commentsState: UIState<List<Comment>>,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
@@ -22,12 +22,12 @@ inline fun LazyListScope.comments(
         is UIState.Failure -> item { Text("Failed loading comments") }
         is UIState.Loading -> item { RainbowProgressIndicator() }
         is UIState.Success -> itemsIndexed(commentsState.value) { index, comment ->
-            CommentItem(
+            UserCommentItem(
                 comment = comment,
                 onUserNameClick,
                 onSubredditNameClick,
                 modifier = Modifier
-                    .defaultShape()
+                    .defaultSurfaceShape()
                     .fillParentMaxWidth()
                     .clickable {}
                     .defaultPadding(),

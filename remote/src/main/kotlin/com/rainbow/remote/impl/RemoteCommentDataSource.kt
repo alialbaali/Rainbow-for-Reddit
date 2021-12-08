@@ -22,8 +22,8 @@ private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommen
         }.mapCatching { it.map { it.data.toList() }[1] }
     }
 
-    override suspend fun getUserComments(userId: String): Result<List<RemoteComment>> {
-        return client.get<Listing<RemoteComment>>(Comments.UserComments(userId))
+    override suspend fun getUserComments(userName: String): Result<List<RemoteComment>> {
+        return client.get<Listing<RemoteComment>>(Comments.UserComments(userName))
             .mapCatching { it.toList() }
     }
 

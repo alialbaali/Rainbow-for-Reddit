@@ -19,6 +19,7 @@ import com.rainbow.domain.models.Comment
 @Composable
 inline fun PostCommentItem(
     comment: Comment,
+    commentModel: PostCommentModel,
     postUserName: String,
     isRepliesVisible: Boolean,
     crossinline onClick: () -> Unit,
@@ -34,25 +35,7 @@ inline fun PostCommentItem(
     ) {
         PostCommentInfo(comment, postUserName, onUserNameClick, onSubredditNameClick, isSubredditNameEnabled = false)
         Text(comment.body, color = MaterialTheme.colors.onBackground)
-        CommentActions(comment, isRepliesVisible)
-    }
-}
-
-fun main() = application {
-    Window({ exitApplication() }) {
-        LazyColumn {
-            item {
-                Row {
-                    Box(
-                        Modifier
-                            .background(Color.Blue)
-                            .width(5.dp)
-                            .fillMaxHeight(),
-                    )
-                    Text("Hello world!")
-                }
-            }
-        }
+        CommentActions(comment, commentModel, isRepliesVisible)
     }
 }
 

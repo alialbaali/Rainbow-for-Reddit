@@ -35,8 +35,8 @@ internal class CommentRepositoryImpl(
             .map { it.quickMap(mapper) }
     }
 
-    override suspend fun getUserComments(userId: String): Result<List<Comment>> {
-        return remoteCommentDataSource.getUserComments(userId)
+    override suspend fun getUserComments(userName: String): Result<List<Comment>> {
+        return remoteCommentDataSource.getUserComments(userName)
             .mapCatching { it.quickMap(mapper) }
     }
 

@@ -11,13 +11,14 @@ import com.rainbow.domain.models.Comment
 
 inline fun LazyListScope.postComments(
     commentsState: UIState<List<Comment>>,
+    commentModel: PostCommentModel,
     postUserName: String,
-    repliesVisibility: Map<Comment, Boolean>,
-    noinline setRepliesVisibility: (Comment, Boolean) -> Unit,
+    commentsVisibility: Map<String, Boolean>,
+    noinline setCommentsVisibility: (String, Boolean) -> Unit,
     crossinline onLoadMore: (Comment) -> Unit,
     noinline onUserNameClick: (String) -> Unit,
     noinline onSubredditNameClick: (String) -> Unit,
-    noinline onRequestMoreComments: (List<String>) -> Unit,
+    noinline onRequestMoreComments: (String, List<String>) -> Unit,
 ) {
     when (commentsState) {
         is UIState.Empty -> item { Text("No comments found.") }
@@ -30,12 +31,13 @@ inline fun LazyListScope.postComments(
                     if (indexedComment.value.moreReplies.isEmpty()) {
                         PostCommentItem(
                             indexedComment.value,
+                            commentModel,
                             postUserName,
-                            isRepliesVisible = repliesVisibility[indexedComment.value] ?: true,
+                            isRepliesVisible = commentsVisibility[indexedComment.value.id] ?: true,
                             onClick = {
-                                setRepliesVisibility(
-                                    indexedComment.value,
-                                    repliesVisibility[indexedComment.value]?.not() ?: false
+                                setCommentsVisibility(
+                                    indexedComment.value.id,
+                                    commentsVisibility[indexedComment.value.id]?.not() ?: false
                                 )
                             },
                             onUserNameClick,
@@ -45,17 +47,18 @@ inline fun LazyListScope.postComments(
                     } else {
                         ViewMoreCommentItem(
                             onClick = {
-                                onRequestMoreComments(indexedComment.value.moreReplies)
+                                onRequestMoreComments(indexedComment.value.id, indexedComment.value.moreReplies)
                             }
                         )
                     }
                 }
                 replies(
                     indexedComment.value.replies,
+                    commentModel,
                     postUserName,
-                    isVisible = repliesVisibility[indexedComment.value] ?: true,
-                    isRepliesVisible = { repliesVisibility[it] ?: true },
-                    setIsRepliesVisible = { reply, isVisible -> setRepliesVisibility(reply, isVisible) },
+                    isVisible = commentsVisibility[indexedComment.value.id] ?: true,
+                    isRepliesVisible = { commentsVisibility[it.id] ?: true },
+                    setIsRepliesVisible = { reply, isVisible -> setCommentsVisibility(reply.id, isVisible) },
                     onUserNameClick,
                     onSubredditNameClick,
                     onRequestMoreComments,
@@ -67,15 +70,16 @@ inline fun LazyListScope.postComments(
 
 fun LazyListScope.replies(
     replies: List<Comment>,
+    commentModel: PostCommentModel,
     postUserName: String,
     isVisible: Boolean,
     isRepliesVisible: (Comment) -> Boolean,
     setIsRepliesVisible: (Comment, Boolean) -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
-    onRequestMoreComments: (List<String>) -> Unit,
+    onRequestMoreComments: (String, List<String>) -> Unit,
     depth: Int = 1,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     replies.forEach { reply ->
         item {
@@ -87,6 +91,7 @@ fun LazyListScope.replies(
                 if (reply.moreReplies.isEmpty())
                     ReplyItem(
                         reply,
+                            commentModel,
                         postUserName,
                         isRepliesVisible(reply),
                         depth,
@@ -98,7 +103,7 @@ fun LazyListScope.replies(
                 else
                     ViewMoreReplyItem(
                         onClick = {
-                            onRequestMoreComments(reply.moreReplies)
+                            onRequestMoreComments(reply.id, reply.moreReplies)
                         },
                         depth,
                         modifier
@@ -107,6 +112,7 @@ fun LazyListScope.replies(
         }
         replies(
             reply.replies,
+            commentModel,
             postUserName,
             isVisible = isRepliesVisible(reply) && isVisible,
             isRepliesVisible,

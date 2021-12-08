@@ -12,7 +12,7 @@ interface CommentRepository {
         commentsSorting: PostCommentSorting,
     ): Result<List<Comment>>
 
-    suspend fun getUserComments(userId: String): Result<List<Comment>>
+    suspend fun getUserComments(userName: String): Result<List<Comment>>
 
     suspend fun getMoreComments(
         postId: String,

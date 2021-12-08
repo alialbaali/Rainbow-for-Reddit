@@ -9,7 +9,7 @@ interface RemoteCommentDataSource {
         commentsSorting: String,
     ): Result<List<RemoteComment>>
 
-    suspend fun getUserComments(userId: String): Result<List<RemoteComment>>
+    suspend fun getUserComments(userName: String): Result<List<RemoteComment>>
 
     suspend fun getMoreComments(postId: String, childrenIds: List<String>, commentsSorting: String): Result<List<RemoteComment>>
 
