@@ -68,6 +68,7 @@ class PostModel<T : PostSorting>(
                     else
                         it
                 }
+                .map { it.filterKeys { it.isHidden } }
                 .toUIState()
         }
     }
@@ -120,5 +121,27 @@ class PostModel<T : PostSorting>(
                 }
             }
         }
+    }
+
+    fun hidePost(postId: String) = scope.launch {
+        Repos.Post.hidePost(postId)
+            .onSuccess {
+                mutablePosts.value = mutablePosts.value.map {
+                    it.mapKeys {
+                        it.key.copy(isHidden = if (it.key.id == postId) true else it.key.isHidden)
+                    }
+                }
+            }
+    }
+
+    fun unHidePost(postId: String) = scope.launch {
+        Repos.Post.unHidePost(postId)
+            .onSuccess {
+                mutablePosts.value = mutablePosts.value.map {
+                    it.mapKeys {
+                        it.key.copy(isHidden = if (it.key.id == postId) false else it.key.isHidden)
+                    }
+                }
+            }
     }
 }

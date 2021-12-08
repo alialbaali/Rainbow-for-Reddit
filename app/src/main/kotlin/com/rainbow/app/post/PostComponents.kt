@@ -24,12 +24,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.app.award.Awards
 import com.rainbow.app.components.*
-import com.rainbow.app.utils.*
-import com.rainbow.data.Repos
+import com.rainbow.app.utils.RainbowIcons
+import com.rainbow.app.utils.RainbowStrings
+import com.rainbow.app.utils.defaultBackgroundShape
+import com.rainbow.app.utils.defaultPadding
 import com.rainbow.domain.models.Post
+import com.rainbow.domain.models.PostSorting
 import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
-import kotlinx.coroutines.launch
 
 @Composable
 fun PostTitle(title: String, isRead: Boolean, modifier: Modifier = Modifier) {
@@ -53,9 +55,9 @@ inline fun PostInfo(
         modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        SubredditName(post.subredditName, onSubredditNameClick)
-        Dot()
         UserName(post.userName, onUserNameClick)
+        Dot()
+        SubredditName(post.subredditName, onSubredditNameClick)
         if (post.userFlair.types.isNotEmpty()) {
             Dot()
             FlairItem(post.userFlair)
@@ -110,7 +112,7 @@ fun TextPost(text: Post.Type.Text, isRead: Boolean, modifier: Modifier = Modifie
             Box(
                 Modifier
                     .align(Alignment.CenterHorizontally)
-                    .defaultShape(shape = CircleShape)
+                    .defaultBackgroundShape(shape = CircleShape)
                     .clickable { if (maxLines == Int.MAX_VALUE) maxLines = 15 else maxLines = Int.MAX_VALUE }
                     .padding(horizontal = 16.dp, vertical = 4.dp)
                     .wrapContentSize(),
@@ -155,15 +157,14 @@ fun ImagePost(image: Post.Type.Image, isNSFW: Boolean, modifier: Modifier = Modi
         KamelImage(
             painterResource,
             contentDescription = null,
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = modifier
                 .align(Alignment.Center)
                 .background(MaterialTheme.colors.surface),
             contentScale = ContentScale.Fit,
             onLoading = { RainbowProgressIndicator(modifier) },
             crossfade = true,
             onFailure = {
-                throw it
+
             }
         )
         if (image.urls.count() > 1)
@@ -192,7 +193,7 @@ fun ImagePost(image: Post.Type.Image, isNSFW: Boolean, modifier: Modifier = Modi
 
 @Composable
 fun LinkPost(link: Post.Type.Link, modifier: Modifier = Modifier) {
-    val painterResource = lazyPainterResource(link.url.imageUrl.toString())
+    val painterResource = lazyPainterResource(link.previewUrl)
     val imageShape = MaterialTheme.shapes.medium
     val uriHandler = LocalUriHandler.current
 
@@ -205,12 +206,12 @@ fun LinkPost(link: Post.Type.Link, modifier: Modifier = Modifier) {
         KamelImage(
             painterResource,
             contentDescription = link.url,
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier,
             contentScale = ContentScale.Crop,
             onLoading = { RainbowProgressIndicator(modifier) },
             crossfade = true,
             onFailure = {
-                throw it
+
             }
         )
 
@@ -240,15 +241,15 @@ fun GifPost(gif: Post.Type.Gif, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun PostActions(
+fun <T : PostSorting> PostActions(
     post: Post,
+    postModel: PostModel<T>,
     focusRequester: FocusRequester,
     onShowSnackbar: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
 
     var isMenuExpanded by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
     val uriHandler = LocalUriHandler.current
     val clipboardManager = LocalClipboardManager.current
 
@@ -261,30 +262,14 @@ fun PostActions(
         VoteActions(
             vote = post.vote,
             votesCount = post.upvotesCount.toLong(),
-            onUpvote = {
-                scope.launch {
-                    Repos.Post.upvotePost(post.id)
-                }
-            },
-            onDownvote = {
-                scope.launch {
-                    Repos.Post.downvotePost(post.id)
-                }
-            },
-            onUnvote = {
-                scope.launch {
-                    Repos.Post.unvotePost(post.id)
-                }
-            }
+            onUpvote = { postModel.upvotePost(post.id) },
+            onDownvote = { postModel.downvotePost(post.id) },
+            onUnvote = { postModel.unvotePost(post.id) }
         )
 
-        Row(
-            Modifier
-                .defaultShape()
-                .clickable { focusRequester.requestFocus() }
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        TextIconButton(
+            onClick = { focusRequester.requestFocus() },
+            Modifier.defaultBackgroundShape()
         ) {
             Icon(RainbowIcons.QuestionAnswer, contentDescription = RainbowIcons.QuestionAnswer.name)
             Text(
@@ -324,11 +309,9 @@ fun PostActions(
                         RainbowStrings.UnHide,
                         RainbowIcons.Visibility,
                         onclick = {
-                            scope.launch {
-                                Repos.Post.unHidePost(post.id)
-                                isMenuExpanded = false
-                                onShowSnackbar(RainbowStrings.PostIsUnHidden)
-                            }
+                            postModel.unHidePost(post.id)
+                            isMenuExpanded = false
+                            onShowSnackbar(RainbowStrings.PostIsUnHidden)
                         }
                     )
                 else
@@ -336,11 +319,9 @@ fun PostActions(
                         RainbowStrings.Hide,
                         RainbowIcons.VisibilityOff,
                         onclick = {
-                            scope.launch {
-                                Repos.Post.hidePost(post.id)
-                                isMenuExpanded = false
-                                onShowSnackbar(RainbowStrings.PostIsHidden)
-                            }
+                            postModel.hidePost(post.id)
+                            isMenuExpanded = false
+                            onShowSnackbar(RainbowStrings.PostIsHidden)
                         }
                     )
             }
