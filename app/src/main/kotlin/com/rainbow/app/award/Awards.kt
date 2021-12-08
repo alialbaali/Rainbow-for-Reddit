@@ -16,10 +16,10 @@ import androidx.compose.ui.unit.dp
 import com.rainbow.domain.models.Award
 
 @Composable
-fun Awards(awards: List<Award>) {
+fun Awards(awards: List<Award>, modifier: Modifier = Modifier) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
-    Column(Modifier.wrapContentSize()) {
+    Column(modifier) {
         Row(
             modifier = Modifier
                 .hoverable(interactionSource),
