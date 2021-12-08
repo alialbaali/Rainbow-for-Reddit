@@ -52,6 +52,17 @@ class PostModel<T : PostSorting>(
             mutablePosts.value = getPosts(postSorting.value, timeSorting.value, lastPost.value?.id)
                 .map { it.associateWith { false } }
                 .map {
+                    if (selectedPost.value.isLoading)
+                        it.entries.mapIndexed { index, entry ->
+                            if (index == 0)
+                                entry.key to true
+                            else
+                                entry.key to entry.value
+                        }.toMap()
+                    else
+                        it
+                }
+                .map {
                     if (lastPost.value != null)
                         mutablePosts.value.getOrDefault(emptyMap()) + it
                     else
