@@ -40,6 +40,7 @@ fun PostScreen(
             modifier
                 .defaultSurfaceShape()
                 .defaultPadding(),
+            verticalArrangement = Arrangement.Top,
         ) {
             item {
                 Post(post, postModel, focusRequester, onUserNameClick, onSubredditNameClick, onShowSnackbar)

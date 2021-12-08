@@ -15,7 +15,7 @@ class PostModel<T : PostSorting>(
     val posts
         get() = mutablePosts.map {
             it.map {
-                it.map { it.key }
+                it.filterKeys { !it.isHidden }.map { it.key }
             }
         }.stateIn(scope, SharingStarted.Lazily, UIState.Loading)
     val selectedPost
