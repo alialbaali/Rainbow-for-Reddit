@@ -6,20 +6,20 @@ import androidx.compose.material.Tab
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.rainbow.app.utils.defaultShape
+import com.rainbow.app.utils.defaultBackgroundShape
 
 @Composable
 inline fun <reified T : Enum<T>> DefaultTabRow(
     selectedTab: T,
     crossinline onTabClick: (T) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val values = enumValues<T>()
     ScrollableTabRow(
         values.indexOf(selectedTab),
         backgroundColor = MaterialTheme.colors.background,
         modifier = modifier
-            .defaultShape(),
+            .defaultBackgroundShape(),
         divider = {},
         contentColor = MaterialTheme.colors.primary,
     ) {
