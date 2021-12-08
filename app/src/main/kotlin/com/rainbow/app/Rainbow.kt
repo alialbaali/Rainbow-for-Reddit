@@ -28,10 +28,7 @@ import com.rainbow.app.sidebar.Sidebar
 import com.rainbow.app.subreddit.CurrentUserSubredditsScreen
 import com.rainbow.app.subreddit.SubredditScreen
 import com.rainbow.app.user.UserScreen
-import com.rainbow.app.utils.UIState
-import com.rainbow.app.utils.asSuccess
-import com.rainbow.app.utils.composed
-import com.rainbow.app.utils.getOrNull
+import com.rainbow.app.utils.*
 import com.rainbow.domain.models.Message
 import com.rainbow.domain.models.PostSorting
 
@@ -94,7 +91,7 @@ fun Rainbow(
                     isForwardEnabled,
                     onRefresh = { refreshContent += 1 }
                 )
-                Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Row(Modifier.fillMaxSize().defaultPadding(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     CenterContent(
                         screen,
                         focusRequester,
@@ -104,8 +101,7 @@ fun Rainbow(
                         onMessageClick = { message = UIState.Success(it) },
                         onShowSnackbar = { snackbarMessage = it },
                         setPostModel = { currentPostModelState = UIState.Success(it) },
-                        Modifier.weight(1F)
-                            .padding(start = 16.dp),
+                        Modifier.weight(1F),
                     )
                     EndContent(
                         screen,

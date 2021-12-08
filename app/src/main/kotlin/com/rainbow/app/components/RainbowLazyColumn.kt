@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.rainbow.app.ui.DefaultScrollbarStyle
 
 @Composable
 fun RainbowLazyColumn(
@@ -28,6 +29,12 @@ fun RainbowLazyColumn(
             horizontalAlignment = horizontalAlignment,
             content = content
         )
-        VerticalScrollbar(rememberScrollbarAdapter(scrollingState), Modifier.align(Alignment.CenterEnd).fillMaxHeight())
+        VerticalScrollbar(
+            rememberScrollbarAdapter(scrollingState),
+            Modifier
+                .fillMaxHeight()
+                .align(Alignment.CenterEnd),
+            style = DefaultScrollbarStyle
+        )
     }
 }
