@@ -28,7 +28,7 @@ interface SubredditRepository {
 
     suspend fun getWikiPage(subredditName: String, pageName: String): Result<WikiPage>
 
-    suspend fun searchSubreddits(subredditName: String, sorting: SubredditsSearchSorting): Result<List<Subreddit>>
+    suspend fun searchSubreddits(subredditName: String, lastSubredditId: String?): Result<List<Subreddit>>
 
     suspend fun getSubredditFlairs(subredditName: String): Result<List<Flair>>
 

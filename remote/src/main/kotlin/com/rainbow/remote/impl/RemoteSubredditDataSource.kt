@@ -64,13 +64,11 @@ private class RemoteSubredditDataSourceImpl(private val client: HttpClient) : Re
 
     override suspend fun searchSubreddit(
         subredditName: String,
-        sorting: String,
         limit: Int,
         after: String?,
     ): Result<List<RemoteSubreddit>> {
         return client.get<Listing<RemoteSubreddit>>(Subreddits.Search) {
             parameter(Keys.Query, subredditName)
-            parameter(Keys.Sort, sorting)
             parameter(Keys.Limit, limit)
             parameter(Keys.After, after)
         }.mapCatching { it.toList() }

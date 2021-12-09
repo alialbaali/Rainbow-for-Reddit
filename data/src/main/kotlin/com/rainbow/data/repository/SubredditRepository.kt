@@ -89,11 +89,8 @@ internal class SubredditRepositoryImpl(
                 .map { wikiPageMapper.map(it) }
         }
 
-    override suspend fun searchSubreddits(
-        subredditName: String,
-        sorting: SubredditsSearchSorting,
-    ): Result<List<Subreddit>> {
-        return remoteSubredditDataSource.searchSubreddit(subredditName, sorting.name.lowercase(), DefaultLimit, null)
+    override suspend fun searchSubreddits(subredditName: String, lastSubredditId: String?): Result<List<Subreddit>> {
+        return remoteSubredditDataSource.searchSubreddit(subredditName, DefaultLimit, lastSubredditId)
             .mapCatching { it.quickMap(subredditMapper) }
     }
 
