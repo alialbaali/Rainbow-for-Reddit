@@ -22,7 +22,7 @@ data class Comment(
     val vote: Vote = Vote.None,
     val flair: Flair, // make it nullable when it's empty?
     val creationDate: LocalDateTime,
-)
+) : Item
 
 val Comment.userDisplayName
     get() = userName.asUserDisplayName()

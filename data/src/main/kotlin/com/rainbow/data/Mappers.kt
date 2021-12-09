@@ -11,6 +11,13 @@ import kotlinx.datetime.toLocalDateTime
 
 internal object Mappers {
 
+    val ItemMapper = Mapper<RemoteItem, Item> {
+        when (it) {
+            is RemoteComment -> CommentMapper.map(it)
+            is RemotePost -> PostMapper.map(it)
+        }
+    }
+
     val PostMapper
         get() = Mapper<RemotePost, Post> {
             with(it) {
