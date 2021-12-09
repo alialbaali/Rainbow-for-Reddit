@@ -3,7 +3,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.compose") version "1.0.0-beta5"
+    id("org.jetbrains.compose") version "1.0.0"
 }
 
 repositories {
@@ -19,7 +19,6 @@ dependencies {
     implementation("com.alialbaali.kamel:kamel-image:0.3.0")
     implementation("com.arkivanov.decompose:extensions-compose-jetbrains:0.4.0")
     implementation("com.arkivanov.decompose:decompose:0.4.0")
-    implementation("org.jsoup:jsoup:1.14.3")
     implementation("uk.co.caprica:vlcj:4.7.0")
 }
 
