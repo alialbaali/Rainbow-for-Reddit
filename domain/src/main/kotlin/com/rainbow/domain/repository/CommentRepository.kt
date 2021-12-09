@@ -7,6 +7,8 @@ interface CommentRepository {
 
     suspend fun getCurrentUserComments(): Result<List<Comment>>
 
+    suspend fun getHomeComments(): Result<List<Comment>>
+
     suspend fun getPostsComments(
         postId: String,
         commentsSorting: PostCommentSorting,

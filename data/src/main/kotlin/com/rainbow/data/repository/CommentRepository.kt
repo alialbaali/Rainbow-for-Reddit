@@ -27,6 +27,11 @@ internal class CommentRepositoryImpl(
             .mapCatching { it.quickMap(mapper) }
     }
 
+    override suspend fun getHomeComments(): Result<List<Comment>> {
+        return remoteCommentDataSource.getHomeComments()
+            .mapCatching { it.quickMap(mapper) }
+    }
+
     override suspend fun getPostsComments(
         postId: String,
         commentsSorting: PostCommentSorting,
