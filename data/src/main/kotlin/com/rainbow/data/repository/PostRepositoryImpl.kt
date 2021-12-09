@@ -78,20 +78,6 @@ internal class PostRepositoryImpl(
         ).mapCatching { it.quickMap(mapper) }
     }
 
-    override suspend fun getCurrentUserSavedPosts(
-        postsSorting: UserPostSorting,
-        timeSorting: TimeSorting,
-        lastPostId: String?,
-    ): Result<List<Post>> = withContext(dispatcher) {
-        remoteDataSource.getUserSavedPosts(
-            settings.getString(SettingsKeys.UserName),
-            postsSorting.name.lowercase(),
-            timeSorting.name.lowercase(),
-            DefaultLimit,
-            lastPostId
-        ).mapCatching { it.quickMap(mapper) }
-    }
-
     override suspend fun getUserSubmittedPosts(
         userName: String,
         postsSorting: UserPostSorting,

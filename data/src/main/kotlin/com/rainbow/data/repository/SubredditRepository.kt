@@ -89,7 +89,7 @@ internal class SubredditRepositoryImpl(
                 .map { wikiPageMapper.map(it) }
         }
 
-    override suspend fun searchSubreddit(
+    override suspend fun searchSubreddits(
         subredditName: String,
         sorting: SubredditsSearchSorting,
     ): Result<List<Subreddit>> {

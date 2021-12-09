@@ -28,12 +28,6 @@ interface PostRepository {
         lastPostId: String?,
     ): Result<List<Post>>
 
-    suspend fun getCurrentUserSavedPosts(
-        postsSorting: UserPostSorting,
-        timeSorting: TimeSorting,
-        lastPostId: String?,
-    ): Result<List<Post>>
-
     suspend fun getUserSubmittedPosts(
         userName: String,
         postsSorting: UserPostSorting,

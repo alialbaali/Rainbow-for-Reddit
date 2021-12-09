@@ -11,9 +11,9 @@ import com.russhwolf.settings.coroutines.toFlowSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-private val DefaultDispatcher = Dispatchers.IO
-
 object Repos {
+
+    private val DefaultDispatcher = Dispatchers.IO
 
     @OptIn(
         ExperimentalSettingsImplementation::class,
@@ -70,6 +70,13 @@ object Repos {
         RemoteMessageDataSource(),
         DefaultDispatcher,
         Mappers.MessageMapper
+    )
+
+    object Item : ItemRepository by ItemRepositoryImpl(
+        RemoteItemDataSourceImpl(),
+        settings,
+        DefaultDispatcher,
+        Mappers.ItemMapper,
     )
 
 }
