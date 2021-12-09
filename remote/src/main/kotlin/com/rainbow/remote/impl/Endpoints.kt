@@ -126,6 +126,8 @@ internal sealed class Endpoint(val path: String) {
 
     object Comments {
 
+        object Home: Endpoint("comments")
+
         // https://oauth.reddit.com/comments/{post-id}
         class PostComments(postId: String) : Endpoint("$CommentPath$postId")
 
