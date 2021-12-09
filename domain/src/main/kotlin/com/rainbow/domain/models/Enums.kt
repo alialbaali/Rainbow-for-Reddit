@@ -45,7 +45,7 @@ enum class SubredditPostSorting : PostSorting {
 
 enum class MainPostSorting : PostSorting {
     Best, New, Controversial,
-    Top, Hot, Rising;
+    Top, Hot, Rising, Comments;
 
 
     override val isTimeSorting: Boolean
@@ -67,15 +67,6 @@ enum class MessagesSorting {
 
     companion object {
         val Default = Inbox
-    }
-}
-
-enum class SubredditsSearchSorting {
-    Relevance,
-    Activity;
-
-    companion object {
-        val Default = Relevance
     }
 }
 
