@@ -26,7 +26,15 @@ internal sealed class Endpoint(val path: String) {
 
         object ReportUser : Endpoint(ActionPath + "report_user")
 
-        class OverView(userName: String) : Endpoint("$UserPath$userName/overview")
+    }
+
+    object Items {
+
+        // https://oauth.reddit.com/user/{user-name}/overview/{post-sorting}
+        class OverView(userName: String, postsSorting: String) : Endpoint("$UserPath$userName/overview/$postsSorting")
+
+        // https://oauth.reddit.com/user/{user-name}/saved/{post-sorting}
+        class Saved(userName: String, postsSorting: String) : Endpoint("$UserPath$userName/saved/$postsSorting")
 
     }
 
@@ -83,10 +91,6 @@ internal sealed class Endpoint(val path: String) {
         class UserHiddenPosts(userName: String, postsSorting: String) :
             Endpoint("$UserPath$userName/hidden/$postsSorting")
 
-        // https://oauth.reddit.com/user/{user-name}/saved/{post-sorting}
-        class UserSavedPosts(userName: String, postsSorting: String) :
-            Endpoint("$UserPath$userName/saved/$postsSorting")
-
         object GetPost : Endpoint(ActionPath + "info")
 
         // https://oauth.reddit.com/api/vote
@@ -116,7 +120,7 @@ internal sealed class Endpoint(val path: String) {
         // https://oauth.reddit.com/api/submit
         object Submit : Endpoint(ActionPath + "submit")
 
-        object Search: Endpoint("search")
+        object Search : Endpoint("search")
 
     }
 
@@ -127,7 +131,7 @@ internal sealed class Endpoint(val path: String) {
 
         class UserComments(userName: String) : Endpoint("$UserPath$userName/comments")
 
-        object Replies: Endpoint("${ActionPath}morechildren")
+        object Replies : Endpoint("${ActionPath}morechildren")
 
         // https://oauth.reddit.com/api/save
         object Save : Endpoint(ActionPath + "save")
@@ -225,9 +229,9 @@ internal sealed class Endpoint(val path: String) {
     }
 
     object Wiki {
-        class Index(subredditName: String): Endpoint("$SubredditPath$subredditName/wiki/index")
+        class Index(subredditName: String) : Endpoint("$SubredditPath$subredditName/wiki/index")
 
-        class Page(subredditName: String, pageName: String): Endpoint("$SubredditPath$subredditName/wiki/$pageName")
+        class Page(subredditName: String, pageName: String) : Endpoint("$SubredditPath$subredditName/wiki/$pageName")
     }
 
 }

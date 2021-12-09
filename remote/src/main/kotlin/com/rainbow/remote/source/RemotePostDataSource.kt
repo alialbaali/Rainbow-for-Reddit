@@ -51,14 +51,6 @@ interface RemotePostDataSource {
         after: String?,
     ): Result<List<RemotePost>>
 
-    suspend fun getUserSavedPosts(
-        userName: String,
-        postsSorting: String,
-        timeSorting: String,
-        limit: Int,
-        after: String?,
-    ): Result<List<RemotePost>>
-
     suspend fun getPost(postId: String): Result<RemotePost>
 
     suspend fun followPost(postId: String): String
