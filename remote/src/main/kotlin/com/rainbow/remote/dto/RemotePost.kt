@@ -222,4 +222,4 @@ data class RemotePost(
     val wls: Int? = null, // 6
     @SerialName("preview")
     val preview: PreviewResponse? = null,
-)
+) : RemoteItem()

@@ -150,7 +150,7 @@ data class RemoteComment internal constructor(
     val children: List<String>? = null,
     @SerialName("count")
     val count: Int? = null, // 1
-)
+) : RemoteItem()
 
 val RemoteComment.replies: List<RemoteComment>?
     get() = replies?.data?.toList()
