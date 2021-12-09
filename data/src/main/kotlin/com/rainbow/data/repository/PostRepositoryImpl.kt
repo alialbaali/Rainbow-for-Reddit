@@ -187,8 +187,18 @@ internal class PostRepositoryImpl(
         remoteDataSource.unHidePost(postId)
     }
 
-    override suspend fun searchPosts(searchTerm: String): Result<List<Post>> = withContext(dispatcher) {
-        remoteDataSource.searchPosts(searchTerm)
-            .map { it.quickMap(mapper) }
+    override suspend fun searchPosts(
+        searchTerm: String,
+        postSorting: SearchPostSorting,
+        timeSorting: TimeSorting,
+        lastPostId: String?,
+    ): Result<List<Post>> = withContext(dispatcher) {
+        remoteDataSource.searchPosts(
+            searchTerm,
+            postSorting.name.lowercase(),
+            timeSorting.name.lowercase(),
+            DefaultLimit,
+            lastPostId
+        ).mapCatching { it.quickMap(mapper) }
     }
 }

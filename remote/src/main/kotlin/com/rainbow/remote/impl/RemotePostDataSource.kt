@@ -192,9 +192,19 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
         }
     }
 
-    override suspend fun searchPosts(searchTerm: String): Result<List<RemotePost>> {
+    override suspend fun searchPosts(
+        searchTerm: String,
+        postsSorting: String,
+        timeSorting: String,
+        limit: Int,
+        after: String?,
+    ): Result<List<RemotePost>> {
         return client.get<Listing<RemotePost>>(Posts.Search) {
             parameter(Keys.Query, searchTerm)
+            parameter(Keys.Sort, postsSorting)
+            parameter(Keys.Time, timeSorting)
+            parameter(Keys.Limit, limit)
+            parameter(Keys.After, after)
         }.mapCatching { it.toList() }
     }
 

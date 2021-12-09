@@ -64,5 +64,10 @@ interface PostRepository {
 
     suspend fun unHidePost(postId: String): Result<Unit>
 
-    suspend fun searchPosts(searchTerm: String): Result<List<Post>>
+    suspend fun searchPosts(
+        searchTerm: String,
+        postSorting: SearchPostSorting,
+        timeSorting: TimeSorting,
+        lastPostId: String?,
+    ): Result<List<Post>>
 }
