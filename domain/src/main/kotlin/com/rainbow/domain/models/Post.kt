@@ -5,7 +5,7 @@ import com.rainbow.domain.utils.asUserDisplayName
 import kotlinx.datetime.LocalDateTime
 
 data class Post(
-    val id: String,
+    override val id: String,
     val userId: String,
     val userName: String,
     val subredditId: String,
@@ -31,7 +31,7 @@ data class Post(
     val userFlair: Flair,
     val url: String,
     val creationDate: LocalDateTime,
-): Item {
+) : Item {
     sealed interface Type {
         object None : Type
         data class Text(val body: String) : Type

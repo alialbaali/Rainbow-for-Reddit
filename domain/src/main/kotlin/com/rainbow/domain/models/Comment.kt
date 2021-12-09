@@ -5,7 +5,7 @@ import com.rainbow.domain.utils.asUserDisplayName
 import kotlinx.datetime.LocalDateTime
 
 data class Comment(
-    val id: String,
+    override val id: String,
     val parentId: String,
     val postId: String,
     val userId: String,

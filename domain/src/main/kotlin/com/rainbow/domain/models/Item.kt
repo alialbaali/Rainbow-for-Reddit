@@ -1,3 +1,5 @@
 package com.rainbow.domain.models
 
-sealed interface Item
+sealed interface Item {
+    val id: String
+}
