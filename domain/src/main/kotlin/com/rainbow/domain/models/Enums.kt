@@ -56,6 +56,17 @@ enum class MainPostSorting : PostSorting {
     }
 }
 
+enum class SearchPostSorting: PostSorting {
+    Relevance, New, Top, Hot, Comments;
+
+    override val isTimeSorting: Boolean
+        get() = true
+
+    companion object {
+        val Default = Hot
+    }
+}
+
 sealed interface Sorting
 
 sealed interface PostSorting : Sorting {
