@@ -26,7 +26,7 @@ import com.rainbow.app.components.DefaultTabRow
 import com.rainbow.app.components.FlairItem
 import com.rainbow.app.components.HeaderItem
 import com.rainbow.app.components.Markdown
-import com.rainbow.app.post.PostModel
+import com.rainbow.app.model.ListModel
 import com.rainbow.app.post.posts
 import com.rainbow.app.utils.*
 import com.rainbow.data.Repos
@@ -50,14 +50,16 @@ fun SubredditScreen(
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
     onShowSnackbar: (String) -> Unit,
-    setPostModel: (PostModel<PostSorting>) -> Unit,
+    setPostModel: (ListModel<*>) -> Unit,
+    onPostUpdate: (Post) -> Unit,
+    onPostClick: (Post) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val model = remember { SubredditModel.getOrCreateInstance(subredditName) }
-    setPostModel(model.postModel as PostModel<PostSorting>)
+    val model = remember { SubredditScreenModel.getOrCreateInstance(subredditName) }
+    setPostModel(model.postListModel)
     val scrollingState = rememberLazyListState()
-    val postLayout by model.postModel.postLayout.collectAsState()
-    val postsState by model.postModel.posts.collectAsState()
+    val postLayout by model.postListModel.postLayout.collectAsState()
+    val postsState by model.postListModel.items.collectAsState()
     val moderatorsState by model.moderators.collectAsState()
     val subredditState by model.subreddit.collectAsState()
     val selectedTab by model.selectedTab.collectAsState()
@@ -78,13 +80,14 @@ fun SubredditScreen(
         when (selectedTab) {
             SubredditTab.Posts -> posts(
                 postsState,
-                model.postModel,
+                onPostUpdate,
                 postLayout,
                 focusRequester,
                 onUserNameClick,
                 onSubredditNameClick,
                 onShowSnackbar,
-                onLoadMore = { model.postModel.setLastPost(it) }
+                model.postListModel::setLastItem,
+                onPostClick,
             )
             SubredditTab.Description -> description(subredditState, onShowSnackbar)
             SubredditTab.Wiki -> {
