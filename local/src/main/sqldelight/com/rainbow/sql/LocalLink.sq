@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS LocalLink (
 id TEXT NOT NULL REFERENCES LocalPost(id),
 url TEXT NOT NULL,
+preview_url TEXT,
 PRIMARY KEY (id, url)
 );
 
