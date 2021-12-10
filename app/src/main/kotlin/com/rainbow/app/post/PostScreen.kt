@@ -18,24 +18,23 @@ import com.rainbow.app.comment.postComments
 import com.rainbow.app.components.RainbowLazyColumn
 import com.rainbow.app.utils.*
 import com.rainbow.domain.models.Post
-import com.rainbow.domain.models.PostSorting
 
 @Composable
 fun PostScreen(
-    postModel: PostModel<PostSorting>,
+    model: PostScreenModel,
     focusRequester: FocusRequester,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
     onShowSnackbar: (String) -> Unit,
+    onPostUpdate: (Post) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val selectedPostState by postModel.selectedPost.collectAsState()
-    selectedPostState.composed(onShowSnackbar, modifier) { post ->
-        val model = remember(post.id) { PostScreenModel.getOrCreateInstance(post.id) }
-        val commentsVisibility by model.commentModel.commentsVisibility.collectAsState()
-        val commentsSorting by model.commentModel.commentsSorting.collectAsState()
-        val timeSorting by model.commentModel.timeSorting.collectAsState()
-        val commentsState by model.commentModel.comments.collectAsState()
+    val postState by model.post.collectAsState()
+    val commentsVisibility by model.commentModel.commentsVisibility.collectAsState()
+    val commentsSorting by model.commentModel.commentsSorting.collectAsState()
+    val timeSorting by model.commentModel.timeSorting.collectAsState()
+    val commentsState by model.commentModel.comments.collectAsState()
+    postState.composed(onShowSnackbar, modifier) { post ->
         RainbowLazyColumn(
             modifier
                 .defaultSurfaceShape()
@@ -43,7 +42,7 @@ fun PostScreen(
             verticalArrangement = Arrangement.Top,
         ) {
             item {
-                Post(post, postModel, focusRequester, onUserNameClick, onSubredditNameClick, onShowSnackbar)
+                Post(post, onPostUpdate, focusRequester, onUserNameClick, onSubredditNameClick, onShowSnackbar)
                 Spacer(Modifier.height(16.dp))
                 AddComment(
                     post,
@@ -128,7 +127,7 @@ private fun CommentsActions(
 @Composable
 private fun Post(
     post: Post,
-    postModel: PostModel<PostSorting>,
+    onUpdate: (Post) -> Unit,
     focusRequester: FocusRequester,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
@@ -162,7 +161,7 @@ private fun Post(
 
         PostActions(
             post,
-            postModel,
+            onUpdate,
             focusRequester,
             onShowSnackbar,
             modifier = Modifier
