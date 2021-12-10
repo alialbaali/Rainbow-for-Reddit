@@ -8,11 +8,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
+import com.rainbow.app.settings.SettingsModel
 import com.rainbow.app.utils.defaultPadding
 import com.rainbow.app.utils.defaultSurfaceShape
-import com.rainbow.data.Repos
 import com.rainbow.domain.models.Post
-import com.rainbow.domain.models.PostSorting
 
 @Composable
 inline fun PostItem(
@@ -26,7 +25,7 @@ inline fun PostItem(
     modifier: Modifier = Modifier,
 ) {
 
-    val isFullHeight by Repos.Settings.isFullHeight.collectAsState(false)
+    val isFullHeight by SettingsModel.isPostFullHeight.collectAsState()
 
     Column(
         modifier

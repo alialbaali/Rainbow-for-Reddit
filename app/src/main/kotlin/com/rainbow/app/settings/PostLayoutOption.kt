@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 fun PostLayoutOption(modifier: Modifier = Modifier) {
 
     val scope = rememberCoroutineScope()
-    val currentPostLayout by Repos.Settings.postLayout.collectAsState(PostLayout.Card)
+    val currentPostLayout by SettingsModel.postLayout.collectAsState()
 
     Row(
         modifier

@@ -8,12 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
-import com.rainbow.data.Repos
+import com.rainbow.app.settings.SettingsModel
 import com.rainbow.domain.models.Theme
 
 @Composable
 fun RainbowTheme(content: @Composable () -> Unit) {
-    val theme by Repos.Settings.theme.collectAsState(Theme.System)
+    val theme by SettingsModel.theme.collectAsState()
 
     val colors = when (theme) {
         Theme.Dark -> darkColors

@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 fun ThemeOption(modifier: Modifier = Modifier) {
 
     val scope = rememberCoroutineScope()
-    val currentTheme by Repos.Settings.theme.collectAsState(Theme.Light)
+    val currentTheme by SettingsModel.theme.collectAsState()
 
     Row(
         modifier

@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun PostFullHeightOption(modifier: Modifier = Modifier) {
 
-    val isFulLHeight by Repos.Settings.isFullHeight.collectAsState(false)
+    val isFulLHeight by SettingsModel.isPostFullHeight.collectAsState()
     val scope = rememberCoroutineScope()
 
     Row(

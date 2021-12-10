@@ -10,11 +10,11 @@ import com.rainbow.app.login.LoginScreen
 import com.rainbow.app.navigation.Screen
 import com.rainbow.app.navigation.bringToFrontIfContentMatches
 import com.rainbow.app.navigation.rememberRouter
+import com.rainbow.app.settings.SettingsModel
 import com.rainbow.app.utils.RainbowStrings
-import com.rainbow.data.Repos
 
 fun main() = application {
-    val isUserLoggedIn by Repos.User.isUserLoggedIn.collectAsState(false)
+    val isUserLoggedIn by SettingsModel.isUserLoggedIn.collectAsState()
     RainbowWindow(RainbowStrings.Rainbow) {
         if (isUserLoggedIn)
             ContentScreen()
