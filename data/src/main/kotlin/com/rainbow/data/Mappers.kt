@@ -188,7 +188,7 @@ internal object Mappers {
 //                colorOf(keyColor?.removeHashtagPrefix() ?: DefaultColor)
 //            )
             Subreddit(
-                id = id ?: "",
+                id = name ?: "",
                 name = displayName ?: "",
                 title = title ?: "",
                 shortDescription = publicDescription.takeIf { !it.isNullOrBlank() } ?: "",
