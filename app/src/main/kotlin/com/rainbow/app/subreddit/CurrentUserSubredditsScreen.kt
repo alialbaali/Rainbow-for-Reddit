@@ -12,13 +12,13 @@ fun CurrentUserSubredditsScreen(
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val state by CurrentUserSubredditsModel.subredditsModel.subreddits.collectAsState()
+    val state by CurrentUserSubredditsScreenModel.subredditListModel.items.collectAsState()
     state.composed(onShowSnackbar, modifier) { subreddits ->
         Subreddits(
             subreddits,
             SubredditType.Default,
             onClick = { onClick(it.name) },
-            onLoadMore = { CurrentUserSubredditsModel.subredditsModel.setLastSubreddit(it) },
+            onLoadMore = { CurrentUserSubredditsScreenModel.subredditListModel.setLastItem(it) },
             onShowSnackbar,
             modifier
         )
