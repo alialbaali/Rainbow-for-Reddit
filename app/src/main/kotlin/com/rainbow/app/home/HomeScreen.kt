@@ -5,14 +5,22 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import com.rainbow.app.comment.userComments
+import com.rainbow.app.comment.comments
+import com.rainbow.app.components.DefaultTabRow
 import com.rainbow.app.components.RainbowLazyColumn
 import com.rainbow.app.model.ListModel
 import com.rainbow.app.post.posts
 import com.rainbow.app.utils.OneTimeEffect
 import com.rainbow.domain.models.Comment
-import com.rainbow.domain.models.MainPostSorting
 import com.rainbow.domain.models.Post
+
+enum class HomeTab {
+    Posts, Comments;
+
+    companion object {
+        val Default = Posts
+    }
+}
 
 @Composable
 inline fun HomeScreen(
@@ -27,22 +35,25 @@ inline fun HomeScreen(
     crossinline setListModel: (ListModel<*>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    OneTimeEffect(Unit) {
-        setListModel(HomeScreenModel.postListModel)
-    }
     val postLayout by HomeScreenModel.postListModel.postLayout.collectAsState()
     val postsState by HomeScreenModel.postListModel.items.collectAsState()
     val commentsState by HomeScreenModel.commentListModel.items.collectAsState()
-    val sorting by HomeScreenModel.postListModel.postSorting.collectAsState()
+    val selectedTab by HomeScreenModel.selectedTab.collectAsState()
+    OneTimeEffect(selectedTab) {
+        when (selectedTab) {
+            HomeTab.Posts -> setListModel(HomeScreenModel.postListModel)
+            HomeTab.Comments -> setListModel(HomeScreenModel.commentListModel)
+        }
+    }
     RainbowLazyColumn(modifier) {
-        when (sorting) {
-            MainPostSorting.Comments -> userComments(
-                commentsState,
-                onUserNameClick,
-                onSubredditNameClick,
-                onCommentClick
+        item {
+            DefaultTabRow(
+                selectedTab,
+                onTabClick = { HomeScreenModel.selectTab(it) }
             )
-            else -> posts(
+        }
+        when (selectedTab) {
+            HomeTab.Posts -> posts(
                 postsState,
                 onPostUpdate,
                 postLayout,
@@ -53,6 +64,13 @@ inline fun HomeScreen(
                 setLastPost = {},
                 onPostClick,
             )
+            HomeTab.Comments ->
+                comments(
+                    commentsState,
+                    onUserNameClick,
+                    onSubredditNameClick,
+                    onCommentClick
+                )
         }
     }
 }

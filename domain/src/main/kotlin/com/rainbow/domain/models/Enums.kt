@@ -45,7 +45,7 @@ enum class SubredditPostSorting : PostSorting {
 
 enum class MainPostSorting : PostSorting {
     Best, New, Controversial,
-    Top, Hot, Rising, Comments;
+    Top, Hot, Rising;
 
 
     override val isTimeSorting: Boolean
@@ -56,7 +56,7 @@ enum class MainPostSorting : PostSorting {
     }
 }
 
-enum class SearchPostSorting: PostSorting {
+enum class SearchPostSorting : PostSorting {
     Relevance, New, Top, Hot, CommentsCount;
 
     override val isTimeSorting: Boolean
