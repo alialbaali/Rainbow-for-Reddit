@@ -1,7 +1,7 @@
 package com.rainbow.app.profile
 
-import com.rainbow.app.utils.Model
-import com.rainbow.app.post.PostModel
+import com.rainbow.app.item.ItemListModel
+import com.rainbow.app.model.Model
 import com.rainbow.app.utils.UIState
 import com.rainbow.app.utils.toUIState
 import com.rainbow.data.Repos
@@ -11,43 +11,23 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-object ProfileModel : Model() {
+object ProfileScreenModel : Model() {
 
     private val mutableCurrentUser = MutableStateFlow<UIState<User>>(UIState.Loading)
     val currentUser get() = mutableCurrentUser.asStateFlow()
 
-    private val mutableTab = MutableStateFlow(ProfileTab.Default)
-    val tab get() = mutableTab.asStateFlow()
+    private val mutableSelectedTab = MutableStateFlow(ProfileTab.Default)
+    val selectedTab get() = mutableSelectedTab.asStateFlow()
 
-    val postModel = PostModel(UserPostSorting.Top) { postSorting, timeSorting, lastPostId ->
-        when (tab.value) {
-            ProfileTab.Overview -> Result.success(emptyList())
-            ProfileTab.Submitted -> Repos.Post.getCurrentUserSubmittedPosts(
-                postSorting,
-                timeSorting,
-                lastPostId
-            )
-            ProfileTab.Saved -> Repos.Post.getCurrentUserSavedPosts(
-                postSorting,
-                timeSorting,
-                lastPostId
-            ).onFailure { throw it  }
-            ProfileTab.Hidden -> Repos.Post.getCurrentUserHiddenPosts(
-                postSorting,
-                timeSorting,
-                lastPostId
-            )
-            ProfileTab.Upvoted -> Repos.Post.getCurrentUserUpvotedPosts(
-                postSorting,
-                timeSorting,
-                lastPostId
-            )
-            ProfileTab.Downvoted -> Repos.Post.getCurrentUserDownvotedPosts(
-                postSorting,
-                timeSorting,
-                lastPostId
-            )
-            ProfileTab.Comments -> Result.success(emptyList())
+    val itemListModel = ItemListModel(UserPostSorting.Default) { postSorting, timeSorting, lastItemId ->
+        when (selectedTab.value) {
+            ProfileTab.Overview -> Repos.Item.getCurrentUserOverviewItems(postSorting, timeSorting, lastItemId)
+            ProfileTab.Submitted -> Repos.Post.getCurrentUserSubmittedPosts(postSorting, timeSorting, lastItemId)
+            ProfileTab.Saved -> Repos.Item.getCurrentUserSavedItems(postSorting, timeSorting, lastItemId)
+            ProfileTab.Hidden -> Repos.Post.getCurrentUserHiddenPosts(postSorting, timeSorting, lastItemId)
+            ProfileTab.Upvoted -> Repos.Post.getCurrentUserUpvotedPosts(postSorting, timeSorting, lastItemId)
+            ProfileTab.Downvoted -> Repos.Post.getCurrentUserDownvotedPosts(postSorting, timeSorting, lastItemId)
+            ProfileTab.Comments -> Repos.Comment.getCurrentUserComments()
         }
     }
 
@@ -57,12 +37,12 @@ object ProfileModel : Model() {
 
     private fun loadUser() = scope.launch {
         mutableCurrentUser.value = Repos.User.getCurrentUser()
-            .onSuccess { postModel.loadPosts() }
+            .onSuccess { itemListModel.loadItems() }
             .toUIState()
     }
 
-    fun setTab(tab: ProfileTab) {
-        mutableTab.value = tab
-        postModel.loadPosts()
+    fun selectTab(tab: ProfileTab) {
+        mutableSelectedTab.value = tab
+        itemListModel.loadItems()
     }
 }

@@ -1,31 +1,28 @@
 package com.rainbow.app.profile
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rainbow.app.comment.comments
 import com.rainbow.app.components.DefaultTabRow
 import com.rainbow.app.components.HeaderDescription
 import com.rainbow.app.components.HeaderItem
-import com.rainbow.app.post.PostModel
-import com.rainbow.app.post.posts
+import com.rainbow.app.components.RainbowLazyColumn
+import com.rainbow.app.item.items
+import com.rainbow.app.model.ListModel
 import com.rainbow.app.utils.*
 import com.rainbow.domain.models.Comment
-import com.rainbow.domain.models.PostSorting
+import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.User
 import kotlinx.datetime.toJavaLocalDateTime
 import java.time.format.DateTimeFormatter
@@ -34,58 +31,50 @@ enum class ProfileTab {
     Overview, Submitted, Saved, Hidden, Upvoted, Downvoted, Comments;
 
     companion object {
-        val Default = Submitted
+        val Default = Overview
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProfileScreen(
     focusRequester: FocusRequester,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
     onShowSnackbar: (String) -> Unit,
-    setPostModel: (PostModel<PostSorting>) -> Unit,
+    setListModel: (ListModel<*>) -> Unit,
+    onPostUpdate: (Post) -> Unit,
+    onPostClick: (Post) -> Unit,
+    onCommentClick: (Comment) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    setPostModel(ProfileModel.postModel as PostModel<PostSorting>)
-    val selectedTab by ProfileModel.tab.collectAsState()
-    val postLayout by ProfileModel.postModel.postLayout.collectAsState()
-    val userState by ProfileModel.currentUser.collectAsState()
-    val postsState by ProfileModel.postModel.posts.collectAsState()
-    val scrollingState = rememberLazyListState()
+    OneTimeEffect(Unit) {
+        setListModel(ProfileScreenModel.itemListModel)
+    }
+    val selectedTab by ProfileScreenModel.selectedTab.collectAsState()
+    val postLayout by ProfileScreenModel.itemListModel.postLayout.collectAsState()
+    val userState by ProfileScreenModel.currentUser.collectAsState()
+    val itemsState by ProfileScreenModel.itemListModel.items.collectAsState()
     userState.composed(onShowSnackbar, modifier) { user ->
-        val commentsState by produceState<UIState<List<Comment>>>(UIState.Loading, selectedTab) {
-//            if (selectedTab == ProfileTab.Comments)
-//                Repos.Comment.getCurrentUserComments()
-//                    .map { it.toUIState() }
-//                    .collect { value = it }
-        }
-        LazyColumn(modifier, scrollingState, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        RainbowLazyColumn(modifier) {
             item { Header(user) }
             item {
                 DefaultTabRow(
                     selectedTab = selectedTab,
-                    onTabClick = { ProfileModel.setTab(it) },
+                    onTabClick = { ProfileScreenModel.selectTab(it) },
                 )
             }
-            when (selectedTab) {
-                ProfileTab.Overview -> {
-                }
-                ProfileTab.Comments -> comments(commentsState, onUserNameClick, onSubredditNameClick)
-                else -> posts(
-                    postsState,
-                    ProfileModel.postModel,
-                    postLayout,
-                    focusRequester,
-                    onUserNameClick,
-                    onSubredditNameClick,
-                    onShowSnackbar,
-                    onLoadMore = { ProfileModel.postModel.setLastPost(it) }
-                )
-            }
+            items(
+                itemsState,
+                postLayout,
+                focusRequester,
+                onUserNameClick,
+                onSubredditNameClick,
+                onPostClick,
+                onCommentClick,
+                onPostUpdate,
+                onShowSnackbar,
+            )
         }
-        VerticalScrollbar(rememberScrollbarAdapter(scrollingState))
     }
 }
 
