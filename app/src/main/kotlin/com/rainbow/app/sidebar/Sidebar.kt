@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import com.rainbow.app.navigation.Screen
+import com.rainbow.app.settings.SettingsModel
 import com.rainbow.app.ui.dpDimensions
 import com.rainbow.app.utils.RainbowIcons
 import com.rainbow.app.utils.RainbowStrings
@@ -29,7 +30,7 @@ fun Sidebar(
     onClick: (Screen.SidebarItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isExpanded by Repos.Settings.isSidebarExpanded.collectAsState(true)
+    val isExpanded by SettingsModel.isSidebarExpanded.collectAsState()
     val scope = rememberCoroutineScope()
 
     @Composable
