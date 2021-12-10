@@ -94,7 +94,7 @@ internal class PostRepositoryImpl(
     }
 
     override suspend fun getHomePosts(
-        postsSorting: MainPostSorting,
+        postsSorting: HomePostSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
     ): Result<List<Post>> = withContext(dispatcher) {

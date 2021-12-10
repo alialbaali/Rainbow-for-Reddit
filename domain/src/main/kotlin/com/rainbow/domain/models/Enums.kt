@@ -43,7 +43,7 @@ enum class SubredditPostSorting : PostSorting {
     }
 }
 
-enum class MainPostSorting : PostSorting {
+enum class HomePostSorting : PostSorting {
     Best, New, Controversial,
     Top, Hot, Rising;
 

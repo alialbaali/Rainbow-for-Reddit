@@ -36,7 +36,7 @@ interface PostRepository {
     ): Result<List<Post>>
 
     suspend fun getHomePosts(
-        postsSorting: MainPostSorting,
+        postsSorting: HomePostSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
     ): Result<List<Post>>

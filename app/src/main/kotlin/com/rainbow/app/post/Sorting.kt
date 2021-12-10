@@ -1,46 +1,39 @@
 package com.rainbow.app.post
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.utils.RainbowIcons
 import com.rainbow.app.utils.defaultPadding
+import com.rainbow.app.utils.defaultSurfaceShape
 import com.rainbow.domain.models.*
 
-val UserPostSorting.isTimeSorting get() = this == UserPostSorting.Top || this == UserPostSorting.Controversial
-val SubredditPostSorting.isTimeSorting get() = this == SubredditPostSorting.Top || this == SubredditPostSorting.Controversial
-val MainPostSorting.isTimeSorting get() = this == MainPostSorting.Top || this == MainPostSorting.Controversial
-
 @Composable
-inline fun <reified T : Enum<T>> Sorting(
+inline fun <reified T : Enum<T>> PostSorting(
     postsSorting: T,
     crossinline onSortingUpdate: (T) -> Unit,
     timeSorting: TimeSorting,
     crossinline onTimeSortingUpdate: (TimeSorting) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier
-            .wrapContentHeight()
-            .fillMaxWidth(),
+        modifier,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        PostsSorting(
+        Sorting(
             sorting = postsSorting,
             onSortingUpdate = onSortingUpdate
         )
 
-        val isUserTimeSorting = (postsSorting is UserPostSorting && postsSorting.isTimeSorting)
-        val isSubredditTimeSorting = (postsSorting is SubredditPostSorting && postsSorting.isTimeSorting)
-        val isMainTimeSorting = (postsSorting is MainPostSorting && postsSorting.isTimeSorting)
-
-        if (isUserTimeSorting || isSubredditTimeSorting || isMainTimeSorting)
-            PostsSorting(
+        if (postsSorting is PostSorting && postsSorting.isTimeSorting)
+            Sorting(
                 sorting = timeSorting,
                 onSortingUpdate = onTimeSortingUpdate
             )
@@ -48,29 +41,32 @@ inline fun <reified T : Enum<T>> Sorting(
 }
 
 @Composable
-inline fun <reified T : Enum<T>> PostsSorting(
+inline fun <reified T : Enum<T>> Sorting(
     sorting: T,
     crossinline onSortingUpdate: (T) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var isMenuVisible by remember { mutableStateOf(false) }
     val iconRotation by animateFloatAsState(if (isMenuVisible) 180F else 0F)
     Column(modifier) {
-        OutlinedButton(
-            onClick = { isMenuVisible = !isMenuVisible },
-            shape = MaterialTheme.shapes.medium,
-            colors = ButtonDefaults.outlinedButtonColors(backgroundColor = MaterialTheme.colors.background)
+        Row(
+            Modifier
+                .defaultSurfaceShape(shape = MaterialTheme.shapes.medium)
+                .clickable { isMenuVisible = !isMenuVisible }
+                .defaultPadding(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 sorting.name,
-                style = MaterialTheme.typography.subtitle1
+                style = MaterialTheme.typography.subtitle1,
+                color = MaterialTheme.colors.primary,
             )
 
             Icon(
                 RainbowIcons.ArrowDropUp,
                 contentDescription = null,
                 modifier = Modifier
-                    .size(28.dp)
                     .rotate(iconRotation),
                 tint = MaterialTheme.colors.primary,
             )
@@ -87,7 +83,7 @@ inline fun <reified T : Enum<T>> PostsSorting(
                         isMenuVisible = false
                     },
                 ) {
-                    sorting.icon?.let { icon ->
+                    (sorting as? PostSorting)?.icon?.let { icon ->
                         Icon(icon, sorting.name)
                     }
                     Text(
@@ -102,7 +98,7 @@ inline fun <reified T : Enum<T>> PostsSorting(
     }
 }
 
-val <T> T.icon
+val PostSorting.icon
     get() = when (this) {
         is UserPostSorting -> when (this) {
             UserPostSorting.Hot -> RainbowIcons.Whatshot
@@ -116,22 +112,19 @@ val <T> T.icon
             SubredditPostSorting.Controversial -> RainbowIcons.TrendingDown
             SubredditPostSorting.Rising -> RainbowIcons.TrendingUp
         }
-        is MainPostSorting -> when (this) {
-            MainPostSorting.Best -> RainbowIcons.Star
-            MainPostSorting.New -> RainbowIcons.BrightnessLow
-            MainPostSorting.Controversial -> RainbowIcons.TrendingDown
-            MainPostSorting.Top -> RainbowIcons.BarChart
-            MainPostSorting.Hot -> RainbowIcons.Whatshot
-            MainPostSorting.Rising -> RainbowIcons.TrendingUp
+        is HomePostSorting -> when (this) {
+            HomePostSorting.Best -> RainbowIcons.Star
+            HomePostSorting.New -> RainbowIcons.BrightnessLow
+            HomePostSorting.Controversial -> RainbowIcons.TrendingDown
+            HomePostSorting.Top -> RainbowIcons.BarChart
+            HomePostSorting.Hot -> RainbowIcons.Whatshot
+            HomePostSorting.Rising -> RainbowIcons.TrendingUp
         }
-        is PostCommentSorting -> when (this) {
-            PostCommentSorting.Top -> RainbowIcons.BarChart
-            PostCommentSorting.Best -> RainbowIcons.Star
-            PostCommentSorting.New -> RainbowIcons.BrightnessLow
-            PostCommentSorting.Old -> RainbowIcons.Timelapse
-            PostCommentSorting.Controversial -> RainbowIcons.TrendingDown
-            PostCommentSorting.QA -> RainbowIcons.Comment
-            PostCommentSorting.Confidence -> RainbowIcons.Label
+        is SearchPostSorting -> when (this) {
+            SearchPostSorting.Relevance -> RainbowIcons.Star
+            SearchPostSorting.New -> RainbowIcons.BrightnessLow
+            SearchPostSorting.Top -> RainbowIcons.BarChart
+            SearchPostSorting.Hot -> RainbowIcons.Whatshot
+            SearchPostSorting.CommentsCount -> RainbowIcons.TrendingUp
         }
-        else -> null
     }
