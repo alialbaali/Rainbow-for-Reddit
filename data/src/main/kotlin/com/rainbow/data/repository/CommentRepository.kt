@@ -6,6 +6,8 @@ import com.rainbow.data.utils.DefaultLimit
 import com.rainbow.data.utils.SettingsKeys
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.PostCommentSorting
+import com.rainbow.domain.models.TimeSorting
+import com.rainbow.domain.models.UserPostSorting
 import com.rainbow.domain.repository.CommentRepository
 import com.rainbow.remote.dto.RemoteComment
 import com.rainbow.remote.source.RemoteCommentDataSource
@@ -22,10 +24,19 @@ internal class CommentRepositoryImpl(
     private val mapper: Mapper<RemoteComment, Comment>,
 ) : CommentRepository {
 
-    override suspend fun getCurrentUserComments(): Result<List<Comment>> {
+    override suspend fun getCurrentUserComments(
+        commentsSorting: UserPostSorting,
+        timeSorting: TimeSorting,
+        lastCommentId: String?,
+    ): Result<List<Comment>> = withContext(dispatcher) {
         val currentUserId = settings.getString(SettingsKeys.UserName)
-        return remoteCommentDataSource.getUserComments(currentUserId)
-            .mapCatching { it.quickMap(mapper) }
+        remoteCommentDataSource.getUserComments(
+            currentUserId,
+            commentsSorting.name.lowercase(),
+            timeSorting.name.lowercase(),
+            DefaultLimit,
+            lastCommentId
+        ).mapCatching { it.quickMap(mapper) }
     }
 
     override suspend fun getHomeComments(lastCommentId: String?): Result<List<Comment>> {
@@ -41,9 +52,18 @@ internal class CommentRepositoryImpl(
             .map { it.quickMap(mapper) }
     }
 
-    override suspend fun getUserComments(userName: String): Result<List<Comment>> {
-        return remoteCommentDataSource.getUserComments(userName)
-            .mapCatching { it.quickMap(mapper) }
+    override suspend fun getUserComments(
+        userName: String,
+        commentsSorting: UserPostSorting,
+        timeSorting: TimeSorting,
+        lastCommentId: String?,
+    ): Result<List<Comment>> = withContext(dispatcher) {
+        remoteCommentDataSource.getUserComments(userName,
+            commentsSorting.name.lowercase(),
+            timeSorting.name.lowercase(),
+            DefaultLimit,
+            lastCommentId
+        ).mapCatching { it.quickMap(mapper) }
     }
 
     override suspend fun getMoreComments(

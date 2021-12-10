@@ -25,16 +25,16 @@ class UserScreenModel private constructor(private val userName: String) : Model(
     private val mutableUser = MutableStateFlow<UIState<User>>(UIState.Loading)
     val user get() = mutableUser.asStateFlow()
 
-    val itemListModel = ItemListModel(UserPostSorting.Default) { postSorting, timeSorting, lastPostId ->
-        Repos.Item.getUserOverviewItems(userName, postSorting, timeSorting, lastPostId)
+    val itemListModel = ItemListModel(UserPostSorting.Default) { postSorting, timeSorting, lastItemId ->
+        Repos.Item.getUserOverviewItems(userName, postSorting, timeSorting, lastItemId)
     }
 
     val postListModel = PostListModel(UserPostSorting.Default) { postSorting, timeSorting, lastPostId ->
         Repos.Post.getUserSubmittedPosts(userName, postSorting, timeSorting, lastPostId)
     }
 
-    val commentListModel = CommentListModel(UserPostSorting.Default) { postSorting, timeSorting, lastPostId ->
-        Repos.Comment.getUserComments(userName)
+    val commentListModel = CommentListModel(UserPostSorting.Default) { postSorting, timeSorting, lastCommentId ->
+        Repos.Comment.getUserComments(userName, postSorting, timeSorting, lastCommentId)
     }
 
     init {

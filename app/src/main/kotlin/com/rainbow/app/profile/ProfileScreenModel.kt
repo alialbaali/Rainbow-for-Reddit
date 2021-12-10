@@ -27,7 +27,7 @@ object ProfileScreenModel : Model() {
             ProfileTab.Hidden -> Repos.Post.getCurrentUserHiddenPosts(postSorting, timeSorting, lastItemId)
             ProfileTab.Upvoted -> Repos.Post.getCurrentUserUpvotedPosts(postSorting, timeSorting, lastItemId)
             ProfileTab.Downvoted -> Repos.Post.getCurrentUserDownvotedPosts(postSorting, timeSorting, lastItemId)
-            ProfileTab.Comments -> Repos.Comment.getCurrentUserComments()
+            ProfileTab.Comments -> Repos.Comment.getCurrentUserComments(postSorting, timeSorting, lastItemId)
         }
     }
 

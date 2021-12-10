@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import com.rainbow.app.comment.userComments
+import com.rainbow.app.comment.comments
 import com.rainbow.app.components.DefaultTabRow
 import com.rainbow.app.components.RainbowLazyColumn
 import com.rainbow.app.item.items
@@ -78,7 +78,7 @@ fun UserScreen(
                     {},
                     onPostClick
                 )
-                UserTab.Comments -> userComments(
+                UserTab.Comments -> comments(
                     commentState,
                     onUserNameClick,
                     onSubredditNameClick,

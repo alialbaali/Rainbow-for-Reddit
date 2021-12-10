@@ -2,10 +2,16 @@ package com.rainbow.domain.repository
 
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.PostCommentSorting
+import com.rainbow.domain.models.TimeSorting
+import com.rainbow.domain.models.UserPostSorting
 
 interface CommentRepository {
 
-    suspend fun getCurrentUserComments(): Result<List<Comment>>
+    suspend fun getCurrentUserComments(
+        commentsSorting: UserPostSorting,
+        timeSorting: TimeSorting,
+        lastCommentId: String?,
+    ): Result<List<Comment>>
 
     suspend fun getHomeComments(lastCommentId: String?): Result<List<Comment>>
 
@@ -14,7 +20,12 @@ interface CommentRepository {
         commentsSorting: PostCommentSorting,
     ): Result<List<Comment>>
 
-    suspend fun getUserComments(userName: String): Result<List<Comment>>
+    suspend fun getUserComments(
+        userName: String,
+        commentsSorting: UserPostSorting,
+        timeSorting: TimeSorting,
+        lastCommentId: String?,
+    ): Result<List<Comment>>
 
     suspend fun getMoreComments(
         postId: String,

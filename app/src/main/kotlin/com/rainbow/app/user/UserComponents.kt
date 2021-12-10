@@ -28,6 +28,7 @@ private val BannerImageModifier = Modifier
     .fillMaxWidth()
 
 private val BoxScope.ImageModifier
+    @Composable
     get() = Modifier
         .padding(top = 50.dp)
         .border(ImageBorderSize, MaterialTheme.colors.background, CircleShape)

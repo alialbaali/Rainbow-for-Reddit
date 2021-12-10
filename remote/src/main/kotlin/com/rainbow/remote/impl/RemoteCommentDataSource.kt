@@ -29,9 +29,19 @@ private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommen
         }.mapCatching { it.map { it.data.toList() }[1] }
     }
 
-    override suspend fun getUserComments(userName: String): Result<List<RemoteComment>> {
-        return client.get<Listing<RemoteComment>>(Comments.UserComments(userName))
-            .mapCatching { it.toList() }
+    override suspend fun getUserComments(
+        userName: String,
+        commentsSorting: String,
+        timeSorting: String,
+        limit: Int,
+        after: String?,
+    ): Result<List<RemoteComment>> {
+        return client.get<Listing<RemoteComment>>(Comments.UserComments(userName)) {
+            parameter(Keys.Sort, commentsSorting)
+            parameter(Keys.Time, timeSorting)
+            parameter(Keys.Limit, limit)
+            parameter(Keys.After, after)
+        }.mapCatching { it.toList() }
     }
 
     override suspend fun getMoreComments(
