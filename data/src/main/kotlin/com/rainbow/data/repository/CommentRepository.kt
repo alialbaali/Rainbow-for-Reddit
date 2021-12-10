@@ -2,6 +2,7 @@ package com.rainbow.data.repository
 
 import com.rainbow.data.Mapper
 import com.rainbow.data.quickMap
+import com.rainbow.data.utils.DefaultLimit
 import com.rainbow.data.utils.SettingsKeys
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.PostCommentSorting
@@ -27,8 +28,8 @@ internal class CommentRepositoryImpl(
             .mapCatching { it.quickMap(mapper) }
     }
 
-    override suspend fun getHomeComments(): Result<List<Comment>> {
-        return remoteCommentDataSource.getHomeComments()
+    override suspend fun getHomeComments(lastCommentId: String?): Result<List<Comment>> {
+        return remoteCommentDataSource.getHomeComments(DefaultLimit, lastCommentId)
             .mapCatching { it.quickMap(mapper) }
     }
 

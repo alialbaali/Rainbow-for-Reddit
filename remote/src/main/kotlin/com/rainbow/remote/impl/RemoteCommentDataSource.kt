@@ -13,9 +13,11 @@ fun RemoteCommentDataSource(client: HttpClient = redditClient): RemoteCommentDat
 
 private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommentDataSource {
 
-    override suspend fun getHomeComments(): Result<List<RemoteComment>> {
-        return client.get<Listing<RemoteComment>>(Comments.Home)
-            .mapCatching { it.toList() }
+    override suspend fun getHomeComments(limit: Int, after: String?): Result<List<RemoteComment>> {
+        return client.get<Listing<RemoteComment>>(Comments.Home) {
+            parameter(Keys.Limit, limit)
+            parameter(Keys.After, after)
+        }.mapCatching { it.toList() }
     }
 
     override suspend fun getPostComments(
@@ -35,7 +37,7 @@ private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommen
     override suspend fun getMoreComments(
         postId: String,
         childrenIds: List<String>,
-        commentsSorting: String
+        commentsSorting: String,
     ): Result<List<RemoteComment>> {
         return client.plainRequest<Map<String, Item<Map<String, List<Item<RemoteComment>>>>>>(Comments.Replies) {
             parameter(Keys.Sort, commentsSorting)
