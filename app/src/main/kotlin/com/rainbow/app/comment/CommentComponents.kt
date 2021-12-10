@@ -27,12 +27,12 @@ inline fun PostCommentInfo(
     modifier: Modifier = Modifier,
 ) {
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
+        CommentUserName(comment.userName, postUserName, onUserNameClick)
+        Dot()
         if (isSubredditNameEnabled) {
             SubredditName(comment.subredditName, onSubredditNameClick)
             Dot()
         }
-        CommentUserName(comment.userName, postUserName, onUserNameClick)
-        Dot()
         CreationDate(comment.creationDate)
         if (comment.awards.isNotEmpty()) {
             Dot()
@@ -50,12 +50,12 @@ inline fun CommentInfo(
     modifier: Modifier = Modifier,
 ) {
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
+        UserName(comment.userName, onUserNameClick)
+        Dot()
         if (isSubredditNameEnabled) {
             SubredditName(comment.subredditName, onSubredditNameClick)
             Dot()
         }
-        UserName(comment.userName, onUserNameClick)
-        Dot()
         CreationDate(comment.creationDate)
         if (comment.flair.types.isNotEmpty()) {
             Dot()
