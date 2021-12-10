@@ -20,7 +20,7 @@ import com.rainbow.app.components.RainbowMenu
 import com.rainbow.app.components.RainbowMenuItem
 import com.rainbow.app.utils.RainbowIcons
 import com.rainbow.app.utils.RainbowStrings
-import com.rainbow.app.utils.defaultShape
+import com.rainbow.app.utils.defaultSurfaceShape
 import com.rainbow.app.utils.displayTime
 import com.rainbow.domain.models.Subreddit
 import com.rainbow.domain.models.fullUrl
@@ -35,7 +35,7 @@ fun SearchSubredditItem(
 ) {
     Column(
         modifier
-            .defaultShape()
+            .defaultSurfaceShape()
             .clickable { onClick(subreddit) },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)

@@ -27,12 +27,26 @@ import com.rainbow.app.components.TextImage
 import com.rainbow.app.utils.ImageBorderSize
 import com.rainbow.app.utils.RainbowIcons
 import com.rainbow.app.utils.RainbowStrings
-import com.rainbow.app.utils.defaultShape
+import com.rainbow.app.utils.defaultSurfaceShape
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.Subreddit
 import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
 import kotlinx.coroutines.launch
+
+private val BannerImageModifier = Modifier
+    .height(100.dp)
+    .fillMaxWidth()
+
+private val BoxScope.ImageModifier
+    @Composable
+    get() = Modifier
+        .padding(top = 50.dp)
+        .border(ImageBorderSize, MaterialTheme.colors.background, MaterialTheme.shapes.large)
+        .size(100.dp)
+        .clip(MaterialTheme.shapes.large)
+        .align(Alignment.BottomCenter)
+
 
 @Composable
 fun SubredditItemName(subredditName: String, modifier: Modifier = Modifier) {
@@ -50,16 +64,6 @@ fun SubredditItemHeader(subreddit: Subreddit) {
     val bannerPainterResource = lazyPainterResource(subreddit.bannerImageUrl.toString())
     val painterResource = lazyPainterResource(subreddit.imageUrl.toString())
     Box {
-        val BannerImageModifier = Modifier
-            .height(100.dp)
-            .fillMaxWidth()
-
-        val ImageModifier = Modifier
-            .padding(top = 50.dp)
-            .border(ImageBorderSize, MaterialTheme.colors.background, MaterialTheme.shapes.large)
-            .size(100.dp)
-            .clip(MaterialTheme.shapes.large)
-            .align(Alignment.BottomCenter)
 
         KamelImage(
             bannerPainterResource,
@@ -90,7 +94,12 @@ fun SubredditItemHeader(subreddit: Subreddit) {
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun SubredditFavoriteIconButton(subreddit: Subreddit, onShowSnackbar: (String) -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
+fun SubredditFavoriteIconButton(
+    subreddit: Subreddit,
+    onShowSnackbar: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
     val scope = rememberCoroutineScope()
     IconToggleButton(
         subreddit.isFavorite,
@@ -106,7 +115,7 @@ fun SubredditFavoriteIconButton(subreddit: Subreddit, onShowSnackbar: (String) -
             }
         },
         modifier = modifier
-            .defaultShape(shape = CircleShape),
+            .defaultSurfaceShape(shape = CircleShape),
         enabled = enabled
     ) {
         AnimatedContent(subreddit.isFavorite) { isFavorite ->
@@ -124,7 +133,7 @@ fun SubredditFavoriteIconButton(subreddit: Subreddit, onShowSnackbar: (String) -
 fun SubscribeButton(
     subreddit: Subreddit,
     onShowSnackbar: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
     Button(
