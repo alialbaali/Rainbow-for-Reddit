@@ -5,10 +5,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import com.rainbow.app.comment.userComments
 import com.rainbow.app.components.RainbowLazyColumn
-import com.rainbow.app.post.PostModel
+import com.rainbow.app.model.ListModel
 import com.rainbow.app.post.posts
-import com.rainbow.domain.models.PostSorting
+import com.rainbow.app.utils.OneTimeEffect
+import com.rainbow.domain.models.Comment
+import com.rainbow.domain.models.MainPostSorting
+import com.rainbow.domain.models.Post
 
 @Composable
 inline fun HomeScreen(
@@ -16,25 +20,39 @@ inline fun HomeScreen(
     refreshContent: Int,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
+    noinline onPostUpdate: (Post) -> Unit,
+    crossinline onCommentClick: (Comment) -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
-    setPostModel: (PostModel<PostSorting>) -> Unit,
+    crossinline onPostClick: (Post) -> Unit,
+    crossinline setListModel: (ListModel<*>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    setPostModel(HomeModel.postModel as PostModel<PostSorting>)
-    val postSorting by HomeModel.postModel.postSorting.collectAsState()
-    val timeSorting by HomeModel.postModel.timeSorting.collectAsState()
-    val postLayout by HomeModel.postModel.postLayout.collectAsState()
-    val state by HomeModel.postModel.posts.collectAsState()
+    OneTimeEffect(Unit) {
+        setListModel(HomeScreenModel.postListModel)
+    }
+    val postLayout by HomeScreenModel.postListModel.postLayout.collectAsState()
+    val postsState by HomeScreenModel.postListModel.items.collectAsState()
+    val commentsState by HomeScreenModel.commentListModel.items.collectAsState()
+    val sorting by HomeScreenModel.postListModel.postSorting.collectAsState()
     RainbowLazyColumn(modifier) {
-        posts(
-            state,
-            HomeModel.postModel,
-            postLayout,
-            focusRequester,
-            onUserNameClick,
-            onSubredditNameClick,
-            onShowSnackbar,
-            onLoadMore = { HomeModel.postModel.setLastPost(it) }
-        )
+        when (sorting) {
+            MainPostSorting.Comments -> userComments(
+                commentsState,
+                onUserNameClick,
+                onSubredditNameClick,
+                onCommentClick
+            )
+            else -> posts(
+                postsState,
+                onPostUpdate,
+                postLayout,
+                focusRequester,
+                onUserNameClick,
+                onSubredditNameClick,
+                onShowSnackbar,
+                setLastPost = {},
+                onPostClick,
+            )
+        }
     }
 }
