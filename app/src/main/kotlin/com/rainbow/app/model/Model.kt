@@ -1,4 +1,4 @@
-package com.rainbow.app.utils
+package com.rainbow.app.model
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
