@@ -4,6 +4,7 @@ import com.rainbow.data.Mapper
 import com.rainbow.data.quickMap
 import com.rainbow.data.utils.DefaultLimit
 import com.rainbow.data.utils.SettingsKeys
+import com.rainbow.data.utils.lowercaseName
 import com.rainbow.domain.models.Item
 import com.rainbow.domain.models.TimeSorting
 import com.rainbow.domain.models.UserPostSorting
@@ -30,8 +31,8 @@ internal class ItemRepositoryImpl(
     ): Result<List<Item>> = withContext(dispatcher) {
         remoteItemDataSource.getUserOverviewItems(
             settings.getString(SettingsKeys.UserName),
-            postSorting.name.lowercase(),
-            timeSorting.name.lowercase(),
+            postSorting.lowercaseName,
+            timeSorting.lowercaseName,
             DefaultLimit,
             after
         ).map { it.quickMap(mapper) }
@@ -44,8 +45,8 @@ internal class ItemRepositoryImpl(
     ): Result<List<Item>> = withContext(dispatcher) {
         remoteItemDataSource.getUserSavedItems(
             settings.getString(SettingsKeys.UserName),
-            postSorting.name.lowercase(),
-            timeSorting.name.lowercase(),
+            postSorting.lowercaseName,
+            timeSorting.lowercaseName,
             DefaultLimit,
             after
         ).map { it.quickMap(mapper) }
@@ -59,8 +60,8 @@ internal class ItemRepositoryImpl(
     ): Result<List<Item>> = withContext(dispatcher) {
         remoteItemDataSource.getUserOverviewItems(
             userName,
-            postSorting.name.lowercase(),
-            timeSorting.name.lowercase(),
+            postSorting.lowercaseName,
+            timeSorting.lowercaseName,
             DefaultLimit,
             after
         ).map { it.quickMap(mapper) }

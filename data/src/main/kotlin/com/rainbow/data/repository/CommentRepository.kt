@@ -4,6 +4,7 @@ import com.rainbow.data.Mapper
 import com.rainbow.data.quickMap
 import com.rainbow.data.utils.DefaultLimit
 import com.rainbow.data.utils.SettingsKeys
+import com.rainbow.data.utils.lowercaseName
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.PostCommentSorting
 import com.rainbow.domain.models.TimeSorting
@@ -32,8 +33,8 @@ internal class CommentRepositoryImpl(
         val currentUserId = settings.getString(SettingsKeys.UserName)
         remoteCommentDataSource.getUserComments(
             currentUserId,
-            commentsSorting.name.lowercase(),
-            timeSorting.name.lowercase(),
+            commentsSorting.lowercaseName,
+            timeSorting.lowercaseName,
             DefaultLimit,
             lastCommentId
         ).mapCatching { it.quickMap(mapper) }
@@ -48,7 +49,7 @@ internal class CommentRepositoryImpl(
         postId: String,
         commentsSorting: PostCommentSorting,
     ): Result<List<Comment>> = withContext(dispatcher) {
-        remoteCommentDataSource.getPostComments(postId, commentsSorting.name.lowercase())
+        remoteCommentDataSource.getPostComments(postId, commentsSorting.lowercaseName)
             .map { it.quickMap(mapper) }
     }
 
@@ -59,8 +60,8 @@ internal class CommentRepositoryImpl(
         lastCommentId: String?,
     ): Result<List<Comment>> = withContext(dispatcher) {
         remoteCommentDataSource.getUserComments(userName,
-            commentsSorting.name.lowercase(),
-            timeSorting.name.lowercase(),
+            commentsSorting.lowercaseName,
+            timeSorting.lowercaseName,
             DefaultLimit,
             lastCommentId
         ).mapCatching { it.quickMap(mapper) }
@@ -71,7 +72,7 @@ internal class CommentRepositoryImpl(
         children: List<String>,
         commentsSorting: PostCommentSorting,
     ): Result<List<Comment>> = withContext(dispatcher) {
-        remoteCommentDataSource.getMoreComments(postId, children, commentsSorting.name.lowercase())
+        remoteCommentDataSource.getMoreComments(postId, children, commentsSorting.lowercaseName)
             .map { it.quickMap(mapper) }
     }
 

@@ -8,3 +8,6 @@ fun String.toLongColor() = removePrefix("#").let {
     else
         "FF$it"
 }.toLong(radix = 16)
+
+val <T : Enum<T>> Enum<T>.lowercaseName
+    get() = name.lowercase()

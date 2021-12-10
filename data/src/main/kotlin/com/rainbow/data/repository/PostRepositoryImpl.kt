@@ -4,6 +4,7 @@ import com.rainbow.data.Mapper
 import com.rainbow.data.quickMap
 import com.rainbow.data.utils.DefaultLimit
 import com.rainbow.data.utils.SettingsKeys
+import com.rainbow.data.utils.lowercaseName
 import com.rainbow.domain.models.*
 import com.rainbow.domain.models.Post.Type
 import com.rainbow.domain.repository.PostRepository
@@ -29,8 +30,8 @@ internal class PostRepositoryImpl(
     ): Result<List<Post>> = withContext(dispatcher) {
         remoteDataSource.getUserSubmittedPosts(
             settings.getString(SettingsKeys.UserName),
-            postsSorting.name.lowercase(),
-            timeSorting.name.lowercase(),
+            postsSorting.lowercaseName,
+            timeSorting.lowercaseName,
             DefaultLimit,
             lastPostId
         ).mapCatching { it.quickMap(mapper) }
@@ -43,8 +44,8 @@ internal class PostRepositoryImpl(
     ): Result<List<Post>> = withContext(dispatcher) {
         remoteDataSource.getUserUpvotedPosts(
             settings.getString(SettingsKeys.UserName),
-            postsSorting.name.lowercase(),
-            timeSorting.name.lowercase(),
+            postsSorting.lowercaseName,
+            timeSorting.lowercaseName,
             DefaultLimit,
             lastPostId
         ).mapCatching { it.quickMap(mapper) }
@@ -57,8 +58,8 @@ internal class PostRepositoryImpl(
     ): Result<List<Post>> = withContext(dispatcher) {
         remoteDataSource.getUserDownvotedPosts(
             settings.getString(SettingsKeys.UserName),
-            postsSorting.name.lowercase(),
-            timeSorting.name.lowercase(),
+            postsSorting.lowercaseName,
+            timeSorting.lowercaseName,
             DefaultLimit,
             lastPostId
         ).mapCatching { it.quickMap(mapper) }
@@ -71,8 +72,8 @@ internal class PostRepositoryImpl(
     ): Result<List<Post>> = withContext(dispatcher) {
         remoteDataSource.getUserHiddenPosts(
             settings.getString(SettingsKeys.UserName),
-            postsSorting.name.lowercase(),
-            timeSorting.name.lowercase(),
+            postsSorting.lowercaseName,
+            timeSorting.lowercaseName,
             DefaultLimit,
             lastPostId
         ).mapCatching { it.quickMap(mapper) }
@@ -86,8 +87,8 @@ internal class PostRepositoryImpl(
     ): Result<List<Post>> = withContext(dispatcher) {
         remoteDataSource.getUserSubmittedPosts(
             userName,
-            postsSorting.name.lowercase(),
-            timeSorting.name.lowercase(),
+            postsSorting.lowercaseName,
+            timeSorting.lowercaseName,
             DefaultLimit,
             lastPostId
         ).mapCatching { it.quickMap(mapper) }
@@ -99,8 +100,8 @@ internal class PostRepositoryImpl(
         lastPostId: String?,
     ): Result<List<Post>> = withContext(dispatcher) {
         remoteDataSource.getHomePosts(
-            postsSorting.name.lowercase(),
-            timeSorting.name.lowercase(),
+            postsSorting.lowercaseName,
+            timeSorting.lowercaseName,
             DefaultLimit,
             lastPostId
         ).mapCatching { it.quickMap(mapper) }
@@ -114,8 +115,8 @@ internal class PostRepositoryImpl(
     ): Result<List<Post>> = withContext(dispatcher) {
         remoteDataSource.getSubredditPosts(
             subredditName,
-            postsSorting.name.lowercase(),
-            timeSorting.name.lowercase(),
+            postsSorting.lowercaseName,
+            timeSorting.lowercaseName,
             DefaultLimit,
             lastPostId
         ).mapCatching { it.quickMap(mapper) }
@@ -195,8 +196,8 @@ internal class PostRepositoryImpl(
     ): Result<List<Post>> = withContext(dispatcher) {
         remoteDataSource.searchPosts(
             searchTerm,
-            postSorting.name.lowercase(),
-            timeSorting.name.lowercase(),
+            postSorting.lowercaseName,
+            timeSorting.lowercaseName,
             DefaultLimit,
             lastPostId
         ).mapCatching { it.quickMap(mapper) }
