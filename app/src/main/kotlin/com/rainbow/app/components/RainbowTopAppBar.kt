@@ -29,13 +29,13 @@ import com.rainbow.domain.models.*
 @Composable
 inline fun RainbowTopAppBar(
     screen: Screen,
-    sorting: PostSorting?,
+    sorting: Sorting?,
     timeSorting: TimeSorting?,
     noinline onSearchClick: (String) -> Unit,
     noinline onSubredditNameClick: (String) -> Unit,
     noinline onBackClick: () -> Unit,
     noinline onForwardClick: () -> Unit,
-    crossinline setPostSorting: (PostSorting) -> Unit,
+    crossinline setPostSorting: (Sorting) -> Unit,
     crossinline setTimeSorting: (TimeSorting) -> Unit,
     isBackEnabled: Boolean,
     isForwardEnabled: Boolean,
@@ -104,6 +104,12 @@ inline fun RainbowTopAppBar(
                         onTimeSortingUpdate = { setTimeSorting(it) }
                     )
                     is UserPostSorting -> PostSorting(
+                        postsSorting = sorting,
+                        onSortingUpdate = { setPostSorting(it) },
+                        timeSorting = timeSorting,
+                        onTimeSortingUpdate = { setTimeSorting(it) }
+                    )
+                    is SearchPostSorting -> PostSorting(
                         postsSorting = sorting,
                         onSortingUpdate = { setPostSorting(it) },
                         timeSorting = timeSorting,
