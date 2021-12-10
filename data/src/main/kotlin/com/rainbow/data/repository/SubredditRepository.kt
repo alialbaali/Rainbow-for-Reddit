@@ -33,8 +33,18 @@ internal class SubredditRepositoryImpl(
 ) : SubredditRepository {
 
     override suspend fun getCurrentUserSubreddits(lastSubredditId: String?): Result<List<Subreddit>> {
-        return remoteSubredditDataSource.getCurrentUserSubreddits(DefaultLimit, lastSubredditId)
-            .mapCatching { it.quickMap(subredditMapper) }
+        val subreddits = mutableListOf<Subreddit>()
+        var id = lastSubredditId
+        do {
+            remoteSubredditDataSource.getCurrentUserSubreddits(DefaultLimit, id)
+                .mapCatching { it.quickMap(subredditMapper) }
+                .onSuccess {
+                    subreddits += it
+                    id = it.lastOrNull()?.id
+                }
+                .onFailure { return Result.failure(it) }
+        } while (id != null)
+        return Result.success(subreddits)
     }
 
     override suspend fun getSubreddit(subredditName: String): Result<Subreddit> {
