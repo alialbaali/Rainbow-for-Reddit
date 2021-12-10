@@ -16,7 +16,7 @@ inline fun UserName(userName: String, crossinline onClick: (String) -> Unit, mod
     Text(
         text = userName,
         modifier = modifier.clickable { onClick(userName) },
-        color = MaterialTheme.colors.secondary,
+        color = MaterialTheme.colors.primary,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
     )
@@ -35,13 +35,13 @@ inline fun CommentUserName(
         modifier = modifier
             .then(
                 if (isOP)
-                    Modifier.background(MaterialTheme.colors.secondary, MaterialTheme.shapes.small)
+                    Modifier.background(MaterialTheme.colors.primary, MaterialTheme.shapes.small)
                         .padding(horizontal = 4.dp, vertical = 2.dp)
                 else
                     Modifier
             )
             .clickable { onClick(userName) },
-        color = if (isOP) MaterialTheme.colors.background else MaterialTheme.colors.secondary,
+        color = if (isOP) MaterialTheme.colors.background else MaterialTheme.colors.primary,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
     )
