@@ -57,7 +57,7 @@ enum class MainPostSorting : PostSorting {
 }
 
 enum class SearchPostSorting: PostSorting {
-    Relevance, New, Top, Hot, Comments;
+    Relevance, New, Top, Hot, CommentsCount;
 
     override val isTimeSorting: Boolean
         get() = true
