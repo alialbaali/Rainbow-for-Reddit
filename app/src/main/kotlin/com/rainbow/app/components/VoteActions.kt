@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rainbow.app.utils.defaultShape
+import com.rainbow.app.utils.defaultBackgroundShape
 import com.rainbow.domain.models.Vote
 
 @Composable
@@ -52,7 +52,7 @@ fun VoteActions(
 
     Row(
         modifier
-            .defaultShape(borderColor = borderColor, shape = CircleShape),
+            .defaultBackgroundShape(borderColor = borderColor, shape = CircleShape),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
