@@ -1,6 +1,8 @@
 package com.rainbow.data.repository
 
 import com.rainbow.data.Mapper
+import com.rainbow.data.quickMap
+import com.rainbow.data.utils.DefaultLimit
 import com.rainbow.data.utils.SettingsKeys
 import com.rainbow.domain.models.User
 import com.rainbow.domain.repository.UserRepository
@@ -51,5 +53,13 @@ internal class UserRepositoryImpl(
 
     override suspend fun blockUser(userName: String): Result<Unit> = withContext(dispatcher) {
         remoteDataSource.blockUser(userName)
+    }
+
+    override suspend fun searchUsers(
+        searchTerm: String,
+        lastUserId: String?,
+    ): Result<List<User>> = withContext(dispatcher) {
+        remoteDataSource.searchUsers(searchTerm, DefaultLimit, lastUserId)
+            .mapCatching { it.quickMap(mapper) }
     }
 }

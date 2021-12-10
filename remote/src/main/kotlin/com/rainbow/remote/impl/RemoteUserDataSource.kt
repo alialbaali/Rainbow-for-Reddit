@@ -1,5 +1,7 @@
 package com.rainbow.remote.impl
 
+import com.rainbow.remote.*
+import com.rainbow.remote.Listing
 import com.rainbow.remote.client.settings
 import com.rainbow.remote.dto.RemoteUser
 import com.rainbow.remote.get
@@ -18,7 +20,7 @@ fun RemoteUserDataSource(
 
 private class RemoteUserDataSourceImpl(
     private val rainbowClient: HttpClient,
-    private val redditClient: HttpClient
+    private val redditClient: HttpClient,
 ) : RemoteUserDataSource {
 
     override suspend fun loginUser(uuid: UUID): Result<Unit> {
@@ -61,4 +63,11 @@ private class RemoteUserDataSourceImpl(
         }
     }
 
+    override suspend fun searchUsers(searchTerm: String, limit: Int, after: String?): Result<List<RemoteUser>> {
+        return redditClient.get<Listing<RemoteUser>>(Users.Search) {
+            parameter(Keys.Query, searchTerm)
+            parameter(Keys.Limit, limit)
+            parameter(Keys.After, after)
+        }.mapCatching { it.toList() }
+    }
 }

@@ -17,4 +17,6 @@ interface RemoteUserDataSource {
 
     suspend fun reportUser(userName: String, reason: String): Result<Unit>
 
+    suspend fun searchUsers(searchTerm: String, limit: Int, after: String?): Result<List<RemoteUser>>
+
 }

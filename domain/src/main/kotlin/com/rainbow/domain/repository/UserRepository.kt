@@ -20,4 +20,6 @@ interface UserRepository {
 
     suspend fun blockUser(userName: String): Result<Unit>
 
+    suspend fun searchUsers(searchTerm: String, lastUserId: String?): Result<List<User>>
+
 }
