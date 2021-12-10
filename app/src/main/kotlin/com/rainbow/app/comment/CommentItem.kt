@@ -1,5 +1,6 @@
 package com.rainbow.app.comment
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -15,19 +16,28 @@ import com.rainbow.app.components.RainbowMenu
 import com.rainbow.app.components.RainbowMenuItem
 import com.rainbow.app.components.VoteActions
 import com.rainbow.app.utils.RainbowIcons
+import com.rainbow.app.utils.defaultPadding
+import com.rainbow.app.utils.defaultSurfaceShape
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.Comment
 import kotlinx.coroutines.launch
 
 @Composable
-inline fun UserCommentItem(
+inline fun CommentItem(
     comment: Comment,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
+    crossinline onCommentClick: (Comment) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(
+        modifier
+            .defaultSurfaceShape()
+            .clickable { onCommentClick(comment) }
+            .defaultPadding(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
         CommentInfo(comment, onUserNameClick, onSubredditNameClick, isSubredditNameEnabled = true)
         Text(comment.body, color = MaterialTheme.colors.onBackground)
         Row {
