@@ -39,16 +39,16 @@ internal class CommentRepositoryImpl(
         ).mapCatching { it.quickMap(mapper) }
     }
 
-    override suspend fun getHomeComments(lastCommentId: String?): Result<List<Comment>> {
-        return remoteCommentDataSource.getHomeComments(DefaultLimit, lastCommentId)
+    override suspend fun getHomeComments(lastCommentId: String?): Result<List<Comment>> = withContext(dispatcher) {
+        remoteCommentDataSource.getHomeComments(DefaultLimit, lastCommentId)
             .mapCatching { it.quickMap(mapper) }
     }
 
     override suspend fun getPostsComments(
         postId: String,
         commentsSorting: PostCommentSorting,
-    ): Result<List<Comment>> {
-        return remoteCommentDataSource.getPostComments(postId, commentsSorting.name.lowercase())
+    ): Result<List<Comment>> = withContext(dispatcher) {
+        remoteCommentDataSource.getPostComments(postId, commentsSorting.name.lowercase())
             .map { it.quickMap(mapper) }
     }
 
@@ -70,8 +70,8 @@ internal class CommentRepositoryImpl(
         postId: String,
         children: List<String>,
         commentsSorting: PostCommentSorting,
-    ): Result<List<Comment>> {
-        return remoteCommentDataSource.getMoreComments(postId, children, commentsSorting.name.lowercase())
+    ): Result<List<Comment>> = withContext(dispatcher) {
+        remoteCommentDataSource.getMoreComments(postId, children, commentsSorting.name.lowercase())
             .map { it.quickMap(mapper) }
     }
 

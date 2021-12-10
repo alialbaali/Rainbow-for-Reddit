@@ -32,23 +32,24 @@ internal class SubredditRepositoryImpl(
     private val ruleMapper: Mapper<RemoteRule, Rule>,
 ) : SubredditRepository {
 
-    override suspend fun getCurrentUserSubreddits(lastSubredditId: String?): Result<List<Subreddit>> {
-        val subreddits = mutableListOf<Subreddit>()
-        var id = lastSubredditId
-        do {
-            remoteSubredditDataSource.getCurrentUserSubreddits(DefaultLimit, id)
-                .mapCatching { it.quickMap(subredditMapper) }
-                .onSuccess {
-                    subreddits += it
-                    id = it.lastOrNull()?.id
-                }
-                .onFailure { return Result.failure(it) }
-        } while (id != null)
-        return Result.success(subreddits)
-    }
+    override suspend fun getCurrentUserSubreddits(lastSubredditId: String?): Result<List<Subreddit>> =
+        withContext(dispatcher) {
+            val subreddits = mutableListOf<Subreddit>()
+            var id = lastSubredditId
+            do {
+                remoteSubredditDataSource.getCurrentUserSubreddits(DefaultLimit, id)
+                    .mapCatching { it.quickMap(subredditMapper) }
+                    .onSuccess {
+                        subreddits += it
+                        id = it.lastOrNull()?.id
+                    }
+                    .onFailure { return@withContext Result.failure(it) }
+            } while (id != null)
+            Result.success(subreddits)
+        }
 
-    override suspend fun getSubreddit(subredditName: String): Result<Subreddit> {
-        return remoteSubredditDataSource.getSubreddit(subredditName)
+    override suspend fun getSubreddit(subredditName: String): Result<Subreddit> = withContext(dispatcher) {
+        remoteSubredditDataSource.getSubreddit(subredditName)
             .mapCatching { subredditMapper.map(it) }
     }
 
@@ -99,10 +100,11 @@ internal class SubredditRepositoryImpl(
                 .map { wikiPageMapper.map(it) }
         }
 
-    override suspend fun searchSubreddits(subredditName: String, lastSubredditId: String?): Result<List<Subreddit>> {
-        return remoteSubredditDataSource.searchSubreddit(subredditName, DefaultLimit, lastSubredditId)
-            .mapCatching { it.quickMap(subredditMapper) }
-    }
+    override suspend fun searchSubreddits(subredditName: String, lastSubredditId: String?): Result<List<Subreddit>> =
+        withContext(dispatcher) {
+            remoteSubredditDataSource.searchSubreddit(subredditName, DefaultLimit, lastSubredditId)
+                .mapCatching { it.quickMap(subredditMapper) }
+        }
 
     override suspend fun getSubredditFlairs(subredditName: String): Result<List<Flair>> = withContext(dispatcher) {
         remoteSubredditFlairDataSource.getSubredditFlairs(subredditName)
