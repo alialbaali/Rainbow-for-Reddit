@@ -29,7 +29,6 @@ import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.app.utils.defaultBackgroundShape
 import com.rainbow.app.utils.defaultPadding
 import com.rainbow.domain.models.Post
-import com.rainbow.domain.models.PostSorting
 import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
 
@@ -241,11 +240,11 @@ fun GifPost(gif: Post.Type.Gif, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun <T : PostSorting> PostActions(
+inline fun PostActions(
     post: Post,
-    postModel: PostModel<T>,
+    noinline onUpdate: (Post) -> Unit,
     focusRequester: FocusRequester,
-    onShowSnackbar: (String) -> Unit,
+    crossinline onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -262,9 +261,9 @@ fun <T : PostSorting> PostActions(
         VoteActions(
             vote = post.vote,
             votesCount = post.upvotesCount.toLong(),
-            onUpvote = { postModel.upvotePost(post.id) },
-            onDownvote = { postModel.downvotePost(post.id) },
-            onUnvote = { postModel.unvotePost(post.id) }
+            onUpvote = { PostActionsModel.upvotePost(post, onUpdate) },
+            onDownvote = { PostActionsModel.downvotePost(post, onUpdate) },
+            onUnvote = { PostActionsModel.unvotePost(post, onUpdate) }
         )
 
         TextIconButton(
@@ -309,7 +308,7 @@ fun <T : PostSorting> PostActions(
                         RainbowStrings.UnHide,
                         RainbowIcons.Visibility,
                         onclick = {
-                            postModel.unHidePost(post.id)
+                            PostActionsModel.unHidePost(post, onUpdate)
                             isMenuExpanded = false
                             onShowSnackbar(RainbowStrings.PostIsUnHidden)
                         }
@@ -319,7 +318,7 @@ fun <T : PostSorting> PostActions(
                         RainbowStrings.Hide,
                         RainbowIcons.VisibilityOff,
                         onclick = {
-                            postModel.hidePost(post.id)
+                            PostActionsModel.hidePost(post, onUpdate)
                             isMenuExpanded = false
                             onShowSnackbar(RainbowStrings.PostIsHidden)
                         }

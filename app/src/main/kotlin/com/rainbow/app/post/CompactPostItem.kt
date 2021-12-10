@@ -8,24 +8,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.utils.defaultPadding
-import com.rainbow.app.utils.defaultShape
+import com.rainbow.app.utils.defaultSurfaceShape
 import com.rainbow.domain.models.Post
+import com.rainbow.domain.models.PostSorting
 
 @Composable
 inline fun CompactPostItem(
     post: Post,
+    noinline onUpdate: (Post) -> Unit,
     focusRequester: FocusRequester,
     crossinline onClick: (Post) -> Unit,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val isTextPost = remember(post) { post.type is Post.Type.Text }
     Column(
         modifier
             .padding(vertical = 8.dp)
-            .defaultShape()
+            .defaultSurfaceShape()
             .clickable { onClick(post) }
             .defaultPadding(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -61,19 +63,18 @@ inline fun CompactPostItem(
                     title = post.title,
                     isRead = post.isRead,
                     modifier = Modifier
-                        .wrapContentWidth()
-                        .wrapContentHeight()
+                        .weight(1F)
                 )
                 PostContent(
                     post = post,
                     modifier = Modifier
-                        .wrapContentWidth()
                         .height(100.dp)
                 )
             }
         }
         PostActions(
             post,
+            onUpdate,
             focusRequester,
             onShowSnackbar,
             modifier = Modifier

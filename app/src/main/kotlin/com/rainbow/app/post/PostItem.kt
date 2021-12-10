@@ -9,18 +9,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.utils.defaultPadding
-import com.rainbow.app.utils.defaultShape
+import com.rainbow.app.utils.defaultSurfaceShape
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.Post
+import com.rainbow.domain.models.PostSorting
 
 @Composable
 inline fun PostItem(
     post: Post,
+    noinline onUpdate: (Post) -> Unit,
     focusRequester: FocusRequester,
     crossinline onClick: (Post) -> Unit,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
-    noinline onShowSnackbar: (String) -> Unit,
+    crossinline onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -28,7 +30,7 @@ inline fun PostItem(
 
     Column(
         modifier
-            .defaultShape()
+            .defaultSurfaceShape()
             .clickable { onClick(post) }
             .defaultPadding(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -56,7 +58,7 @@ inline fun PostItem(
             modifier = Modifier
                 .then(
                     if (isFullHeight)
-                        Modifier.fillMaxHeight()
+                        Modifier.fillMaxSize()
                     else
                         Modifier.heightIn(max = 500.dp)
                 )
@@ -65,11 +67,12 @@ inline fun PostItem(
 
         PostActions(
             post,
+            onUpdate,
             focusRequester,
             onShowSnackbar,
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight()
+                .wrapContentHeight(),
         )
     }
 }

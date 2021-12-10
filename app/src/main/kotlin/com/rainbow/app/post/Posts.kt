@@ -9,16 +9,17 @@ import com.rainbow.app.utils.PagingEffect
 import com.rainbow.app.utils.UIState
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.PostLayout
-import com.rainbow.domain.models.PostSorting
 
 inline fun LazyListScope.posts(
     postsState: UIState<List<Post>>,
-    postModel: PostModel<PostSorting>,
+    noinline onPostUpdate: (Post) -> Unit,
     postLayout: PostLayout,
     focusRequester: FocusRequester,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
+    crossinline setLastPost: (Post) -> Unit,
+    crossinline onPostClick: (Post) -> Unit,
 ) {
     when (postsState) {
         is UIState.Empty -> item { Text("No posts found") }
@@ -30,30 +31,26 @@ inline fun LazyListScope.posts(
                 PostLayout.Card -> itemsIndexed(posts) { index, post ->
                     PostItem(
                         post,
-                        postModel,
+                        onPostUpdate,
                         focusRequester,
-                        onClick = { postModel.selectPost(it.id) },
+                        onPostClick,
                         onUserNameClick,
                         onSubredditNameClick,
                         onShowSnackbar,
                     )
-                    PagingEffect(posts, index) {
-                        postModel.setLastPost(it)
-                    }
+                    PagingEffect(posts, index, setLastPost)
                 }
                 PostLayout.Compact -> itemsIndexed(posts) { index, post ->
                     CompactPostItem(
                         post,
-                        postModel,
+                        onPostUpdate,
                         focusRequester,
-                        onClick = { postModel.selectPost(it.id) },
+                        onPostClick,
                         onUserNameClick,
                         onSubredditNameClick,
                         onShowSnackbar,
                     )
-                    PagingEffect(posts, index) {
-                        postModel.setLastPost(it)
-                    }
+                    PagingEffect(posts, index, setLastPost)
                 }
             }
         }
