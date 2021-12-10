@@ -91,7 +91,7 @@ inline fun RainbowTopAppBar(
             }
             if (sorting != null && timeSorting != null)
                 when (sorting) {
-                    is MainPostSorting -> PostSorting(
+                    is HomePostSorting -> PostSorting(
                         postsSorting = sorting,
                         onSortingUpdate = { setPostSorting(it) },
                         timeSorting = timeSorting,

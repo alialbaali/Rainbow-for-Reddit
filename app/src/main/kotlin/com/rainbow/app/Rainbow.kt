@@ -1,8 +1,5 @@
 package com.rainbow.app
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -138,7 +135,6 @@ private fun StartContent(
         screen as? Screen.SidebarItem ?: backStack.last { it is Screen.SidebarItem } as Screen.SidebarItem,
         onSidebarClick,
         modifier
-            .animateContentSize(spring(stiffness = Spring.StiffnessLow)),
     )
 }
 
