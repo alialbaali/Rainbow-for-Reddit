@@ -11,6 +11,8 @@ import com.rainbow.domain.models.User
 import com.rainbow.domain.models.UserPostSorting
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 private val userScreenModels = mutableSetOf<UserScreenModel>()
@@ -37,6 +39,15 @@ class UserScreenModel private constructor(private val userName: String) : Model(
 
     init {
         loadUser()
+        selectedTab
+            .onEach {
+                when (it) {
+                    UserTab.Overview -> if (itemListModel.items.value.isLoading) itemListModel.loadItems()
+                    UserTab.Submitted -> if (postListModel.items.value.isLoading) postListModel.loadItems()
+                    UserTab.Comments -> if (commentListModel.items.value.isLoading) commentListModel.loadItems()
+                }
+            }
+            .launchIn(scope)
     }
 
     companion object {
@@ -47,13 +58,7 @@ class UserScreenModel private constructor(private val userName: String) : Model(
     }
 
     fun loadUser() = scope.launch {
-        mutableUser.value = Repos.User.getUser(userName)
-            .onSuccess {
-                itemListModel.loadItems()
-                postListModel.loadItems()
-                commentListModel.loadItems()
-            }
-            .toUIState()
+        mutableUser.value = Repos.User.getUser(userName).toUIState()
     }
 
     fun selectTab(tab: UserTab) {
