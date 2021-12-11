@@ -20,24 +20,21 @@ private const val DebounceTime = 500L
 object RainbowModel : Model() {
 
     private val mutableListModel = MutableStateFlow<UIState<ListModel<Any>>>(UIState.Loading)
-    val listModel get() = mutableListModel.asStateFlow()
 
-    val sorting
-        get() = listModel.map {
-            val sortedListModel = it.getOrNull() as? SortedListModel<Any, *>
-            sortedListModel?.sorting?.value
-        }.stateIn(scope, SharingStarted.Lazily, null)
+    val sorting = mutableListModel.map {
+        val sortedListModel = it.getOrNull() as? SortedListModel<Any, *>
+        sortedListModel?.sorting?.value
+    }.stateIn(scope, SharingStarted.Lazily, null)
 
-    val timeSorting
-        get() = listModel.map {
-            val sortedListModel = it.getOrNull() as? SortedListModel<Any, *>
-            sortedListModel?.timeSorting?.value
-        }.stateIn(scope, SharingStarted.Lazily, null)
+    val timeSorting = mutableListModel.map {
+        val sortedListModel = it.getOrNull() as? SortedListModel<Any, *>
+        sortedListModel?.timeSorting?.value
+    }.stateIn(scope, SharingStarted.Lazily, null)
 
     private val mutableRefreshContent = MutableSharedFlow<Unit>(replay = 1)
 
     init {
-        listModel
+        mutableListModel
             .onEach {
                 it.getOrNull()?.items
                     ?.firstOrNull { it.isSuccess }
@@ -56,7 +53,7 @@ object RainbowModel : Model() {
 
         mutableRefreshContent
             .debounce(DebounceTime)
-            .onEach { listModel.value.getOrNull()?.loadItems() }
+            .onEach { mutableListModel.value.getOrNull()?.loadItems() }
             .launchIn(scope)
     }
 
@@ -73,27 +70,27 @@ object RainbowModel : Model() {
     }
 
     fun updatePost(post: Post) {
-        listModel.value.getOrNull()?.updateItem(post)
+        mutableListModel.value.getOrNull()?.updateItem(post)
         postScreenModel.value.getOrNull()?.updatePost(post)
     }
 
     fun updateComment(comment: Comment) {
-        val isCommentListModel = listModel.value.getOrNull()
+        val isCommentListModel = mutableListModel.value.getOrNull()
             ?.items?.value
             ?.getOrNull()
             ?.any { it::class == Comment::class } ?: false
         if (isCommentListModel)
-            listModel.value.getOrNull()?.updateItem(comment)
+            mutableListModel.value.getOrNull()?.updateItem(comment)
         postScreenModel.value.getOrNull()?.commentListModel?.updateComment(comment)
     }
 
     fun setSorting(sorting: Sorting) {
-        val sortedListModel = listModel.value.getOrNull() as? SortedListModel<Any, Sorting>
+        val sortedListModel = mutableListModel.value.getOrNull() as? SortedListModel<Any, Sorting>
         sortedListModel?.setSorting(sorting)
     }
 
     fun setTimeSorting(timeSorting: TimeSorting) {
-        val sortedListModel = listModel.value.getOrNull() as? SortedListModel<Any, Sorting>
+        val sortedListModel = mutableListModel.value.getOrNull() as? SortedListModel<Any, Sorting>
         sortedListModel?.setTimeSorting(timeSorting)
     }
 
