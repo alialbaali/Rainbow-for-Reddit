@@ -14,13 +14,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.rainbow.app.comment.comments
 import com.rainbow.app.components.DefaultTabRow
 import com.rainbow.app.components.HeaderDescription
 import com.rainbow.app.components.HeaderItem
 import com.rainbow.app.components.RainbowLazyColumn
 import com.rainbow.app.item.items
 import com.rainbow.app.model.ListModel
-import com.rainbow.app.utils.*
+import com.rainbow.app.post.posts
+import com.rainbow.app.utils.RainbowStrings
+import com.rainbow.app.utils.composed
+import com.rainbow.app.utils.defaultPadding
+import com.rainbow.app.utils.defaultSurfaceShape
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.User
@@ -48,13 +53,16 @@ fun ProfileScreen(
     onCommentUpdate: (Comment) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    OneTimeEffect(Unit) {
-        setListModel(ProfileScreenModel.itemListModel)
-    }
-    val selectedTab by ProfileScreenModel.selectedTab.collectAsState()
-    val postLayout by ProfileScreenModel.itemListModel.postLayout.collectAsState()
+    val selectedTab by ProfileScreenModel.selectedTab.collectAsState(ProfileTab.Overview)
     val userState by ProfileScreenModel.currentUser.collectAsState()
-    val itemsState by ProfileScreenModel.itemListModel.items.collectAsState()
+    val overViewItemsState by ProfileScreenModel.overViewItemListModel.items.collectAsState()
+    val savedItemsState by ProfileScreenModel.savedItemListModel.items.collectAsState()
+    val submittedPostsState by ProfileScreenModel.submittedPostListModel.items.collectAsState()
+    val hiddenPostsState by ProfileScreenModel.hiddenPostListModel.items.collectAsState()
+    val upvotedPostsState by ProfileScreenModel.upvotedPostListModel.items.collectAsState()
+    val downvotedPostsState by ProfileScreenModel.downvotedPostListModel.items.collectAsState()
+    val commentsState by ProfileScreenModel.commentListModel.items.collectAsState()
+    val postLayout by ProfileScreenModel.postLayout.collectAsState()
     userState.composed(onShowSnackbar, modifier) { user ->
         RainbowLazyColumn(modifier) {
             item { Header(user) }
@@ -64,18 +72,104 @@ fun ProfileScreen(
                     onTabClick = { ProfileScreenModel.selectTab(it) },
                 )
             }
-            items(
-                itemsState,
-                postLayout,
-                focusRequester,
-                onUserNameClick,
-                onSubredditNameClick,
-                onPostClick,
-                onCommentClick,
-                onPostUpdate,
-                onCommentUpdate,
-                onShowSnackbar,
-            )
+            when (selectedTab) {
+                ProfileTab.Overview -> {
+                    setListModel(ProfileScreenModel.overViewItemListModel)
+                    items(
+                        overViewItemsState,
+                        postLayout,
+                        focusRequester,
+                        onUserNameClick,
+                        onSubredditNameClick,
+                        onPostClick,
+                        onCommentClick,
+                        onPostUpdate,
+                        onCommentUpdate,
+                        onShowSnackbar,
+                    )
+                }
+                ProfileTab.Saved -> {
+                    setListModel(ProfileScreenModel.savedItemListModel)
+                    items(
+                        savedItemsState,
+                        postLayout,
+                        focusRequester,
+                        onUserNameClick,
+                        onSubredditNameClick,
+                        onPostClick,
+                        onCommentClick,
+                        onPostUpdate,
+                        onCommentUpdate,
+                        onShowSnackbar,
+                    )
+                }
+                ProfileTab.Comments -> {
+                    setListModel(ProfileScreenModel.commentListModel)
+                    comments(
+                        commentsState,
+                        onUserNameClick,
+                        onSubredditNameClick,
+                        onCommentClick,
+                        onCommentUpdate,
+                    )
+                }
+                ProfileTab.Submitted -> {
+                    setListModel(ProfileScreenModel.submittedPostListModel)
+                    posts(
+                        submittedPostsState,
+                        onPostUpdate,
+                        postLayout,
+                        focusRequester,
+                        onUserNameClick,
+                        onSubredditNameClick,
+                        onShowSnackbar,
+                        {},
+                        onPostClick
+                    )
+                }
+                ProfileTab.Hidden -> {
+                    setListModel(ProfileScreenModel.hiddenPostListModel)
+                    posts(
+                        hiddenPostsState,
+                        onPostUpdate,
+                        postLayout,
+                        focusRequester,
+                        onUserNameClick,
+                        onSubredditNameClick,
+                        onShowSnackbar,
+                        {},
+                        onPostClick
+                    )
+                }
+                ProfileTab.Upvoted -> {
+                    setListModel(ProfileScreenModel.upvotedPostListModel)
+                    posts(
+                        upvotedPostsState,
+                        onPostUpdate,
+                        postLayout,
+                        focusRequester,
+                        onUserNameClick,
+                        onSubredditNameClick,
+                        onShowSnackbar,
+                        {},
+                        onPostClick
+                    )
+                }
+                ProfileTab.Downvoted -> {
+                    setListModel(ProfileScreenModel.downvotedPostListModel)
+                    posts(
+                        downvotedPostsState,
+                        onPostUpdate,
+                        postLayout,
+                        focusRequester,
+                        onUserNameClick,
+                        onSubredditNameClick,
+                        onShowSnackbar,
+                        {},
+                        onPostClick
+                    )
+                }
+            }
         }
     }
 }
