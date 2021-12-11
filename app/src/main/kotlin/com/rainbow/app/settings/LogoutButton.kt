@@ -11,8 +11,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.app.utils.defaultPadding
-import com.rainbow.data.Repos
-import kotlinx.coroutines.launch
 
 @Composable
 fun LogoutButton(modifier: Modifier = Modifier) {
@@ -36,8 +34,6 @@ private fun LogoutDialog(
     onCloseRequest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
-
     Dialog(
         onCloseRequest = onCloseRequest,
         title = RainbowStrings.Logout,
@@ -63,11 +59,7 @@ private fun LogoutDialog(
                     .align(Alignment.End)
             ) {
                 Button(
-                    onClick = {
-                        scope.launch {
-                            Repos.User.logoutUser()
-                        }
-                    },
+                    onClick = { SettingsModel.logoutUser() },
                     modifier = Modifier
                         .padding(end = 8.dp),
                     colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.error),

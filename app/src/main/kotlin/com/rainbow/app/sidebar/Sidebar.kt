@@ -1,5 +1,7 @@
 package com.rainbow.app.sidebar
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
@@ -9,10 +11,10 @@ import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import com.rainbow.app.navigation.Screen
 import com.rainbow.app.settings.SettingsModel
@@ -21,8 +23,6 @@ import com.rainbow.app.utils.RainbowIcons
 import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.app.utils.defaultPadding
 import com.rainbow.app.utils.defaultSurfaceShape
-import com.rainbow.data.Repos
-import kotlinx.coroutines.launch
 
 @Composable
 fun Sidebar(
@@ -31,7 +31,6 @@ fun Sidebar(
     modifier: Modifier = Modifier,
 ) {
     val isExpanded by SettingsModel.isSidebarExpanded.collectAsState()
-    val scope = rememberCoroutineScope()
 
     @Composable
     fun Screen.SidebarItem.iconColor() =
@@ -57,11 +56,7 @@ fun Sidebar(
         horizontalAlignment = if (isExpanded) Alignment.Start else Alignment.CenterHorizontally
     ) {
         IconButton(
-            onClick = {
-                scope.launch {
-                    Repos.Settings.setIsSidebarExpanded(!isExpanded)
-                }
-            },
+            onClick = { SettingsModel.setIsSidebarExpanded(!isExpanded) },
         ) {
             Icon(RainbowIcons.Menu, RainbowStrings.ShowMenu)
         }

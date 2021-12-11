@@ -16,7 +16,7 @@ interface SettingsRepository {
 
     suspend fun setTheme(theme: Theme)
 
-    suspend fun setIsFullHeight(value: Boolean)
+    suspend fun setIsPostFullHeight(value: Boolean)
 
     suspend fun setPostLayout(value: PostLayout)
 

@@ -24,7 +24,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun PostLayoutOption(modifier: Modifier = Modifier) {
 
-    val scope = rememberCoroutineScope()
     val currentPostLayout by SettingsModel.postLayout.collectAsState()
 
     Row(
@@ -47,11 +46,7 @@ fun PostLayoutOption(modifier: Modifier = Modifier) {
                 val isSelected = currentPostLayout == postLayout
 
                 Button(
-                    onClick = {
-                        scope.launch {
-                            Repos.Settings.setPostLayout(postLayout)
-                        }
-                    },
+                    onClick = { SettingsModel.setPostLayout(postLayout) },
                     modifier = Modifier.padding(horizontal = 4.dp),
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = if (isSelected)

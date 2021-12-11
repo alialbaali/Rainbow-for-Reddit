@@ -6,6 +6,8 @@ import com.rainbow.domain.models.PostLayout
 import com.rainbow.domain.models.Theme
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import java.util.*
 
 object SettingsModel : Model() {
 
@@ -19,4 +21,32 @@ object SettingsModel : Model() {
 
     val postLayout = Repos.Settings.postLayout.stateIn(scope, SharingStarted.Eagerly, PostLayout.Card)
 
+    fun setIsSidebarExpanded(value: Boolean) = scope.launch {
+        Repos.Settings.setIsSidebarExpanded(value)
+    }
+
+    fun loginUser(uuid: UUID, onSuccess: () -> Unit, onFailure: (Throwable) -> Unit) = scope.launch {
+        Repos.User.loginUser(uuid)
+            .onSuccess {
+                onSuccess()
+                Repos.User.getCurrentUser()
+            }
+            .onFailure(onFailure)
+    }
+
+    fun logoutUser() = scope.launch {
+        Repos.User.logoutUser()
+    }
+
+    fun setIsPostFullHeight(value: Boolean) = scope.launch {
+        Repos.Settings.setIsPostFullHeight(value)
+    }
+
+    fun setPostLayout(value: PostLayout) = scope.launch {
+        Repos.Settings.setPostLayout(value)
+    }
+
+    fun setTheme(value: Theme) = scope.launch {
+        Repos.Settings.setTheme(value)
+    }
 }

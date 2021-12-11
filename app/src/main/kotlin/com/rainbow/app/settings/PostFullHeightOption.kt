@@ -8,19 +8,15 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.app.utils.defaultPadding
-import com.rainbow.data.Repos
-import kotlinx.coroutines.launch
 
 @Composable
 fun PostFullHeightOption(modifier: Modifier = Modifier) {
 
     val isFulLHeight by SettingsModel.isPostFullHeight.collectAsState()
-    val scope = rememberCoroutineScope()
 
     Row(
         modifier
@@ -34,11 +30,7 @@ fun PostFullHeightOption(modifier: Modifier = Modifier) {
 
         Switch(
             isFulLHeight,
-            onCheckedChange = {
-                scope.launch {
-                    Repos.Settings.setIsFullHeight(it)
-                }
-            },
+            onCheckedChange = { isPostFullHeight -> SettingsModel.setIsPostFullHeight(isPostFullHeight) },
         )
     }
 

@@ -32,10 +32,10 @@ private class SettingsRepositoryImpl(
         settings.putString(SettingsKeys.Theme, theme.name)
     }
 
-    override val isFullHeight: Flow<Boolean> = settings.getBooleanFlow(SettingsKeys.IsFullHeight)
+    override val isFullHeight: Flow<Boolean> = settings.getBooleanFlow(SettingsKeys.IsPostFullHeight)
 
-    override suspend fun setIsFullHeight(value: Boolean) = withContext(dispatcher) {
-        settings.putBoolean(SettingsKeys.IsFullHeight, value)
+    override suspend fun setIsPostFullHeight(value: Boolean) = withContext(dispatcher) {
+        settings.putBoolean(SettingsKeys.IsPostFullHeight, value)
     }
 
     override val postLayout: Flow<PostLayout> = settings.getStringFlow(SettingsKeys.PostLayout, PostLayout.Card.name)
