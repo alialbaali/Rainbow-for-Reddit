@@ -9,6 +9,7 @@ interface RemoteCommentDataSource {
     suspend fun getPostComments(
         postId: String,
         commentsSorting: String,
+        limit: Int,
     ): Result<List<RemoteComment>>
 
     suspend fun getUserComments(
@@ -19,10 +20,11 @@ interface RemoteCommentDataSource {
         after: String?,
     ): Result<List<RemoteComment>>
 
-    suspend fun getMoreComments(
+    suspend fun getMorePostComments(
         postId: String,
         childrenIds: List<String>,
         commentsSorting: String,
+        limit: Int,
     ): Result<List<RemoteComment>>
 
     suspend fun submitComment(postId: String?, parentCommentId: String?, text: String): Result<Unit>

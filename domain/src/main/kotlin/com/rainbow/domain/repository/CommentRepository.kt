@@ -27,7 +27,7 @@ interface CommentRepository {
         lastCommentId: String?,
     ): Result<List<Comment>>
 
-    suspend fun getMoreComments(
+    suspend fun getMorePostComments(
         postId: String,
         children: List<String>,
         commentsSorting: PostCommentSorting,
