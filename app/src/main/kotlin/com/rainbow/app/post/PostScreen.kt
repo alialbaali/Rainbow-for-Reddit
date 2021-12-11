@@ -101,20 +101,20 @@ private fun CommentsActions(
         }
 
         IconButton(
-            onClick = { },
+            onClick = model.commentListModel::refreshComments,
             Modifier.defaultSurfaceShape(shape = CircleShape)
         ) {
             Icon(RainbowIcons.Refresh, RainbowStrings.Refresh)
         }
 
         IconButton(
-            onClick = { model.commentListModel.expandComments() },
+            onClick = model.commentListModel::expandComments,
             modifier = Modifier.defaultSurfaceShape(shape = CircleShape)
         ) {
             Icon(RainbowIcons.UnfoldMore, RainbowStrings.ExpandComments)
         }
         IconButton(
-            onClick = { model.commentListModel.collapseComments() },
+            onClick = model.commentListModel::collapseComments,
             modifier = Modifier.defaultSurfaceShape(shape = CircleShape)
         ) {
             Icon(RainbowIcons.UnfoldLess, RainbowStrings.CollapseComments)

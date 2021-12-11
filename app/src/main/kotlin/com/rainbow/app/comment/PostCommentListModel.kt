@@ -1,18 +1,20 @@
 package com.rainbow.app.comment
 
 import com.rainbow.app.model.Model
+import com.rainbow.app.utils.Constants
 import com.rainbow.app.utils.UIState
 import com.rainbow.app.utils.map
 import com.rainbow.app.utils.toUIState
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.PostCommentSorting
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 private val postCommentListModels = mutableSetOf<PostCommentListModel>()
 
+@OptIn(FlowPreview::class)
 class PostCommentListModel private constructor(private val postId: String) : Model() {
 
     private val mutableComments = MutableStateFlow<UIState<List<Comment>>>(UIState.Loading)
@@ -24,6 +26,8 @@ class PostCommentListModel private constructor(private val postId: String) : Mod
     private val mutableCommentsVisibility = MutableStateFlow<Map<String, Boolean>>(emptyMap())
     val commentsVisibility get() = mutableCommentsVisibility.asStateFlow()
 
+    private val mutableRefreshContent = MutableSharedFlow<Unit>(replay = 1)
+
     companion object {
         fun getOrCreateInstance(postId: String): PostCommentListModel {
             return postCommentListModels.find { it.postId == postId }
@@ -33,6 +37,11 @@ class PostCommentListModel private constructor(private val postId: String) : Mod
 
     init {
         loadComments()
+
+        mutableRefreshContent
+            .debounce(Constants.RefreshContentDebounceTime)
+            .onEach { loadComments() }
+            .launchIn(scope)
     }
 
     fun loadComments() {
@@ -98,6 +107,10 @@ class PostCommentListModel private constructor(private val postId: String) : Mod
     fun setSorting(sorting: PostCommentSorting) {
         mutableSorting.value = sorting
         loadComments()
+    }
+
+    fun refreshComments() {
+        mutableRefreshContent.tryEmit(Unit)
     }
 
     private fun List<Comment>.updateComment(comment: Comment): List<Comment> {
