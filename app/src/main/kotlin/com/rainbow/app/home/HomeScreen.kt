@@ -25,7 +25,6 @@ enum class HomeTab {
 @Composable
 inline fun HomeScreen(
     focusRequester: FocusRequester,
-    refreshContent: Int,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
     noinline onPostUpdate: (Post) -> Unit,

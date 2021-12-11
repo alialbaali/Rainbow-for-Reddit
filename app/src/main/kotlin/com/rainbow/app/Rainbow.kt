@@ -52,7 +52,6 @@ fun Rainbow(
     val focusRequester = remember { FocusRequester() }
     var snackbarMessage by remember { mutableStateOf<String?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
-    var refreshContent by remember { mutableStateOf(0) }
     val sorting by RainbowModel.sorting.collectAsState()
     val timeSorting by RainbowModel.timeSorting.collectAsState()
     LaunchedEffect(snackbarMessage) {
@@ -84,13 +83,12 @@ fun Rainbow(
                     RainbowModel::setTimeSorting,
                     isBackEnabled,
                     isForwardEnabled,
-                    onRefresh = { refreshContent += 1 }
+                    RainbowModel::refreshContent,
                 )
                 Row(Modifier.fillMaxSize().defaultPadding(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     CenterContent(
                         screen,
                         focusRequester,
-                        refreshContent,
                         onUserNameClick,
                         onSubredditNameClick,
                         onMessageClick = { message = UIState.Success(it) },
@@ -144,7 +142,6 @@ private fun StartContent(
 private fun CenterContent(
     screen: Screen,
     focusRequester: FocusRequester,
-    refreshContent: Int,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
     onMessageClick: (Message) -> Unit,
@@ -173,7 +170,6 @@ private fun CenterContent(
                 )
                 Screen.SidebarItem.Home -> HomeScreen(
                     focusRequester,
-                    refreshContent,
                     onUserNameClick,
                     onSubredditNameClick,
                     onPostUpdate,
