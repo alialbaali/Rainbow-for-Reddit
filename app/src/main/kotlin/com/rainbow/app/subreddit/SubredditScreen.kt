@@ -22,10 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.rainbow.app.components.DefaultTabRow
-import com.rainbow.app.components.FlairItem
-import com.rainbow.app.components.HeaderItem
-import com.rainbow.app.components.Markdown
+import com.rainbow.app.components.*
 import com.rainbow.app.model.ListModel
 import com.rainbow.app.post.posts
 import com.rainbow.app.utils.*
@@ -57,7 +54,6 @@ fun SubredditScreen(
 ) {
     val model = remember { SubredditScreenModel.getOrCreateInstance(subredditName) }
     setPostModel(model.postListModel)
-    val scrollingState = rememberLazyListState()
     val postLayout by model.postListModel.postLayout.collectAsState()
     val postsState by model.postListModel.items.collectAsState()
     val moderatorsState by model.moderators.collectAsState()
@@ -65,7 +61,7 @@ fun SubredditScreen(
     val selectedTab by model.selectedTab.collectAsState()
     val rulesState by model.rules.collectAsState()
     val wikiState by model.wiki.collectAsState()
-    LazyColumn(modifier, scrollingState, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    RainbowLazyColumn(modifier) {
         item {
             subredditState.composed(onShowSnackbar) { subreddit ->
                 Header(subreddit, onShowSnackbar, Modifier.padding(bottom = 8.dp))
@@ -90,24 +86,11 @@ fun SubredditScreen(
                 onPostClick,
             )
             SubredditTab.Description -> description(subredditState, onShowSnackbar)
-            SubredditTab.Wiki -> {
-                if (model.wiki.value.isLoading)
-                    model.loadWiki()
-                wiki(wikiState, onShowSnackbar)
-            }
-            SubredditTab.Rules -> {
-                if (model.rules.value.isLoading)
-                    model.loadRules()
-                rules(rulesState, onShowSnackbar)
-            }
-            SubredditTab.Moderators -> {
-                if (model.moderators.value.isLoading)
-                    model.loadModerators()
-                moderators(moderatorsState, onUserNameClick, onShowSnackbar)
-            }
+            SubredditTab.Wiki -> wiki(wikiState, onShowSnackbar)
+            SubredditTab.Rules -> rules(rulesState, onShowSnackbar)
+            SubredditTab.Moderators -> moderators(moderatorsState, onUserNameClick, onShowSnackbar)
         }
     }
-    VerticalScrollbar(rememberScrollbarAdapter(scrollingState))
 }
 
 private fun LazyListScope.wiki(wikiState: UIState<WikiPage>, onShowSnackbar: (String) -> Unit) {

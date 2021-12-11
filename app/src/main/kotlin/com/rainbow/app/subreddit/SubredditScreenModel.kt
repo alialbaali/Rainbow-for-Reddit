@@ -8,6 +8,8 @@ import com.rainbow.data.Repos
 import com.rainbow.domain.models.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 private val subredditScreenModels = mutableSetOf<SubredditScreenModel>()
@@ -30,16 +32,21 @@ class SubredditScreenModel private constructor(private val subredditName: String
     val rules get() = mutableRules.asStateFlow()
 
     val postListModel = PostListModel(SubredditPostSorting.Controversial) { postSorting, timeSorting, lastPostId ->
-        Repos.Post.getSubredditPosts(
-            subredditName,
-            postSorting,
-            timeSorting,
-            lastPostId
-        )
+        Repos.Post.getSubredditPosts(subredditName, postSorting, timeSorting, lastPostId)
     }
 
     init {
         loadSubreddit()
+        selectedTab
+            .onEach {
+                when (it) {
+                    SubredditTab.Posts -> if (postListModel.items.value.isLoading) postListModel.loadItems()
+                    SubredditTab.Wiki -> if (wiki.value.isLoading) loadWiki()
+                    SubredditTab.Rules -> if (rules.value.isLoading) loadRules()
+                    SubredditTab.Moderators -> if (moderators.value.isLoading) loadModerators()
+                }
+            }
+            .launchIn(scope)
     }
 
     companion object {
@@ -59,18 +66,15 @@ class SubredditScreenModel private constructor(private val subredditName: String
         mutableSelectedTab.value = tab
     }
 
-    fun loadRules() = scope.launch {
-        mutableRules.value = Repos.Subreddit.getSubredditRules(subredditName)
-            .toUIState()
+    private fun loadRules() = scope.launch {
+        mutableRules.value = Repos.Subreddit.getSubredditRules(subredditName).toUIState()
     }
 
-    fun loadWiki() = scope.launch {
-        mutableWiki.value = Repos.Subreddit.getWikiIndex(subredditName)
-            .toUIState()
+    private fun loadWiki() = scope.launch {
+        mutableWiki.value = Repos.Subreddit.getWikiIndex(subredditName).toUIState()
     }
 
-    fun loadModerators() = scope.launch {
-        mutableModerators.value = Repos.Subreddit.getSubredditModerators(subredditName)
-            .toUIState()
+    private fun loadModerators() = scope.launch {
+        mutableModerators.value = Repos.Subreddit.getSubredditModerators(subredditName).toUIState()
     }
 }
