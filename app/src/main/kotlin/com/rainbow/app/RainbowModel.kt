@@ -5,7 +5,6 @@ import com.rainbow.app.model.Model
 import com.rainbow.app.model.SortedListModel
 import com.rainbow.app.post.PostScreenModel
 import com.rainbow.app.utils.UIState
-import com.rainbow.app.utils.getOrDefault
 import com.rainbow.app.utils.getOrNull
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.Post
@@ -33,17 +32,17 @@ object RainbowModel : Model() {
     init {
         listModel.onEach {
             it.getOrNull()?.items
-                ?.onEach {
-                    it.getOrDefault(emptyList()).firstOrNull()
-                        ?.let { item ->
-                            when (item) {
-                                is Post -> PostScreenModel.Type.PostEntity(item)
-                                is Comment -> PostScreenModel.Type.PostId(item.postId)
-                                else -> null
-                            }
-                        }
-                        ?.let(this::selectPost)
-                }?.launchIn(scope)
+                ?.firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { item ->
+                    when (item) {
+                        is Post -> PostScreenModel.Type.PostEntity(item)
+                        is Comment -> PostScreenModel.Type.PostId(item.postId)
+                        else -> null
+                    }
+                }
+                ?.let(this::selectPost)
         }.launchIn(scope)
     }
 
