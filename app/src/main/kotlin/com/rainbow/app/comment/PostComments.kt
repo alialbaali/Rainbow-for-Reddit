@@ -11,13 +11,13 @@ import com.rainbow.domain.models.Comment
 
 inline fun LazyListScope.postComments(
     commentsState: UIState<List<Comment>>,
-    commentModel: PostCommentModel,
     postUserName: String,
     commentsVisibility: Map<String, Boolean>,
     noinline setCommentsVisibility: (String, Boolean) -> Unit,
     crossinline onLoadMore: (Comment) -> Unit,
     noinline onUserNameClick: (String) -> Unit,
     noinline onSubredditNameClick: (String) -> Unit,
+    noinline onCommentUpdate: (Comment) -> Unit,
     noinline onRequestMoreComments: (String, List<String>) -> Unit,
 ) {
     when (commentsState) {
@@ -31,7 +31,6 @@ inline fun LazyListScope.postComments(
                     if (indexedComment.value.moreReplies.isEmpty()) {
                         PostCommentItem(
                             indexedComment.value,
-                            commentModel,
                             postUserName,
                             isRepliesVisible = commentsVisibility[indexedComment.value.id] ?: true,
                             onClick = {
@@ -40,6 +39,7 @@ inline fun LazyListScope.postComments(
                                     commentsVisibility[indexedComment.value.id]?.not() ?: false
                                 )
                             },
+                            onCommentUpdate,
                             onUserNameClick,
                             onSubredditNameClick,
                         )
@@ -54,7 +54,6 @@ inline fun LazyListScope.postComments(
                 }
                 replies(
                     indexedComment.value.replies,
-                    commentModel,
                     postUserName,
                     isVisible = commentsVisibility[indexedComment.value.id] ?: true,
                     isRepliesVisible = { commentsVisibility[it.id] ?: true },
@@ -62,6 +61,7 @@ inline fun LazyListScope.postComments(
                     onUserNameClick,
                     onSubredditNameClick,
                     onRequestMoreComments,
+                    onCommentUpdate,
                 )
             }
         }
@@ -70,7 +70,6 @@ inline fun LazyListScope.postComments(
 
 fun LazyListScope.replies(
     replies: List<Comment>,
-    commentModel: PostCommentModel,
     postUserName: String,
     isVisible: Boolean,
     isRepliesVisible: (Comment) -> Boolean,
@@ -78,6 +77,7 @@ fun LazyListScope.replies(
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
     onRequestMoreComments: (String, List<String>) -> Unit,
+    onCommentUpdate: (Comment) -> Unit,
     depth: Int = 1,
     modifier: Modifier = Modifier,
 ) {
@@ -91,20 +91,18 @@ fun LazyListScope.replies(
                 if (reply.moreReplies.isEmpty())
                     ReplyItem(
                         reply,
-                            commentModel,
                         postUserName,
                         isRepliesVisible(reply),
                         depth,
                         onClick = { setIsRepliesVisible(reply, !isRepliesVisible(reply)) },
+                        onCommentUpdate,
                         onUserNameClick,
                         onSubredditNameClick,
                         modifier
                     )
                 else
                     ViewMoreReplyItem(
-                        onClick = {
-                            onRequestMoreComments(reply.id, reply.moreReplies)
-                        },
+                        onClick = { onRequestMoreComments(reply.id, reply.moreReplies) },
                         depth,
                         modifier
                     )
@@ -112,7 +110,6 @@ fun LazyListScope.replies(
         }
         replies(
             reply.replies,
-            commentModel,
             postUserName,
             isVisible = isRepliesVisible(reply) && isVisible,
             isRepliesVisible,
@@ -120,6 +117,7 @@ fun LazyListScope.replies(
             onUserNameClick,
             onSubredditNameClick,
             onRequestMoreComments,
+            onCommentUpdate,
             depth = depth + 1,
             modifier
         )

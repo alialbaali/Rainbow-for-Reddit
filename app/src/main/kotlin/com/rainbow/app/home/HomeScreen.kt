@@ -32,6 +32,7 @@ inline fun HomeScreen(
     crossinline onCommentClick: (Comment) -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
     crossinline onPostClick: (Post) -> Unit,
+    noinline onCommentUpdate: (Comment) -> Unit,
     crossinline setListModel: (ListModel<*>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -64,13 +65,13 @@ inline fun HomeScreen(
                 setLastPost = {},
                 onPostClick,
             )
-            HomeTab.Comments ->
-                comments(
-                    commentsState,
-                    onUserNameClick,
-                    onSubredditNameClick,
-                    onCommentClick
-                )
+            HomeTab.Comments -> comments(
+                commentsState,
+                onUserNameClick,
+                onSubredditNameClick,
+                onCommentClick,
+                onCommentUpdate,
+            )
         }
     }
 }

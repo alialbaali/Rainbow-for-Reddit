@@ -8,7 +8,6 @@ import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusOrder
@@ -17,6 +16,7 @@ import com.rainbow.app.comment.AddComment
 import com.rainbow.app.comment.postComments
 import com.rainbow.app.components.RainbowLazyColumn
 import com.rainbow.app.utils.*
+import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.Post
 
 @Composable
@@ -27,13 +27,13 @@ fun PostScreen(
     onSubredditNameClick: (String) -> Unit,
     onShowSnackbar: (String) -> Unit,
     onPostUpdate: (Post) -> Unit,
+    onCommentUpdate : (Comment) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val postState by model.post.collectAsState()
-    val commentsVisibility by model.commentModel.commentsVisibility.collectAsState()
-    val commentsSorting by model.commentModel.commentsSorting.collectAsState()
-    val timeSorting by model.commentModel.timeSorting.collectAsState()
-    val commentsState by model.commentModel.comments.collectAsState()
+    val commentsVisibility by model.commentListModel.commentsVisibility.collectAsState()
+    val sorting by model.commentListModel.sorting.collectAsState()
+    val commentsState by model.commentListModel.comments.collectAsState()
     postState.composed(onShowSnackbar, modifier) { post ->
         RainbowLazyColumn(
             modifier
@@ -53,29 +53,27 @@ fun PostScreen(
                 Spacer(Modifier.height(16.dp))
                 Row(Modifier.fillParentMaxWidth()) {
                     CommentsActions(model, Modifier.weight(1F))
-                    PostSorting(
-                        commentsSorting,
-                        onSortingUpdate = { model.commentModel.setCommentSorting(it) },
-                        timeSorting,
-                        onTimeSortingUpdate = { model.commentModel.setTimeSorting(it) }
+                    Sorting(
+                        sorting,
+                        onSortingUpdate = { model.commentListModel.setSorting(it) },
                     )
                 }
                 Spacer(Modifier.height(16.dp))
             }
             postComments(
                 commentsState,
-                model.commentModel,
                 post.userName,
                 commentsVisibility,
                 setCommentsVisibility = { commentId, isVisible ->
-                    model.commentModel.setCommentVisibility(commentId, isVisible)
+                    model.commentListModel.setCommentVisibility(commentId, isVisible)
                 },
                 onLoadMore = { },
                 onUserNameClick,
                 onSubredditNameClick,
                 onRequestMoreComments = { commentId, moreComments ->
-                    model.commentModel.getMoreComments(post.id, commentId, moreComments)
-                }
+                    model.commentListModel.loadMoreComments(post.id, commentId, moreComments)
+                },
+                onCommentUpdate = onCommentUpdate,
             )
         }
     }
@@ -110,13 +108,13 @@ private fun CommentsActions(
         }
 
         IconButton(
-            onClick = { model.commentModel.expandComments() },
+            onClick = { model.commentListModel.expandComments() },
             modifier = Modifier.defaultSurfaceShape(shape = CircleShape)
         ) {
             Icon(RainbowIcons.UnfoldMore, RainbowStrings.ExpandComments)
         }
         IconButton(
-            onClick = { model.commentModel.collapseComments() },
+            onClick = { model.commentListModel.collapseComments() },
             modifier = Modifier.defaultSurfaceShape(shape = CircleShape)
         ) {
             Icon(RainbowIcons.UnfoldLess, RainbowStrings.CollapseComments)

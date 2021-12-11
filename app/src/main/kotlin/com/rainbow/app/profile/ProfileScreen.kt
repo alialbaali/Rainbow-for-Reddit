@@ -45,6 +45,7 @@ fun ProfileScreen(
     onPostUpdate: (Post) -> Unit,
     onPostClick: (Post) -> Unit,
     onCommentClick: (Comment) -> Unit,
+    onCommentUpdate: (Comment) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     OneTimeEffect(Unit) {
@@ -72,6 +73,7 @@ fun ProfileScreen(
                 onPostClick,
                 onCommentClick,
                 onPostUpdate,
+                onCommentUpdate,
                 onShowSnackbar,
             )
         }

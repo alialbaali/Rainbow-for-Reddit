@@ -88,7 +88,7 @@ enum class UserSort {
 typealias ProfileSort = UserSort
 
 
-enum class PostCommentSorting {
+enum class PostCommentSorting: Sorting {
     Confidence, Top, Best, New, Old, Controversial, QA;
 
     companion object {

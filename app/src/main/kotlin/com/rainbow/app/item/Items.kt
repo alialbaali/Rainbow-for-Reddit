@@ -24,6 +24,7 @@ inline fun LazyListScope.items(
     crossinline onPostClick: (Post) -> Unit,
     crossinline onCommentClick: (Comment) -> Unit,
     noinline onPostUpdate: (Post) -> Unit,
+    noinline onCommentUpdate: (Comment) -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
 ) {
     when (itemsState) {
@@ -37,6 +38,7 @@ inline fun LazyListScope.items(
                     onUserNameClick,
                     onSubredditNameClick,
                     onCommentClick,
+                    onCommentUpdate,
                     Modifier.fillParentMaxWidth()
                 )
                 is Post -> when (postLayout) {

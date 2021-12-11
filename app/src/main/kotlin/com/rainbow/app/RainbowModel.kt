@@ -21,7 +21,7 @@ object RainbowModel : Model() {
     val sorting
         get() = listModel.map {
             val sortedListModel = it.getOrNull() as? SortedListModel<Any, *>
-            sortedListModel?.postSorting?.value
+            sortedListModel?.sorting?.value
         }.stateIn(scope, SharingStarted.Lazily, null)
 
     val timeSorting
@@ -64,9 +64,19 @@ object RainbowModel : Model() {
         postScreenModel.value.getOrNull()?.updatePost(post)
     }
 
-    fun setPostSorting(postSorting: Sorting) {
+    fun updateComment(comment: Comment) {
+        val isCommentListModel = listModel.value.getOrNull()
+            ?.items?.value
+            ?.getOrNull()
+            ?.any { it::class == Comment::class } ?: false
+        if (isCommentListModel)
+            listModel.value.getOrNull()?.updateItem(comment)
+        postScreenModel.value.getOrNull()?.commentListModel?.updateComment(comment)
+    }
+
+    fun setSorting(sorting: Sorting) {
         val sortedListModel = listModel.value.getOrNull() as? SortedListModel<Any, Sorting>
-        sortedListModel?.setPostSorting(postSorting)
+        sortedListModel?.setSorting(sorting)
     }
 
     fun setTimeSorting(timeSorting: TimeSorting) {

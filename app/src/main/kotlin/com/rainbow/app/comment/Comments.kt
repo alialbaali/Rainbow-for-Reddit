@@ -13,6 +13,7 @@ inline fun LazyListScope.comments(
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
     crossinline onCommentClick: (Comment) -> Unit,
+    noinline onCommentUpdate: (Comment) -> Unit,
 ) {
     when (commentsState) {
         is UIState.Empty -> item { Text("No comments found") }
@@ -24,6 +25,7 @@ inline fun LazyListScope.comments(
                 onUserNameClick,
                 onSubredditNameClick,
                 onCommentClick,
+                onCommentUpdate,
                 modifier = Modifier.fillParentMaxWidth()
             )
         }

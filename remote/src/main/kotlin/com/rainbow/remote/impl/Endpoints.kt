@@ -26,6 +26,7 @@ internal sealed class Endpoint(val path: String) {
 
         object ReportUser : Endpoint(ActionPath + "report_user")
 
+        object Search: Endpoint("users/search")
     }
 
     object Items {

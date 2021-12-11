@@ -1,6 +1,6 @@
 package com.rainbow.app.post
 
-import com.rainbow.app.comment.PostCommentModel
+import com.rainbow.app.comment.PostCommentListModel
 import com.rainbow.app.model.Model
 import com.rainbow.app.utils.UIState
 import com.rainbow.app.utils.map
@@ -15,7 +15,7 @@ private val postScreenModels = mutableSetOf<PostScreenModel>()
 
 class PostScreenModel private constructor(private val type: Type) : Model() {
 
-    val commentModel = PostCommentModel.getOrCreateInstance(type.postId)
+    val commentListModel = PostCommentListModel.getOrCreateInstance(type.postId)
 
     private val mutablePost = MutableStateFlow<UIState<Post>>(UIState.Loading)
     val post get() = mutablePost.asStateFlow()

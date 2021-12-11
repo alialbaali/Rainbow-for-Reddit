@@ -6,16 +6,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
-//import androidx.compose.ui.platform.LocalUriHandler
 import com.rainbow.app.components.RainbowProgressIndicator
+import com.rainbow.app.settings.SettingsModel
 import com.rainbow.app.ui.dpDimensions
 import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.app.utils.UIState
 import com.rainbow.app.utils.defaultPadding
-import com.rainbow.app.utils.toUIState
-import com.rainbow.data.Repos
 import io.ktor.http.*
-import kotlinx.coroutines.launch
 import java.util.*
 
 @Composable
@@ -24,7 +21,6 @@ fun LoginScreen() {
     var state by remember { mutableStateOf<UIState<Unit>?>(null) }
     var isButtonEnabled by remember { mutableStateOf(true) }
     var isSnackbarEnabled by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
     val currentUriHandler = LocalUriHandler.current
 
     if (isSnackbarEnabled) {
@@ -55,15 +51,15 @@ fun LoginScreen() {
                         state = UIState.Loading
                         val uuid = UUID.randomUUID()
                         currentUriHandler.openUri(createAuthenticationUrl(uuid))
-                        scope.launch {
-                            state = Repos.User.loginUser(uuid)
-                                .onFailure {
-                                    isButtonEnabled = true
-                                    isSnackbarEnabled = true
-                                }
-                                .onSuccess { Repos.User.getCurrentUser() }
-                                .toUIState()
-                        }
+                        SettingsModel.loginUser(
+                            uuid,
+                            onSuccess = { state = UIState.Success(Unit) },
+                            onFailure = {
+                                state = UIState.Failure(it)
+                                isButtonEnabled = true
+                                isSnackbarEnabled = true
+                            }
+                        )
                         isButtonEnabled = false
                     },
                     enabled = isButtonEnabled,

@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 
 class ItemListModel<S : Sorting>(
-    initialSorting: S,
+    initialItemSorting: S,
     getItems: suspend (S, TimeSorting, String?) -> Result<List<Item>>,
-) : SortedListModel<Item, S>(initialSorting, getItems) {
+) : SortedListModel<Item, S>(initialItemSorting, getItems) {
     override val Item.itemId: String
         get() = this.id
 

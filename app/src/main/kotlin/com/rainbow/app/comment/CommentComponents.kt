@@ -69,7 +69,12 @@ inline fun CommentInfo(
 }
 
 @Composable
-fun CommentActions(comment: Comment, commentModel: CommentModel, isRepliesVisible: Boolean, modifier: Modifier = Modifier) {
+fun CommentActions(
+    comment: Comment,
+    onUpdate: (Comment) -> Unit,
+    isRepliesVisible: Boolean,
+    modifier: Modifier = Modifier,
+) {
     var isMenuExpanded by remember { mutableStateOf(false) }
     Row(
         modifier.fillMaxWidth(),
@@ -79,9 +84,9 @@ fun CommentActions(comment: Comment, commentModel: CommentModel, isRepliesVisibl
         VoteActions(
             vote = comment.vote,
             votesCount = comment.upvotesCount.toLong(),
-            onUpvote = { commentModel.upvoteComment(comment.id) },
-            onDownvote = { commentModel.downvoteComment(comment.id) },
-            onUnvote = { commentModel.unvoteComment(comment.id) }
+            onUpvote = { CommentActionsModel.upvoteComment(comment, onUpdate) },
+            onDownvote = { CommentActionsModel.downvoteComment(comment, onUpdate) },
+            onUnvote = { CommentActionsModel.unvoteComment(comment, onUpdate) }
         )
 
         AnimatedVisibility(comment.replies.isNotEmpty() && !isRepliesVisible) {

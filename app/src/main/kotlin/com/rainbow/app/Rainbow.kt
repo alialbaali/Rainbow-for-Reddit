@@ -80,7 +80,7 @@ fun Rainbow(
                     onSubredditNameClick,
                     onBackClick,
                     onForwardClick,
-                    RainbowModel::setPostSorting,
+                    RainbowModel::setSorting,
                     RainbowModel::setTimeSorting,
                     isBackEnabled,
                     isForwardEnabled,
@@ -99,6 +99,7 @@ fun Rainbow(
                         onPostClick = { RainbowModel.selectPost(PostScreenModel.Type.PostEntity(it)) },
                         onCommentClick = { RainbowModel.selectPost(PostScreenModel.Type.PostId(it.postId)) },
                         RainbowModel::updatePost,
+                        RainbowModel::updateComment,
                         Modifier.weight(1F),
                     )
                     EndContent(
@@ -110,6 +111,7 @@ fun Rainbow(
                         onSubredditNameClick,
                         onShowSnackbar = { snackbarMessage = it },
                         RainbowModel::updatePost,
+                        RainbowModel::updateComment,
                         Modifier.weight(1F),
                     )
                 }
@@ -151,6 +153,7 @@ private fun CenterContent(
     onPostClick: (Post) -> Unit,
     onCommentClick: (Comment) -> Unit,
     onPostUpdate: (Post) -> Unit,
+    onCommentUpdate: (Comment) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (screen) {
@@ -165,6 +168,7 @@ private fun CenterContent(
                     onPostUpdate,
                     onPostClick,
                     onCommentClick,
+                    onCommentUpdate,
                     modifier,
                 )
                 Screen.SidebarItem.Home -> HomeScreen(
@@ -176,6 +180,7 @@ private fun CenterContent(
                     onCommentClick,
                     onShowSnackbar,
                     onPostClick,
+                    onCommentUpdate,
                     setListModel,
                     modifier,
                 )
@@ -205,6 +210,7 @@ private fun CenterContent(
             onPostUpdate,
             onPostClick,
             onCommentClick,
+            onCommentUpdate,
             focusRequester,
             onUserNameClick,
             onSubredditNameClick,
@@ -237,6 +243,7 @@ private fun EndContent(
     onSubredditNameClick: (String) -> Unit,
     onShowSnackbar: (String) -> Unit,
     onPostUpdate: (Post) -> Unit,
+    onCommentUpdate: (Comment) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val isPostScreen = screen is Screen.User || screen is Screen.Subreddit
@@ -254,6 +261,7 @@ private fun EndContent(
                 onSubredditNameClick,
                 onShowSnackbar,
                 onPostUpdate,
+                onCommentUpdate,
                 modifier
             )
         }

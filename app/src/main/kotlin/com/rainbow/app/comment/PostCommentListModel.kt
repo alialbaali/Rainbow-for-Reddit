@@ -1,26 +1,33 @@
 package com.rainbow.app.comment
 
-import com.rainbow.app.utils.*
+import com.rainbow.app.model.Model
+import com.rainbow.app.utils.UIState
+import com.rainbow.app.utils.map
+import com.rainbow.app.utils.toUIState
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.PostCommentSorting
-import com.rainbow.domain.models.TimeSorting
-import com.rainbow.domain.models.Vote
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-private val postCommentModels = mutableSetOf<PostCommentModel>()
+private val postCommentListModels = mutableSetOf<PostCommentListModel>()
 
-class PostCommentModel private constructor(private val postId: String) : CommentModel() {
+class PostCommentListModel private constructor(private val postId: String) : Model() {
+
+    private val mutableComments = MutableStateFlow<UIState<List<Comment>>>(UIState.Loading)
+    val comments get() = mutableComments.asStateFlow()
+
+    private val mutableSorting = MutableStateFlow(PostCommentSorting.Default)
+    val sorting get() = mutableSorting.asStateFlow()
 
     private val mutableCommentsVisibility = MutableStateFlow<Map<String, Boolean>>(emptyMap())
     val commentsVisibility get() = mutableCommentsVisibility.asStateFlow()
 
     companion object {
-        fun getOrCreateInstance(postId: String): PostCommentModel {
-            return postCommentModels.find { it.postId == postId }
-                ?: PostCommentModel(postId).also { postCommentModels += it }
+        fun getOrCreateInstance(postId: String): PostCommentListModel {
+            return postCommentListModels.find { it.postId == postId }
+                ?: PostCommentListModel(postId).also { postCommentListModels += it }
         }
     }
 
@@ -28,18 +35,18 @@ class PostCommentModel private constructor(private val postId: String) : Comment
         loadComments()
     }
 
-    override fun loadComments() {
+    fun loadComments() {
         mutableComments.value = UIState.Loading
         scope.launch {
-            mutableComments.value = Repos.Comment.getPostsComments(postId, commentsSorting.value).toUIState()
-            if (comments.value.isSuccess)
-                mutableCommentsVisibility.value = comments.value.asSuccess().value.associate { it.id to true }
+            mutableComments.value = Repos.Comment.getPostsComments(postId, sorting.value)
+                .onSuccess { mutableCommentsVisibility.value = it.associate { it.id to true } }
+                .toUIState()
         }
     }
 
-    fun getMoreComments(postId: String, commentId: String, children: List<String>) {
+    fun loadMoreComments(postId: String, commentId: String, children: List<String>) {
         scope.launch {
-            Repos.Comment.getMoreComments(postId, children, commentsSorting.value)
+            Repos.Comment.getMorePostComments(postId, children, sorting.value)
                 .onSuccess { moreComments ->
                     mutableComments.value = comments.value.map { it ->
                         it.toMutableList()
@@ -80,5 +87,23 @@ class PostCommentModel private constructor(private val postId: String) : Comment
     fun setCommentVisibility(commentId: String, isVisible: Boolean) {
         mutableCommentsVisibility.value = commentsVisibility.value.toMutableMap()
             .apply { this[commentId] = isVisible }
+    }
+
+    fun updateComment(comment: Comment) {
+        mutableComments.value = comments.value.map { it.updateComment(comment) }
+    }
+
+    fun setSorting(sorting: PostCommentSorting) {
+        mutableSorting.value = sorting
+        loadComments()
+    }
+
+    private fun List<Comment>.updateComment(comment: Comment): List<Comment> {
+        return map {
+            if (it.id == comment.id)
+                comment
+            else
+                it.copy(replies = it.replies.updateComment(comment))
+        }
     }
 }
