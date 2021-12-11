@@ -90,7 +90,9 @@ class PostCommentListModel private constructor(private val postId: String) : Mod
     }
 
     fun updateComment(comment: Comment) {
-        mutableComments.value = comments.value.map { it.updateComment(comment) }
+        postCommentListModels.onEach {
+            it.mutableComments.value = it.comments.value.map { it.updateComment(comment) }
+        }
     }
 
     fun setSorting(sorting: PostCommentSorting) {
