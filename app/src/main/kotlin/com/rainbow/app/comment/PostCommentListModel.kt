@@ -103,7 +103,7 @@ class PostCommentListModel private constructor(private val postId: String) : Mod
     private fun List<Comment>.updateComment(comment: Comment): List<Comment> {
         return map {
             if (it.id == comment.id)
-                comment
+                comment.copy(replies = it.replies, moreReplies = it.moreReplies)
             else
                 it.copy(replies = it.replies.updateComment(comment))
         }
