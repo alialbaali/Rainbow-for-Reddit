@@ -23,13 +23,12 @@ object ProfileScreenModel : Model() {
 
     val postLayout = Repos.Settings.postLayout.stateIn(scope, SharingStarted.Lazily, PostLayout.Card)
 
-
     val overViewItemListModel = ItemListModel(UserPostSorting.Default) { itemSorting, timeSorting, lastItemId ->
-        Repos.Item.getCurrentUserSavedItems(itemSorting, timeSorting, lastItemId)
+        Repos.Item.getCurrentUserOverviewItems(itemSorting, timeSorting, lastItemId)
     }
 
     val savedItemListModel = ItemListModel(UserPostSorting.Default) { itemSorting, timeSorting, lastItemId ->
-        Repos.Item.getCurrentUserOverviewItems(itemSorting, timeSorting, lastItemId)
+        Repos.Item.getCurrentUserSavedItems(itemSorting, timeSorting, lastItemId)
     }
 
     val submittedPostListModel = PostListModel(UserPostSorting.Default) { postSorting, timeSorting, lastPostId ->
