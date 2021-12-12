@@ -1,15 +1,12 @@
 package com.rainbow.app
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.window.application
-import com.arkivanov.decompose.extensions.compose.jetbrains.Children
-import com.arkivanov.decompose.router.bringToFront
-import com.arkivanov.decompose.router.push
 import com.rainbow.app.components.RainbowWindow
 import com.rainbow.app.login.LoginScreen
 import com.rainbow.app.navigation.Screen
-import com.rainbow.app.navigation.bringToFrontIfContentMatches
-import com.rainbow.app.navigation.rememberRouter
 import com.rainbow.app.settings.SettingsModel
 import com.rainbow.app.utils.RainbowStrings
 
@@ -25,49 +22,54 @@ fun main() = application {
 
 @Composable
 private fun ContentScreen() {
-    val router = rememberRouter(
-        initialConfiguration = Screen.SidebarItem.Home,
-        configurationClass = Screen::class,
-    )
+    var screen by remember { mutableStateOf<Screen>(Screen.SidebarItem.Home) }
+    val backStack by remember { mutableStateOf<MutableList<Screen>>(mutableListOf()) }
     val forwardStack by remember { mutableStateOf<MutableList<Screen>>(mutableListOf()) }
-    Children(router.state) { child ->
-        Rainbow(
-            screen = child.configuration,
-            backStack = router.state.value.backStack.map { it.configuration },
-            onSidebarClick = {
-                router.bringToFront(it)
-                forwardStack.clear()
-            },
-            onUserNameClick = { userName ->
-                if ((child.configuration as? Screen.User)?.userName != userName) {
-                    router.bringToFrontIfContentMatches(Screen.User(userName))
+    val stateHolder = rememberSaveableStateHolder()
+    Crossfade(screen) { animatedScreen ->
+        stateHolder.SaveableStateProvider(animatedScreen) {
+            Rainbow(
+                screen = animatedScreen,
+                backStack = backStack,
+                onSidebarClick = { sidebarItem ->
+                    backStack += screen
+                    screen = sidebarItem
                     forwardStack.clear()
-                }
-            },
-            onSubredditNameClick = { subredditName ->
-                if ((child.configuration as? Screen.Subreddit)?.subredditName != subredditName) {
-                    router.bringToFrontIfContentMatches(Screen.Subreddit(subredditName))
-                    forwardStack.clear()
-                }
-            },
-            onSearchClick = { searchTerm ->
-                if ((child.configuration as? Screen.Search)?.searchTerm != searchTerm) {
-                    router.bringToFrontIfContentMatches(Screen.Search(searchTerm))
-                    forwardStack.clear()
-                }
-            },
-            onBackClick = {
-                router.navigate {
-                    forwardStack += it.last()
-                    it.dropLast(1)
-                }
-            },
-            onForwardClick = {
-                router.push(forwardStack.last())
-                forwardStack.removeLast()
-            },
-            isBackEnabled = router.state.value.backStack.isNotEmpty(),
-            isForwardEnabled = forwardStack.isNotEmpty(),
-        )
+                },
+                onUserNameClick = { userName ->
+                    if ((screen as? Screen.User)?.userName != userName) {
+                        backStack += screen
+                        screen = Screen.User(userName)
+                        forwardStack.clear()
+                    }
+                },
+                onSubredditNameClick = { subredditName ->
+                    if ((screen as? Screen.Subreddit)?.subredditName != subredditName) {
+                        backStack += screen
+                        screen = Screen.Subreddit(subredditName)
+                        forwardStack.clear()
+                    }
+                },
+                onSearchClick = { searchTerm ->
+                    if ((screen as? Screen.Search)?.searchTerm != searchTerm) {
+                        backStack += screen
+                        screen = Screen.Search(searchTerm)
+                        forwardStack.clear()
+                    }
+                },
+                onBackClick = {
+                    forwardStack += screen
+                    screen = backStack.last()
+                    backStack.removeLast()
+                },
+                onForwardClick = {
+                    backStack += screen
+                    screen = forwardStack.last()
+                    forwardStack.removeLast()
+                },
+                isBackEnabled = backStack.isNotEmpty(),
+                isForwardEnabled = forwardStack.isNotEmpty(),
+            )
+        }
     }
 }
