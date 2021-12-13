@@ -1,9 +1,12 @@
 package com.rainbow.app.post
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -19,6 +22,7 @@ import com.rainbow.app.utils.*
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.Post
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PostScreen(
     model: PostScreenModel,
@@ -54,7 +58,9 @@ fun PostScreen(
                         .focusOrder(focusRequester)
                 )
                 Spacer(Modifier.height(16.dp))
-                Row(Modifier.fillParentMaxWidth()) {
+            }
+            stickyHeader {
+                Row(Modifier.fillParentMaxWidth().background(MaterialTheme.colors.surface)) {
                     CommentsActions(
                         backStack.isNotEmpty(),
                         forwardStack.isNotEmpty(),
