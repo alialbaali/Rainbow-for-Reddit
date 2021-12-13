@@ -1,7 +1,5 @@
 package com.rainbow.app.sidebar
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
@@ -14,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import com.rainbow.app.navigation.Screen
 import com.rainbow.app.settings.SettingsModel
@@ -43,7 +40,7 @@ fun Sidebar(
     fun Screen.SidebarItem.textStyle() = MaterialTheme.typography.subtitle2.copy(iconColor())
 
     @Composable
-    fun Screen.SidebarItem.background() =
+    fun Screen.SidebarItem.backgroundColor() =
         if (sidebarItem == this)
             MaterialTheme.colors.primary.copy(0.1F)
         else
@@ -71,7 +68,7 @@ fun Sidebar(
                         .fillMaxWidth()
                         .wrapContentHeight()
                         .clip(itemShape)
-                        .background(background()),
+                        .background(backgroundColor()),
                     textStyle(),
                     iconColor(),
                 )
@@ -95,7 +92,7 @@ fun Sidebar(
                                 .fillMaxWidth()
                                 .wrapContentHeight()
                                 .clip(item.itemShape)
-                                .background(item.background()),
+                                .background(item.backgroundColor()),
                             item.textStyle(),
                             item.iconColor(),
                         )
@@ -111,7 +108,7 @@ fun Sidebar(
                         .fillMaxWidth()
                         .wrapContentHeight()
                         .clip(itemShape)
-                        .background(background()),
+                        .background(backgroundColor()),
                     textStyle(),
                     iconColor(),
                 )
