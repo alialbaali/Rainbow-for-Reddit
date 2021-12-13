@@ -64,3 +64,23 @@ fun ViewMoreReplyItem(onClick: () -> Unit, depth: Int, modifier: Modifier = Modi
         )
     }
 }
+
+@Composable
+fun ContinueThreadReplyItem(onClick: () -> Unit, depth: Int, modifier: Modifier = Modifier) {
+    var contentSize by remember { mutableStateOf(IntSize.Zero) }
+    Row(modifier) {
+        repeat(depth) {
+            BoxLine(it, contentSize.height.dp)
+        }
+        Text(
+            RainbowStrings.ContinueThread,
+            Modifier
+                .clip(MaterialTheme.shapes.large)
+                .fillMaxWidth()
+                .clickable { onClick() }
+                .onSizeChanged { contentSize = it }
+                .padding(vertical = 16.dp),
+            color = MaterialTheme.colors.onBackground
+        )
+    }
+}

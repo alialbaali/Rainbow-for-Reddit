@@ -5,63 +5,64 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.Text
 import androidx.compose.ui.Modifier
 import com.rainbow.app.components.RainbowProgressIndicator
-import com.rainbow.app.utils.PagingEffect
 import com.rainbow.app.utils.UIState
 import com.rainbow.domain.models.Comment
 
-inline fun LazyListScope.postComments(
+fun LazyListScope.postComments(
     commentsState: UIState<List<Comment>>,
     postUserName: String,
     commentsVisibility: Map<String, Boolean>,
-    noinline setCommentsVisibility: (String, Boolean) -> Unit,
-    crossinline onLoadMore: (Comment) -> Unit,
-    noinline onUserNameClick: (String) -> Unit,
-    noinline onSubredditNameClick: (String) -> Unit,
-    noinline onCommentUpdate: (Comment) -> Unit,
-    noinline onRequestMoreComments: (String, List<String>) -> Unit,
+    setCommentsVisibility: (String, Boolean) -> Unit,
+    onUserNameClick: (String) -> Unit,
+    onSubredditNameClick: (String) -> Unit,
+    onCommentUpdate: (Comment) -> Unit,
+    onRequestMoreComments: (String, List<String>) -> Unit,
+    onRequestContinueThreadComments: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     when (commentsState) {
         is UIState.Empty -> item { Text("No comments found.") }
         is UIState.Failure -> item { Text("Failed to load comments") }
         is UIState.Loading -> item { RainbowProgressIndicator() }
         is UIState.Success -> {
-            val comments = commentsState.value
-            comments.withIndex().forEach { indexedComment ->
+            commentsState.value.forEach { comment ->
                 item {
-                    if (indexedComment.value.moreReplies.isEmpty()) {
-                        PostCommentItem(
-                            indexedComment.value,
+                    when (val commentType = comment.type) {
+                        is Comment.Type.None -> PostCommentItem(
+                            comment,
                             postUserName,
-                            isRepliesVisible = commentsVisibility[indexedComment.value.id] ?: true,
+                            isRepliesVisible = commentsVisibility[comment.id] ?: true,
                             onClick = {
                                 setCommentsVisibility(
-                                    indexedComment.value.id,
-                                    commentsVisibility[indexedComment.value.id]?.not() ?: false
+                                    comment.id,
+                                    commentsVisibility[comment.id]?.not() ?: false
                                 )
                             },
                             onCommentUpdate,
                             onUserNameClick,
                             onSubredditNameClick,
+                            modifier,
                         )
-                        PagingEffect(comments, indexedComment.index, onLoadMore)
-                    } else {
-                        ViewMoreCommentItem(
+                        is Comment.Type.ViewMore -> ViewMoreCommentItem(
                             onClick = {
-                                onRequestMoreComments(indexedComment.value.id, indexedComment.value.moreReplies)
-                            }
+                                val moreComments = commentType.replies
+                                onRequestMoreComments(comment.id, moreComments)
+                            },
+                            modifier,
                         )
                     }
                 }
                 replies(
-                    indexedComment.value.replies,
+                    comment.replies,
                     postUserName,
-                    isVisible = commentsVisibility[indexedComment.value.id] ?: true,
+                    isVisible = commentsVisibility[comment.id] ?: true,
                     isRepliesVisible = { commentsVisibility[it.id] ?: true },
                     setIsRepliesVisible = { reply, isVisible -> setCommentsVisibility(reply.id, isVisible) },
                     onUserNameClick,
                     onSubredditNameClick,
                     onRequestMoreComments,
                     onCommentUpdate,
+                    onRequestContinueThreadComments,
                 )
             }
         }
@@ -78,8 +79,9 @@ fun LazyListScope.replies(
     onSubredditNameClick: (String) -> Unit,
     onRequestMoreComments: (String, List<String>) -> Unit,
     onCommentUpdate: (Comment) -> Unit,
-    depth: Int = 1,
+    onRequestContinueThreadComments: (String) -> Unit,
     modifier: Modifier = Modifier,
+    depth: Int = 1,
 ) {
     replies.forEach { reply ->
         item {
@@ -88,8 +90,8 @@ fun LazyListScope.replies(
                 enter = fadeIn() + expandVertically(),
                 exit = fadeOut() + shrinkVertically(),
             ) {
-                if (reply.moreReplies.isEmpty())
-                    ReplyItem(
+                when (val replyType = reply.type) {
+                    is Comment.Type.None -> ReplyItem(
                         reply,
                         postUserName,
                         isRepliesVisible(reply),
@@ -100,12 +102,17 @@ fun LazyListScope.replies(
                         onSubredditNameClick,
                         modifier
                     )
-                else
-                    ViewMoreReplyItem(
-                        onClick = { onRequestMoreComments(reply.id, reply.moreReplies) },
+                    is Comment.Type.ViewMore -> ViewMoreReplyItem(
+                        onClick = { onRequestMoreComments(reply.id, replyType.replies) },
                         depth,
                         modifier
                     )
+                    is Comment.Type.ContinueThread -> ContinueThreadReplyItem(
+                        onClick = { onRequestContinueThreadComments(replyType.parentId) },
+                        depth,
+                        modifier,
+                    )
+                }
             }
         }
         replies(
@@ -118,8 +125,9 @@ fun LazyListScope.replies(
             onSubredditNameClick,
             onRequestMoreComments,
             onCommentUpdate,
+            onRequestContinueThreadComments,
+            modifier,
             depth = depth + 1,
-            modifier
         )
     }
 }
