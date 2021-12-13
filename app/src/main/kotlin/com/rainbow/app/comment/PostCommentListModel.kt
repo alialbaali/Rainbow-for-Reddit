@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 private val postCommentListModels = mutableSetOf<PostCommentListModel>()
 
 @OptIn(FlowPreview::class)
-class PostCommentListModel private constructor(private val postId: String) : Model() {
+class PostCommentListModel private constructor(private val postId: String, private val parentId: String?) : Model() {
 
     private val mutableComments = MutableStateFlow<UIState<List<Comment>>>(UIState.Loading)
     val comments get() = mutableComments.asStateFlow()
@@ -29,9 +29,9 @@ class PostCommentListModel private constructor(private val postId: String) : Mod
     private val mutableRefreshContent = MutableSharedFlow<Unit>(replay = 1)
 
     companion object {
-        fun getOrCreateInstance(postId: String): PostCommentListModel {
-            return postCommentListModels.find { it.postId == postId }
-                ?: PostCommentListModel(postId).also { postCommentListModels += it }
+        fun getOrCreateInstance(postId: String, parentId: String?): PostCommentListModel {
+            return postCommentListModels.find { it.postId == postId && it.parentId == parentId }
+                ?: PostCommentListModel(postId, parentId).also { postCommentListModels += it }
         }
     }
 
@@ -44,7 +44,7 @@ class PostCommentListModel private constructor(private val postId: String) : Mod
             .launchIn(scope)
     }
 
-    fun loadComments() {
+    fun loadPostComments() {
         mutableComments.value = UIState.Loading
         scope.launch {
             mutableComments.value = Repos.Comment.getPostsComments(postId, sorting.value)
@@ -53,7 +53,7 @@ class PostCommentListModel private constructor(private val postId: String) : Mod
         }
     }
 
-    fun loadMoreComments(postId: String, commentId: String, children: List<String>) {
+    fun loadMoreComments(commentId: String, children: List<String>) {
         scope.launch {
             Repos.Comment.getMorePostComments(postId, children, sorting.value)
                 .onSuccess { moreComments ->
@@ -68,6 +68,15 @@ class PostCommentListModel private constructor(private val postId: String) : Mod
                         mutableCommentsVisibility.value =
                             commentsVisibility.value + moreComments.associate { it.id to false }
                 }
+        }
+    }
+
+    fun loadContinueThreadComments(parentId: String) {
+        mutableComments.value = UIState.Loading
+        scope.launch {
+            mutableComments.value = Repos.Comment.getContinueThreadComments(postId, parentId, sorting.value)
+                .onSuccess { mutableCommentsVisibility.value = it.associate { it.id to true } }
+                .toUIState()
         }
     }
 
@@ -116,9 +125,11 @@ class PostCommentListModel private constructor(private val postId: String) : Mod
     private fun List<Comment>.updateComment(comment: Comment): List<Comment> {
         return map {
             if (it.id == comment.id)
-                comment.copy(replies = it.replies, moreReplies = it.moreReplies)
+                comment.copy(replies = it.replies, type = it.type)
             else
                 it.copy(replies = it.replies.updateComment(comment))
         }
     }
+
+    private fun loadComments() = if (parentId == null) loadPostComments() else loadContinueThreadComments(parentId)
 }

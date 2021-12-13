@@ -132,6 +132,8 @@ internal sealed class Endpoint(val path: String) {
         // https://oauth.reddit.com/comments/{post-id}
         class PostComments(postId: String) : Endpoint("$CommentPath$postId")
 
+        class ContinueThreadComments(postId: String, parentId: String) : Endpoint("$CommentPath$postId//$parentId")
+
         class UserComments(userName: String) : Endpoint("$UserPath$userName/comments")
 
         object Replies : Endpoint("${ActionPath}morechildren")

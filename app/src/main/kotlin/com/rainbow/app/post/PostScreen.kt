@@ -27,13 +27,16 @@ fun PostScreen(
     onSubredditNameClick: (String) -> Unit,
     onShowSnackbar: (String) -> Unit,
     onPostUpdate: (Post) -> Unit,
-    onCommentUpdate : (Comment) -> Unit,
+    onCommentUpdate: (Comment) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val postState by model.post.collectAsState()
-    val commentsVisibility by model.commentListModel.commentsVisibility.collectAsState()
-    val sorting by model.commentListModel.sorting.collectAsState()
-    val commentsState by model.commentListModel.comments.collectAsState()
+    val backStack by model.backStack.collectAsState()
+    val forwardStack by model.forwardStack.collectAsState()
+    val commentListModel by model.commentListModel.collectAsState()
+    val commentsState by commentListModel.comments.collectAsState()
+    val commentsVisibility by commentListModel.commentsVisibility.collectAsState()
+    val sorting by commentListModel.sorting.collectAsState()
     postState.composed(onShowSnackbar, modifier) { post ->
         RainbowLazyColumn(
             modifier
@@ -52,10 +55,19 @@ fun PostScreen(
                 )
                 Spacer(Modifier.height(16.dp))
                 Row(Modifier.fillParentMaxWidth()) {
-                    CommentsActions(model, Modifier.weight(1F))
+                    CommentsActions(
+                        backStack.isNotEmpty(),
+                        forwardStack.isNotEmpty(),
+                        model::back,
+                        model::forward,
+                        commentListModel::refreshComments,
+                        commentListModel::expandComments,
+                        commentListModel::collapseComments,
+                        Modifier.weight(1F)
+                    )
                     Sorting(
                         sorting,
-                        onSortingUpdate = { model.commentListModel.setSorting(it) },
+                        onSortingUpdate = { commentListModel.setSorting(it) },
                     )
                 }
                 Spacer(Modifier.height(16.dp))
@@ -65,56 +77,63 @@ fun PostScreen(
                 post.userName,
                 commentsVisibility,
                 setCommentsVisibility = { commentId, isVisible ->
-                    model.commentListModel.setCommentVisibility(commentId, isVisible)
+                    commentListModel.setCommentVisibility(commentId, isVisible)
                 },
-                onLoadMore = { },
                 onUserNameClick,
                 onSubredditNameClick,
                 onRequestMoreComments = { commentId, moreComments ->
-                    model.commentListModel.loadMoreComments(post.id, commentId, moreComments)
+                    commentListModel.loadMoreComments(commentId, moreComments)
                 },
                 onCommentUpdate = onCommentUpdate,
+                onRequestContinueThreadComments = { parentId -> model.setCommentListModel(parentId) }
             )
         }
     }
 }
 
-
 @Composable
 private fun CommentsActions(
-    model: PostScreenModel,
+    isBackEnabled: Boolean,
+    isForwardEnabled: Boolean,
+    onBackClick: () -> Unit,
+    onForwardClick: () -> Unit,
+    onRefresh: () -> Unit,
+    onExpand: () -> Unit,
+    onCollapse: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         IconButton(
-            onClick = { },
-            modifier = Modifier.defaultSurfaceShape(shape = CircleShape)
+            onClick = onBackClick,
+            modifier = Modifier.defaultSurfaceShape(shape = CircleShape),
+            isBackEnabled,
         ) {
             Icon(RainbowIcons.ArrowBack, RainbowStrings.NavigateBack)
         }
 
         IconButton(
-            onClick = {},
-            modifier = Modifier.defaultSurfaceShape(shape = CircleShape)
+            onClick = onForwardClick,
+            modifier = Modifier.defaultSurfaceShape(shape = CircleShape),
+            isForwardEnabled
         ) {
             Icon(RainbowIcons.ArrowForward, RainbowStrings.NavigateForward)
         }
 
         IconButton(
-            onClick = model.commentListModel::refreshComments,
+            onClick = onRefresh,
             Modifier.defaultSurfaceShape(shape = CircleShape)
         ) {
             Icon(RainbowIcons.Refresh, RainbowStrings.Refresh)
         }
 
         IconButton(
-            onClick = model.commentListModel::expandComments,
+            onClick = onExpand,
             modifier = Modifier.defaultSurfaceShape(shape = CircleShape)
         ) {
             Icon(RainbowIcons.UnfoldMore, RainbowStrings.ExpandComments)
         }
         IconButton(
-            onClick = model.commentListModel::collapseComments,
+            onClick = onCollapse,
             modifier = Modifier.defaultSurfaceShape(shape = CircleShape)
         ) {
             Icon(RainbowIcons.UnfoldLess, RainbowStrings.CollapseComments)

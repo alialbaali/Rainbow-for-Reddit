@@ -15,10 +15,17 @@ private val postScreenModels = mutableSetOf<PostScreenModel>()
 
 class PostScreenModel private constructor(private val type: Type) : Model() {
 
-    val commentListModel = PostCommentListModel.getOrCreateInstance(type.postId)
-
     private val mutablePost = MutableStateFlow<UIState<Post>>(UIState.Loading)
     val post get() = mutablePost.asStateFlow()
+
+    private val mutableCommentListModel = MutableStateFlow(PostCommentListModel.getOrCreateInstance(type.postId, null))
+    val commentListModel get() = mutableCommentListModel.asStateFlow()
+
+    private val mutableBackStack = MutableStateFlow(mutableListOf<PostCommentListModel>())
+    val backStack get() = mutableBackStack.asStateFlow()
+
+    private val mutableForwardStack = MutableStateFlow(mutableListOf<PostCommentListModel>())
+    val forwardStack get() = mutableForwardStack.asStateFlow()
 
     companion object {
         fun getOrCreateInstance(type: Type): PostScreenModel {
@@ -63,5 +70,23 @@ class PostScreenModel private constructor(private val type: Type) : Model() {
                 }
             }
         }
+    }
+
+    fun setCommentListModel(parentId: String) {
+        backStack.value += commentListModel.value
+        mutableCommentListModel.value = PostCommentListModel.getOrCreateInstance(type.postId, parentId)
+        forwardStack.value.clear()
+    }
+
+    fun back() {
+        forwardStack.value += commentListModel.value
+        mutableCommentListModel.value = backStack.value.last()
+        backStack.value.removeLast()
+    }
+
+    fun forward() {
+        backStack.value += commentListModel.value
+        mutableCommentListModel.value = forwardStack.value.last()
+        forwardStack.value.removeLast()
     }
 }

@@ -82,7 +82,7 @@ object RainbowModel : Model() {
             ?.any { it::class == Comment::class } ?: false
         if (isCommentListModel)
             mutableListModel.value.getOrNull()?.updateItem(comment)
-        postScreenModel.value.getOrNull()?.commentListModel?.updateComment(comment)
+        postScreenModel.value.getOrNull()?.commentListModel?.value?.updateComment(comment)
     }
 
     fun setSorting(sorting: Sorting) {

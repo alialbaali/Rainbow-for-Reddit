@@ -44,6 +44,7 @@ object RainbowStrings {
     const val PostKarma = "Post karma"
     const val CommentKarma = "Comment karma"
     const val ViewMore = "View more"
+    const val ContinueThread = "Continue thread"
     const val Search = "Search"
     const val OpenInBrowser = "Open in browser"
     const val CopyLink = "Copy link"
