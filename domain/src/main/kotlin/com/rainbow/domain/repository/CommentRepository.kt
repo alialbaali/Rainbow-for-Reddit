@@ -33,7 +33,7 @@ interface CommentRepository {
         commentsSorting: PostCommentSorting,
     ): Result<List<Comment>>
 
-    suspend fun getContinueThreadComments(
+    suspend fun getThreadComments(
         postId: String,
         parentId: String,
         commentsSorting: PostCommentSorting,

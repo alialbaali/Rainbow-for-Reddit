@@ -17,7 +17,7 @@ fun LazyListScope.postComments(
     onSubredditNameClick: (String) -> Unit,
     onCommentUpdate: (Comment) -> Unit,
     onRequestMoreComments: (String, List<String>) -> Unit,
-    onRequestContinueThreadComments: (String) -> Unit,
+    onRequestThreadComments: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (commentsState) {
@@ -62,7 +62,7 @@ fun LazyListScope.postComments(
                     onSubredditNameClick,
                     onRequestMoreComments,
                     onCommentUpdate,
-                    onRequestContinueThreadComments,
+                    onRequestThreadComments,
                 )
             }
         }
@@ -79,7 +79,7 @@ fun LazyListScope.replies(
     onSubredditNameClick: (String) -> Unit,
     onRequestMoreComments: (String, List<String>) -> Unit,
     onCommentUpdate: (Comment) -> Unit,
-    onRequestContinueThreadComments: (String) -> Unit,
+    onRequestThreadComments: (String) -> Unit,
     modifier: Modifier = Modifier,
     depth: Int = 1,
 ) {
@@ -108,7 +108,7 @@ fun LazyListScope.replies(
                         modifier
                     )
                     is Comment.Type.ContinueThread -> ContinueThreadReplyItem(
-                        onClick = { onRequestContinueThreadComments(replyType.parentId) },
+                        onClick = { onRequestThreadComments(replyType.parentId) },
                         depth,
                         modifier,
                     )
@@ -125,7 +125,7 @@ fun LazyListScope.replies(
             onSubredditNameClick,
             onRequestMoreComments,
             onCommentUpdate,
-            onRequestContinueThreadComments,
+            onRequestThreadComments,
             modifier,
             depth = depth + 1,
         )

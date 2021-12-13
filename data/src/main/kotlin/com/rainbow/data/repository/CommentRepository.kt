@@ -76,12 +76,12 @@ internal class CommentRepositoryImpl(
             .map { it.quickMap(mapper) }
     }
 
-    override suspend fun getContinueThreadComments(
+    override suspend fun getThreadComments(
         postId: String,
         parentId: String,
         commentsSorting: PostCommentSorting,
     ): Result<List<Comment>> = withContext(dispatcher) {
-        remoteCommentDataSource.getContinueThreadComments(
+        remoteCommentDataSource.getThreadComments(
             postId,
             parentId,
             commentsSorting.lowercaseName,

@@ -27,7 +27,7 @@ interface RemoteCommentDataSource {
         limit: Int,
     ): Result<List<RemoteComment>>
 
-    suspend fun getContinueThreadComments(
+    suspend fun getThreadComments(
         postId: String,
         parentId: String,
         commentsSorting: String,

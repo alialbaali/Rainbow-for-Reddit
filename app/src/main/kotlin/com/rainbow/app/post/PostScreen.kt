@@ -91,7 +91,7 @@ fun PostScreen(
                     commentListModel.loadMoreComments(commentId, moreComments)
                 },
                 onCommentUpdate = onCommentUpdate,
-                onRequestContinueThreadComments = { parentId -> model.setCommentListModel(parentId) }
+                onRequestThreadComments = { parentId -> model.setCommentListModel(parentId) }
             )
         }
     }

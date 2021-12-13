@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 private val postCommentListModels = mutableSetOf<PostCommentListModel>()
 
 @OptIn(FlowPreview::class)
-class PostCommentListModel private constructor(private val postId: String, private val parentId: String?) : Model() {
+class PostCommentListModel private constructor(private val type: Type) : Model() {
 
     private val mutableComments = MutableStateFlow<UIState<List<Comment>>>(UIState.Loading)
     val comments get() = mutableComments.asStateFlow()
@@ -29,10 +29,16 @@ class PostCommentListModel private constructor(private val postId: String, priva
     private val mutableRefreshContent = MutableSharedFlow<Unit>(replay = 1)
 
     companion object {
-        fun getOrCreateInstance(postId: String, parentId: String?): PostCommentListModel {
-            return postCommentListModels.find { it.postId == postId && it.parentId == parentId }
-                ?: PostCommentListModel(postId, parentId).also { postCommentListModels += it }
+        fun getOrCreateInstance(type: Type): PostCommentListModel {
+            return postCommentListModels.find { it.type == type }
+                ?: PostCommentListModel(type).also { postCommentListModels += it }
         }
+    }
+
+    sealed interface Type {
+        val postId: String
+        data class Post(override val postId: String) : Type
+        data class Thread(override val postId: String, val parentId: String) : Type
     }
 
     init {
@@ -44,7 +50,7 @@ class PostCommentListModel private constructor(private val postId: String, priva
             .launchIn(scope)
     }
 
-    fun loadPostComments() {
+    fun loadPostComments(postId: String) {
         mutableComments.value = UIState.Loading
         scope.launch {
             mutableComments.value = Repos.Comment.getPostsComments(postId, sorting.value)
@@ -55,12 +61,12 @@ class PostCommentListModel private constructor(private val postId: String, priva
 
     fun loadMoreComments(commentId: String, children: List<String>) {
         scope.launch {
-            Repos.Comment.getMorePostComments(postId, children, sorting.value)
+            Repos.Comment.getMorePostComments(type.postId, children, sorting.value)
                 .onSuccess { moreComments ->
                     mutableComments.value = comments.value.map { it ->
                         it.toMutableList()
                             .apply { removeIf { it.id == commentId } }
-                            .plus(moreComments.filter { it.parentId == postId })
+                            .plus(moreComments.filter { it.parentId == type.postId })
                             .toMutableList()
                             .replaceViewMore(commentId, moreComments)
                     }
@@ -71,10 +77,10 @@ class PostCommentListModel private constructor(private val postId: String, priva
         }
     }
 
-    fun loadContinueThreadComments(parentId: String) {
+    fun loadThreadComments(postId: String, parentId: String) {
         mutableComments.value = UIState.Loading
         scope.launch {
-            mutableComments.value = Repos.Comment.getContinueThreadComments(postId, parentId, sorting.value)
+            mutableComments.value = Repos.Comment.getThreadComments(postId, parentId, sorting.value)
                 .onSuccess { mutableCommentsVisibility.value = it.associate { it.id to true } }
                 .toUIState()
         }
@@ -131,5 +137,8 @@ class PostCommentListModel private constructor(private val postId: String, priva
         }
     }
 
-    private fun loadComments() = if (parentId == null) loadPostComments() else loadContinueThreadComments(parentId)
+    private fun loadComments() = when (type) {
+        is Type.Post -> loadPostComments(type.postId)
+        is Type.Thread -> loadThreadComments(type.postId, type.parentId)
+    }
 }

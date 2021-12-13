@@ -18,7 +18,7 @@ class PostScreenModel private constructor(private val type: Type) : Model() {
     private val mutablePost = MutableStateFlow<UIState<Post>>(UIState.Loading)
     val post get() = mutablePost.asStateFlow()
 
-    private val mutableCommentListModel = MutableStateFlow(PostCommentListModel.getOrCreateInstance(type.postId, null))
+    private val mutableCommentListModel = MutableStateFlow(PostCommentListModel.getOrCreateInstance(PostCommentListModel.Type.Post(type.postId)))
     val commentListModel get() = mutableCommentListModel.asStateFlow()
 
     private val mutableBackStack = MutableStateFlow(mutableListOf<PostCommentListModel>())
@@ -74,7 +74,7 @@ class PostScreenModel private constructor(private val type: Type) : Model() {
 
     fun setCommentListModel(parentId: String) {
         backStack.value += commentListModel.value
-        mutableCommentListModel.value = PostCommentListModel.getOrCreateInstance(type.postId, parentId)
+        mutableCommentListModel.value = PostCommentListModel.getOrCreateInstance(PostCommentListModel.Type.Thread(type.postId, parentId))
         forwardStack.value.clear()
     }
 
