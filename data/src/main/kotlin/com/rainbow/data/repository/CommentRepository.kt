@@ -76,6 +76,19 @@ internal class CommentRepositoryImpl(
             .map { it.quickMap(mapper) }
     }
 
+    override suspend fun getContinueThreadComments(
+        postId: String,
+        parentId: String,
+        commentsSorting: PostCommentSorting,
+    ): Result<List<Comment>> = withContext(dispatcher) {
+        remoteCommentDataSource.getContinueThreadComments(
+            postId,
+            parentId,
+            commentsSorting.lowercaseName,
+            DefaultLimit
+        ).map { it.quickMap(mapper) }
+    }
+
     override suspend fun createComment(comment: Comment): Result<Comment> = withContext(dispatcher) {
         TODO("Not yet implemented")
     }

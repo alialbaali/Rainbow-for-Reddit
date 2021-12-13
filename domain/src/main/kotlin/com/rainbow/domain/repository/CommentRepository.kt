@@ -33,6 +33,12 @@ interface CommentRepository {
         commentsSorting: PostCommentSorting,
     ): Result<List<Comment>>
 
+    suspend fun getContinueThreadComments(
+        postId: String,
+        parentId: String,
+        commentsSorting: PostCommentSorting,
+    ): Result<List<Comment>>
+
     suspend fun createComment(comment: Comment): Result<Comment>
 
     suspend fun deleteComment(commentId: String): Result<Unit>

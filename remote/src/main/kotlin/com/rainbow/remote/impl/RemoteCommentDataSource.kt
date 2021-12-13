@@ -11,6 +11,8 @@ import io.ktor.client.request.*
 fun RemoteCommentDataSource(client: HttpClient = redditClient): RemoteCommentDataSource =
     RemoteCommentDataSourceImpl(client)
 
+private typealias CommentsList = List<Item<Listing<RemoteComment>>>
+
 private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommentDataSource {
 
     override suspend fun getHomeComments(limit: Int, after: String?): Result<List<RemoteComment>> {
@@ -25,7 +27,7 @@ private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommen
         commentsSorting: String,
         limit: Int,
     ): Result<List<RemoteComment>> {
-        return client.plainRequest<List<Item<Listing<RemoteComment>>>>(Comments.PostComments(postId.asPostId())) {
+        return client.plainRequest<CommentsList>(Comments.PostComments(postId.removeIdPrefix())) {
             parameter(Keys.Sort, commentsSorting)
             parameter(Keys.Limit, limit)
         }.mapCatching { it.map { it.data.toList() }[1] }
@@ -58,6 +60,20 @@ private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommen
             parameter(Keys.ApiType, Values.Json)
             parameter(Keys.Children, childrenIds.take(limit).joinToString())
         }.map { it["json"]?.data?.get("things")?.map { it.data } ?: emptyList() }
+    }
+
+    override suspend fun getContinueThreadComments(
+        postId: String,
+        parentId: String,
+        commentsSorting: String,
+        limit: Int,
+    ): Result<List<RemoteComment>> {
+        return client.plainRequest<CommentsList>(
+            Comments.ContinueThreadComments(postId.removeIdPrefix(), parentId.removeIdPrefix())
+        ) {
+            parameter(Keys.Sort, commentsSorting)
+            parameter(Keys.Limit, limit)
+        }.mapCatching { it.map { it.data.toList() }[1] }
     }
 
     override suspend fun submitComment(postId: String?, parentCommentId: String?, text: String): Result<Unit> {
@@ -113,5 +129,5 @@ private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommen
         }
     }
 
-    private fun String.asPostId() = substringAfter('_')
+    private fun String.removeIdPrefix() = substringAfter('_')
 }
