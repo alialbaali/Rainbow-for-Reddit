@@ -13,7 +13,7 @@ data class Comment(
     val userName: String,
     val subredditName: String,
     val replies: List<Comment> = emptyList(),
-    val moreReplies: List<String> = emptyList(),
+    val type: Type,
     val body: String,
     val upvotesCount: ULong,
     val awards: List<Award> = emptyList(),
@@ -22,7 +22,13 @@ data class Comment(
     val vote: Vote = Vote.None,
     val flair: Flair, // make it nullable when it's empty?
     val creationDate: LocalDateTime,
-) : Item
+) : Item {
+    sealed interface Type {
+        object None: Type
+        class ViewMore(val replies: List<String>): Type
+        class ContinueThread(val parentId: String) : Type
+    }
+}
 
 val Comment.userDisplayName
     get() = userName.asUserDisplayName()

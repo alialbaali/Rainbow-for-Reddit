@@ -145,7 +145,11 @@ internal object Mappers {
                     isEdited = false,
                     isSaved = saved ?: false,
                     replies = replies?.quickMap(CommentMapper) ?: emptyList(),
-                    moreReplies = children ?: emptyList(),
+                    type = when {
+                        children == null -> Comment.Type.None
+                        children!!.isEmpty() -> Comment.Type.ContinueThread(parentId ?: "")
+                        else -> Comment.Type.ViewMore(children!!)
+                    },
                     flair = FlairMapper.map(
                         RemoteFlair(
                             id = authorFlairTemplateId,
