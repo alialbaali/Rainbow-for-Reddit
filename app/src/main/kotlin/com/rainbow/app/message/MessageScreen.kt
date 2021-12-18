@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.rainbow.domain.models.Message
 
 @Composable
-fun MessageScreen(message: Message, modifier: Modifier = Modifier) {
+fun MessageScreen(model: MessageScreenModel, modifier: Modifier = Modifier) {
+    val message by model.message.collectAsState()
     var text by remember { mutableStateOf("") }
     Column(modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceBetween) {
         MessageItem(message, onClick = {}, onUserNameClick = {})

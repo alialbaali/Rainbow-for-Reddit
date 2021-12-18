@@ -1,17 +1,14 @@
 package com.rainbow.app
 
+import com.rainbow.app.message.MessageScreenModel
 import com.rainbow.app.model.ListModel
-
 import com.rainbow.app.model.Model
 import com.rainbow.app.model.SortedListModel
 import com.rainbow.app.post.PostScreenModel
 import com.rainbow.app.utils.Constants
 import com.rainbow.app.utils.UIState
 import com.rainbow.app.utils.getOrNull
-import com.rainbow.domain.models.Comment
-import com.rainbow.domain.models.Post
-import com.rainbow.domain.models.Sorting
-import com.rainbow.domain.models.TimeSorting
+import com.rainbow.domain.models.*
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 
@@ -35,6 +32,9 @@ object RainbowModel : Model() {
     private val mutablePostScreenModel = MutableStateFlow<UIState<PostScreenModel>>(UIState.Loading)
     val postScreenModel get() = mutablePostScreenModel.asStateFlow()
 
+    private val mutableMessageScreenModel = MutableStateFlow<UIState<MessageScreenModel>>(UIState.Loading)
+    val messageScreenModel get() = mutableMessageScreenModel.asStateFlow()
+
     private val mutableRefreshContent = MutableSharedFlow<Unit>(replay = 1)
 
     init {
@@ -44,14 +44,17 @@ object RainbowModel : Model() {
                     ?.firstOrNull { it.isSuccess }
                     ?.getOrNull()
                     ?.firstOrNull()
-                    ?.let { item ->
-                        when (item) {
+                    ?.also { item ->
+                        val postType = when (item) {
                             is Post -> PostScreenModel.Type.PostEntity(item)
                             is Comment -> PostScreenModel.Type.PostId(item.postId)
                             else -> null
                         }
+                        if (postType != null)
+                            selectPost(postType)
+                        else if (item is Message)
+                            selectMessage(item)
                     }
-                    ?.let(this::selectPost)
             }
             .launchIn(scope)
 
@@ -68,6 +71,11 @@ object RainbowModel : Model() {
     fun selectPost(type: PostScreenModel.Type) {
         val model = PostScreenModel.getOrCreateInstance(type)
         mutablePostScreenModel.value = UIState.Success(model)
+    }
+
+    fun selectMessage(message: Message) {
+        val model = MessageScreenModel.getOrCreateInstance(message)
+        mutableMessageScreenModel.value = UIState.Success(model)
     }
 
     fun updatePost(post: Post) {

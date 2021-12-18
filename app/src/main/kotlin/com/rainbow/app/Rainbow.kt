@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.rainbow.app.components.RainbowTopAppBar
 import com.rainbow.app.home.HomeScreen
 import com.rainbow.app.message.MessageScreen
+import com.rainbow.app.message.MessageScreenModel
 import com.rainbow.app.message.MessagesScreen
 import com.rainbow.app.model.ListModel
 import com.rainbow.app.navigation.Screen
@@ -48,7 +49,7 @@ fun Rainbow(
     modifier: Modifier = Modifier,
 ) {
     val postScreenModel by RainbowModel.postScreenModel.collectAsState()
-    var message by remember { mutableStateOf<UIState<Message>>(UIState.Loading) }
+    val messageScreenModel by RainbowModel.messageScreenModel.collectAsState()
     val focusRequester = remember { FocusRequester() }
     var snackbarMessage by remember { mutableStateOf<String?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -91,7 +92,7 @@ fun Rainbow(
                         focusRequester,
                         onUserNameClick,
                         onSubredditNameClick,
-                        onMessageClick = { message = UIState.Success(it) },
+                        RainbowModel::selectMessage,
                         onShowSnackbar = { snackbarMessage = it },
                         RainbowModel::setListModel,
                         onPostClick = { RainbowModel.selectPost(PostScreenModel.Type.PostEntity(it)) },
@@ -103,7 +104,7 @@ fun Rainbow(
                     EndContent(
                         screen,
                         postScreenModel,
-                        message,
+                        messageScreenModel,
                         focusRequester,
                         onUserNameClick,
                         onSubredditNameClick,
@@ -189,6 +190,7 @@ private fun CenterContent(
                     onMessageClick,
                     onUserNameClick,
                     onShowSnackbar,
+                    setListModel,
                     modifier,
                 )
                 Screen.SidebarItem.Settings -> SettingsScreen()
@@ -236,8 +238,8 @@ private fun CenterContent(
 @Composable
 private fun EndContent(
     screen: Screen,
-    modelState: UIState<PostScreenModel>,
-    message: UIState<Message>,
+    postModelState: UIState<PostScreenModel>,
+    messageModelState: UIState<MessageScreenModel>,
     focusRequester: FocusRequester,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
@@ -246,14 +248,15 @@ private fun EndContent(
     onCommentUpdate: (Comment) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isPostScreen = screen is Screen.User || screen is Screen.Subreddit
-            || screen is Screen.Search || screen is Screen.SidebarItem.Profile || screen is Screen.SidebarItem.Home
-    when {
-        screen is Screen.SidebarItem.Messages -> message.composed(onShowSnackbar, modifier) {
-            MessageScreen(it,
-                modifier)
+    when (screen) {
+        Screen.SidebarItem.Messages -> messageModelState.composed(onShowSnackbar, modifier) { model ->
+            MessageScreen(
+                model,
+                modifier
+            )
         }
-        isPostScreen -> modelState.composed(onShowSnackbar, modifier) { model ->
+        Screen.SidebarItem.Settings, Screen.SidebarItem.Subreddits -> {}
+        else -> postModelState.composed(onShowSnackbar, modifier) { model ->
             PostScreen(
                 model,
                 focusRequester,
