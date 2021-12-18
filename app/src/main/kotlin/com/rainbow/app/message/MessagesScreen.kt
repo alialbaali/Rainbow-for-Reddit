@@ -1,6 +1,8 @@
 package com.rainbow.app.message
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.rainbow.app.components.DefaultTabRow
 import com.rainbow.app.components.RainbowLazyColumn
@@ -19,6 +21,7 @@ enum class MessageTab {
 inline fun MessagesScreen(
     crossinline onMessageClick: (Message) -> Unit,
     crossinline onUserNameClick: (String) -> Unit,
+    crossinline onSubredditNameClick: (String) -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
     crossinline setListModel: (ListModel<*>) -> Unit,
     modifier: Modifier = Modifier,
@@ -42,31 +45,31 @@ inline fun MessagesScreen(
         when (selectedTab) {
             MessageTab.Inbox -> {
                 setListModel(MessagesScreenModel.inboxMessages)
-                messages(inboxMessages, onMessageClick, onUserNameClick)
+                messages(inboxMessages, onMessageClick, onUserNameClick, onSubredditNameClick)
             }
             MessageTab.Unread -> {
                 setListModel(MessagesScreenModel.unreadMessages)
-                messages(unreadMessages, onMessageClick, onUserNameClick)
+                messages(unreadMessages, onMessageClick, onUserNameClick, onSubredditNameClick)
             }
             MessageTab.Sent -> {
                 setListModel(MessagesScreenModel.sentMessages)
-                messages(sentMessages, onMessageClick, onUserNameClick)
+                messages(sentMessages, onMessageClick, onUserNameClick, onSubredditNameClick)
             }
             MessageTab.Messages -> {
                 setListModel(MessagesScreenModel.messages)
-                messages(messages, onMessageClick, onUserNameClick)
+                messages(messages, onMessageClick, onUserNameClick, onSubredditNameClick)
             }
             MessageTab.Mentions -> {
                 setListModel(MessagesScreenModel.mentions)
-                messages(mentions, onMessageClick, onUserNameClick)
+                messages(mentions, onMessageClick, onUserNameClick, onSubredditNameClick)
             }
             MessageTab.PostMessages -> {
                 setListModel(MessagesScreenModel.postMessages)
-                messages(postMessages, onMessageClick, onUserNameClick)
+                messages(postMessages, onMessageClick, onUserNameClick, onSubredditNameClick)
             }
             MessageTab.CommentMessages -> {
                 setListModel(MessagesScreenModel.commentMessages)
-                messages(commentMessages, onMessageClick, onUserNameClick)
+                messages(commentMessages, onMessageClick, onUserNameClick, onSubredditNameClick)
             }
         }
     }

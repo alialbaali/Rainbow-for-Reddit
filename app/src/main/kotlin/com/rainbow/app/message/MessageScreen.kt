@@ -9,11 +9,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 
 @Composable
-fun MessageScreen(model: MessageScreenModel, modifier: Modifier = Modifier) {
+inline fun MessageScreen(
+    model: MessageScreenModel,
+    crossinline onUserNameClick: (String) -> Unit,
+    crossinline onSubredditNameClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val message by model.message.collectAsState()
     var text by remember { mutableStateOf("") }
     Column(modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceBetween) {
-        MessageItem(message, onClick = {}, onUserNameClick = {})
+        MessageItem(message, onUserNameClick, onSubredditNameClick)
         OutlinedTextField(
             value = text,
             onValueChange = { text = it },

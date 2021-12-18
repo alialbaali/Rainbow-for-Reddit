@@ -187,6 +187,7 @@ private fun CenterContent(
                 Screen.SidebarItem.Messages -> MessagesScreen(
                     onMessageClick,
                     onUserNameClick,
+                    onSubredditNameClick,
                     onShowSnackbar,
                     setListModel,
                     modifier,
@@ -246,18 +247,16 @@ private fun EndContent(
     onCommentUpdate: (Comment) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isPostScreen = messageModelState
-        .map {
-            it.message.value.type is Message.Type.PostReply
-                    || it.message.value.type is Message.Type.CommentReply
-                    || it.message.value.type is Message.Type.Mention
-        }
+    val isMessageScreen = messageModelState
+        .map { it.message.value.type is Message.Type.Message }
         .getOrDefault(false)
     when {
-        screen is Screen.SidebarItem.Messages && !isPostScreen ->
+        screen is Screen.SidebarItem.Messages && isMessageScreen ->
             messageModelState.composed(onShowSnackbar, modifier) { model ->
                 MessageScreen(
                     model,
+                    onUserNameClick,
+                    onSubredditNameClick,
                     modifier
                 )
             }

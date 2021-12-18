@@ -7,6 +7,7 @@ data class Message(
     val id: String,
     val userId: String,
     val userName: String,
+    val subredditName: String?,
     val subject: String,
     val body: String,
     val isNew: Boolean,

@@ -239,6 +239,7 @@ internal object Mappers {
                 name!!,
                 authorFullname ?: "",
                 author!!,
+                subreddit,
                 when (type) {
                     "unknown" -> subject!!
                     else -> linkTitle!!
