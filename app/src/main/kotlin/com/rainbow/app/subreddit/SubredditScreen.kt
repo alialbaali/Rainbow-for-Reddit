@@ -113,7 +113,7 @@ private fun LazyListScope.wiki(wikiState: UIState<WikiPage>, onShowSnackbar: (St
 private fun LazyListScope.description(state: UIState<Subreddit>, onShowSnackbar: (String) -> Unit) {
     item {
         state.composed(onShowSnackbar) {
-            Markdown(
+            MarkdownText(
                 it.longDescription,
                 Modifier.defaultSurfaceShape()
                     .defaultPadding()
@@ -131,7 +131,7 @@ private fun Header(subreddit: Subreddit, onShowSnackbar: (String) -> Unit, modif
             .heightIn(min = 350.dp)
             .fillMaxWidth()
     ) {
-        HeaderItem(
+        ScreenHeaderItem(
             subreddit.bannerImageUrl.toString(),
             subreddit.imageUrl.toString(),
             subreddit.name,

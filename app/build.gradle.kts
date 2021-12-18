@@ -20,6 +20,7 @@ dependencies {
     implementation("com.arkivanov.decompose:extensions-compose-jetbrains:0.4.0")
     implementation("com.arkivanov.decompose:decompose:0.4.0")
     implementation("uk.co.caprica:vlcj:4.7.0")
+    implementation ("com.halilibo.compose-richtext:richtext-commonmark:0.9.0")
 }
 
 compose.desktop {
