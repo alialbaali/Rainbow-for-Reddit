@@ -180,7 +180,11 @@ private fun CenterContent(
                     setListModel,
                     modifier,
                 )
-                Screen.SidebarItem.Subreddits -> CurrentUserSubredditsScreen(onSubredditNameClick, onShowSnackbar)
+                Screen.SidebarItem.Subreddits -> CurrentUserSubredditsScreen(
+                    onSubredditNameClick,
+                    onShowSnackbar,
+                    setListModel
+                )
                 Screen.SidebarItem.Messages -> MessagesScreen(
                     onMessageClick,
                     onUserNameClick,
