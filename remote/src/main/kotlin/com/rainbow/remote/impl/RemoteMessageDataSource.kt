@@ -16,44 +16,51 @@ fun RemoteMessageDataSource(client: HttpClient = redditClient): RemoteMessageDat
 
 private class RemoteMessageDataSourceImpl(private val client: HttpClient) : RemoteMessageDataSource {
 
-    override suspend fun getInbox(): Result<List<RemoteMessage>> {
+    override suspend fun getInbox(limit: Int, after: String?): Result<List<RemoteMessage>> {
         return client.get<Listing<RemoteMessage>>(Messages.Inbox) {
-            parameter(Keys.Limit, 100)
+            parameter(Keys.Limit, limit)
+            parameter(Keys.After, after)
         }.mapCatching { it.toList() }
     }
 
-    override suspend fun getUnreadInbox(): Result<List<RemoteMessage>> {
+    override suspend fun getUnreadInbox(limit: Int, after: String?): Result<List<RemoteMessage>> {
         return client.get<Listing<RemoteMessage>>(Messages.UnreadInbox) {
-            parameter(Keys.Limit, 100)
+            parameter(Keys.Limit, limit)
+            parameter(Keys.After, after)
         }.mapCatching { it.toList() }
     }
 
-    override suspend fun getSent(): Result<List<RemoteMessage>> {
+    override suspend fun getSent(limit: Int, after: String?): Result<List<RemoteMessage>> {
         return client.get<Listing<RemoteMessage>>(Messages.Sent) {
-            parameter(Keys.Limit, 100)
+            parameter(Keys.Limit, limit)
+            parameter(Keys.After, after)
         }.mapCatching { it.toList() }
     }
 
-    override suspend fun getMessages(): Result<List<RemoteMessage>>{
+    override suspend fun getMessages(limit: Int, after: String?): Result<List<RemoteMessage>>{
         return client.get<Listing<RemoteMessage>>(Messages.Messages) {
-            parameter(Keys.Limit, 100)
+            parameter(Keys.Limit, limit)
+            parameter(Keys.After, after)
         }.mapCatching { it.toList() }
     }
-    override suspend fun getMentions(): Result<List<RemoteMessage>> {
+    override suspend fun getMentions(limit: Int, after: String?): Result<List<RemoteMessage>> {
         return client.get<Listing<RemoteMessage>>(Messages.Mentions) {
-            parameter(Keys.Limit, 100)
+            parameter(Keys.Limit, limit)
+            parameter(Keys.After, after)
         }.mapCatching { it.toList() }
     }
 
-    override suspend fun getPostReplies(): Result<List<RemoteMessage>> {
+    override suspend fun getPostReplies(limit: Int, after: String?): Result<List<RemoteMessage>> {
         return client.get<Listing<RemoteMessage>>(Messages.PostReplies) {
-            parameter(Keys.Limit, 100)
+            parameter(Keys.Limit, limit)
+            parameter(Keys.After, after)
         }.mapCatching { it.toList() }
     }
 
-    override suspend fun getCommentReplies(): Result<List<RemoteMessage>> {
+    override suspend fun getCommentReplies(limit: Int, after: String?): Result<List<RemoteMessage>> {
         return client.get<Listing<RemoteMessage>>(Messages.CommentReplies) {
-            parameter(Keys.Limit, 100)
+            parameter(Keys.Limit, limit)
+            parameter(Keys.After, after)
         }.mapCatching { it.toList() }
     }
 
