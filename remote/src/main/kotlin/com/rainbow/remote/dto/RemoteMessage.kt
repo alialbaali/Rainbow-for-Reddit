@@ -55,5 +55,7 @@ data class RemoteMessage(
     @SerialName("type")
     val type: String? = null, // unknown
     @SerialName("was_comment")
-    val wasComment: Boolean? = null // false
+    val wasComment: Boolean? = null, // false
+    @SerialName("link_title")
+    val linkTitle: String? = null,
 )

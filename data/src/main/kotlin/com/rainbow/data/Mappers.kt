@@ -239,7 +239,10 @@ internal object Mappers {
                 name!!,
                 authorFullname ?: "",
                 author!!,
-                subject!!,
+                when (type) {
+                    "unknown" -> subject!!
+                    else -> linkTitle!!
+                },
                 body!!,
                 new!!,
                 when (type) {
@@ -314,5 +317,5 @@ internal object Mappers {
         .fromEpochSeconds(this)
         .toLocalDateTime(TimeZone.currentSystemDefault())
 
-    private fun String.getPostId() = "t3_" +substringAfter("comments/").substringBefore("/")
+    private fun String.getPostId() = "t3_" + substringAfter("comments/").substringBefore("/")
 }
