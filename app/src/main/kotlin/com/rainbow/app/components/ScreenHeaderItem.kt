@@ -29,7 +29,7 @@ import io.kamel.image.lazyPainterResource
 
 
 @Composable
-fun HeaderItem(
+fun ScreenHeaderItem(
     bannerImageUrl: String,
     imageUrl: String,
     text: String,
@@ -96,7 +96,7 @@ fun HeaderItem(
             contentScale = ContentScale.Fit,
             crossfade = true,
             onLoading = { RainbowProgressIndicator(ImageModifier) },
-            onFailure = { TextImage(text, 200.sp, ImageModifier.background(MaterialTheme.colors.secondary)) }
+            onFailure = { TextBox(text, 180.sp, ImageModifier.background(MaterialTheme.colors.secondary)) }
         )
 
         Text(
