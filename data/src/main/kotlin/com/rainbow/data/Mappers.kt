@@ -244,9 +244,9 @@ internal object Mappers {
                 new!!,
                 when (type) {
                     "unknown" -> Message.Type.Message
-                    "post_reply" -> Message.Type.PostReply
-                    "comment_reply" -> Message.Type.CommentReply
-                    "username_mention" -> Message.Type.Mention
+                    "post_reply" -> Message.Type.PostReply(parentId ?: "")
+                    "comment_reply" -> Message.Type.CommentReply(context?.getPostId() ?: "")
+                    "username_mention" -> Message.Type.Mention(context?.getPostId() ?: "")
                     else -> Message.Type.Message
                 },
                 created!!.toLong().toLocalDateTime(),
@@ -313,4 +313,6 @@ internal object Mappers {
     fun Long.toLocalDateTime() = Instant
         .fromEpochSeconds(this)
         .toLocalDateTime(TimeZone.currentSystemDefault())
+
+    private fun String.getPostId() = "t3_" +substringAfter("comments/").substringBefore("/")
 }

@@ -13,11 +13,11 @@ data class Message(
     val type: Type,
     val creationDate: LocalDateTime,
 ) {
-    enum class Type {
-        Mention,
-        Message,
-        PostReply,
-        CommentReply,
+    sealed interface Type {
+        object Message : Type
+        class Mention(val postId: String) : Type
+        class PostReply(val postId: String) : Type
+        class CommentReply(val postId: String) : Type
     }
 }
 

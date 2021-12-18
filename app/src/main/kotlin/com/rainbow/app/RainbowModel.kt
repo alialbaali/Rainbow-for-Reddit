@@ -53,7 +53,7 @@ object RainbowModel : Model() {
                         if (postType != null)
                             selectPost(postType)
                         else if (item is Message)
-                            selectMessage(item)
+                            selectMessageOrPost(item)
                     }
             }
             .launchIn(scope)
@@ -73,7 +73,15 @@ object RainbowModel : Model() {
         mutablePostScreenModel.value = UIState.Success(model)
     }
 
-    fun selectMessage(message: Message) {
+    fun selectMessageOrPost(message: Message) {
+        val postId = when (message.type) {
+            is Message.Type.PostReply -> (message.type as Message.Type.PostReply).postId
+            is Message.Type.CommentReply -> (message.type as Message.Type.CommentReply).postId
+            is Message.Type.Mention -> (message.type as Message.Type.Mention).postId
+            else -> null
+        }
+        if (postId != null)
+            selectPost(PostScreenModel.Type.PostId(postId))
         val model = MessageScreenModel.getOrCreateInstance(message)
         mutableMessageScreenModel.value = UIState.Success(model)
     }

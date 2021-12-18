@@ -27,9 +27,7 @@ import com.rainbow.app.sidebar.Sidebar
 import com.rainbow.app.subreddit.CurrentUserSubredditsScreen
 import com.rainbow.app.subreddit.SubredditScreen
 import com.rainbow.app.user.UserScreen
-import com.rainbow.app.utils.UIState
-import com.rainbow.app.utils.composed
-import com.rainbow.app.utils.defaultPadding
+import com.rainbow.app.utils.*
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.Message
 import com.rainbow.domain.models.Post
@@ -92,7 +90,7 @@ fun Rainbow(
                         focusRequester,
                         onUserNameClick,
                         onSubredditNameClick,
-                        RainbowModel::selectMessage,
+                        RainbowModel::selectMessageOrPost,
                         onShowSnackbar = { snackbarMessage = it },
                         RainbowModel::setListModel,
                         onPostClick = { RainbowModel.selectPost(PostScreenModel.Type.PostEntity(it)) },
@@ -248,14 +246,23 @@ private fun EndContent(
     onCommentUpdate: (Comment) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    when (screen) {
-        Screen.SidebarItem.Messages -> messageModelState.composed(onShowSnackbar, modifier) { model ->
-            MessageScreen(
-                model,
-                modifier
-            )
+    val isPostScreen = messageModelState
+        .map {
+            it.message.value.type is Message.Type.PostReply
+                    || it.message.value.type is Message.Type.CommentReply
+                    || it.message.value.type is Message.Type.Mention
         }
-        Screen.SidebarItem.Settings, Screen.SidebarItem.Subreddits -> {}
+        .getOrDefault(false)
+    when {
+        screen is Screen.SidebarItem.Messages && !isPostScreen ->
+            messageModelState.composed(onShowSnackbar, modifier) { model ->
+                MessageScreen(
+                    model,
+                    modifier
+                )
+            }
+        screen is Screen.SidebarItem.Settings -> {}
+        screen is Screen.SidebarItem.Subreddits -> {}
         else -> postModelState.composed(onShowSnackbar, modifier) { model ->
             PostScreen(
                 model,
