@@ -10,7 +10,6 @@ import com.rainbow.app.components.DefaultTabRow
 import com.rainbow.app.components.RainbowLazyColumn
 import com.rainbow.app.model.ListModel
 import com.rainbow.app.post.posts
-import com.rainbow.app.utils.OneTimeEffect
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.Post
 
@@ -39,12 +38,6 @@ inline fun HomeScreen(
     val postsState by HomeScreenModel.postListModel.items.collectAsState()
     val commentsState by HomeScreenModel.commentListModel.items.collectAsState()
     val selectedTab by HomeScreenModel.selectedTab.collectAsState()
-    OneTimeEffect(selectedTab) {
-        when (selectedTab) {
-            HomeTab.Posts -> setListModel(HomeScreenModel.postListModel)
-            HomeTab.Comments -> setListModel(HomeScreenModel.commentListModel)
-        }
-    }
     RainbowLazyColumn(modifier) {
         item {
             DefaultTabRow(
@@ -53,24 +46,30 @@ inline fun HomeScreen(
             )
         }
         when (selectedTab) {
-            HomeTab.Posts -> posts(
-                postsState,
-                onPostUpdate,
-                postLayout,
-                focusRequester,
-                onUserNameClick,
-                onSubredditNameClick,
-                onShowSnackbar,
-                setLastPost = {},
-                onPostClick,
-            )
-            HomeTab.Comments -> comments(
-                commentsState,
-                onUserNameClick,
-                onSubredditNameClick,
-                onCommentClick,
-                onCommentUpdate,
-            )
+            HomeTab.Posts -> {
+                setListModel(HomeScreenModel.postListModel)
+                posts(
+                    postsState,
+                    onPostUpdate,
+                    postLayout,
+                    focusRequester,
+                    onUserNameClick,
+                    onSubredditNameClick,
+                    onShowSnackbar,
+                    setLastPost = {},
+                    onPostClick,
+                )
+            }
+            HomeTab.Comments -> {
+                setListModel(HomeScreenModel.commentListModel)
+                comments(
+                    commentsState,
+                    onUserNameClick,
+                    onSubredditNameClick,
+                    onCommentClick,
+                    onCommentUpdate,
+                )
+            }
         }
     }
 }
