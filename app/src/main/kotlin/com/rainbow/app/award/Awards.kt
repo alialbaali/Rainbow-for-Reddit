@@ -1,15 +1,16 @@
 package com.rainbow.app.award
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -19,6 +20,8 @@ import com.rainbow.domain.models.Award
 fun Awards(awards: List<Award>, modifier: Modifier = Modifier) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
+    var isDialogVisible by remember { mutableStateOf(false) }
+    var selectedAward by remember { mutableStateOf(awards.firstOrNull()) }
     Column(modifier) {
         Row(
             modifier = Modifier
@@ -26,8 +29,8 @@ fun Awards(awards: List<Award>, modifier: Modifier = Modifier) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            awards.onEach { award ->
-                Award(
+            awards.forEach { award ->
+                AwardImage(
                     award,
                     modifier = Modifier.size(20.dp),
                 )
@@ -41,19 +44,19 @@ fun Awards(awards: List<Award>, modifier: Modifier = Modifier) {
             modifier = Modifier.hoverable(interactionSource)
         ) {
             awards.forEach { award ->
-                DropdownMenuItem(
-                    onClick = {},
-                    Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                ) {
-                    Award(award, Modifier.size(24.dp))
-                    Spacer(Modifier.width(16.dp))
-                    Text(award.name, Modifier.weight(1F))
-                    Spacer(Modifier.width(16.dp))
-                    Text(award.count.toString())
-                }
+                AwardMenuItem(
+                    award,
+                    onClick = {
+                        selectedAward = award
+                        isDialogVisible = true
+                    },
+                )
             }
+        }
+    }
+    AnimatedVisibility(isDialogVisible) {
+        selectedAward?.let { award ->
+            AwardDialog(award, onCloseRequest = { isDialogVisible = false })
         }
     }
 }
