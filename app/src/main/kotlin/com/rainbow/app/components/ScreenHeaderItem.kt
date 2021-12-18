@@ -1,6 +1,7 @@
 package com.rainbow.app.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -18,6 +19,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.rainbow.app.utils.ImageBorderSize
 import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.app.utils.defaultPadding
@@ -62,9 +64,9 @@ fun HeaderItem(
         .offset(y = 100.dp)
         .graphicsLayer {
             clip = true
-            this.shape = imageShape
+            shape = imageShape
         }
-        .border(ImageBorderSize, MaterialTheme.colors.background, imageShape)
+        .border(ImageBorderSize, MaterialTheme.colors.surface, imageShape)
 
     Box(
         modifier
@@ -94,13 +96,7 @@ fun HeaderItem(
             contentScale = ContentScale.Fit,
             crossfade = true,
             onLoading = { RainbowProgressIndicator(ImageModifier) },
-            onFailure = {
-                Image(
-                    ColorPainter(MaterialTheme.colors.secondary),
-                    text,
-                    ImageModifier,
-                )
-            }
+            onFailure = { TextImage(text, 200.sp, ImageModifier.background(MaterialTheme.colors.secondary)) }
         )
 
         Text(
