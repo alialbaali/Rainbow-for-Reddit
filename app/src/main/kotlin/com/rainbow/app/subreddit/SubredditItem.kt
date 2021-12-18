@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
+import com.rainbow.app.components.HeaderItem
 import com.rainbow.app.components.MenuIconButton
 import com.rainbow.app.components.RainbowMenu
 import com.rainbow.app.components.RainbowMenuItem
@@ -34,7 +35,7 @@ fun SubredditItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        SubredditItemHeader(subreddit)
+        HeaderItem(subreddit.bannerImageUrl.toString(), subreddit.imageUrl.toString(), subreddit.name)
         SubredditItemName(subreddit.name, Modifier.padding(horizontal = 16.dp))
         SubredditItemActions(subreddit, onShowSnackbar, Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp))
     }

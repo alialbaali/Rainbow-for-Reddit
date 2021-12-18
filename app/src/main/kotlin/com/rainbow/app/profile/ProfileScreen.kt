@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.sp
 import com.rainbow.app.comment.comments
 import com.rainbow.app.components.DefaultTabRow
 import com.rainbow.app.components.HeaderDescription
-import com.rainbow.app.components.HeaderItem
+import com.rainbow.app.components.ScreenHeaderItem
 import com.rainbow.app.components.RainbowLazyColumn
 import com.rainbow.app.item.items
 import com.rainbow.app.model.ListModel
@@ -182,7 +182,7 @@ fun Header(user: User, modifier: Modifier = Modifier) {
             .heightIn(min = 350.dp)
             .fillMaxWidth()
     ) {
-        HeaderItem(user.bannerImageUrl.toString(), user.imageUrl.toString(), user.name)
+        ScreenHeaderItem(user.bannerImageUrl.toString(), user.imageUrl.toString(), user.name)
         HeaderDescription(
             user,
             Modifier

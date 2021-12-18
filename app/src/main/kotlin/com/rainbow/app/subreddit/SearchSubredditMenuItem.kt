@@ -13,14 +13,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.app.components.RainbowProgressIndicator
-import com.rainbow.app.components.TextImage
+import com.rainbow.app.components.TextBox
 import com.rainbow.domain.models.Subreddit
 import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
 
 private val ImageModifier
     @Composable
-    get() = Modifier.size(24.dp).clip(MaterialTheme.shapes.small)
+    get() = Modifier.size(24.dp).clip(MaterialTheme.shapes.small).background(MaterialTheme.colors.secondary)
 
 @Composable
 fun SearchSubredditMenuItem(
@@ -38,13 +38,7 @@ fun SearchSubredditMenuItem(
             subreddit.name,
             ImageModifier,
             onLoading = { RainbowProgressIndicator() },
-            onFailure = {
-                TextImage(
-                    subreddit.name,
-                    ImageModifier.background(MaterialTheme.colors.secondary),
-                    fontSize = 16.sp
-                )
-            }
+            onFailure = { TextBox(subreddit.name, 16.sp, ImageModifier) }
         )
         Spacer(Modifier.width(16.dp))
         Text(subreddit.name)

@@ -2,10 +2,8 @@ package com.rainbow.app.subreddit
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.rounded.PlaylistAdd
@@ -14,39 +12,16 @@ import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.ColorPainter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rainbow.app.components.RainbowProgressIndicator
-import com.rainbow.app.components.TextImage
-import com.rainbow.app.utils.ImageBorderSize
 import com.rainbow.app.utils.RainbowIcons
 import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.app.utils.defaultSurfaceShape
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.Subreddit
-import io.kamel.image.KamelImage
-import io.kamel.image.lazyPainterResource
 import kotlinx.coroutines.launch
-
-private val BannerImageModifier = Modifier
-    .height(100.dp)
-    .fillMaxWidth()
-
-private val BoxScope.ImageModifier
-    @Composable
-    get() = Modifier
-        .padding(top = 50.dp)
-        .border(ImageBorderSize, MaterialTheme.colors.background, MaterialTheme.shapes.large)
-        .size(100.dp)
-        .clip(MaterialTheme.shapes.large)
-        .align(Alignment.BottomCenter)
-
 
 @Composable
 fun SubredditItemName(subredditName: String, modifier: Modifier = Modifier) {
@@ -57,39 +32,6 @@ fun SubredditItemName(subredditName: String, modifier: Modifier = Modifier) {
         fontWeight = FontWeight.Medium,
         color = MaterialTheme.colors.onBackground
     )
-}
-
-@Composable
-fun SubredditItemHeader(subreddit: Subreddit) {
-    val bannerPainterResource = lazyPainterResource(subreddit.bannerImageUrl.toString())
-    val painterResource = lazyPainterResource(subreddit.imageUrl.toString())
-    Box {
-
-        KamelImage(
-            bannerPainterResource,
-            contentDescription = subreddit.name,
-            modifier = BannerImageModifier,
-            contentScale = ContentScale.Crop,
-            onLoading = { RainbowProgressIndicator(BannerImageModifier) },
-            onFailure = {
-                Image(
-                    ColorPainter(
-                        MaterialTheme.colors.primary,
-                    ),
-                    subreddit.name,
-                    BannerImageModifier,
-                )
-            }
-        )
-
-        KamelImage(
-            resource = painterResource,
-            contentDescription = subreddit.name,
-            modifier = ImageModifier,
-            onLoading = { RainbowProgressIndicator(ImageModifier) },
-            onFailure = { TextImage(subreddit.name, ImageModifier.background(MaterialTheme.colors.secondary)) }
-        )
-    }
 }
 
 @OptIn(ExperimentalAnimationApi::class)

@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.rainbow.app.components.HeaderItem
 import com.rainbow.app.utils.defaultSurfaceShape
 import com.rainbow.domain.models.User
 
@@ -24,7 +25,7 @@ fun UserItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        UserItemHeader(user)
+        HeaderItem(user.bannerImageUrl.toString(), user.imageUrl.toString(), user.name)
         UserItemName(user.name, Modifier.padding(horizontal = 16.dp))
     }
 }
