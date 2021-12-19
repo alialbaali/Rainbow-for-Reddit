@@ -83,25 +83,25 @@ inline fun RainbowTopAppBar(
             }
             if (sorting != null && timeSorting != null)
                 when (sorting) {
-                    is HomePostSorting -> PostSorting(
+                    is HomePostSorting -> Sorting(
                         postsSorting = sorting,
                         onSortingUpdate = { setPostSorting(it) },
                         timeSorting = timeSorting,
                         onTimeSortingUpdate = { setTimeSorting(it) },
                     )
-                    is SubredditPostSorting -> PostSorting(
+                    is SubredditPostSorting -> Sorting(
                         postsSorting = sorting,
                         onSortingUpdate = { setPostSorting(it) },
                         timeSorting = timeSorting,
                         onTimeSortingUpdate = { setTimeSorting(it) }
                     )
-                    is UserPostSorting -> PostSorting(
+                    is UserPostSorting -> Sorting(
                         postsSorting = sorting,
                         onSortingUpdate = { setPostSorting(it) },
                         timeSorting = timeSorting,
                         onTimeSortingUpdate = { setTimeSorting(it) }
                     )
-                    is SearchPostSorting -> PostSorting(
+                    is SearchPostSorting -> Sorting(
                         postsSorting = sorting,
                         onSortingUpdate = { setPostSorting(it) },
                         timeSorting = timeSorting,

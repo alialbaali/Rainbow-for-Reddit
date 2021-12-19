@@ -1,7 +1,6 @@
 package com.rainbow.app.post
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -267,27 +266,15 @@ inline fun PostActions(
                 onUnvote = { PostActionsModel.unvotePost(post, onUpdate) }
             )
 
-            Button(
+            TextIconButton(
+                post.commentsCount.toString(),
+                RainbowIcons.QuestionAnswer,
+                RainbowIcons.QuestionAnswer.name,
                 onClick = {
                     onClick(post)
                     focusRequester.requestFocus()
                 },
-                colors = ButtonDefaults.buttonColors(
-                    MaterialTheme.colors.background,
-                    MaterialTheme.colors.onBackground,
-                ),
-                elevation = null,
-                border = BorderStroke(1.dp, MaterialTheme.colors.onBackground.copy(0.1F)),
-                shape = CircleShape,
-                contentPadding = PaddingValues(16.dp, 12.dp)
-            ) {
-                Icon(RainbowIcons.QuestionAnswer, contentDescription = RainbowIcons.QuestionAnswer.name)
-                Spacer(Modifier.width(16.dp))
-                Text(
-                    text = post.commentsCount.toString(),
-                    fontSize = 14.sp,
-                )
-            }
+            )
         }
 
         Column {

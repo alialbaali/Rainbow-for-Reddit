@@ -1,22 +1,21 @@
 package com.rainbow.app.components
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.utils.RainbowIcons
-import com.rainbow.app.utils.defaultPadding
-import com.rainbow.app.utils.defaultSurfaceShape
 import com.rainbow.domain.models.*
 
 @Composable
-inline fun <reified T : Enum<T>> PostSorting(
+inline fun <reified T : Enum<T>> Sorting(
     postsSorting: T,
     crossinline onSortingUpdate: (T) -> Unit,
     timeSorting: TimeSorting,
@@ -27,13 +26,13 @@ inline fun <reified T : Enum<T>> PostSorting(
         modifier,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Sorting(
+        SortingItem(
             sorting = postsSorting,
             onSortingUpdate = onSortingUpdate
         )
 
         if (postsSorting is PostSorting && postsSorting.isTimeSorting)
-            Sorting(
+            SortingItem(
                 sorting = timeSorting,
                 onSortingUpdate = onTimeSortingUpdate
             )
@@ -41,7 +40,7 @@ inline fun <reified T : Enum<T>> PostSorting(
 }
 
 @Composable
-inline fun <reified T : Enum<T>> Sorting(
+inline fun <reified T : Enum<T>> SortingItem(
     sorting: T,
     crossinline onSortingUpdate: (T) -> Unit,
     modifier: Modifier = Modifier,
@@ -50,28 +49,13 @@ inline fun <reified T : Enum<T>> Sorting(
     val iconRotation by animateFloatAsState(if (isMenuVisible) 180F else 0F)
     val values = remember(sorting) { enumValues<T>() }
     Column(modifier) {
-        Row(
-            Modifier
-                .defaultSurfaceShape(shape = MaterialTheme.shapes.medium)
-                .clickable { isMenuVisible = !isMenuVisible }
-                .defaultPadding(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                sorting.name,
-                style = MaterialTheme.typography.subtitle1,
-                color = MaterialTheme.colors.primary,
-            )
-
-            Icon(
-                RainbowIcons.ArrowDropUp,
-                contentDescription = null,
-                modifier = Modifier
-                    .rotate(iconRotation),
-                tint = MaterialTheme.colors.primary,
-            )
-        }
+        TextIconButton(
+            sorting.name,
+            RainbowIcons.ArrowDropUp,
+            null,
+            onClick = { isMenuVisible = !isMenuVisible },
+            iconModifier = Modifier.rotate(iconRotation)
+        )
 
         DropdownMenu(
             isMenuVisible,
