@@ -16,6 +16,7 @@ import com.rainbow.app.comment.AddComment
 import com.rainbow.app.comment.postComments
 import com.rainbow.app.components.RainbowIconButton
 import com.rainbow.app.components.RainbowLazyColumn
+import com.rainbow.app.components.Sorting
 import com.rainbow.app.utils.*
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.Post

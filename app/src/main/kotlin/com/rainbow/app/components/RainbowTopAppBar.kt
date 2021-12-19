@@ -16,7 +16,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.navigation.Screen
 import com.rainbow.app.navigation.name
-import com.rainbow.app.post.PostSorting
 import com.rainbow.app.search.SearchTextField
 import com.rainbow.app.utils.RainbowIcons
 import com.rainbow.app.utils.RainbowStrings

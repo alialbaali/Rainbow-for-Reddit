@@ -1,6 +1,6 @@
 package com.rainbow.domain.models
 
-enum class TimeSorting : Sorting {
+enum class TimeSorting {
     Hour, Day, Week,
     Month, Year, All;
 
@@ -88,7 +88,7 @@ enum class UserSort {
 typealias ProfileSort = UserSort
 
 
-enum class PostCommentSorting: Sorting {
+enum class PostCommentSorting : Sorting {
     Confidence, Top, Best, New, Old, Controversial, QA;
 
     companion object {

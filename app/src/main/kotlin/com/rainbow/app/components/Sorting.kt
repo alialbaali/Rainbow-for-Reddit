@@ -1,4 +1,4 @@
-package com.rainbow.app.post
+package com.rainbow.app.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
@@ -48,6 +48,7 @@ inline fun <reified T : Enum<T>> Sorting(
 ) {
     var isMenuVisible by remember { mutableStateOf(false) }
     val iconRotation by animateFloatAsState(if (isMenuVisible) 180F else 0F)
+    val values = remember(sorting) { enumValues<T>() }
     Column(modifier) {
         Row(
             Modifier
@@ -76,29 +77,28 @@ inline fun <reified T : Enum<T>> Sorting(
             isMenuVisible,
             onDismissRequest = { isMenuVisible = !isMenuVisible },
         ) {
-            enumValues<T>().forEach { sorting ->
+            values.forEach { sorting ->
                 DropdownMenuItem(
                     onClick = {
                         onSortingUpdate(sorting)
                         isMenuVisible = false
                     },
+                    Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
                 ) {
-                    (sorting as? PostSorting)?.icon?.let { icon ->
+                    (sorting as? Sorting)?.icon?.let { icon ->
                         Icon(icon, sorting.name)
                     }
-                    Text(
-                        text = sorting.name,
-                        modifier = Modifier
-                            .defaultPadding()
-                            .fillMaxWidth()
-                    )
+                    Spacer(Modifier.width(16.dp))
+                    Text(text = sorting.name, Modifier.fillMaxWidth())
                 }
             }
         }
     }
 }
 
-val PostSorting.icon
+val Sorting.icon
     get() = when (this) {
         is UserPostSorting -> when (this) {
             UserPostSorting.Hot -> RainbowIcons.Whatshot
@@ -126,5 +126,14 @@ val PostSorting.icon
             SearchPostSorting.Top -> RainbowIcons.BarChart
             SearchPostSorting.Hot -> RainbowIcons.Whatshot
             SearchPostSorting.CommentsCount -> RainbowIcons.TrendingUp
+        }
+        is PostCommentSorting -> when (this) {
+            PostCommentSorting.Confidence -> RainbowIcons.Star
+            PostCommentSorting.Top -> RainbowIcons.BarChart
+            PostCommentSorting.Best -> RainbowIcons.Star
+            PostCommentSorting.New -> RainbowIcons.BrightnessLow
+            PostCommentSorting.Old -> RainbowIcons.BrightnessLow
+            PostCommentSorting.Controversial -> RainbowIcons.TrendingDown
+            PostCommentSorting.QA -> RainbowIcons.TrendingDown
         }
     }
