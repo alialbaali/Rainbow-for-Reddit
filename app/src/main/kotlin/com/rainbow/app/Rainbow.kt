@@ -35,7 +35,7 @@ import com.rainbow.domain.models.Post
 @Composable
 fun Rainbow(
     screen: Screen,
-    backStack: List<Screen>,
+    sidebarItem: Screen.SidebarItem,
     onSidebarClick: (Screen.SidebarItem) -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
@@ -62,8 +62,7 @@ fun Rainbow(
     Box(modifier.background(MaterialTheme.colors.background)) {
         Row(Modifier.fillMaxSize()) {
             StartContent(
-                screen,
-                backStack,
+                sidebarItem,
                 onSidebarClick,
                 Modifier
                     .wrapContentWidth(unbounded = true)
@@ -125,13 +124,12 @@ fun Rainbow(
 
 @Composable
 private fun StartContent(
-    screen: Screen,
-    backStack: List<Screen>,
+    sidebarItem: Screen.SidebarItem,
     onSidebarClick: (Screen.SidebarItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Sidebar(
-        screen as? Screen.SidebarItem ?: backStack.last { it is Screen.SidebarItem } as Screen.SidebarItem,
+        sidebarItem,
         onSidebarClick,
         modifier
     )

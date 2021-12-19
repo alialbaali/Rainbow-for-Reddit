@@ -30,7 +30,8 @@ private fun ContentScreen() {
         stateHolder.SaveableStateProvider(animatedScreen) {
             Rainbow(
                 screen = animatedScreen,
-                backStack = backStack,
+                sidebarItem = screen as? Screen.SidebarItem
+                    ?: backStack.lastOrNull { it is Screen.SidebarItem } as Screen.SidebarItem,
                 onSidebarClick = { sidebarItem ->
                     backStack += screen
                     screen = sidebarItem
