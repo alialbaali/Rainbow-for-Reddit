@@ -3,9 +3,6 @@ package com.rainbow.app.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.rounded.ArrowBack
@@ -45,7 +42,7 @@ inline fun RainbowTopAppBar(
     Row(
         modifier = modifier
             .defaultSurfaceShape(shape = RectangleShape)
-            .padding(vertical = 16.dp),
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -54,29 +51,25 @@ inline fun RainbowTopAppBar(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                IconButton(
-                    onClick = onBackClick,
+                RainbowIconButton(
+                    RainbowIcons.ArrowBack,
+                    RainbowStrings.NavigateBack,
+                    onBackClick,
                     enabled = isBackEnabled,
-                    modifier = Modifier
-                        .defaultSurfaceShape(shape = CircleShape)
-                ) {
-                    Icon(RainbowIcons.ArrowBack, RainbowStrings.NavigateBack)
-                }
+                )
 
-                IconButton(
-                    onClick = onForwardClick,
+                RainbowIconButton(
+                    RainbowIcons.ArrowForward,
+                    RainbowStrings.NavigateForward,
+                    onForwardClick,
                     enabled = isForwardEnabled,
-                    modifier = Modifier.defaultSurfaceShape(shape = CircleShape)
-                ) {
-                    Icon(RainbowIcons.ArrowForward, RainbowStrings.NavigateForward)
-                }
+                )
 
-                IconButton(
-                    onClick = onRefresh,
-                    Modifier.defaultSurfaceShape(shape = CircleShape)
-                ) {
-                    Icon(RainbowIcons.Refresh, RainbowStrings.Refresh)
-                }
+                RainbowIconButton(
+                    RainbowIcons.Refresh,
+                    RainbowStrings.Refresh,
+                    onRefresh,
+                )
 
                 Text(
                     when (screen) {

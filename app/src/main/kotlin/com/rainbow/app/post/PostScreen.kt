@@ -3,9 +3,6 @@ package com.rainbow.app.post
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.Composable
@@ -17,6 +14,7 @@ import androidx.compose.ui.focus.focusOrder
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.comment.AddComment
 import com.rainbow.app.comment.postComments
+import com.rainbow.app.components.RainbowIconButton
 import com.rainbow.app.components.RainbowLazyColumn
 import com.rainbow.app.utils.*
 import com.rainbow.domain.models.Comment
@@ -109,41 +107,37 @@ private fun CommentsActions(
     modifier: Modifier = Modifier,
 ) {
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        IconButton(
-            onClick = onBackClick,
-            modifier = Modifier.defaultSurfaceShape(shape = CircleShape),
-            isBackEnabled,
-        ) {
-            Icon(RainbowIcons.ArrowBack, RainbowStrings.NavigateBack)
-        }
+        RainbowIconButton(
+            RainbowIcons.ArrowBack,
+            RainbowStrings.NavigateBack,
+            onBackClick,
+            enabled = isBackEnabled,
+        )
 
-        IconButton(
-            onClick = onForwardClick,
-            modifier = Modifier.defaultSurfaceShape(shape = CircleShape),
-            isForwardEnabled
-        ) {
-            Icon(RainbowIcons.ArrowForward, RainbowStrings.NavigateForward)
-        }
+        RainbowIconButton(
+            RainbowIcons.ArrowForward,
+            RainbowStrings.NavigateForward,
+            onForwardClick,
+            enabled = isForwardEnabled
+        )
 
-        IconButton(
-            onClick = onRefresh,
-            Modifier.defaultSurfaceShape(shape = CircleShape)
-        ) {
-            Icon(RainbowIcons.Refresh, RainbowStrings.Refresh)
-        }
+        RainbowIconButton(
+            RainbowIcons.Refresh,
+            RainbowStrings.Refresh,
+            onRefresh,
+        )
 
-        IconButton(
-            onClick = onExpand,
-            modifier = Modifier.defaultSurfaceShape(shape = CircleShape)
-        ) {
-            Icon(RainbowIcons.UnfoldMore, RainbowStrings.ExpandComments)
-        }
-        IconButton(
-            onClick = onCollapse,
-            modifier = Modifier.defaultSurfaceShape(shape = CircleShape)
-        ) {
-            Icon(RainbowIcons.UnfoldLess, RainbowStrings.CollapseComments)
-        }
+        RainbowIconButton(
+            RainbowIcons.UnfoldMore,
+            RainbowStrings.ExpandComments,
+            onExpand,
+        )
+
+        RainbowIconButton(
+            RainbowIcons.UnfoldLess,
+            RainbowStrings.CollapseComments,
+            onCollapse,
+        )
     }
 }
 
