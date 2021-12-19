@@ -83,7 +83,7 @@ fun CommentActions(
     ) {
         VoteActions(
             vote = comment.vote,
-            votesCount = comment.upvotesCount.toLong(),
+            votesCount = comment.votesCount,
             onUpvote = { CommentActionsModel.upvoteComment(comment, onUpdate) },
             onDownvote = { CommentActionsModel.downvoteComment(comment, onUpdate) },
             onUnvote = { CommentActionsModel.unvoteComment(comment, onUpdate) }

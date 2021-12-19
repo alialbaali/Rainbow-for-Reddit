@@ -34,7 +34,7 @@ import io.kamel.image.lazyPainterResource
 
 @Composable
 fun PostTitle(title: String, isRead: Boolean, modifier: Modifier = Modifier) {
-    PostIsReadProvider(isRead) {
+    IsPostReadProvider(isRead) {
         Text(
             text = title,
             modifier = modifier,
@@ -95,7 +95,7 @@ fun TextPost(text: Post.Type.Text, isRead: Boolean, modifier: Modifier = Modifie
     var maxLines by remember { mutableStateOf(15) }
     var shouldLimitLines by remember { mutableStateOf(false) }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        PostIsReadProvider(isRead) {
+        IsPostReadProvider(isRead) {
             Text(
                 buildAnnotatedString {
                     append(text.body.trim())
@@ -260,7 +260,7 @@ inline fun PostActions(
 
         VoteActions(
             vote = post.vote,
-            votesCount = post.upvotesCount.toLong(),
+            votesCount = post.votesCount,
             onUpvote = { PostActionsModel.upvotePost(post, onUpdate) },
             onDownvote = { PostActionsModel.downvotePost(post, onUpdate) },
             onUnvote = { PostActionsModel.unvotePost(post, onUpdate) }
@@ -329,7 +329,7 @@ inline fun PostActions(
 }
 
 @Composable
-private fun PostIsReadProvider(isRead: Boolean, content: @Composable () -> Unit) {
+private fun IsPostReadProvider(isRead: Boolean, content: @Composable () -> Unit) {
     CompositionLocalProvider(LocalContentAlpha provides if (isRead) ContentAlpha.medium else ContentAlpha.high) {
         content()
     }

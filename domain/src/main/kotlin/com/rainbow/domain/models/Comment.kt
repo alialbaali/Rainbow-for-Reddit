@@ -15,7 +15,7 @@ data class Comment(
     val replies: List<Comment> = emptyList(),
     val type: Type,
     val body: String,
-    val upvotesCount: ULong,
+    val votesCount: Int,
     val awards: List<Award> = emptyList(),
     val isEdited: Boolean = false,
     val isSaved: Boolean = false,

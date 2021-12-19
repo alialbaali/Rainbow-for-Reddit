@@ -14,12 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.app.utils.defaultBackgroundShape
+import com.rainbow.app.utils.format
 import com.rainbow.domain.models.Vote
 
 @Composable
 fun VoteActions(
     vote: Vote,
-    votesCount: Long,
+    votesCount: Int,
     onUpvote: () -> Unit,
     onDownvote: () -> Unit,
     onUnvote: () -> Unit,
@@ -47,7 +48,7 @@ fun VoteActions(
             Vote.Up -> votesCount.inc()
             Vote.Down -> votesCount.dec()
             Vote.None -> votesCount
-        }.toInt()
+        }
     )
 
     Row(
@@ -65,7 +66,7 @@ fun VoteActions(
             },
             tint = contentColor,
         )
-        Text(updatedVotesCount.toString(), fontSize = 14.sp, color = contentColor)
+        Text(updatedVotesCount.format(), fontSize = 14.sp, color = contentColor)
         DownvoteButton(
             onClick = {
                 when (vote) {
