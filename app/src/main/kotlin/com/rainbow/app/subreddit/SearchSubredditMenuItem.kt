@@ -37,7 +37,7 @@ fun SearchSubredditMenuItem(
             painterResource,
             subreddit.name,
             ImageModifier,
-            onLoading = { RainbowProgressIndicator() },
+            onLoading = { RainbowProgressIndicator(Modifier.size(24.dp)) },
             onFailure = { TextBox(subreddit.name, 16.sp, ImageModifier) }
         )
         Spacer(Modifier.width(16.dp))
