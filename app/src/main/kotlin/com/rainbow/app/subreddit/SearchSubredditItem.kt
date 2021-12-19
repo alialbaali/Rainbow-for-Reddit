@@ -3,7 +3,8 @@ package com.rainbow.app.subreddit
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,10 +20,7 @@ import com.rainbow.app.components.HeaderItem
 import com.rainbow.app.components.MenuIconButton
 import com.rainbow.app.components.RainbowMenu
 import com.rainbow.app.components.RainbowMenuItem
-import com.rainbow.app.utils.RainbowIcons
-import com.rainbow.app.utils.RainbowStrings
-import com.rainbow.app.utils.defaultSurfaceShape
-import com.rainbow.app.utils.displayTime
+import com.rainbow.app.utils.*
 import com.rainbow.domain.models.Subreddit
 import com.rainbow.domain.models.fullUrl
 
@@ -63,7 +61,7 @@ private fun SubredditItemDescription(subredditDescription: String, modifier: Mod
 private fun SubredditItemActions(
     subreddit: Subreddit,
     onShowSnackbar: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
     val uriHandler = LocalUriHandler.current
@@ -120,19 +118,18 @@ private fun SubredditInfoItems(subreddit: Subreddit, modifier: Modifier = Modifi
 }
 
 
-
 private data class SubredditInfoItem(val key: String, val value: String, val imageVector: ImageVector)
 
 private val Subreddit.infoItems
     get() = listOf(
         SubredditInfoItem(
             RainbowStrings.Subscribers,
-            subscribersCount.toString(),
+            subscribersCount.format(),
             RainbowIcons.People
         ),
         SubredditInfoItem(
             RainbowStrings.ActiveSubscribers,
-            activeSubscribersCount.toString(),
+            activeSubscribersCount.format(),
             RainbowIcons.EmojiPeople
         ),
         SubredditInfoItem(
