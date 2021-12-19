@@ -59,10 +59,10 @@ fun RainbowDialog(
         ) {
             Column(
                 modifier = Modifier
-                    .size(250.dp)
+                    .width(250.dp)
                     .clip(MaterialTheme.shapes.large)
                     .background(MaterialTheme.colors.surface),
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
