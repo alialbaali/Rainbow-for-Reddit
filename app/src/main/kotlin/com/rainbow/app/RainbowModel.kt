@@ -9,25 +9,41 @@ import com.rainbow.app.utils.Constants
 import com.rainbow.app.utils.UIState
 import com.rainbow.app.utils.getOrNull
 import com.rainbow.domain.models.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 
-@OptIn(FlowPreview::class)
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 object RainbowModel : Model() {
 
     private val mutableListModel = MutableStateFlow<UIState<ListModel<Any>>>(UIState.Loading)
 
-    val sorting
-        get() = mutableListModel.map {
-            val sortedListModel = it.getOrNull() as? SortedListModel<Any, *>
-            sortedListModel?.sorting?.value
-        }.stateIn(scope, SharingStarted.Lazily, null)
+    private val items = callbackFlow {
+        mutableListModel
+            .onEach { it.getOrNull()?.items?.collect { send(it) } }
+            .launchIn(scope)
+        awaitClose()
+    }.stateIn(scope, SharingStarted.Lazily, UIState.Loading)
 
-    val timeSorting
-        get() = mutableListModel.map {
-            val sortedListModel = it.getOrNull() as? SortedListModel<Any, *>
-            sortedListModel?.timeSorting?.value
-        }.stateIn(scope, SharingStarted.Lazily, null)
+    val sorting = callbackFlow {
+        mutableListModel
+            .onEach {
+                val sortedListModel = it.getOrNull() as? SortedListModel<Any, *>
+                sortedListModel?.sorting?.collect { send(it) }
+            }
+            .launchIn(scope)
+        awaitClose()
+    }.stateIn(scope, SharingStarted.Lazily, null)
+
+    val timeSorting = callbackFlow {
+        mutableListModel
+            .onEach {
+                val sortedListModel = it.getOrNull() as? SortedListModel<Any, *>
+                sortedListModel?.timeSorting?.collect { send(it) }
+            }.launchIn(scope)
+        awaitClose()
+    }.stateIn(scope, SharingStarted.Lazily, null)
 
     private val mutablePostScreenModel = MutableStateFlow<UIState<PostScreenModel>>(UIState.Loading)
     val postScreenModel get() = mutablePostScreenModel.asStateFlow()
@@ -38,25 +54,21 @@ object RainbowModel : Model() {
     private val mutableRefreshContent = MutableSharedFlow<Unit>(replay = 1)
 
     init {
-        mutableListModel
-            .onEach {
-                it.getOrNull()?.items
-                    ?.firstOrNull { it.isSuccess }
-                    ?.getOrNull()
-                    ?.firstOrNull()
-                    ?.also { item ->
-                        val postType = when (item) {
-                            is Post -> PostScreenModel.Type.PostEntity(item)
-                            is Comment -> PostScreenModel.Type.PostId(item.postId)
-                            else -> null
-                        }
-                        if (postType != null)
-                            selectPost(postType)
-                        else if (item is Message)
-                            selectMessageOrPost(item)
+        combine(items, sorting, timeSorting) { items, _, _ ->
+            items.getOrNull()
+                ?.firstOrNull()
+                ?.also { item ->
+                    val postType = when (item) {
+                        is Post -> PostScreenModel.Type.PostEntity(item)
+                        is Comment -> PostScreenModel.Type.PostId(item.postId)
+                        else -> null
                     }
-            }
-            .launchIn(scope)
+                    if (postType != null)
+                        selectPost(postType)
+                    else if (item is Message)
+                        selectMessageOrPost(item)
+                }
+        }.launchIn(scope)
 
         mutableRefreshContent
             .debounce(Constants.RefreshContentDebounceTime)
