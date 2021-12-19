@@ -90,7 +90,7 @@ inline fun <reified T : Enum<T>> Sorting(
                         text = sorting.name,
                         modifier = Modifier
                             .defaultPadding()
-                            .wrapContentWidth()
+                            .fillMaxWidth()
                     )
                 }
             }

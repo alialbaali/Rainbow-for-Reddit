@@ -4,10 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -41,7 +38,9 @@ fun Awards(awards: List<Award>, modifier: Modifier = Modifier) {
             isHovered,
             onDismissRequest = {},
             focusable = false,
-            modifier = Modifier.hoverable(interactionSource)
+            modifier = Modifier
+                .hoverable(interactionSource)
+                .heightIn(max = 300.dp)
         ) {
             awards.forEach { award ->
                 AwardMenuItem(
