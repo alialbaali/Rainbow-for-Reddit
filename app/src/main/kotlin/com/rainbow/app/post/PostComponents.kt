@@ -1,6 +1,7 @@
 package com.rainbow.app.post
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -245,9 +246,9 @@ inline fun PostActions(
     noinline onUpdate: (Post) -> Unit,
     focusRequester: FocusRequester,
     crossinline onShowSnackbar: (String) -> Unit,
+    crossinline onClick: (Post) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     var isMenuExpanded by remember { mutableStateOf(false) }
     val uriHandler = LocalUriHandler.current
     val clipboardManager = LocalClipboardManager.current
@@ -257,24 +258,36 @@ inline fun PostActions(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-
-        VoteActions(
-            vote = post.vote,
-            votesCount = post.votesCount,
-            onUpvote = { PostActionsModel.upvotePost(post, onUpdate) },
-            onDownvote = { PostActionsModel.downvotePost(post, onUpdate) },
-            onUnvote = { PostActionsModel.unvotePost(post, onUpdate) }
-        )
-
-        TextIconButton(
-            onClick = { focusRequester.requestFocus() },
-            Modifier.defaultBackgroundShape()
-        ) {
-            Icon(RainbowIcons.QuestionAnswer, contentDescription = RainbowIcons.QuestionAnswer.name)
-            Text(
-                text = post.commentsCount.toString(),
-                fontSize = 14.sp,
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            VoteActions(
+                vote = post.vote,
+                votesCount = post.votesCount,
+                onUpvote = { PostActionsModel.upvotePost(post, onUpdate) },
+                onDownvote = { PostActionsModel.downvotePost(post, onUpdate) },
+                onUnvote = { PostActionsModel.unvotePost(post, onUpdate) }
             )
+
+            Button(
+                onClick = {
+                    onClick(post)
+                    focusRequester.requestFocus()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    MaterialTheme.colors.background,
+                    MaterialTheme.colors.onBackground,
+                ),
+                elevation = null,
+                border = BorderStroke(1.dp, MaterialTheme.colors.onBackground.copy(0.1F)),
+                shape = CircleShape,
+                contentPadding = PaddingValues(16.dp, 12.dp)
+            ) {
+                Icon(RainbowIcons.QuestionAnswer, contentDescription = RainbowIcons.QuestionAnswer.name)
+                Spacer(Modifier.width(16.dp))
+                Text(
+                    text = post.commentsCount.toString(),
+                    fontSize = 14.sp,
+                )
+            }
         }
 
         Column {

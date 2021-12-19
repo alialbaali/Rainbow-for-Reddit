@@ -157,7 +157,7 @@ private fun Post(
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         PostInfo(
             post = post,
             onUserNameClick,
@@ -187,6 +187,7 @@ private fun Post(
             onUpdate,
             focusRequester,
             onShowSnackbar,
+            onClick = {},
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),

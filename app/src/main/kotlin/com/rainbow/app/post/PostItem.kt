@@ -69,6 +69,7 @@ inline fun PostItem(
             onUpdate,
             focusRequester,
             onShowSnackbar,
+            onClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
