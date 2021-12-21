@@ -2,7 +2,8 @@ package com.rainbow.app.search
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.*
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.Text
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -13,6 +14,8 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
+import com.rainbow.app.components.RainbowIconButton
+import com.rainbow.app.components.RainbowTextField
 import com.rainbow.app.subreddit.SearchSubredditMenuItem
 import com.rainbow.app.utils.RainbowIcons
 import com.rainbow.app.utils.RainbowStrings
@@ -31,24 +34,25 @@ fun SearchTextField(
     val state by SearchTextFieldModel.subredditListModel.items.collectAsState()
     var width by remember { mutableStateOf(0) }
     Column(modifier) {
-        OutlinedTextField(
+        RainbowTextField(
             searchTerm,
             onValueChange = {
                 isExpanded = it.isNotBlank()
                 SearchTextFieldModel.setSearchTerm(it)
             },
-            placeholder = { Text(RainbowStrings.Search) },
+            RainbowStrings.Search,
             trailingIcon = {
-                IconButton(onClick = { searchTerm.takeIf { it.isNotBlank() }?.let(onSearchClick) }) {
-                    Icon(RainbowIcons.Search, RainbowIcons.Search.name)
-                }
+                RainbowIconButton(
+                    RainbowIcons.Search,
+                    RainbowIcons.Search.name,
+                    onClick = { searchTerm.takeIf { it.isNotBlank() }?.let(onSearchClick) }
+                )
             },
-            singleLine = true,
             modifier = Modifier
                 .onSizeChanged { width = it.width }
                 .onFocusEvent {
                     if (it.isFocused && searchTerm.isNotBlank())
-                        isExpanded = true
+                        isExpanded = !isExpanded
                 }
                 .onKeyEvent {
                     if (it.key == Key.Enter && searchTerm.isNotBlank()) {

@@ -65,6 +65,9 @@ object RainbowStrings {
     const val IsEnabled = "Is enabled"
     const val CollapseComments = "Collapse comments"
     const val ExpandComments = "Expand comments"
+    const val AddComment = "Add comment"
+    const val Upvote = "Upvote"
+    const val Downvote = "Downvote"
 
     fun UnsubscribeMessage(subredditName: String) = "You have unsubscribed from $subredditName."
     fun SubscribeMessage(subredditName: String) = "You have subscribed to $subredditName."
