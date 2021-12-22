@@ -4,13 +4,13 @@ import com.rainbow.remote.dto.CurrentFlair
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-internal sealed class Response<out T>
+internal sealed interface Response<out T>
 
 @Serializable
-internal data class Item<T>(val kind: Kind? = null, val data: T) : Response<T>()
+internal data class Item<T>(val kind: Kind? = null, val data: T) : Response<T>
 
 @Serializable
-internal data class Error(val message: String? = null, val error: Int? = null) : Response<Nothing>()
+internal data class Error(val message: String? = null, val error: Int? = null) : Response<Nothing>
 
 @Serializable
 internal data class Listing<T>(val children: List<Item<T>> = emptyList())
