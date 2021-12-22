@@ -27,10 +27,10 @@ internal suspend inline fun <reified T> HttpClient.submitForm(
 internal suspend inline fun <reified T> HttpClient.plainRequest(
     endpoint: Endpoint,
     builder: HttpRequestBuilder.() -> Unit = {},
-): Result<T> = request<T?> {
+): Result<T> = request<HttpResponse> {
     url("${endpoint.path}.json")
     builder()
-}.asResult()
+}.receiveAsResult()
 
 private suspend inline fun <reified T> HttpResponse.receiveAsResponse() =
     if (status.isSuccess())
@@ -51,9 +51,4 @@ private suspend inline fun <reified T> HttpResponse.receiveAsResult(): Result<T>
     if (status.isSuccess())
         Result.success(receive())
     else
-        Result.failure(Throwable("${receive<Any?>()}, ${status.value}"))
-
-private inline fun <reified T> T?.asResult(): Result<T> = when (this) {
-    null -> Result.failure(Throwable("Something went wrong"))
-    else -> Result.success(this)
-}
+        Result.failure(Throwable("${status.description}, ${status.value}"))
