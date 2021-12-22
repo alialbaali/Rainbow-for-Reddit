@@ -1,8 +1,10 @@
 package com.rainbow.app.search
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -11,12 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.components.DefaultTabRow
+import com.rainbow.app.components.LazyGrid
 import com.rainbow.app.model.ListModel
 import com.rainbow.app.post.posts
-import com.rainbow.app.subreddit.SubredditType
-import com.rainbow.app.subreddit.Subreddits
-import com.rainbow.app.user.UserType
-import com.rainbow.app.user.Users
+import com.rainbow.app.subreddit.SearchSubredditItem
+import com.rainbow.app.user.UserItem
 import com.rainbow.app.utils.composed
 import com.rainbow.domain.models.Post
 
@@ -28,6 +29,7 @@ enum class SearchTab {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchScreen(
     searchTerm: String,
@@ -56,9 +58,17 @@ fun SearchScreen(
         )
 
         when (selectedTab) {
-            SearchTab.Subreddits -> subredditsState.composed(onShowSnackbar) {
+            SearchTab.Subreddits -> subredditsState.composed(onShowSnackbar) { subreddits ->
                 setListModel(model.subredditListModel)
-                Subreddits(it, SubredditType.Search, { onSubredditNameClick(it.name) }, onLoadMore = {}, onShowSnackbar)
+                LazyGrid {
+                    items(subreddits) { subreddit ->
+                        SearchSubredditItem(
+                            subreddit,
+                            onClick = { onSubredditNameClick(it.name) },
+                            onShowSnackbar
+                        )
+                    }
+                }
             }
             SearchTab.Posts -> LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 setListModel(model.postListModel)
@@ -74,9 +84,13 @@ fun SearchScreen(
                     onPostClick
                 )
             }
-            SearchTab.Users -> usersState.composed(onShowSnackbar) {
+            SearchTab.Users -> usersState.composed(onShowSnackbar) { users ->
                 setListModel(model.userListModel)
-                Users(it, UserType.Search, { onUserNameClick(it.name) }, onLoadMore = {}, onShowSnackbar)
+                LazyGrid {
+                    items(users) { user ->
+                        UserItem(user, onClick = { onUserNameClick(it.name) }, onShowSnackbar)
+                    }
+                }
             }
         }
     }

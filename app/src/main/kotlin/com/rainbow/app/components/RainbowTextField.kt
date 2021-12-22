@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.app.utils.defaultBackgroundShape
+import com.rainbow.app.utils.defaultPadding
 
 @Composable
 fun RainbowTextField(
@@ -51,7 +52,13 @@ fun RainbowTextField(
         modifier
             .defaultMinSize(minTextWidth)
             .defaultBackgroundShape(borderWidth, borderColor, CircleShape)
-            .padding(start = textStartPadding),
+            .padding(start = textStartPadding)
+            .then(
+                if (trailingIcon != null)
+                    Modifier
+                else
+                    Modifier.padding(vertical = 16.dp)
+            ),
         singleLine = singleLine,
         maxLines = maxLines,
         interactionSource = interactionSource,
