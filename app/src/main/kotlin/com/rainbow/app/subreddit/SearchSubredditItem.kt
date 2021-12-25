@@ -28,6 +28,7 @@ import com.rainbow.domain.models.fullUrl
 @Composable
 fun SearchSubredditItem(
     subreddit: Subreddit,
+    onSubredditUpdate: (Subreddit) -> Unit,
     onClick: (Subreddit) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -43,7 +44,7 @@ fun SearchSubredditItem(
         SubredditItemName(subreddit.name, Modifier.padding(horizontal = 16.dp))
         SubredditItemDescription(subreddit.shortDescription, Modifier.padding(horizontal = 16.dp))
         SubredditInfoItems(subreddit, Modifier.padding(horizontal = 16.dp))
-        SubredditItemActions(subreddit, onShowSnackbar, Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp))
+        SubredditItemActions(subreddit, onSubredditUpdate, onShowSnackbar, Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp))
     }
 }
 
@@ -60,6 +61,7 @@ private fun SubredditItemDescription(subredditDescription: String, modifier: Mod
 @Composable
 private fun SubredditItemActions(
     subreddit: Subreddit,
+    onSubredditUpdate: (Subreddit) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -71,7 +73,7 @@ private fun SubredditItemActions(
             .wrapContentHeight(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        SubscribeButton(subreddit, onShowSnackbar)
+        SubscribeButton(subreddit, onSubredditUpdate, onShowSnackbar)
         Column {
             MenuIconButton(onClick = { isMenuExpanded = true })
             RainbowMenu(isMenuExpanded, onDismissRequest = { isMenuExpanded = false }) {

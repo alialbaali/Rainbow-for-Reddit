@@ -11,7 +11,6 @@ import androidx.compose.material.icons.rounded.PlaylistAddCheck
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarBorder
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -19,9 +18,7 @@ import androidx.compose.ui.unit.sp
 import com.rainbow.app.utils.RainbowIcons
 import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.app.utils.defaultSurfaceShape
-import com.rainbow.data.Repos
 import com.rainbow.domain.models.Subreddit
-import kotlinx.coroutines.launch
 
 @Composable
 fun SubredditItemName(subredditName: String, modifier: Modifier = Modifier) {
@@ -38,22 +35,20 @@ fun SubredditItemName(subredditName: String, modifier: Modifier = Modifier) {
 @Composable
 fun SubredditFavoriteIconButton(
     subreddit: Subreddit,
+    onSubredditUpdate: (Subreddit) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    val scope = rememberCoroutineScope()
     IconToggleButton(
         subreddit.isFavorite,
         onCheckedChange = { isFavorite ->
-            scope.launch {
-                if (isFavorite) {
-                    Repos.Subreddit.favoriteSubreddit(subreddit.name)
-                    onShowSnackbar(RainbowStrings.FavoriteMessage(subreddit.name))
-                } else {
-                    Repos.Subreddit.unFavoriteSubreddit(subreddit.name)
-                    onShowSnackbar(RainbowStrings.UnFavoriteMessage(subreddit.name))
-                }
+            if (isFavorite) {
+                SubredditActionsModel.favoriteSubreddit(subreddit, onSubredditUpdate)
+                onShowSnackbar(RainbowStrings.FavoriteMessage(subreddit.name))
+            } else {
+                SubredditActionsModel.unFavoriteSubreddit(subreddit, onSubredditUpdate)
+                onShowSnackbar(RainbowStrings.UnFavoriteMessage(subreddit.name))
             }
         },
         modifier = modifier
@@ -74,20 +69,18 @@ fun SubredditFavoriteIconButton(
 @Composable
 fun SubscribeButton(
     subreddit: Subreddit,
+    onSubredditUpdate: (Subreddit) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
     Button(
         onClick = {
-            scope.launch {
-                if (subreddit.isSubscribed) {
-                    Repos.Subreddit.unSubscribeSubreddit(subreddit.name)
-                    onShowSnackbar(RainbowStrings.UnsubscribeMessage(subreddit.name))
-                } else {
-                    Repos.Subreddit.subscribeSubreddit(subreddit.name)
-                    onShowSnackbar(RainbowStrings.SubscribeMessage(subreddit.name))
-                }
+            if (subreddit.isSubscribed) {
+                SubredditActionsModel.unSubscribeSubreddit(subreddit, onSubredditUpdate)
+                onShowSnackbar(RainbowStrings.UnsubscribeMessage(subreddit.name))
+            } else {
+                SubredditActionsModel.subscribeSubreddit(subreddit, onSubredditUpdate)
+                onShowSnackbar(RainbowStrings.SubscribeMessage(subreddit.name))
             }
         },
         modifier = modifier,

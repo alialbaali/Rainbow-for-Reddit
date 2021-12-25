@@ -18,6 +18,7 @@ import com.rainbow.domain.models.Subreddit
 @Composable
 fun CurrentUserSubredditsScreen(
     onClick: (String) -> Unit,
+    onSubredditUpdate: (Subreddit) -> Unit,
     onShowSnackbar: (String) -> Unit,
     setListModel: (ListModel<*>) -> Unit,
     modifier: Modifier = Modifier,
@@ -40,6 +41,7 @@ fun CurrentUserSubredditsScreen(
                 items(subreddits) { subreddit ->
                     SubredditItem(
                         subreddit,
+                        onSubredditUpdate,
                         onClick = { onClick(subreddit.name) },
                         onShowSnackbar
                     )

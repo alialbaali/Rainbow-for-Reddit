@@ -31,6 +31,7 @@ import com.rainbow.app.utils.*
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.Message
 import com.rainbow.domain.models.Post
+import com.rainbow.domain.models.Subreddit
 
 @Composable
 fun Rainbow(
@@ -96,6 +97,7 @@ fun Rainbow(
                         onCommentClick = { RainbowModel.selectPost(PostScreenModel.Type.PostId(it.postId)) },
                         RainbowModel::updatePost,
                         RainbowModel::updateComment,
+                        RainbowModel::updateSubreddit,
                         Modifier.weight(1F),
                     )
                     EndContent(
@@ -148,6 +150,7 @@ private fun CenterContent(
     onCommentClick: (Comment) -> Unit,
     onPostUpdate: (Post) -> Unit,
     onCommentUpdate: (Comment) -> Unit,
+    onSubredditUpdate: (Subreddit) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (screen) {
@@ -179,6 +182,7 @@ private fun CenterContent(
                 )
                 Screen.SidebarItem.Subreddits -> CurrentUserSubredditsScreen(
                     onSubredditNameClick,
+                    onSubredditUpdate,
                     onShowSnackbar,
                     setListModel
                 )
@@ -195,6 +199,7 @@ private fun CenterContent(
         }
         is Screen.Subreddit -> SubredditScreen(
             screen.subredditName,
+            onSubredditUpdate,
             focusRequester,
             onUserNameClick,
             onSubredditNameClick,
@@ -221,6 +226,7 @@ private fun CenterContent(
             screen.searchTerm,
             onPostUpdate,
             onPostClick,
+            onSubredditUpdate,
             focusRequester,
             onUserNameClick,
             onSubredditNameClick,

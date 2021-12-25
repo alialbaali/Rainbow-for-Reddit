@@ -43,6 +43,7 @@ enum class SubredditTab {
 @Composable
 fun SubredditScreen(
     subredditName: String,
+    onSubredditUpdate: (Subreddit) -> Unit,
     focusRequester: FocusRequester,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
@@ -64,7 +65,7 @@ fun SubredditScreen(
     RainbowLazyColumn(modifier) {
         item {
             subredditState.composed(onShowSnackbar) { subreddit ->
-                Header(subreddit, onShowSnackbar, Modifier.padding(bottom = 8.dp))
+                Header(subreddit, onSubredditUpdate, onShowSnackbar, Modifier.padding(bottom = 8.dp))
             }
         }
         item {
@@ -124,7 +125,12 @@ private fun LazyListScope.description(state: UIState<Subreddit>, onShowSnackbar:
 }
 
 @Composable
-private fun Header(subreddit: Subreddit, onShowSnackbar: (String) -> Unit, modifier: Modifier = Modifier) {
+private fun Header(
+    subreddit: Subreddit,
+    onSubredditUpdate: (Subreddit) -> Unit,
+    onShowSnackbar: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier
             .defaultSurfaceShape()
@@ -151,9 +157,9 @@ private fun Header(subreddit: Subreddit, onShowSnackbar: (String) -> Unit, modif
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1F)
             )
-            SubredditFavoriteIconButton(subreddit, onShowSnackbar, enabled = subreddit.isSubscribed)
+            SubredditFavoriteIconButton(subreddit, onSubredditUpdate, onShowSnackbar, enabled = subreddit.isSubscribed)
             SelectFlairButton(subreddit.name, onShowSnackbar)
-            SubscribeButton(subreddit, onShowSnackbar)
+            SubscribeButton(subreddit, onSubredditUpdate, onShowSnackbar)
         }
     }
 }

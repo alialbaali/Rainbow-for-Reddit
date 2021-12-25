@@ -3,6 +3,7 @@ package com.rainbow.app.subreddit
 import com.rainbow.app.model.Model
 import com.rainbow.app.post.PostListModel
 import com.rainbow.app.utils.UIState
+import com.rainbow.app.utils.map
 import com.rainbow.app.utils.toUIState
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.*
@@ -53,6 +54,17 @@ class SubredditScreenModel private constructor(private val subredditName: String
         fun getOrCreateInstance(subredditName: String): SubredditScreenModel {
             return subredditScreenModels.find { it.subredditName == subredditName }
                 ?: SubredditScreenModel(subredditName).also { subredditScreenModels += it }
+        }
+
+        fun updateSubreddit(subreddit: Subreddit) {
+            subredditScreenModels.onEach {
+                it.mutableSubreddit.value = it.subreddit.value.map {
+                    if (it.name == subreddit.name)
+                        subreddit
+                    else
+                        it
+                }
+            }
         }
     }
 

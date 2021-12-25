@@ -20,6 +20,7 @@ import com.rainbow.app.subreddit.SearchSubredditItem
 import com.rainbow.app.user.UserItem
 import com.rainbow.app.utils.composed
 import com.rainbow.domain.models.Post
+import com.rainbow.domain.models.Subreddit
 
 enum class SearchTab {
     Subreddits, Posts, Users;
@@ -35,6 +36,7 @@ fun SearchScreen(
     searchTerm: String,
     onPostUpdate: (Post) -> Unit,
     onPostClick: (Post) -> Unit,
+    onSubredditUpdate: (Subreddit) -> Unit,
     focusRequester: FocusRequester,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
@@ -64,6 +66,7 @@ fun SearchScreen(
                     items(subreddits) { subreddit ->
                         SearchSubredditItem(
                             subreddit,
+                            onSubredditUpdate,
                             onClick = { onSubredditNameClick(it.name) },
                             onShowSnackbar
                         )

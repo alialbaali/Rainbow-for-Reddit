@@ -17,17 +17,16 @@ import com.rainbow.app.components.RainbowMenuItem
 import com.rainbow.app.utils.RainbowIcons
 import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.app.utils.defaultSurfaceShape
-import com.rainbow.data.Repos
 import com.rainbow.domain.models.Subreddit
 import com.rainbow.domain.models.fullUrl
-import kotlinx.coroutines.launch
 
 @Composable
 fun SubredditItem(
     subreddit: Subreddit,
+    onSubredditUpdate: (Subreddit) -> Unit,
     onClick: (Subreddit) -> Unit,
     onShowSnackbar: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier.defaultSurfaceShape()
@@ -37,26 +36,29 @@ fun SubredditItem(
     ) {
         HeaderItem(subreddit.bannerImageUrl.toString(), subreddit.imageUrl.toString(), subreddit.name)
         SubredditItemName(subreddit.name, Modifier.padding(horizontal = 16.dp))
-        SubredditItemActions(subreddit, onShowSnackbar, Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp))
+        SubredditItemActions(subreddit,
+            onSubredditUpdate,
+            onShowSnackbar,
+            Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp))
     }
 }
 
 @Composable
 private fun SubredditItemActions(
     subreddit: Subreddit,
+    onSubredditUpdate: (Subreddit) -> Unit,
     onShowSnackbar: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
     val uriHandler = LocalUriHandler.current
-    val scope = rememberCoroutineScope()
     Row(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        SubredditFavoriteIconButton(subreddit, onShowSnackbar)
+        SubredditFavoriteIconButton(subreddit, onSubredditUpdate, onShowSnackbar)
         Column {
             MenuIconButton(onClick = { isMenuExpanded = true })
             RainbowMenu(isMenuExpanded, onDismissRequest = { isMenuExpanded = false }) {
@@ -72,11 +74,9 @@ private fun SubredditItemActions(
                     RainbowStrings.UnSubscribe,
                     RainbowIcons.RemoveCircle, // Playlist remove icon (Not available currently)
                     onclick = {
-                        scope.launch {
-                            Repos.Subreddit.unSubscribeSubreddit(subreddit.name)
-                            isMenuExpanded = false
-                            onShowSnackbar(RainbowStrings.UnsubscribeMessage(subreddit.name))
-                        }
+                        SubredditActionsModel.unSubscribeSubreddit(subreddit, onSubredditUpdate)
+                        isMenuExpanded = false
+                        onShowSnackbar(RainbowStrings.UnsubscribeMessage(subreddit.name))
                     }
                 )
                 RainbowMenuItem(
