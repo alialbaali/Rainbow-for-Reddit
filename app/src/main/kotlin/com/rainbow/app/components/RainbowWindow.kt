@@ -6,6 +6,7 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.key
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
@@ -31,7 +32,8 @@ fun ApplicationScope.RainbowWindow(
         } else {
             false
         }
-    }
+    },
+    icon = painterResource("Icon.svg")
 ) {
     RainbowTheme(content = content)
 }
