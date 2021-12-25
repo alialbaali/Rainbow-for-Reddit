@@ -27,5 +27,8 @@ fun UserItem(
     ) {
         HeaderItem(user.bannerImageUrl.toString(), user.imageUrl.toString(), user.name)
         UserItemName(user.name, Modifier.padding(horizontal = 16.dp))
+        user.description?.let {
+            UserItemDescription(it)
+        }
     }
 }
