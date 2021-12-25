@@ -34,7 +34,7 @@ fun CurrentUserSubredditsScreen(
         setListModel(CurrentUserSubredditsScreenModel.subredditListModel)
     }
     state
-        .map { it.filterContent(searchTerm) }
+        .map { it.filter { it.isSubscribed }.filterContent(searchTerm) }
         .composed(onShowSnackbar, modifier) { subreddits ->
             LazyGrid(
                 item = {
