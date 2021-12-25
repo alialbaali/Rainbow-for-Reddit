@@ -69,6 +69,7 @@ object RainbowStrings {
     const val Upvote = "Upvote"
     const val Downvote = "Downvote"
 
+    fun SubredditsCount(count: Int) = "$count subreddits"
     fun UnsubscribeMessage(subredditName: String) = "You have unsubscribed from $subredditName."
     fun SubscribeMessage(subredditName: String) = "You have subscribed to $subredditName."
     fun FavoriteMessage(subredditName: String) = "You have starred $subredditName."
