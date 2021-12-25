@@ -17,15 +17,12 @@ import androidx.compose.ui.unit.sp
 import com.rainbow.app.comment.comments
 import com.rainbow.app.components.DefaultTabRow
 import com.rainbow.app.components.HeaderDescription
-import com.rainbow.app.components.ScreenHeaderItem
 import com.rainbow.app.components.RainbowLazyColumn
+import com.rainbow.app.components.ScreenHeaderItem
 import com.rainbow.app.item.items
 import com.rainbow.app.model.ListModel
 import com.rainbow.app.post.posts
-import com.rainbow.app.utils.RainbowStrings
-import com.rainbow.app.utils.composed
-import com.rainbow.app.utils.defaultPadding
-import com.rainbow.app.utils.defaultSurfaceShape
+import com.rainbow.app.utils.*
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.User
@@ -63,6 +60,26 @@ fun ProfileScreen(
     val downvotedPostsState by ProfileScreenModel.downvotedPostListModel.items.collectAsState()
     val commentsState by ProfileScreenModel.commentListModel.items.collectAsState()
     val postLayout by ProfileScreenModel.postLayout.collectAsState()
+    OneTimeEffect(
+        selectedTab,
+        overViewItemsState.isLoading,
+        submittedPostsState.isLoading,
+        savedItemsState.isLoading,
+        hiddenPostsState.isLoading,
+        upvotedPostsState.isLoading,
+        downvotedPostsState.isLoading,
+        commentsState.isLoading,
+    ) {
+        when (selectedTab) {
+            ProfileTab.Overview -> setListModel(ProfileScreenModel.overViewItemListModel)
+            ProfileTab.Submitted -> setListModel(ProfileScreenModel.submittedPostListModel)
+            ProfileTab.Saved -> setListModel(ProfileScreenModel.savedItemListModel)
+            ProfileTab.Hidden -> setListModel(ProfileScreenModel.hiddenPostListModel)
+            ProfileTab.Upvoted -> setListModel(ProfileScreenModel.upvotedPostListModel)
+            ProfileTab.Downvoted -> setListModel(ProfileScreenModel.downvotedPostListModel)
+            ProfileTab.Comments -> setListModel(ProfileScreenModel.commentListModel)
+        }
+    }
     userState.composed(onShowSnackbar, modifier) { user ->
         RainbowLazyColumn(modifier) {
             item { Header(user) }
@@ -73,102 +90,81 @@ fun ProfileScreen(
                 )
             }
             when (selectedTab) {
-                ProfileTab.Overview -> {
-                    setListModel(ProfileScreenModel.overViewItemListModel)
-                    items(
-                        overViewItemsState,
-                        postLayout,
-                        focusRequester,
-                        onUserNameClick,
-                        onSubredditNameClick,
-                        onPostClick,
-                        onCommentClick,
-                        onPostUpdate,
-                        onCommentUpdate,
-                        onShowSnackbar,
-                    )
-                }
-                ProfileTab.Saved -> {
-                    setListModel(ProfileScreenModel.savedItemListModel)
-                    items(
-                        savedItemsState,
-                        postLayout,
-                        focusRequester,
-                        onUserNameClick,
-                        onSubredditNameClick,
-                        onPostClick,
-                        onCommentClick,
-                        onPostUpdate,
-                        onCommentUpdate,
-                        onShowSnackbar,
-                    )
-                }
-                ProfileTab.Comments -> {
-                    setListModel(ProfileScreenModel.commentListModel)
-                    comments(
-                        commentsState,
-                        onUserNameClick,
-                        onSubredditNameClick,
-                        onCommentClick,
-                        onCommentUpdate,
-                    )
-                }
-                ProfileTab.Submitted -> {
-                    setListModel(ProfileScreenModel.submittedPostListModel)
-                    posts(
-                        submittedPostsState,
-                        onPostUpdate,
-                        postLayout,
-                        focusRequester,
-                        onUserNameClick,
-                        onSubredditNameClick,
-                        onShowSnackbar,
-                        {},
-                        onPostClick
-                    )
-                }
-                ProfileTab.Hidden -> {
-                    setListModel(ProfileScreenModel.hiddenPostListModel)
-                    posts(
-                        hiddenPostsState,
-                        onPostUpdate,
-                        postLayout,
-                        focusRequester,
-                        onUserNameClick,
-                        onSubredditNameClick,
-                        onShowSnackbar,
-                        {},
-                        onPostClick
-                    )
-                }
-                ProfileTab.Upvoted -> {
-                    setListModel(ProfileScreenModel.upvotedPostListModel)
-                    posts(
-                        upvotedPostsState,
-                        onPostUpdate,
-                        postLayout,
-                        focusRequester,
-                        onUserNameClick,
-                        onSubredditNameClick,
-                        onShowSnackbar,
-                        {},
-                        onPostClick
-                    )
-                }
-                ProfileTab.Downvoted -> {
-                    setListModel(ProfileScreenModel.downvotedPostListModel)
-                    posts(
-                        downvotedPostsState,
-                        onPostUpdate,
-                        postLayout,
-                        focusRequester,
-                        onUserNameClick,
-                        onSubredditNameClick,
-                        onShowSnackbar,
-                        {},
-                        onPostClick
-                    )
-                }
+                ProfileTab.Overview -> items(
+                    overViewItemsState,
+                    postLayout,
+                    focusRequester,
+                    onUserNameClick,
+                    onSubredditNameClick,
+                    onPostClick,
+                    onCommentClick,
+                    onPostUpdate,
+                    onCommentUpdate,
+                    onShowSnackbar,
+                )
+                ProfileTab.Saved -> items(
+                    savedItemsState,
+                    postLayout,
+                    focusRequester,
+                    onUserNameClick,
+                    onSubredditNameClick,
+                    onPostClick,
+                    onCommentClick,
+                    onPostUpdate,
+                    onCommentUpdate,
+                    onShowSnackbar,
+                )
+                ProfileTab.Comments -> comments(
+                    commentsState,
+                    onUserNameClick,
+                    onSubredditNameClick,
+                    onCommentClick,
+                    onCommentUpdate,
+                )
+                ProfileTab.Submitted -> posts(
+                    submittedPostsState,
+                    onPostUpdate,
+                    postLayout,
+                    focusRequester,
+                    onUserNameClick,
+                    onSubredditNameClick,
+                    onShowSnackbar,
+                    {},
+                    onPostClick
+                )
+                ProfileTab.Hidden -> posts(
+                    hiddenPostsState,
+                    onPostUpdate,
+                    postLayout,
+                    focusRequester,
+                    onUserNameClick,
+                    onSubredditNameClick,
+                    onShowSnackbar,
+                    {},
+                    onPostClick
+                )
+                ProfileTab.Upvoted -> posts(
+                    upvotedPostsState,
+                    onPostUpdate,
+                    postLayout,
+                    focusRequester,
+                    onUserNameClick,
+                    onSubredditNameClick,
+                    onShowSnackbar,
+                    {},
+                    onPostClick
+                )
+                ProfileTab.Downvoted -> posts(
+                    downvotedPostsState,
+                    onPostUpdate,
+                    postLayout,
+                    focusRequester,
+                    onUserNameClick,
+                    onSubredditNameClick,
+                    onShowSnackbar,
+                    {},
+                    onPostClick
+                )
             }
         }
     }

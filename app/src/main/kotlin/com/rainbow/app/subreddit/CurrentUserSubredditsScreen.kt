@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import com.rainbow.app.components.LazyGrid
 import com.rainbow.app.components.RainbowTextField
 import com.rainbow.app.model.ListModel
+import com.rainbow.app.utils.OneTimeEffect
 import com.rainbow.app.utils.RainbowStrings
 import com.rainbow.app.utils.composed
 import com.rainbow.app.utils.map
@@ -23,9 +24,11 @@ fun CurrentUserSubredditsScreen(
     setListModel: (ListModel<*>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    setListModel(CurrentUserSubredditsScreenModel.subredditListModel)
     val state by CurrentUserSubredditsScreenModel.subredditListModel.items.collectAsState()
     val searchTerm by CurrentUserSubredditsScreenModel.searchTerm.collectAsState()
+    OneTimeEffect(state.isLoading) {
+        setListModel(CurrentUserSubredditsScreenModel.subredditListModel)
+    }
     state
         .map { it.filterContent(searchTerm) }
         .composed(onShowSnackbar, modifier) { subreddits ->

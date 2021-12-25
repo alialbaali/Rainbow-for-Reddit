@@ -44,10 +44,10 @@ inline fun <T> Iterable<T>.runOnIndex(currentIndex: Int, block: (T) -> Unit) {
 @Composable
 @NonRestartableComposable
 fun OneTimeEffect(
-    key1: Any?,
+    vararg keys: Any?,
     effect: DisposableEffectScope.() -> Unit,
 ) {
-    DisposableEffect(key1) {
+    DisposableEffect(*keys) {
         effect()
         onDispose {
 

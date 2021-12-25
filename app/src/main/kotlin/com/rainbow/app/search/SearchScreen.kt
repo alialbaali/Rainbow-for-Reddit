@@ -18,6 +18,7 @@ import com.rainbow.app.model.ListModel
 import com.rainbow.app.post.posts
 import com.rainbow.app.subreddit.SearchSubredditItem
 import com.rainbow.app.user.UserItem
+import com.rainbow.app.utils.OneTimeEffect
 import com.rainbow.app.utils.composed
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.Subreddit
@@ -50,6 +51,13 @@ fun SearchScreen(
     val postsState by model.postListModel.items.collectAsState()
     val usersState by model.userListModel.items.collectAsState()
     val postLayout by model.postListModel.postLayout.collectAsState()
+    OneTimeEffect(selectedTab, subredditsState.isLoading, postsState.isLoading, usersState.isLoading) {
+        when (selectedTab) {
+            SearchTab.Subreddits -> setListModel(model.subredditListModel)
+            SearchTab.Posts -> setListModel(model.postListModel)
+            SearchTab.Users -> setListModel(model.userListModel)
+        }
+    }
     Column(
         if (selectedTab == SearchTab.Posts) modifier else Modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -61,7 +69,6 @@ fun SearchScreen(
 
         when (selectedTab) {
             SearchTab.Subreddits -> subredditsState.composed(onShowSnackbar) { subreddits ->
-                setListModel(model.subredditListModel)
                 LazyGrid {
                     items(subreddits) { subreddit ->
                         SearchSubredditItem(
@@ -74,7 +81,6 @@ fun SearchScreen(
                 }
             }
             SearchTab.Posts -> LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                setListModel(model.postListModel)
                 posts(
                     postsState,
                     onPostUpdate,
@@ -88,7 +94,6 @@ fun SearchScreen(
                 )
             }
             SearchTab.Users -> usersState.composed(onShowSnackbar) { users ->
-                setListModel(model.userListModel)
                 LazyGrid {
                     items(users) { user ->
                         UserItem(user, onClick = { onUserNameClick(it.name) }, onShowSnackbar)

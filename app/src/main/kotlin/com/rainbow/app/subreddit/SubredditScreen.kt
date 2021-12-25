@@ -48,13 +48,12 @@ fun SubredditScreen(
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
     onShowSnackbar: (String) -> Unit,
-    setPostModel: (ListModel<*>) -> Unit,
+    setListModel: (ListModel<*>) -> Unit,
     onPostUpdate: (Post) -> Unit,
     onPostClick: (Post) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val model = remember { SubredditScreenModel.getOrCreateInstance(subredditName) }
-    setPostModel(model.postListModel)
     val postLayout by model.postListModel.postLayout.collectAsState()
     val postsState by model.postListModel.items.collectAsState()
     val moderatorsState by model.moderators.collectAsState()
@@ -62,6 +61,9 @@ fun SubredditScreen(
     val selectedTab by model.selectedTab.collectAsState()
     val rulesState by model.rules.collectAsState()
     val wikiState by model.wiki.collectAsState()
+    OneTimeEffect(postsState.isLoading) {
+        setListModel(model.postListModel)
+    }
     RainbowLazyColumn(modifier) {
         item {
             subredditState.composed(onShowSnackbar) { subreddit ->

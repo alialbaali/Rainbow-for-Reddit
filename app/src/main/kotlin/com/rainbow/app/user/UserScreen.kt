@@ -13,6 +13,7 @@ import com.rainbow.app.item.items
 import com.rainbow.app.model.ListModel
 import com.rainbow.app.post.posts
 import com.rainbow.app.profile.Header
+import com.rainbow.app.utils.OneTimeEffect
 import com.rainbow.app.utils.composed
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.Post
@@ -44,8 +45,15 @@ fun UserScreen(
     val selectedTab by model.selectedTab.collectAsState()
     val postLayout by model.itemListModel.postLayout.collectAsState()
     val itemsState by model.itemListModel.items.collectAsState()
-    val commentsState by model.commentListModel.items.collectAsState()
     val postsState by model.postListModel.items.collectAsState()
+    val commentsState by model.commentListModel.items.collectAsState()
+    OneTimeEffect(selectedTab, itemsState.isLoading, postsState.isLoading, commentsState.isLoading) {
+        when (selectedTab) {
+            UserTab.Overview -> setListModel(model.itemListModel)
+            UserTab.Submitted -> setListModel(model.postListModel)
+            UserTab.Comments -> setListModel(model.commentListModel)
+        }
+    }
     userState.composed(onShowSnackbar) { user ->
         RainbowLazyColumn(modifier) {
             item { Header(user) }
@@ -56,45 +64,36 @@ fun UserScreen(
                 )
             }
             when (selectedTab) {
-                UserTab.Overview -> {
-                    setListModel(model.itemListModel)
-                    items(
-                        itemsState,
-                        postLayout,
-                        focusRequester,
-                        onUserNameClick,
-                        onSubredditNameClick,
-                        onPostClick,
-                        onCommentClick,
-                        onPostUpdate,
-                        onCommentUpdate,
-                        onShowSnackbar,
-                    )
-                }
-                UserTab.Submitted -> {
-                    setListModel(model.postListModel)
-                    posts(
-                        postsState,
-                        onPostUpdate,
-                        postLayout,
-                        focusRequester,
-                        onUserNameClick,
-                        onSubredditNameClick,
-                        onShowSnackbar,
-                        {},
-                        onPostClick
-                    )
-                }
-                UserTab.Comments -> {
-                    setListModel(model.commentListModel)
-                    comments(
-                        commentsState,
-                        onUserNameClick,
-                        onSubredditNameClick,
-                        onCommentClick,
-                        onCommentUpdate,
-                    )
-                }
+                UserTab.Overview -> items(
+                    itemsState,
+                    postLayout,
+                    focusRequester,
+                    onUserNameClick,
+                    onSubredditNameClick,
+                    onPostClick,
+                    onCommentClick,
+                    onPostUpdate,
+                    onCommentUpdate,
+                    onShowSnackbar,
+                )
+                UserTab.Submitted -> posts(
+                    postsState,
+                    onPostUpdate,
+                    postLayout,
+                    focusRequester,
+                    onUserNameClick,
+                    onSubredditNameClick,
+                    onShowSnackbar,
+                    {},
+                    onPostClick
+                )
+                UserTab.Comments -> comments(
+                    commentsState,
+                    onUserNameClick,
+                    onSubredditNameClick,
+                    onCommentClick,
+                    onCommentUpdate,
+                )
             }
         }
     }

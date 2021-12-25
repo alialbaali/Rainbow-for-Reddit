@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import com.rainbow.app.components.DefaultTabRow
 import com.rainbow.app.components.RainbowLazyColumn
 import com.rainbow.app.model.ListModel
+import com.rainbow.app.utils.OneTimeEffect
 import com.rainbow.domain.models.Message
 
 enum class MessageTab {
@@ -34,6 +35,26 @@ inline fun MessagesScreen(
     val mentions by MessagesScreenModel.mentions.items.collectAsState()
     val postMessages by MessagesScreenModel.postMessages.items.collectAsState()
     val commentMessages by MessagesScreenModel.commentMessages.items.collectAsState()
+    OneTimeEffect(
+        selectedTab,
+        inboxMessages.isLoading,
+        unreadMessages.isLoading,
+        sentMessages.isLoading,
+        messages.isLoading,
+        mentions.isLoading,
+        postMessages.isLoading,
+        commentMessages.isLoading
+    ) {
+        when (selectedTab) {
+            MessageTab.Inbox -> setListModel(MessagesScreenModel.inboxMessages)
+            MessageTab.Unread -> setListModel(MessagesScreenModel.unreadMessages)
+            MessageTab.Sent -> setListModel(MessagesScreenModel.sentMessages)
+            MessageTab.Messages -> setListModel(MessagesScreenModel.messages)
+            MessageTab.Mentions -> setListModel(MessagesScreenModel.mentions)
+            MessageTab.PostMessages -> setListModel(MessagesScreenModel.postMessages)
+            MessageTab.CommentMessages -> setListModel(MessagesScreenModel.commentMessages)
+        }
+    }
     RainbowLazyColumn(modifier) {
         item {
             DefaultTabRow(
@@ -43,34 +64,13 @@ inline fun MessagesScreen(
             )
         }
         when (selectedTab) {
-            MessageTab.Inbox -> {
-                setListModel(MessagesScreenModel.inboxMessages)
-                messages(inboxMessages, onMessageClick, onUserNameClick, onSubredditNameClick)
-            }
-            MessageTab.Unread -> {
-                setListModel(MessagesScreenModel.unreadMessages)
-                messages(unreadMessages, onMessageClick, onUserNameClick, onSubredditNameClick)
-            }
-            MessageTab.Sent -> {
-                setListModel(MessagesScreenModel.sentMessages)
-                messages(sentMessages, onMessageClick, onUserNameClick, onSubredditNameClick)
-            }
-            MessageTab.Messages -> {
-                setListModel(MessagesScreenModel.messages)
-                messages(messages, onMessageClick, onUserNameClick, onSubredditNameClick)
-            }
-            MessageTab.Mentions -> {
-                setListModel(MessagesScreenModel.mentions)
-                messages(mentions, onMessageClick, onUserNameClick, onSubredditNameClick)
-            }
-            MessageTab.PostMessages -> {
-                setListModel(MessagesScreenModel.postMessages)
-                messages(postMessages, onMessageClick, onUserNameClick, onSubredditNameClick)
-            }
-            MessageTab.CommentMessages -> {
-                setListModel(MessagesScreenModel.commentMessages)
-                messages(commentMessages, onMessageClick, onUserNameClick, onSubredditNameClick)
-            }
+            MessageTab.Inbox -> messages(inboxMessages, onMessageClick, onUserNameClick, onSubredditNameClick)
+            MessageTab.Unread -> messages(unreadMessages, onMessageClick, onUserNameClick, onSubredditNameClick)
+            MessageTab.Sent -> messages(sentMessages, onMessageClick, onUserNameClick, onSubredditNameClick)
+            MessageTab.Messages -> messages(messages, onMessageClick, onUserNameClick, onSubredditNameClick)
+            MessageTab.Mentions -> messages(mentions, onMessageClick, onUserNameClick, onSubredditNameClick)
+            MessageTab.PostMessages -> messages(postMessages, onMessageClick, onUserNameClick, onSubredditNameClick)
+            MessageTab.CommentMessages -> messages(commentMessages, onMessageClick, onUserNameClick, onSubredditNameClick)
         }
     }
 }
