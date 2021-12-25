@@ -5,45 +5,35 @@ import com.rainbow.app.model.ListModel
 import com.rainbow.app.model.Model
 import com.rainbow.app.model.SortedListModel
 import com.rainbow.app.post.PostScreenModel
+import com.rainbow.app.subreddit.SubredditScreenModel
 import com.rainbow.app.utils.Constants
 import com.rainbow.app.utils.UIState
+import com.rainbow.app.utils.getOrDefault
 import com.rainbow.app.utils.getOrNull
 import com.rainbow.domain.models.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 object RainbowModel : Model() {
 
-    private val mutableListModel = MutableStateFlow<UIState<ListModel<Any>>>(UIState.Loading)
+    private val mutableListModel = MutableSharedFlow<ListModel<Any>>(replay = Int.MAX_VALUE)
 
-    private val items = callbackFlow {
-        mutableListModel
-            .onEach { it.getOrNull()?.items?.collect { send(it) } }
-            .launchIn(scope)
-        awaitClose()
-    }.stateIn(scope, SharingStarted.Lazily, UIState.Loading)
+    private val items = mutableListModel
+        .map { it.items.value }
+        .stateIn(scope, SharingStarted.Lazily, UIState.Loading)
 
-    val sorting = callbackFlow {
-        mutableListModel
-            .onEach {
-                val sortedListModel = it.getOrNull() as? SortedListModel<Any, *>
-                sortedListModel?.sorting?.collect { send(it) }
-            }
-            .launchIn(scope)
-        awaitClose()
-    }.stateIn(scope, SharingStarted.Lazily, null)
+    val sorting = mutableListModel
+        .map { it as? SortedListModel<Any, *> }
+        .map { it?.sorting?.value }
+        .stateIn(scope, SharingStarted.Lazily, null)
 
-    val timeSorting = callbackFlow {
-        mutableListModel
-            .onEach {
-                val sortedListModel = it.getOrNull() as? SortedListModel<Any, *>
-                sortedListModel?.timeSorting?.collect { send(it) }
-            }.launchIn(scope)
-        awaitClose()
-    }.stateIn(scope, SharingStarted.Lazily, null)
+    val timeSorting = mutableListModel
+        .map { it as? SortedListModel<Any, *> }
+        .map { it?.timeSorting?.value }
+        .stateIn(scope, SharingStarted.Lazily, null)
 
     private val mutablePostScreenModel = MutableStateFlow<UIState<PostScreenModel>>(UIState.Loading)
     val postScreenModel get() = mutablePostScreenModel.asStateFlow()
@@ -72,12 +62,14 @@ object RainbowModel : Model() {
 
         mutableRefreshContent
             .debounce(Constants.RefreshContentDebounceTime)
-            .onEach { mutableListModel.value.getOrNull()?.loadItems() }
+            .onEach { mutableListModel.replayCache.last().loadItems() }
             .launchIn(scope)
     }
 
     fun setListModel(model: ListModel<*>) {
-        mutableListModel.value = UIState.Success(model as ListModel<Any>)
+        scope.launch {
+            mutableListModel.emit(model as ListModel<Any>)
+        }
     }
 
     fun selectPost(type: PostScreenModel.Type) {
@@ -99,31 +91,43 @@ object RainbowModel : Model() {
     }
 
     fun updatePost(post: Post) {
-        mutableListModel.value.getOrNull()?.updateItem(post)
+        mutableListModel.replayCache
+            .filter { it.checkType<Post>() }
+            .onEach { it.updateItem(post) }
         postScreenModel.value.getOrNull()?.updatePost(post)
     }
 
     fun updateComment(comment: Comment) {
-        val isCommentListModel = mutableListModel.value.getOrNull()
-            ?.items?.value
-            ?.getOrNull()
-            ?.any { it::class == Comment::class } ?: false
-        if (isCommentListModel)
-            mutableListModel.value.getOrNull()?.updateItem(comment)
+        mutableListModel.replayCache
+            .filter { it.checkType<Comment>() }
+            .onEach { it.updateItem(comment) }
         postScreenModel.value.getOrNull()?.commentListModel?.value?.updateComment(comment)
     }
 
+    fun updateSubreddit(subreddit: Subreddit) {
+        mutableListModel.replayCache
+            .filter { it.checkType<Subreddit>() }
+            .onEach { it.updateItem(subreddit) }
+        SubredditScreenModel.updateSubreddit(subreddit)
+    }
+
     fun setSorting(sorting: Sorting) {
-        val sortedListModel = mutableListModel.value.getOrNull() as? SortedListModel<Any, Sorting>
-        sortedListModel?.setSorting(sorting)
+        scope.launch {
+            val sortedListModel = mutableListModel.replayCache.last() as? SortedListModel<Any, Sorting>
+            sortedListModel?.setSorting(sorting)
+        }
     }
 
     fun setTimeSorting(timeSorting: TimeSorting) {
-        val sortedListModel = mutableListModel.value.getOrNull() as? SortedListModel<Any, Sorting>
+        val sortedListModel = mutableListModel.replayCache.last() as? SortedListModel<Any, Sorting>
         sortedListModel?.setTimeSorting(timeSorting)
     }
 
     fun refreshContent() {
         mutableRefreshContent.tryEmit(Unit)
+    }
+
+    private inline fun <reified T> ListModel<Any>.checkType(): Boolean {
+        return items.value.getOrDefault(emptyList()).any { it::class == T::class }
     }
 }
