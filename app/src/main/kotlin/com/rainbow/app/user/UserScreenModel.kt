@@ -8,7 +8,6 @@ import com.rainbow.app.utils.UIState
 import com.rainbow.app.utils.toUIState
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.User
-import com.rainbow.domain.models.UserPostSorting
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -25,15 +24,17 @@ class UserScreenModel private constructor(private val userName: String) : Model(
     private val mutableUser = MutableStateFlow<UIState<User>>(UIState.Loading)
     val user get() = mutableUser.asStateFlow()
 
-    val itemListModel = ItemListModel(UserPostSorting.Default) { postSorting, timeSorting, lastItemId ->
+    private val initialPostSorting = Repos.Settings.getUserPostSorting()
+
+    val itemListModel = ItemListModel(initialPostSorting) { postSorting, timeSorting, lastItemId ->
         Repos.Item.getUserOverviewItems(userName, postSorting, timeSorting, lastItemId)
     }
 
-    val postListModel = PostListModel(UserPostSorting.Default) { postSorting, timeSorting, lastPostId ->
+    val postListModel = PostListModel(initialPostSorting) { postSorting, timeSorting, lastPostId ->
         Repos.Post.getUserSubmittedPosts(userName, postSorting, timeSorting, lastPostId)
     }
 
-    val commentListModel = CommentListModel(UserPostSorting.Default) { postSorting, timeSorting, lastCommentId ->
+    val commentListModel = CommentListModel(initialPostSorting) { postSorting, timeSorting, lastCommentId ->
         Repos.Comment.getUserComments(userName, postSorting, timeSorting, lastCommentId)
     }
 

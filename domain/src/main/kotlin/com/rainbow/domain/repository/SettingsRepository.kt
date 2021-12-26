@@ -23,6 +23,16 @@ interface SettingsRepository {
 
     val userPostSorting: Flow<UserPostSorting>
 
+    fun getHomePostSorting(): HomePostSorting
+
+    fun getProfilePostSorting(): ProfilePostSorting
+
+    fun getUserPostSorting(): UserPostSorting
+
+    fun getSubredditPostSorting(): SubredditPostSorting
+
+    fun getSearchPostSorting(): SearchPostSorting
+
     suspend fun setTheme(theme: Theme)
 
     suspend fun setIsPostFullHeight(value: Boolean)

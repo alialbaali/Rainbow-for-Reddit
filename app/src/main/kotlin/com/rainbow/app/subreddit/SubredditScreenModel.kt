@@ -6,7 +6,10 @@ import com.rainbow.app.utils.UIState
 import com.rainbow.app.utils.map
 import com.rainbow.app.utils.toUIState
 import com.rainbow.data.Repos
-import com.rainbow.domain.models.*
+import com.rainbow.domain.models.Moderator
+import com.rainbow.domain.models.Rule
+import com.rainbow.domain.models.Subreddit
+import com.rainbow.domain.models.WikiPage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -32,7 +35,9 @@ class SubredditScreenModel private constructor(private val subredditName: String
     private val mutableRules = MutableStateFlow<UIState<List<Rule>>>(UIState.Loading)
     val rules get() = mutableRules.asStateFlow()
 
-    val postListModel = PostListModel(SubredditPostSorting.Controversial) { postSorting, timeSorting, lastPostId ->
+    private val initialPostSorting = Repos.Settings.getSubredditPostSorting()
+
+    val postListModel = PostListModel(initialPostSorting) { postSorting, timeSorting, lastPostId ->
         Repos.Post.getSubredditPosts(subredditName, postSorting, timeSorting, lastPostId)
     }
 

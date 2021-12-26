@@ -9,7 +9,6 @@ import com.rainbow.app.utils.toUIState
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.PostLayout
 import com.rainbow.domain.models.User
-import com.rainbow.domain.models.UserPostSorting
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -23,31 +22,33 @@ object ProfileScreenModel : Model() {
 
     val postLayout = Repos.Settings.postLayout.stateIn(scope, SharingStarted.Lazily, PostLayout.Card)
 
-    val overViewItemListModel = ItemListModel(UserPostSorting.Default) { itemSorting, timeSorting, lastItemId ->
+    private val initialPostSorting = Repos.Settings.getProfilePostSorting()
+
+    val overViewItemListModel = ItemListModel(initialPostSorting) { itemSorting, timeSorting, lastItemId ->
         Repos.Item.getCurrentUserOverviewItems(itemSorting, timeSorting, lastItemId)
     }
 
-    val savedItemListModel = ItemListModel(UserPostSorting.Default) { itemSorting, timeSorting, lastItemId ->
+    val savedItemListModel = ItemListModel(initialPostSorting) { itemSorting, timeSorting, lastItemId ->
         Repos.Item.getCurrentUserSavedItems(itemSorting, timeSorting, lastItemId)
     }
 
-    val submittedPostListModel = PostListModel(UserPostSorting.Default) { postSorting, timeSorting, lastPostId ->
+    val submittedPostListModel = PostListModel(initialPostSorting) { postSorting, timeSorting, lastPostId ->
         Repos.Post.getCurrentUserSubmittedPosts(postSorting, timeSorting, lastPostId)
     }
 
-    val hiddenPostListModel = PostListModel(UserPostSorting.Default) { postSorting, timeSorting, lastPostId ->
+    val hiddenPostListModel = PostListModel(initialPostSorting) { postSorting, timeSorting, lastPostId ->
         Repos.Post.getCurrentUserHiddenPosts(postSorting, timeSorting, lastPostId)
     }
 
-    val upvotedPostListModel = PostListModel(UserPostSorting.Default) { postSorting, timeSorting, lastPostId ->
+    val upvotedPostListModel = PostListModel(initialPostSorting) { postSorting, timeSorting, lastPostId ->
         Repos.Post.getCurrentUserUpvotedPosts(postSorting, timeSorting, lastPostId)
     }
 
-    val downvotedPostListModel = PostListModel(UserPostSorting.Default) { postSorting, timeSorting, lastPostId ->
+    val downvotedPostListModel = PostListModel(initialPostSorting) { postSorting, timeSorting, lastPostId ->
         Repos.Post.getCurrentUserDownvotedPosts(postSorting, timeSorting, lastPostId)
     }
 
-    val commentListModel = CommentListModel(UserPostSorting.Default) { commentSorting, timeSorting, lastCommentId ->
+    val commentListModel = CommentListModel(initialPostSorting) { commentSorting, timeSorting, lastCommentId ->
         Repos.Comment.getCurrentUserComments(commentSorting, timeSorting, lastCommentId)
     }
 

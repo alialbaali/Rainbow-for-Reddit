@@ -1,15 +1,10 @@
 package com.rainbow.app.components
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.rounded.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.utils.RainbowIcons
 import com.rainbow.domain.models.*
@@ -24,61 +19,18 @@ inline fun <reified T : Enum<T>> Sorting(
 ) {
     Row(
         modifier,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        SortingItem(
-            sorting = postsSorting,
-            onSortingUpdate = onSortingUpdate
+        DropdownMenuHolder(
+            postsSorting,
+            onSortingUpdate
         )
 
         if (postsSorting is PostSorting && postsSorting.isTimeSorting)
-            SortingItem(
-                sorting = timeSorting,
-                onSortingUpdate = onTimeSortingUpdate
+            DropdownMenuHolder(
+                timeSorting,
+                onTimeSortingUpdate
             )
-    }
-}
-
-@Composable
-inline fun <reified T : Enum<T>> SortingItem(
-    sorting: T,
-    crossinline onSortingUpdate: (T) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    var isMenuVisible by remember { mutableStateOf(false) }
-    val iconRotation by animateFloatAsState(if (isMenuVisible) 180F else 0F)
-    val values = remember { enumValues<T>() }
-    Column(modifier) {
-        TextIconButton(
-            sorting.name,
-            RainbowIcons.ArrowDropUp,
-            null,
-            onClick = { isMenuVisible = !isMenuVisible },
-            iconModifier = Modifier.rotate(iconRotation)
-        )
-
-        DropdownMenu(
-            isMenuVisible,
-            onDismissRequest = { isMenuVisible = !isMenuVisible },
-        ) {
-            values.forEach { sorting ->
-                DropdownMenuItem(
-                    onClick = {
-                        onSortingUpdate(sorting)
-                        isMenuVisible = false
-                    },
-                    Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                ) {
-                    (sorting as? Sorting)?.icon?.let { icon ->
-                        Icon(icon, sorting.name)
-                    }
-                    Spacer(Modifier.width(16.dp))
-                    Text(text = sorting.name, Modifier.fillMaxWidth())
-                }
-            }
-        }
     }
 }
 

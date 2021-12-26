@@ -5,7 +5,6 @@ import com.rainbow.app.post.PostListModel
 import com.rainbow.app.subreddit.SubredditListModel
 import com.rainbow.app.user.UserListModel
 import com.rainbow.data.Repos
-import com.rainbow.domain.models.SearchPostSorting
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -18,7 +17,9 @@ class SearchScreenModel private constructor(private val searchTerm: String) : Mo
     private val mutableSelectedTab = MutableStateFlow(SearchTab.Default)
     val selectedTab get() = mutableSelectedTab.asStateFlow()
 
-    val postListModel = PostListModel(SearchPostSorting.Default) { postSorting, timeSorting, lastPostId ->
+    private val initialPostSorting = Repos.Settings.getSearchPostSorting()
+
+    val postListModel = PostListModel(initialPostSorting) { postSorting, timeSorting, lastPostId ->
         Repos.Post.searchPosts(searchTerm, postSorting, timeSorting, lastPostId)
     }
 

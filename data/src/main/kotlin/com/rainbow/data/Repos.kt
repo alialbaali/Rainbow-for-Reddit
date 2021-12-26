@@ -23,22 +23,28 @@ object Repos {
     private val settings = JvmPreferencesSettings.Factory()
         .create(null)
         .let { it as ObservableSettings }
-        .toFlowSettings(DefaultDispatcher)
+
+    @OptIn(
+        ExperimentalSettingsImplementation::class,
+        ExperimentalSettingsApi::class,
+        ExperimentalCoroutinesApi::class,
+    )
+    private val flowSettings = settings.toFlowSettings(DefaultDispatcher)
 
     @OptIn(ExperimentalSettingsApi::class)
-    object Settings : SettingsRepository by SettingsRepository(settings, DefaultDispatcher)
+    object Settings : SettingsRepository by SettingsRepositoryImpl(settings, flowSettings, DefaultDispatcher)
 
     @OptIn(ExperimentalSettingsApi::class)
     object User : UserRepository by UserRepositoryImpl(
         RemoteUserDataSource(),
-        settings,
+        flowSettings,
         DefaultDispatcher,
         Mappers.UserMapper,
     )
 
     object Post : PostRepository by PostRepositoryImpl(
         RemotePostDataSource(),
-        settings,
+        flowSettings,
         DefaultDispatcher,
         Mappers.PostMapper,
     )
@@ -50,7 +56,7 @@ object Repos {
         RemoteWikiDataSourceImpl(),
         RemoteSubredditFlairDataSource(),
         RemoteRuleDataSource(),
-        settings,
+        flowSettings,
         DefaultDispatcher,
         Mappers.SubredditMapper,
         Mappers.ModeratorMapper,
@@ -61,7 +67,7 @@ object Repos {
     @OptIn(ExperimentalSettingsApi::class)
     object Comment : CommentRepository by CommentRepositoryImpl(
         RemoteCommentDataSource(),
-        settings,
+        flowSettings,
         DefaultDispatcher,
         Mappers.CommentMapper,
     )
@@ -74,7 +80,7 @@ object Repos {
 
     object Item : ItemRepository by ItemRepositoryImpl(
         RemoteItemDataSourceImpl(),
-        settings,
+        flowSettings,
         DefaultDispatcher,
         Mappers.ItemMapper,
     )

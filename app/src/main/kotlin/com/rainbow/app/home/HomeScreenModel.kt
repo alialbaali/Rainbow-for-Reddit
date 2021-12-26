@@ -4,7 +4,6 @@ import com.rainbow.app.comment.HomeCommentListModel
 import com.rainbow.app.model.Model
 import com.rainbow.app.post.PostListModel
 import com.rainbow.data.Repos
-import com.rainbow.domain.models.HomePostSorting
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -15,7 +14,9 @@ object HomeScreenModel : Model() {
     private val mutableSelectedTab = MutableStateFlow(HomeTab.Default)
     val selectedTab get() = mutableSelectedTab.asStateFlow()
 
-    val postListModel = PostListModel(HomePostSorting.Default) { postSorting, timeSorting, lastPostId ->
+    private val initialPostSorting = Repos.Settings.getHomePostSorting()
+
+    val postListModel = PostListModel(initialPostSorting) { postSorting, timeSorting, lastPostId ->
         Repos.Post.getHomePosts(postSorting, timeSorting, lastPostId)
     }
 
