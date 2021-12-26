@@ -1,7 +1,6 @@
 package com.rainbow.domain.repository
 
-import com.rainbow.domain.models.PostLayout
-import com.rainbow.domain.models.Theme
+import com.rainbow.domain.models.*
 import kotlinx.coroutines.flow.Flow
 
 interface SettingsRepository {
@@ -14,6 +13,16 @@ interface SettingsRepository {
 
     val postLayout: Flow<PostLayout>
 
+    val profilePostSorting: Flow<ProfilePostSorting>
+
+    val homePostSorting: Flow<HomePostSorting>
+
+    val subredditPostSorting: Flow<SubredditPostSorting>
+
+    val searchPostSorting: Flow<SearchPostSorting>
+
+    val userPostSorting: Flow<UserPostSorting>
+
     suspend fun setTheme(theme: Theme)
 
     suspend fun setIsPostFullHeight(value: Boolean)
@@ -22,4 +31,13 @@ interface SettingsRepository {
 
     suspend fun setIsSidebarExpanded(value: Boolean)
 
+    suspend fun setHomePostSorting(value: HomePostSorting)
+
+    suspend fun setUserPostSorting(value: UserPostSorting)
+
+    suspend fun setProfilePostSorting(value: ProfilePostSorting)
+
+    suspend fun setSubredditPostSorting(value: SubredditPostSorting)
+
+    suspend fun setSearchPostSorting(value: SearchPostSorting)
 }

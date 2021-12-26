@@ -2,9 +2,10 @@ package com.rainbow.app.settings
 
 import com.rainbow.app.model.Model
 import com.rainbow.data.Repos
-import com.rainbow.domain.models.PostLayout
-import com.rainbow.domain.models.Theme
+import com.rainbow.domain.models.*
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.*
@@ -20,6 +21,24 @@ object SettingsModel : Model() {
     val theme = Repos.Settings.theme.stateIn(scope, SharingStarted.Eagerly, Theme.System)
 
     val postLayout = Repos.Settings.postLayout.stateIn(scope, SharingStarted.Eagerly, PostLayout.Card)
+
+    private val mutableSelectedTab = MutableStateFlow(SettingsTab.Default)
+    val selectedTab get() = mutableSelectedTab.asStateFlow()
+
+    val homePostSorting = Repos.Settings.homePostSorting
+        .stateIn(scope, SharingStarted.Eagerly, HomePostSorting.Default)
+
+    val profilePostSorting = Repos.Settings.profilePostSorting
+        .stateIn(scope, SharingStarted.Eagerly, ProfilePostSorting.Default)
+
+    val subredditPostSorting = Repos.Settings.subredditPostSorting
+        .stateIn(scope, SharingStarted.Eagerly, SubredditPostSorting.Default)
+
+    val userPostSorting = Repos.Settings.userPostSorting
+        .stateIn(scope, SharingStarted.Eagerly, UserPostSorting.Default)
+
+    val searchPostSorting = Repos.Settings.searchPostSorting
+        .stateIn(scope, SharingStarted.Eagerly, SearchPostSorting.Default)
 
     fun setIsSidebarExpanded(value: Boolean) = scope.launch {
         Repos.Settings.setIsSidebarExpanded(value)
@@ -48,5 +67,29 @@ object SettingsModel : Model() {
 
     fun setTheme(value: Theme) = scope.launch {
         Repos.Settings.setTheme(value)
+    }
+
+    fun setHomePostSorting(value: HomePostSorting) = scope.launch {
+        Repos.Settings.setHomePostSorting(value)
+    }
+
+    fun setProfilePostSorting(value: ProfilePostSorting) = scope.launch {
+        Repos.Settings.setProfilePostSorting(value)
+    }
+
+    fun setSubredditPostSorting(value: SubredditPostSorting) = scope.launch {
+        Repos.Settings.setSubredditPostSorting(value)
+    }
+
+    fun setUserPostSorting(value: UserPostSorting) = scope.launch {
+        Repos.Settings.setUserPostSorting(value)
+    }
+
+    fun setSearchPostSorting(value: SearchPostSorting) = scope.launch {
+        Repos.Settings.setSearchPostSorting(value)
+    }
+
+    fun selectTab(tab: SettingsTab) {
+        mutableSelectedTab.value = tab
     }
 }
