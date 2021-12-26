@@ -53,7 +53,7 @@ class PostCommentListModel private constructor(private val type: Type) : Model()
             .launchIn(scope)
     }
 
-    fun loadPostComments(postId: String) {
+    private fun loadPostComments(postId: String) {
         mutableComments.value = UIState.Loading
         scope.launch {
             mutableComments.value = Repos.Comment.getPostsComments(postId, sorting.value)
@@ -73,20 +73,20 @@ class PostCommentListModel private constructor(private val type: Type) : Model()
                             .toMutableList()
                             .replaceViewMore(commentId, moreComments)
                     }
-                    mutableCommentsVisibility.value = when {
+                    mutableCommentsVisibility.value = commentsVisibility.value + when {
                         commentsVisibility.value.all { it.value } -> moreComments.associate { it.id to true }
                         commentsVisibility.value.none { it.value } -> moreComments.associate { it.id to false }
-                        else -> moreComments.associate { it.id to isCommentsCollapsed }
+                        else -> moreComments.associate { it.id to !isCommentsCollapsed }
                     }
                 }
         }
     }
 
-    fun loadThreadComments(postId: String, parentId: String) {
+    private fun loadThreadComments(postId: String, parentId: String) {
         mutableComments.value = UIState.Loading
         scope.launch {
             mutableComments.value = Repos.Comment.getThreadComments(postId, parentId, sorting.value)
-                .onSuccess { mutableCommentsVisibility.value = it.associate { it.id to true } }
+                .onSuccess { mutableCommentsVisibility.value = it.associate { it.id to isCommentsCollapsed } }
                 .toUIState()
         }
     }
