@@ -74,7 +74,7 @@ object RainbowStrings {
     const val DefaultHomePostSorting = "Default home post sorting"
     const val DefaultSearchPostSorting = "Default search post sorting"
     const val DefaultCommentSorting = "Default comment sorting"
-    const val IsCommentsCollapsed = "Comments collapsed by default"
+    const val CollapseCommentsByDefault = "Collapse comments by default"
 
     fun SubredditsCount(count: Int) = "$count subreddits"
     fun UnsubscribeMessage(subredditName: String) = "You have unsubscribed from $subredditName."

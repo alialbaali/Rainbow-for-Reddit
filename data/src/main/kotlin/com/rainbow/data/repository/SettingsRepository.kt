@@ -29,51 +29,49 @@ internal class SettingsRepositoryImpl(
         flowSettings.getStringFlow(SettingsKeys.PostLayout, PostLayout.Card.name)
             .map { PostLayout.valueOf(it) }
 
-    override val profilePostSorting: Flow<ProfilePostSorting> =
-        flowSettings.getStringFlow(SettingsKeys.ProfilePostSorting)
-            .map { ProfilePostSorting.valueOf(it) }
+    override val profilePostSorting: Flow<ProfilePostSorting> = flowSettings
+        .getStringOrNullFlow(SettingsKeys.ProfilePostSorting)
+        .map { if (it != null) ProfilePostSorting.valueOf(it) else ProfilePostSorting.Default }
 
-    override val homePostSorting: Flow<HomePostSorting> = flowSettings.getStringFlow(SettingsKeys.HomePostSorting)
-        .map { HomePostSorting.valueOf(it) }
+    override val homePostSorting: Flow<HomePostSorting> = flowSettings.getStringOrNullFlow(SettingsKeys.HomePostSorting)
+        .map { if (it != null) HomePostSorting.valueOf(it) else HomePostSorting.Default }
 
-    override val subredditPostSorting: Flow<SubredditPostSorting> =
-        flowSettings.getStringFlow(SettingsKeys.SubredditPostSorting)
-            .map { SubredditPostSorting.valueOf(it) }
+    override val subredditPostSorting: Flow<SubredditPostSorting> = flowSettings
+        .getStringOrNullFlow(SettingsKeys.SubredditPostSorting)
+        .map { if (it != null) SubredditPostSorting.valueOf(it) else SubredditPostSorting.Default }
 
-    override suspend fun setIsPostFullHeight(value: Boolean) = withContext(dispatcher) {
-        flowSettings.putBoolean(SettingsKeys.IsPostFullHeight, value)
-    }
+    override val searchPostSorting: Flow<SearchPostSorting> =
+        flowSettings.getStringOrNullFlow(SettingsKeys.SearchPostSorting)
+            .map { if (it != null) SearchPostSorting.valueOf(it) else SearchPostSorting.Default }
 
-    override val searchPostSorting: Flow<SearchPostSorting> = flowSettings.getStringFlow(SettingsKeys.SearchPostSorting)
-        .map { SearchPostSorting.valueOf(it) }
+    override val userPostSorting: Flow<UserPostSorting> = flowSettings.getStringOrNullFlow(SettingsKeys.UserPostSorting)
+        .map { if (it != null) UserPostSorting.valueOf(it) else UserPostSorting.Default }
 
-    override val userPostSorting: Flow<UserPostSorting> = flowSettings.getStringFlow(SettingsKeys.UserPostSorting)
-        .map { UserPostSorting.valueOf(it) }
     override val postCommentSorting: Flow<PostCommentSorting> =
-        flowSettings.getStringFlow(SettingsKeys.PostCommentSorting)
-            .map { PostCommentSorting.valueOf(it) }
+        flowSettings.getStringOrNullFlow(SettingsKeys.PostCommentSorting)
+            .map { if (it != null) PostCommentSorting.valueOf(it) else PostCommentSorting.Default }
 
     override val isCommentsCollapsed: Flow<Boolean> =
         flowSettings.getBooleanOrNullFlow(SettingsKeys.IsCommentsCollapsed)
             .map { it ?: false }
 
-    override fun getHomePostSorting(): HomePostSorting = settings.getString(SettingsKeys.HomePostSorting)
-        .let { HomePostSorting.valueOf(it) }
+    override fun getHomePostSorting(): HomePostSorting = settings.getStringOrNull(SettingsKeys.HomePostSorting)
+        .let { if (it != null) HomePostSorting.valueOf(it) else HomePostSorting.Default }
 
-    override fun getProfilePostSorting(): ProfilePostSorting = settings.getString(SettingsKeys.ProfilePostSorting)
-        .let { ProfilePostSorting.valueOf(it) }
+    override fun getProfilePostSorting(): ProfilePostSorting = settings.getStringOrNull(SettingsKeys.ProfilePostSorting)
+        .let { if (it != null) ProfilePostSorting.valueOf(it) else ProfilePostSorting.Default }
 
-    override fun getUserPostSorting(): UserPostSorting = settings.getString(SettingsKeys.UserPostSorting)
-        .let { UserPostSorting.valueOf(it) }
+    override fun getUserPostSorting(): UserPostSorting = settings.getStringOrNull(SettingsKeys.UserPostSorting)
+        .let { if (it != null) UserPostSorting.valueOf(it) else UserPostSorting.Default }
 
-    override fun getSubredditPostSorting(): SubredditPostSorting = settings.getString(SettingsKeys.SubredditPostSorting)
-        .let { SubredditPostSorting.valueOf(it) }
+    override fun getSubredditPostSorting(): SubredditPostSorting = settings.getStringOrNull(SettingsKeys.SubredditPostSorting)
+        .let { if (it != null) SubredditPostSorting.valueOf(it) else SubredditPostSorting.Default }
 
-    override fun getSearchPostSorting(): SearchPostSorting = settings.getString(SettingsKeys.SearchPostSorting)
-        .let { SearchPostSorting.valueOf(it) }
+    override fun getSearchPostSorting(): SearchPostSorting = settings.getStringOrNull(SettingsKeys.SearchPostSorting)
+        .let { if (it != null) SearchPostSorting.valueOf(it) else SearchPostSorting.Default }
 
-    override fun getPostCommentSorting(): PostCommentSorting = settings.getString(SettingsKeys.PostCommentSorting)
-        .let { PostCommentSorting.valueOf(it) }
+    override fun getPostCommentSorting(): PostCommentSorting = settings.getStringOrNull(SettingsKeys.PostCommentSorting)
+        .let { if (it != null) PostCommentSorting.valueOf(it) else PostCommentSorting.Default }
 
     override fun getIsCommentsCollapsed(): Boolean =
         settings.getBooleanOrNull(SettingsKeys.IsCommentsCollapsed) ?: false
@@ -84,6 +82,10 @@ internal class SettingsRepositoryImpl(
 
     override suspend fun setPostLayout(value: PostLayout) = withContext(dispatcher) {
         flowSettings.putString(SettingsKeys.PostLayout, value.name)
+    }
+
+    override suspend fun setIsPostFullHeight(value: Boolean) = withContext(dispatcher) {
+        flowSettings.putBoolean(SettingsKeys.IsPostFullHeight, value)
     }
 
     override suspend fun setIsSidebarExpanded(value: Boolean) = withContext(dispatcher) {

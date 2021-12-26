@@ -9,7 +9,7 @@ import com.rainbow.app.utils.RainbowStrings
 @Composable
 fun IsCommentsCollapsedOption() {
     val isCommentsCollapsed by SettingsModel.isCommentsCollapsed.collectAsState()
-    SettingsOption(RainbowStrings.IsCommentsCollapsed) {
+    SettingsOption(RainbowStrings.CollapseCommentsByDefault) {
         Switch(
             isCommentsCollapsed,
             onCheckedChange = { SettingsModel.setIsCommentsCollapsed(it) },
