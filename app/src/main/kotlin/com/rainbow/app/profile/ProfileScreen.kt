@@ -15,7 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.app.comment.comments
-import com.rainbow.app.components.DefaultTabRow
+import com.rainbow.app.components.ScrollableEnumTabRow
 import com.rainbow.app.components.HeaderDescription
 import com.rainbow.app.components.RainbowLazyColumn
 import com.rainbow.app.components.ScreenHeaderItem
@@ -84,7 +84,7 @@ fun ProfileScreen(
         RainbowLazyColumn(modifier) {
             item { Header(user) }
             item {
-                DefaultTabRow(
+                ScrollableEnumTabRow(
                     selectedTab = selectedTab,
                     onTabClick = { ProfileScreenModel.selectTab(it) },
                 )

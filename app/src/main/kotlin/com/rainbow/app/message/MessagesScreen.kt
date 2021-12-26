@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.rainbow.app.components.DefaultTabRow
+import com.rainbow.app.components.ScrollableEnumTabRow
 import com.rainbow.app.components.RainbowLazyColumn
 import com.rainbow.app.model.ListModel
 import com.rainbow.app.utils.OneTimeEffect
@@ -57,7 +57,7 @@ inline fun MessagesScreen(
     }
     RainbowLazyColumn(modifier) {
         item {
-            DefaultTabRow(
+            ScrollableEnumTabRow(
                 selectedTab = selectedTab,
                 onTabClick = { MessagesScreenModel.selectTab(it) },
                 Modifier.fillParentMaxWidth()

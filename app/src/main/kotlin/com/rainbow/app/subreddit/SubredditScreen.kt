@@ -71,7 +71,7 @@ fun SubredditScreen(
             }
         }
         item {
-            DefaultTabRow(
+            ScrollableEnumTabRow(
                 selectedTab = selectedTab,
                 onTabClick = { model.selectTab(it) },
             )

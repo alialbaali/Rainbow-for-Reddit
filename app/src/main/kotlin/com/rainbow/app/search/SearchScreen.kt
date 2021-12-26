@@ -12,7 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
-import com.rainbow.app.components.DefaultTabRow
+import com.rainbow.app.components.ScrollableEnumTabRow
 import com.rainbow.app.components.LazyGrid
 import com.rainbow.app.model.ListModel
 import com.rainbow.app.post.posts
@@ -62,7 +62,7 @@ fun SearchScreen(
         if (selectedTab == SearchTab.Posts) modifier else Modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        DefaultTabRow(
+        ScrollableEnumTabRow(
             selectedTab,
             onTabClick = { model.selectTab(it) }
         )

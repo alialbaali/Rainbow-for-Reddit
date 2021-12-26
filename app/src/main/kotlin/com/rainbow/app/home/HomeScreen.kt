@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import com.rainbow.app.comment.comments
-import com.rainbow.app.components.DefaultTabRow
+import com.rainbow.app.components.EnumTabRow
 import com.rainbow.app.components.RainbowLazyColumn
 import com.rainbow.app.model.ListModel
 import com.rainbow.app.post.posts
@@ -47,7 +47,7 @@ inline fun HomeScreen(
     }
     RainbowLazyColumn(modifier) {
         item {
-            DefaultTabRow(
+            EnumTabRow(
                 selectedTab,
                 onTabClick = { HomeScreenModel.selectTab(it) }
             )

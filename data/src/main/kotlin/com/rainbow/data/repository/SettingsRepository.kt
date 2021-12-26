@@ -64,23 +64,23 @@ private class SettingsRepositoryImpl(
         settings.putBoolean(SettingsKeys.IsSidebarExpanded, value)
     }
 
-    override suspend fun setHomePostSorting(value: HomePostSorting) {
+    override suspend fun setHomePostSorting(value: HomePostSorting) = withContext(dispatcher) {
         settings.putString(SettingsKeys.HomePostSorting, value.name)
     }
 
-    override suspend fun setUserPostSorting(value: UserPostSorting) {
+    override suspend fun setUserPostSorting(value: UserPostSorting) = withContext(dispatcher) {
         settings.putString(SettingsKeys.UserPostSorting, value.name)
     }
 
-    override suspend fun setProfilePostSorting(value: ProfilePostSorting) {
+    override suspend fun setProfilePostSorting(value: ProfilePostSorting) = withContext(dispatcher) {
         settings.putString(SettingsKeys.ProfilePostSorting, value.name)
     }
 
-    override suspend fun setSubredditPostSorting(value: SubredditPostSorting) {
+    override suspend fun setSubredditPostSorting(value: SubredditPostSorting) = withContext(dispatcher) {
         settings.putString(SettingsKeys.SubredditPostSorting, value.name)
     }
 
-    override suspend fun setSearchPostSorting(value: SearchPostSorting) {
+    override suspend fun setSearchPostSorting(value: SearchPostSorting) = withContext(dispatcher) {
         settings.putString(SettingsKeys.SearchPostSorting, value.name)
     }
 }

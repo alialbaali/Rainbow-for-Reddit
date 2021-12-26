@@ -7,7 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import com.rainbow.app.comment.comments
-import com.rainbow.app.components.DefaultTabRow
+import com.rainbow.app.components.ScrollableEnumTabRow
 import com.rainbow.app.components.RainbowLazyColumn
 import com.rainbow.app.item.items
 import com.rainbow.app.model.ListModel
@@ -58,7 +58,7 @@ fun UserScreen(
         RainbowLazyColumn(modifier) {
             item { Header(user) }
             item {
-                DefaultTabRow(
+                ScrollableEnumTabRow(
                     selectedTab = selectedTab,
                     onTabClick = { model.selectTab(it) }
                 )
