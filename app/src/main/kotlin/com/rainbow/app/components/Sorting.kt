@@ -47,7 +47,7 @@ inline fun <reified T : Enum<T>> SortingItem(
 ) {
     var isMenuVisible by remember { mutableStateOf(false) }
     val iconRotation by animateFloatAsState(if (isMenuVisible) 180F else 0F)
-    val values = remember(sorting) { enumValues<T>() }
+    val values = remember { enumValues<T>() }
     Column(modifier) {
         TextIconButton(
             sorting.name,

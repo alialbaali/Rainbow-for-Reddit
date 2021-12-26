@@ -21,6 +21,8 @@ enum class Vote {
     Up, Down, None,
 }
 
+typealias ProfilePostSorting = UserPostSorting
+
 enum class UserPostSorting : PostSorting {
     Hot, New, Top, Controversial;
 
