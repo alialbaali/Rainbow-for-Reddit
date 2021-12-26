@@ -18,7 +18,7 @@ fun LogoutButton(modifier: Modifier = Modifier) {
 
     OutlinedButton(
         onClick = { isDialogShown = true },
-        modifier = modifier.defaultPadding(),
+        modifier = modifier,
         colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colors.error),
         border = ButtonDefaults.outlinedBorder.copy(brush = SolidColor(MaterialTheme.colors.error)),
     ) {
