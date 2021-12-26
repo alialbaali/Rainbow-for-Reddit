@@ -11,4 +11,5 @@ internal object SettingsKeys {
     const val UserPostSorting = "UserPostSorting"
     const val SubredditPostSorting = "SubredditPostSorting"
     const val SearchPostSorting = "SearchPostSorting"
+    const val PostCommentSorting = "PostCommentSorting"
 }

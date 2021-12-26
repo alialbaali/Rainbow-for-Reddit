@@ -49,6 +49,9 @@ internal class SettingsRepositoryImpl(
 
     override val userPostSorting: Flow<UserPostSorting> = flowSettings.getStringFlow(SettingsKeys.UserPostSorting)
         .map { UserPostSorting.valueOf(it) }
+    override val postCommentSorting: Flow<PostCommentSorting> =
+        flowSettings.getStringFlow(SettingsKeys.PostCommentSorting)
+            .map { PostCommentSorting.valueOf(it) }
 
     override fun getHomePostSorting(): HomePostSorting = settings.getString(SettingsKeys.HomePostSorting)
         .let { HomePostSorting.valueOf(it) }
@@ -64,6 +67,9 @@ internal class SettingsRepositoryImpl(
 
     override fun getSearchPostSorting(): SearchPostSorting = settings.getString(SettingsKeys.SearchPostSorting)
         .let { SearchPostSorting.valueOf(it) }
+
+    override fun getPostCommentSorting(): PostCommentSorting = settings.getString(SettingsKeys.PostCommentSorting)
+        .let { PostCommentSorting.valueOf(it) }
 
     override suspend fun setTheme(theme: Theme) = withContext(dispatcher) {
         flowSettings.putString(SettingsKeys.Theme, theme.name)
@@ -95,5 +101,9 @@ internal class SettingsRepositoryImpl(
 
     override suspend fun setSearchPostSorting(value: SearchPostSorting) = withContext(dispatcher) {
         flowSettings.putString(SettingsKeys.SearchPostSorting, value.name)
+    }
+
+    override suspend fun setPostCommentSorting(value: PostCommentSorting) = withContext(dispatcher) {
+        flowSettings.putString(SettingsKeys.PostCommentSorting, value.name)
     }
 }

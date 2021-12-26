@@ -14,9 +14,9 @@ import androidx.compose.ui.focus.focusOrder
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.comment.AddComment
 import com.rainbow.app.comment.postComments
+import com.rainbow.app.components.DropdownMenuHolder
 import com.rainbow.app.components.RainbowIconButton
 import com.rainbow.app.components.RainbowLazyColumn
-import com.rainbow.app.components.SortingItem
 import com.rainbow.app.utils.*
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.Post
@@ -70,9 +70,9 @@ fun PostScreen(
                         commentListModel::collapseComments,
                         Modifier.weight(1F)
                     )
-                    SortingItem(
+                    DropdownMenuHolder(
                         sorting,
-                        onSortingUpdate = { commentListModel.setSorting(it) },
+                        commentListModel::setSorting,
                     )
                 }
                 Spacer(Modifier.height(16.dp))

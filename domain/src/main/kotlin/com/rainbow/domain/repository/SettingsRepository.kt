@@ -23,6 +23,8 @@ interface SettingsRepository {
 
     val userPostSorting: Flow<UserPostSorting>
 
+    val postCommentSorting: Flow<PostCommentSorting>
+
     fun getHomePostSorting(): HomePostSorting
 
     fun getProfilePostSorting(): ProfilePostSorting
@@ -32,6 +34,8 @@ interface SettingsRepository {
     fun getSubredditPostSorting(): SubredditPostSorting
 
     fun getSearchPostSorting(): SearchPostSorting
+
+    fun getPostCommentSorting(): PostCommentSorting
 
     suspend fun setTheme(theme: Theme)
 
@@ -50,4 +54,6 @@ interface SettingsRepository {
     suspend fun setSubredditPostSorting(value: SubredditPostSorting)
 
     suspend fun setSearchPostSorting(value: SearchPostSorting)
+
+    suspend fun setPostCommentSorting(value: PostCommentSorting)
 }

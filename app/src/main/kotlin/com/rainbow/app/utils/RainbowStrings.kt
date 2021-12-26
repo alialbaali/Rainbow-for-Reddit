@@ -73,6 +73,7 @@ object RainbowStrings {
     const val DefaultUserPostSorting = "Default subreddit post sorting"
     const val DefaultHomePostSorting = "Default home post sorting"
     const val DefaultSearchPostSorting = "Default search post sorting"
+    const val DefaultCommentSorting = "Default comment sorting"
 
     fun SubredditsCount(count: Int) = "$count subreddits"
     fun UnsubscribeMessage(subredditName: String) = "You have unsubscribed from $subredditName."

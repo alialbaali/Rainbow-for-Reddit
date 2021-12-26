@@ -20,7 +20,8 @@ class PostCommentListModel private constructor(private val type: Type) : Model()
     private val mutableComments = MutableStateFlow<UIState<List<Comment>>>(UIState.Loading)
     val comments get() = mutableComments.asStateFlow()
 
-    private val mutableSorting = MutableStateFlow(PostCommentSorting.Default)
+    private val initialSorting = Repos.Settings.getPostCommentSorting()
+    private val mutableSorting = MutableStateFlow(initialSorting)
     val sorting get() = mutableSorting.asStateFlow()
 
     private val mutableCommentsVisibility = MutableStateFlow<Map<String, Boolean>>(emptyMap())
@@ -37,6 +38,7 @@ class PostCommentListModel private constructor(private val type: Type) : Model()
 
     sealed interface Type {
         val postId: String
+
         data class Post(override val postId: String) : Type
         data class Thread(override val postId: String, val parentId: String) : Type
     }

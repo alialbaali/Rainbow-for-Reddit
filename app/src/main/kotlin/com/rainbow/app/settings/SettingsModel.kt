@@ -40,6 +40,9 @@ object SettingsModel : Model() {
     val searchPostSorting = Repos.Settings.searchPostSorting
         .stateIn(scope, SharingStarted.Eagerly, SearchPostSorting.Default)
 
+    val postCommentSorting = Repos.Settings.postCommentSorting
+        .stateIn(scope, SharingStarted.Eagerly, PostCommentSorting.Default)
+
     fun setIsSidebarExpanded(value: Boolean) = scope.launch {
         Repos.Settings.setIsSidebarExpanded(value)
     }
@@ -87,6 +90,10 @@ object SettingsModel : Model() {
 
     fun setSearchPostSorting(value: SearchPostSorting) = scope.launch {
         Repos.Settings.setSearchPostSorting(value)
+    }
+
+    fun setPostCommentSorting(value: PostCommentSorting) = scope.launch {
+        Repos.Settings.setPostCommentSorting(value)
     }
 
     fun selectTab(tab: SettingsTab) {

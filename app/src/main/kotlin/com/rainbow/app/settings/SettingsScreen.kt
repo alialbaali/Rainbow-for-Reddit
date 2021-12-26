@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.rainbow.app.components.EnumTabRow
 
 enum class SettingsTab {
-    General, Post;
+    General, Post, Comment;
 
     companion object {
         val Default = General
@@ -30,6 +30,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             when (selectedTab) {
                 SettingsTab.General -> GeneralSettings()
                 SettingsTab.Post -> PostSettings()
+                SettingsTab.Comment -> CommentSettings()
             }
         }
     }
