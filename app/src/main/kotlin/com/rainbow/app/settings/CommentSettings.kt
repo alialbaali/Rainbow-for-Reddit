@@ -14,5 +14,6 @@ fun CommentSettings(modifier: Modifier = Modifier) {
         SettingsOption(RainbowStrings.DefaultCommentSorting) {
             DropdownMenuHolder(commentSorting, SettingsModel::setPostCommentSorting)
         }
+        IsCommentsCollapsedOption()
     }
 }

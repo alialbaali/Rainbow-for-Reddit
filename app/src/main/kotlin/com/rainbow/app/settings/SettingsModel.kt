@@ -22,6 +22,8 @@ object SettingsModel : Model() {
 
     val postLayout = Repos.Settings.postLayout.stateIn(scope, SharingStarted.Eagerly, PostLayout.Card)
 
+    val isCommentsCollapsed = Repos.Settings.isCommentsCollapsed.stateIn(scope, SharingStarted.Eagerly, false)
+
     private val mutableSelectedTab = MutableStateFlow(SettingsTab.Default)
     val selectedTab get() = mutableSelectedTab.asStateFlow()
 
@@ -94,6 +96,10 @@ object SettingsModel : Model() {
 
     fun setPostCommentSorting(value: PostCommentSorting) = scope.launch {
         Repos.Settings.setPostCommentSorting(value)
+    }
+
+    fun setIsCommentsCollapsed(value: Boolean) = scope.launch {
+        Repos.Settings.setIsCommentsCollapsed(value)
     }
 
     fun selectTab(tab: SettingsTab) {

@@ -25,6 +25,8 @@ interface SettingsRepository {
 
     val postCommentSorting: Flow<PostCommentSorting>
 
+    val isCommentsCollapsed: Flow<Boolean>
+
     fun getHomePostSorting(): HomePostSorting
 
     fun getProfilePostSorting(): ProfilePostSorting
@@ -36,6 +38,8 @@ interface SettingsRepository {
     fun getSearchPostSorting(): SearchPostSorting
 
     fun getPostCommentSorting(): PostCommentSorting
+
+    fun getIsCommentsCollapsed(): Boolean
 
     suspend fun setTheme(theme: Theme)
 
@@ -56,4 +60,6 @@ interface SettingsRepository {
     suspend fun setSearchPostSorting(value: SearchPostSorting)
 
     suspend fun setPostCommentSorting(value: PostCommentSorting)
+
+    suspend fun setIsCommentsCollapsed(value: Boolean)
 }

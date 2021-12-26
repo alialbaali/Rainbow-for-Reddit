@@ -53,6 +53,10 @@ internal class SettingsRepositoryImpl(
         flowSettings.getStringFlow(SettingsKeys.PostCommentSorting)
             .map { PostCommentSorting.valueOf(it) }
 
+    override val isCommentsCollapsed: Flow<Boolean> =
+        flowSettings.getBooleanOrNullFlow(SettingsKeys.IsCommentsCollapsed)
+            .map { it ?: false }
+
     override fun getHomePostSorting(): HomePostSorting = settings.getString(SettingsKeys.HomePostSorting)
         .let { HomePostSorting.valueOf(it) }
 
@@ -70,6 +74,9 @@ internal class SettingsRepositoryImpl(
 
     override fun getPostCommentSorting(): PostCommentSorting = settings.getString(SettingsKeys.PostCommentSorting)
         .let { PostCommentSorting.valueOf(it) }
+
+    override fun getIsCommentsCollapsed(): Boolean =
+        settings.getBooleanOrNull(SettingsKeys.IsCommentsCollapsed) ?: false
 
     override suspend fun setTheme(theme: Theme) = withContext(dispatcher) {
         flowSettings.putString(SettingsKeys.Theme, theme.name)
@@ -105,5 +112,9 @@ internal class SettingsRepositoryImpl(
 
     override suspend fun setPostCommentSorting(value: PostCommentSorting) = withContext(dispatcher) {
         flowSettings.putString(SettingsKeys.PostCommentSorting, value.name)
+    }
+
+    override suspend fun setIsCommentsCollapsed(value: Boolean) = withContext(dispatcher) {
+        settings.putBoolean(SettingsKeys.IsCommentsCollapsed, value)
     }
 }

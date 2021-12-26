@@ -24,6 +24,7 @@ class PostCommentListModel private constructor(private val type: Type) : Model()
     private val mutableSorting = MutableStateFlow(initialSorting)
     val sorting get() = mutableSorting.asStateFlow()
 
+    private val isCommentsCollapsed = Repos.Settings.getIsCommentsCollapsed()
     private val mutableCommentsVisibility = MutableStateFlow<Map<String, Boolean>>(emptyMap())
     val commentsVisibility get() = mutableCommentsVisibility.asStateFlow()
 
@@ -56,7 +57,7 @@ class PostCommentListModel private constructor(private val type: Type) : Model()
         mutableComments.value = UIState.Loading
         scope.launch {
             mutableComments.value = Repos.Comment.getPostsComments(postId, sorting.value)
-                .onSuccess { mutableCommentsVisibility.value = it.associate { it.id to true } }
+                .onSuccess { mutableCommentsVisibility.value = it.associate { it.id to !isCommentsCollapsed } }
                 .toUIState()
         }
     }
@@ -72,9 +73,11 @@ class PostCommentListModel private constructor(private val type: Type) : Model()
                             .toMutableList()
                             .replaceViewMore(commentId, moreComments)
                     }
-                    if (commentsVisibility.value.none { it.value })
-                        mutableCommentsVisibility.value =
-                            commentsVisibility.value + moreComments.associate { it.id to false }
+                    mutableCommentsVisibility.value = when {
+                        commentsVisibility.value.all { it.value } -> moreComments.associate { it.id to true }
+                        commentsVisibility.value.none { it.value } -> moreComments.associate { it.id to false }
+                        else -> moreComments.associate { it.id to isCommentsCollapsed }
+                    }
                 }
         }
     }
