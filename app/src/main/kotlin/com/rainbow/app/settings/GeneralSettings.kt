@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 fun GeneralSettings(modifier: Modifier = Modifier) {
     SettingsTabContent(modifier) {
         ThemeOption()
+        TextSelectionOption()
         LogoutButton()
     }
 }

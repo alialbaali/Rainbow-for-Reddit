@@ -24,6 +24,8 @@ object SettingsModel : Model() {
 
     val isCommentsCollapsed = Repos.Settings.isCommentsCollapsed.stateIn(scope, SharingStarted.Eagerly, false)
 
+    val isTextSelectionEnabled = Repos.Settings.isTextSelectionEnabled.stateIn(scope, SharingStarted.Eagerly, false)
+
     private val mutableSelectedTab = MutableStateFlow(SettingsTab.Default)
     val selectedTab get() = mutableSelectedTab.asStateFlow()
 
@@ -100,6 +102,10 @@ object SettingsModel : Model() {
 
     fun setIsCommentsCollapsed(value: Boolean) = scope.launch {
         Repos.Settings.setIsCommentsCollapsed(value)
+    }
+
+    fun setIsTextSelectionEnabled(value: Boolean) = scope.launch {
+        Repos.Settings.setIsTextSelectionEnabled(value)
     }
 
     fun selectTab(tab: SettingsTab) {

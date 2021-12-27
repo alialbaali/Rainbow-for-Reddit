@@ -55,6 +55,10 @@ internal class SettingsRepositoryImpl(
         flowSettings.getBooleanOrNullFlow(SettingsKeys.IsCommentsCollapsed)
             .map { it ?: false }
 
+    override val isTextSelectionEnabled: Flow<Boolean> =
+        flowSettings.getBooleanOrNullFlow(SettingsKeys.isTextSelectionEnabled)
+            .map { it ?: false }
+
     override fun getHomePostSorting(): HomePostSorting = settings.getStringOrNull(SettingsKeys.HomePostSorting)
         .let { if (it != null) HomePostSorting.valueOf(it) else HomePostSorting.Default }
 
@@ -64,8 +68,9 @@ internal class SettingsRepositoryImpl(
     override fun getUserPostSorting(): UserPostSorting = settings.getStringOrNull(SettingsKeys.UserPostSorting)
         .let { if (it != null) UserPostSorting.valueOf(it) else UserPostSorting.Default }
 
-    override fun getSubredditPostSorting(): SubredditPostSorting = settings.getStringOrNull(SettingsKeys.SubredditPostSorting)
-        .let { if (it != null) SubredditPostSorting.valueOf(it) else SubredditPostSorting.Default }
+    override fun getSubredditPostSorting(): SubredditPostSorting =
+        settings.getStringOrNull(SettingsKeys.SubredditPostSorting)
+            .let { if (it != null) SubredditPostSorting.valueOf(it) else SubredditPostSorting.Default }
 
     override fun getSearchPostSorting(): SearchPostSorting = settings.getStringOrNull(SettingsKeys.SearchPostSorting)
         .let { if (it != null) SearchPostSorting.valueOf(it) else SearchPostSorting.Default }
@@ -117,6 +122,10 @@ internal class SettingsRepositoryImpl(
     }
 
     override suspend fun setIsCommentsCollapsed(value: Boolean) = withContext(dispatcher) {
-        settings.putBoolean(SettingsKeys.IsCommentsCollapsed, value)
+        flowSettings.putBoolean(SettingsKeys.IsCommentsCollapsed, value)
+    }
+
+    override suspend fun setIsTextSelectionEnabled(value: Boolean) = withContext(dispatcher) {
+        flowSettings.putBoolean(SettingsKeys.isTextSelectionEnabled, value)
     }
 }

@@ -27,6 +27,8 @@ interface SettingsRepository {
 
     val isCommentsCollapsed: Flow<Boolean>
 
+    val isTextSelectionEnabled: Flow<Boolean>
+
     fun getHomePostSorting(): HomePostSorting
 
     fun getProfilePostSorting(): ProfilePostSorting
@@ -62,4 +64,6 @@ interface SettingsRepository {
     suspend fun setPostCommentSorting(value: PostCommentSorting)
 
     suspend fun setIsCommentsCollapsed(value: Boolean)
+
+    suspend fun setIsTextSelectionEnabled(value: Boolean)
 }
