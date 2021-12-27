@@ -17,6 +17,14 @@ enum class PostLayout {
     Card, Compact,
 }
 
+enum class MarkPostAsRead {
+    OnClick, OnScroll;
+
+    companion object {
+        val Default = OnClick
+    }
+}
+
 enum class Vote {
     Up, Down, None,
 }

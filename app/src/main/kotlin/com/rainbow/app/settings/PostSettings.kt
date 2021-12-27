@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 fun PostSettings(modifier: Modifier = Modifier) {
     SettingsTabContent(modifier) {
         PostFullHeightOption()
+        MarkPostAsReadOption()
         PostLayoutOption()
         PostSortingOptions()
     }

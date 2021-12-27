@@ -14,4 +14,5 @@ internal object SettingsKeys {
     const val PostCommentSorting = "PostCommentSorting"
     const val IsCommentsCollapsed = "isCommentsCollapsed"
     const val isTextSelectionEnabled = "isTextSelectionEnabled"
+    const val MarkPostAsRead = "MarkPostIsRead"
 }

@@ -9,8 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import com.rainbow.app.settings.SettingsModel
+import com.rainbow.app.utils.OneTimeEffect
 import com.rainbow.app.utils.defaultPadding
 import com.rainbow.app.utils.defaultSurfaceShape
+import com.rainbow.domain.models.MarkPostAsRead
 import com.rainbow.domain.models.Post
 
 @Composable
@@ -24,13 +26,22 @@ inline fun PostItem(
     crossinline onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     val isFullHeight by SettingsModel.isPostFullHeight.collectAsState()
+    val markPostAsRead by SettingsModel.markPostAsRead.collectAsState()
+
+    OneTimeEffect(markPostAsRead) {
+        if (markPostAsRead == MarkPostAsRead.OnScroll)
+            PostActionsModel.readPost(post, onUpdate)
+    }
 
     Column(
         modifier
             .defaultSurfaceShape()
-            .clickable { onClick(post) }
+            .clickable {
+                onClick(post)
+                if (markPostAsRead == MarkPostAsRead.OnClick)
+                    PostActionsModel.readPost(post, onUpdate)
+            }
             .defaultPadding(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {

@@ -33,4 +33,6 @@ object PostActionsModel : Model() {
             .onSuccess { onSuccess(post.copy(isHidden = false)) }
     }
 
+    fun readPost(post: Post, onSuccess: (Post) -> Unit) = onSuccess(post.copy(isRead = true))
+
 }

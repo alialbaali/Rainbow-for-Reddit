@@ -59,6 +59,9 @@ internal class SettingsRepositoryImpl(
         flowSettings.getBooleanOrNullFlow(SettingsKeys.isTextSelectionEnabled)
             .map { it ?: false }
 
+    override val markPostAsRead: Flow<MarkPostAsRead> = flowSettings.getStringOrNullFlow(SettingsKeys.MarkPostAsRead)
+        .map { if (it != null) MarkPostAsRead.valueOf(it) else MarkPostAsRead.Default }
+
     override fun getHomePostSorting(): HomePostSorting = settings.getStringOrNull(SettingsKeys.HomePostSorting)
         .let { if (it != null) HomePostSorting.valueOf(it) else HomePostSorting.Default }
 
@@ -127,5 +130,9 @@ internal class SettingsRepositoryImpl(
 
     override suspend fun setIsTextSelectionEnabled(value: Boolean) = withContext(dispatcher) {
         flowSettings.putBoolean(SettingsKeys.isTextSelectionEnabled, value)
+    }
+
+    override suspend fun setMarkPostAsRead(value: MarkPostAsRead) = withContext(dispatcher) {
+        flowSettings.putString(SettingsKeys.MarkPostAsRead, value.name)
     }
 }

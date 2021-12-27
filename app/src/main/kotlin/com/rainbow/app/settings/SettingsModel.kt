@@ -26,6 +26,8 @@ object SettingsModel : Model() {
 
     val isTextSelectionEnabled = Repos.Settings.isTextSelectionEnabled.stateIn(scope, SharingStarted.Eagerly, false)
 
+    val markPostAsRead = Repos.Settings.markPostAsRead.stateIn(scope, SharingStarted.Eagerly, MarkPostAsRead.Default)
+
     private val mutableSelectedTab = MutableStateFlow(SettingsTab.Default)
     val selectedTab get() = mutableSelectedTab.asStateFlow()
 
@@ -106,6 +108,10 @@ object SettingsModel : Model() {
 
     fun setIsTextSelectionEnabled(value: Boolean) = scope.launch {
         Repos.Settings.setIsTextSelectionEnabled(value)
+    }
+
+    fun setMarkPostAsRead(value: MarkPostAsRead) = scope.launch {
+        Repos.Settings.setMarkPostAsRead(value)
     }
 
     fun selectTab(tab: SettingsTab) {

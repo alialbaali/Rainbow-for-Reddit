@@ -29,6 +29,8 @@ interface SettingsRepository {
 
     val isTextSelectionEnabled: Flow<Boolean>
 
+    val markPostAsRead: Flow<MarkPostAsRead>
+
     fun getHomePostSorting(): HomePostSorting
 
     fun getProfilePostSorting(): ProfilePostSorting
@@ -66,4 +68,6 @@ interface SettingsRepository {
     suspend fun setIsCommentsCollapsed(value: Boolean)
 
     suspend fun setIsTextSelectionEnabled(value: Boolean)
+
+    suspend fun setMarkPostAsRead(value: MarkPostAsRead)
 }
