@@ -1,5 +1,6 @@
 package com.rainbow.app.settings
 
+import androidx.compose.material.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -9,11 +10,27 @@ import com.rainbow.app.utils.RainbowStrings
 
 @Composable
 fun CommentSettings(modifier: Modifier = Modifier) {
-    val commentSorting by SettingsModel.postCommentSorting.collectAsState()
     SettingsTabContent(modifier) {
-        SettingsOption(RainbowStrings.DefaultCommentSorting) {
-            DropdownMenuHolder(commentSorting, SettingsModel::setPostCommentSorting)
-        }
+        CommentSortingOption()
         IsCommentsCollapsedOption()
+    }
+}
+
+@Composable
+private fun CommentSortingOption(modifier: Modifier = Modifier) {
+    val commentSorting by SettingsModel.postCommentSorting.collectAsState()
+    SettingsOption(RainbowStrings.DefaultCommentSorting, modifier) {
+        DropdownMenuHolder(commentSorting, SettingsModel::setPostCommentSorting)
+    }
+}
+
+@Composable
+private fun IsCommentsCollapsedOption(modifier: Modifier = Modifier) {
+    val isCommentsCollapsed by SettingsModel.isCommentsCollapsed.collectAsState()
+    SettingsOption(RainbowStrings.CollapseCommentsByDefault, modifier) {
+        Switch(
+            isCommentsCollapsed,
+            onCheckedChange = { SettingsModel.setIsCommentsCollapsed(it) },
+        )
     }
 }
