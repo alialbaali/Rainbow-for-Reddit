@@ -42,24 +42,34 @@ fun PostScreen(
     val sorting by commentListModel.sorting.collectAsState()
     postState.composed(onShowSnackbar, modifier) { post ->
         RainbowLazyColumn(
-            modifier
-                .defaultSurfaceShape()
-                .defaultPadding(),
+            modifier.defaultBackgroundShape(),
             verticalArrangement = Arrangement.Top,
         ) {
             item {
-                Post(post, onPostUpdate, focusRequester, onUserNameClick, onSubredditNameClick, onShowSnackbar)
+                Post(
+                    post,
+                    onPostUpdate,
+                    focusRequester,
+                    onUserNameClick,
+                    onSubredditNameClick,
+                    onShowSnackbar,
+                    Modifier
+                        .background(MaterialTheme.colors.surface)
+                        .defaultPadding()
+                )
                 Spacer(Modifier.height(16.dp))
                 AddComment(
                     post,
                     Modifier
+                        .background(MaterialTheme.colors.surface)
                         .fillParentMaxWidth()
                         .focusOrder(focusRequester)
+                        .defaultPadding()
                 )
                 Spacer(Modifier.height(16.dp))
             }
             stickyHeader {
-                Row(Modifier.fillParentMaxWidth().background(MaterialTheme.colors.surface)) {
+                Row(Modifier.fillParentMaxWidth().background(MaterialTheme.colors.surface).defaultPadding()) {
                     CommentsActions(
                         backStack.isNotEmpty(),
                         forwardStack.isNotEmpty(),
@@ -90,7 +100,7 @@ fun PostScreen(
                     commentListModel.loadMoreComments(commentId, moreComments)
                 },
                 onCommentUpdate = onCommentUpdate,
-                onRequestThreadComments = { parentId -> model.setCommentListModel(parentId) }
+                onRequestThreadComments = { parentId -> model.setCommentListModel(parentId) },
             )
         }
     }
