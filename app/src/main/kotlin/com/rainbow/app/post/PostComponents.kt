@@ -86,6 +86,7 @@ fun PostContent(post: Post, modifier: Modifier = Modifier) {
         is Post.Type.Gif -> GifPost(type, modifier)
         is Post.Type.Image -> ImagePost(type, post.isNSFW, modifier)
         is Post.Type.Video -> VideoPost(type, modifier)
+        is Post.Type.None -> {}
     }
 }
 

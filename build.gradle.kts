@@ -6,7 +6,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath(kotlin("gradle-plugin", "1.5.31"))
+        classpath(kotlin("gradle-plugin", "1.6.10"))
         classpath("com.squareup.sqldelight:gradle-plugin:1.5.1")
     }
 }

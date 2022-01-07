@@ -107,6 +107,12 @@ inline fun RainbowTopAppBar(
                         timeSorting = timeSorting,
                         onTimeSortingUpdate = { setTimeSorting(it) }
                     )
+                    is PostCommentSorting -> Sorting(
+                        postsSorting = sorting,
+                        onSortingUpdate = { setPostSorting(it) },
+                        timeSorting = timeSorting,
+                        onTimeSortingUpdate = { setTimeSorting(it) }
+                    )
                 }
 
         }

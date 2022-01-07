@@ -3,7 +3,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.compose") version "1.0.0"
+    id("org.jetbrains.compose") version "1.0.1"
 }
 
 repositories {
@@ -15,12 +15,12 @@ dependencies {
     implementation(compose.desktop.currentOs)
     implementation(compose.materialIconsExtended)
     implementation(project(":data"))
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.2.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.1")
     implementation("com.alialbaali.kamel:kamel-image:0.3.0")
     implementation("com.arkivanov.decompose:extensions-compose-jetbrains:0.4.0")
     implementation("com.arkivanov.decompose:decompose:0.4.0")
-    implementation("uk.co.caprica:vlcj:4.7.0")
-    implementation ("com.halilibo.compose-richtext:richtext-commonmark:0.9.0")
+    implementation("uk.co.caprica:vlcj:4.7.1")
+    implementation ("com.halilibo.compose-richtext:richtext-commonmark:0.10.0")
 }
 
 compose.desktop {

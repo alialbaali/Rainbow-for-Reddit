@@ -50,6 +50,7 @@ class SubredditScreenModel private constructor(private val subredditName: String
                     SubredditTab.Wiki -> if (wiki.value.isLoading) loadWiki()
                     SubredditTab.Rules -> if (rules.value.isLoading) loadRules()
                     SubredditTab.Moderators -> if (moderators.value.isLoading) loadModerators()
+                    SubredditTab.Description -> {}
                 }
             }
             .launchIn(scope)

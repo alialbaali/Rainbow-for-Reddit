@@ -57,6 +57,7 @@ fun LazyListScope.postComments(
                             modifier
                                 .background(MaterialTheme.colors.surface)
                         )
+                        is Comment.Type.ContinueThread -> {}
                     }
                 }
                 replies(
