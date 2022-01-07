@@ -3,10 +3,7 @@ package com.rainbow.data
 import com.rainbow.data.repository.*
 import com.rainbow.domain.repository.*
 import com.rainbow.remote.impl.*
-import com.russhwolf.settings.ExperimentalSettingsApi
-import com.russhwolf.settings.ExperimentalSettingsImplementation
-import com.russhwolf.settings.JvmPreferencesSettings
-import com.russhwolf.settings.ObservableSettings
+import com.russhwolf.settings.*
 import com.russhwolf.settings.coroutines.toFlowSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,8 +17,7 @@ object Repos {
         ExperimentalSettingsApi::class,
         ExperimentalCoroutinesApi::class,
     )
-    private val settings = JvmPreferencesSettings.Factory()
-        .create(null)
+    private val settings = Settings()
         .let { it as ObservableSettings }
 
     @OptIn(

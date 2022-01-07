@@ -2,11 +2,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     repositories {
-        mavenCentral()
+        gradlePluginPortal()
         jcenter()
+        google()
+        mavenCentral()
     }
     dependencies {
         classpath(kotlin("gradle-plugin", "1.6.10"))
+        classpath("com.android.tools.build:gradle:7.0.4")
         classpath("com.squareup.sqldelight:gradle-plugin:1.5.1")
     }
 }
@@ -15,6 +18,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven(url = "https://kotlin.bintray.com/kotlinx/")
         jcenter()
     }

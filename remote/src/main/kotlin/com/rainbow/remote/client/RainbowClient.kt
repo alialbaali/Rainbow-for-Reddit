@@ -1,7 +1,7 @@
 package com.rainbow.remote.client
 
 import io.ktor.client.*
-import io.ktor.client.engine.apache.*
+import io.ktor.client.engine.cio.*
 import io.ktor.client.features.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.logging.*
@@ -9,12 +9,12 @@ import io.ktor.client.features.observer.*
 import io.ktor.http.*
 
 internal val rainbowClient by lazy {
-    HttpClient(Apache) {
+    HttpClient(CIO) {
         developmentMode = true
         expectSuccess = false
 
         engine {
-            socketTimeout = 0
+            requestTimeout = 0
         }
 
         ResponseObserver {

@@ -12,5 +12,6 @@ dependencies {
     testApi(Testing.Kotest.property)
     testApi(Testing.Kotest.Runner.junit5)
     api("com.russhwolf:multiplatform-settings:0.8")
+    api("com.russhwolf:multiplatform-settings-no-arg:0.8")
     api("com.russhwolf:multiplatform-settings-coroutines:0.8")
 }

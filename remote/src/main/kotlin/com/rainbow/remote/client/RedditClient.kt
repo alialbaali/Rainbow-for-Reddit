@@ -3,7 +3,7 @@ package com.rainbow.remote.client
 import com.rainbow.remote.dto.TokenResponse
 import com.russhwolf.settings.Settings
 import io.ktor.client.*
-import io.ktor.client.engine.apache.*
+import io.ktor.client.engine.cio.*
 import io.ktor.client.features.*
 import io.ktor.client.features.auth.*
 import io.ktor.client.features.auth.providers.*
@@ -22,7 +22,7 @@ private const val RedirectUrl = "https://rainbowforreddit.herokuapp.com/"
 private const val AccessTokenKey = "access_token"
 
 internal val redditClient by lazy {
-    HttpClient(Apache) {
+    HttpClient(CIO) {
         developmentMode = true
         expectSuccess = false
 

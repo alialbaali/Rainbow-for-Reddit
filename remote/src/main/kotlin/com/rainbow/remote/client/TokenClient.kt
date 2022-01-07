@@ -1,7 +1,7 @@
 package com.rainbow.remote.client
 
 import io.ktor.client.*
-import io.ktor.client.engine.apache.*
+import io.ktor.client.engine.cio.*
 import io.ktor.client.features.*
 import io.ktor.client.features.auth.*
 import io.ktor.client.features.auth.providers.*
@@ -14,7 +14,7 @@ private const val ClientId = "cpKMrRbh8b06TQ"
 private const val ClientPassword = ""
 
 internal val tokenClient by lazy {
-    HttpClient(Apache) {
+    HttpClient(CIO) {
         developmentMode = true
         expectSuccess = false
 

@@ -22,7 +22,6 @@ app/build/*
 *.rar
 *.idea/*
 *.build/*
-*/build*
 build/*
 build
 .gradle/*
