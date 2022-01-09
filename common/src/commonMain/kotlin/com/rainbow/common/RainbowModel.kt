@@ -35,8 +35,8 @@ object RainbowModel : Model() {
         .map { it?.timeSorting?.value }
         .stateIn(scope, SharingStarted.Lazily, null)
 
-    private val mutablePostScreenModel = MutableStateFlow<UIState<PostScreenModel>>(UIState.Loading)
-    val postScreenModel get() = mutablePostScreenModel.asStateFlow()
+    private val mutablePostScreenModelType = MutableStateFlow<UIState<PostScreenModel.Type>>(UIState.Loading)
+    val postScreenModelType get() = mutablePostScreenModelType.asStateFlow()
 
     private val mutableMessageScreenModel = MutableStateFlow<UIState<MessageScreenModel>>(UIState.Loading)
     val messageScreenModel get() = mutableMessageScreenModel.asStateFlow()
@@ -48,15 +48,11 @@ object RainbowModel : Model() {
             items.getOrNull()
                 ?.firstOrNull()
                 ?.also { item ->
-                    val postType = when (item) {
-                        is Post -> PostScreenModel.Type.PostEntity(item)
-                        is Comment -> PostScreenModel.Type.PostId(item.postId)
-                        else -> null
+                    when (item) {
+                        is Post -> PostScreenModel.Type.PostEntity(item).also(this::selectPost)
+                        is Comment -> PostScreenModel.Type.PostId(item.postId).also(this::selectPost)
+                        is Message -> selectMessageOrPost(item)
                     }
-                    if (postType != null)
-                        selectPost(postType)
-                    else if (item is Message)
-                        selectMessageOrPost(item)
                 }
         }.launchIn(scope)
 
@@ -73,8 +69,7 @@ object RainbowModel : Model() {
     }
 
     fun selectPost(type: PostScreenModel.Type) {
-        val model = PostScreenModel.getOrCreateInstance(type)
-        mutablePostScreenModel.value = UIState.Success(model)
+        mutablePostScreenModelType.value = UIState.Success(type)
     }
 
     fun selectMessageOrPost(message: Message) {
@@ -94,14 +89,17 @@ object RainbowModel : Model() {
         mutableListModel.replayCache
             .filter { it.checkType<Post>() }
             .onEach { it.updateItem(post) }
-        postScreenModel.value.getOrNull()?.updatePost(post)
+        PostScreenModel.getOrCreateInstance(PostScreenModel.Type.PostEntity(post)).updatePost(post)
     }
 
     fun updateComment(comment: Comment) {
         mutableListModel.replayCache
             .filter { it.checkType<Comment>() }
             .onEach { it.updateItem(comment) }
-        postScreenModel.value.getOrNull()?.commentListModel?.value?.updateComment(comment)
+        PostScreenModel.getOrCreateInstance(PostScreenModel.Type.PostId(comment.postId))
+            .commentListModel
+            .value
+            .updateComment(comment)
     }
 
     fun updateSubreddit(subreddit: Subreddit) {

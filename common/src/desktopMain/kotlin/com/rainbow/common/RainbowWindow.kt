@@ -1,4 +1,4 @@
-package com.rainbow.desktop
+package com.rainbow.common
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -12,8 +12,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
-import com.rainbow.common.RainbowModel
-import com.rainbow.common.ui.RainbowTheme
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -33,10 +31,9 @@ fun ApplicationScope.RainbowWindow(
             false
         }
     },
-    icon = painterResource("Icon.svg")
-) {
-    RainbowTheme(content = content)
-}
+    icon = painterResource("Icon.svg"),
+    content = { content() }
+)
 
 @OptIn(ExperimentalComposeUiApi::class)
 private val KeyEvent.isRefreshPressed

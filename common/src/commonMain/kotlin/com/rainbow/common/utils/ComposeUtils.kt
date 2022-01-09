@@ -104,8 +104,8 @@ val LocalDateTime.displayTime: String
     }
 
 @Composable
-fun <T> UIState<T>.composed(
-    onShowSnackbar: ((String) -> Unit)?,
+inline fun <T> UIState<T>.composed(
+    noinline onShowSnackbar: ((String) -> Unit)?,
     modifier: Modifier = Modifier,
     onEmpty: @Composable () -> Unit = {},
     onLoading: @Composable () -> Unit = { RainbowProgressIndicator(modifier) },

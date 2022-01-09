@@ -43,14 +43,14 @@ enum class SubredditTab {
 @Composable
 fun SubredditScreen(
     subredditName: String,
-    onSubredditUpdate: (Subreddit) -> Unit,
     focusRequester: FocusRequester,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
+    onPostClick: (Post) -> Unit,
+    onSubredditUpdate: (Subreddit) -> Unit,
+    onPostUpdate: (Post) -> Unit,
     onShowSnackbar: (String) -> Unit,
     setListModel: (ListModel<*>) -> Unit,
-    onPostUpdate: (Post) -> Unit,
-    onPostClick: (Post) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val model = remember { SubredditScreenModel.getOrCreateInstance(subredditName) }

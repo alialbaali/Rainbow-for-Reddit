@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,7 +23,7 @@ enum class SettingsTab {
 @Composable
 fun SettingsScreen(modifier: Modifier = Modifier) {
     val selectedTab by SettingsModel.selectedTab.collectAsState()
-    Column(modifier.fillMaxWidth(0.5F), Arrangement.spacedBy(32.dp)) {
+    Column(modifier, Arrangement.spacedBy(32.dp)) {
         EnumTabRow(selectedTab, SettingsModel::selectTab)
         AnimatedContent(selectedTab) { selectedTab ->
             when (selectedTab) {

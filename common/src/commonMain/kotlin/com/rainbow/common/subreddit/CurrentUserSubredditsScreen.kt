@@ -21,11 +21,11 @@ import com.rainbow.domain.models.Subreddit
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CurrentUserSubredditsScreen(
-    onClick: (String) -> Unit,
-    onSubredditUpdate: (Subreddit) -> Unit,
-    onShowSnackbar: (String) -> Unit,
-    setListModel: (ListModel<*>) -> Unit,
+inline fun CurrentUserSubredditsScreen(
+    crossinline onClick: (String) -> Unit,
+    noinline onSubredditUpdate: (Subreddit) -> Unit,
+    noinline onShowSnackbar: (String) -> Unit,
+    crossinline setListModel: (ListModel<*>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state by CurrentUserSubredditsScreenModel.subredditListModel.items.collectAsState()
@@ -65,6 +65,6 @@ fun CurrentUserSubredditsScreen(
         }
 }
 
-private fun List<Subreddit>.filterContent(searchTerm: String) = filter {
+fun List<Subreddit>.filterContent(searchTerm: String) = filter {
     it.name.contains(searchTerm, ignoreCase = true) || it.shortDescription.contains(searchTerm)
 }

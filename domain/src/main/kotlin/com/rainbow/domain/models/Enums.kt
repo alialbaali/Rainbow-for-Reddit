@@ -77,7 +77,11 @@ enum class SearchPostSorting : PostSorting {
     }
 }
 
-sealed interface Sorting
+sealed interface Sorting {
+    val name: String
+
+    companion object
+}
 
 sealed interface PostSorting : Sorting {
     val isTimeSorting: Boolean

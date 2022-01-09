@@ -39,6 +39,8 @@ kotlin {
             dependencies {
                 api("androidx.appcompat:appcompat:1.4.0")
                 api("androidx.core:core-ktx:1.7.0")
+                api("com.google.accompanist:accompanist-navigation-material:0.22.0-rc")
+                api(AndroidX.Navigation.compose)
             }
         }
         val androidTest by getting {

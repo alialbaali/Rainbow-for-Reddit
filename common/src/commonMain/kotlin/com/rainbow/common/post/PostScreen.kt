@@ -24,15 +24,16 @@ import com.rainbow.domain.models.Post
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PostScreen(
-    model: PostScreenModel,
+    type: PostScreenModel.Type,
     focusRequester: FocusRequester,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
-    onShowSnackbar: (String) -> Unit,
     onPostUpdate: (Post) -> Unit,
     onCommentUpdate: (Comment) -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val model = PostScreenModel.getOrCreateInstance(type)
     val postState by model.post.collectAsState()
     val backStack by model.backStack.collectAsState()
     val forwardStack by model.forwardStack.collectAsState()

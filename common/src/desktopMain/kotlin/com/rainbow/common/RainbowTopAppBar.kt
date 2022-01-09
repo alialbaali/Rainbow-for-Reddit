@@ -1,4 +1,4 @@
-package com.rainbow.common.components
+package com.rainbow.common
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -14,8 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.rainbow.common.components.RainbowIconButton
+import com.rainbow.common.components.Sorting
 import com.rainbow.common.navigation.Screen
-import com.rainbow.common.navigation.name
+import com.rainbow.common.navigation.title
 import com.rainbow.common.search.SearchTextField
 import com.rainbow.common.utils.RainbowIcons
 import com.rainbow.common.utils.RainbowStrings
@@ -72,7 +74,7 @@ inline fun RainbowTopAppBar(
 
                 Text(
                     when (screen) {
-                        is Screen.SidebarItem -> screen.name
+                        is Screen.NavigationItem -> screen.title
                         is Screen.Subreddit -> screen.subredditName
                         is Screen.User -> screen.userName
                         is Screen.Search -> screen.searchTerm

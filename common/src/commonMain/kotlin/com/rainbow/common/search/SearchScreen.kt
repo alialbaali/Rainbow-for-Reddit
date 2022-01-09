@@ -33,16 +33,16 @@ enum class SearchTab {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SearchScreen(
+inline fun SearchScreen(
     searchTerm: String,
-    onPostUpdate: (Post) -> Unit,
-    onPostClick: (Post) -> Unit,
-    onSubredditUpdate: (Subreddit) -> Unit,
     focusRequester: FocusRequester,
-    onUserNameClick: (String) -> Unit,
-    onSubredditNameClick: (String) -> Unit,
-    onShowSnackbar: (String) -> Unit,
-    setListModel: (ListModel<*>) -> Unit,
+    crossinline onUserNameClick: (String) -> Unit,
+    crossinline onSubredditNameClick: (String) -> Unit,
+    crossinline onPostClick: (Post) -> Unit,
+    noinline onSubredditUpdate: (Subreddit) -> Unit,
+    noinline onPostUpdate: (Post) -> Unit,
+    noinline onShowSnackbar: (String) -> Unit,
+    crossinline setListModel: (ListModel<*>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val model = remember(searchTerm) { SearchScreenModel.getOrCreateInstance(searchTerm) }

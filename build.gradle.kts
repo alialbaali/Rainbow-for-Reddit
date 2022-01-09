@@ -19,7 +19,6 @@ allprojects {
         google()
         mavenCentral()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-        maven(url = "https://kotlin.bintray.com/kotlinx/")
         jcenter()
     }
 

@@ -15,10 +15,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.common.comment.comments
-import com.rainbow.common.components.ScrollableEnumTabRow
 import com.rainbow.common.components.HeaderDescription
 import com.rainbow.common.components.RainbowLazyColumn
 import com.rainbow.common.components.ScreenHeaderItem
+import com.rainbow.common.components.ScrollableEnumTabRow
 import com.rainbow.common.item.items
 import com.rainbow.common.model.ListModel
 import com.rainbow.common.post.posts
@@ -38,16 +38,16 @@ enum class ProfileTab {
 }
 
 @Composable
-fun ProfileScreen(
+inline fun ProfileScreen(
     focusRequester: FocusRequester,
-    onUserNameClick: (String) -> Unit,
-    onSubredditNameClick: (String) -> Unit,
-    onShowSnackbar: (String) -> Unit,
-    setListModel: (ListModel<*>) -> Unit,
-    onPostUpdate: (Post) -> Unit,
-    onPostClick: (Post) -> Unit,
-    onCommentClick: (Comment) -> Unit,
-    onCommentUpdate: (Comment) -> Unit,
+    crossinline onUserNameClick: (String) -> Unit,
+    crossinline onSubredditNameClick: (String) -> Unit,
+    crossinline onPostClick: (Post) -> Unit,
+    crossinline onCommentClick: (Comment) -> Unit,
+    noinline onPostUpdate: (Post) -> Unit,
+    noinline onCommentUpdate: (Comment) -> Unit,
+    noinline onShowSnackbar: (String) -> Unit,
+    crossinline setListModel: (ListModel<*>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val selectedTab by ProfileScreenModel.selectedTab.collectAsState(ProfileTab.Overview)

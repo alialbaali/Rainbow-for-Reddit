@@ -14,7 +14,7 @@ internal val rainbowClient by lazy {
         expectSuccess = false
 
         engine {
-            requestTimeout = 0
+            requestTimeout = 0 // Change this
         }
 
         ResponseObserver {

@@ -29,13 +29,13 @@ enum class UserTab {
 @Composable
 fun UserScreen(
     userName: String,
-    onPostUpdate: (Post) -> Unit,
-    onPostClick: (Post) -> Unit,
-    onCommentClick: (Comment) -> Unit,
-    onCommentUpdate: (Comment) -> Unit,
     focusRequester: FocusRequester,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
+    onPostClick: (Post) -> Unit,
+    onCommentClick: (Comment) -> Unit,
+    onPostUpdate: (Post) -> Unit,
+    onCommentUpdate: (Comment) -> Unit,
     onShowSnackbar: (String) -> Unit,
     setListModel: (ListModel<*>) -> Unit,
     modifier: Modifier = Modifier,
