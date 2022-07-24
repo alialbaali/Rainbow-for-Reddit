@@ -11,34 +11,29 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rainbow.common.award.Awards
 import com.rainbow.common.components.*
-import com.rainbow.common.utils.RainbowIcons
-import com.rainbow.common.utils.RainbowStrings
-import com.rainbow.common.utils.defaultBackgroundShape
-import com.rainbow.common.utils.defaultPadding
+import com.rainbow.common.utils.*
+import com.rainbow.domain.models.MarkPostAsRead
 import com.rainbow.domain.models.Post
 import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
 
 @Composable
-fun PostTitle(title: String, isRead: Boolean, modifier: Modifier = Modifier) {
+fun PostTitle(title: String, isRead: Boolean, style: TextStyle, modifier: Modifier = Modifier) {
     IsPostReadProvider(isRead) {
         Text(
             text = title,
             modifier = modifier,
-            style = MaterialTheme.typography.h5,
+            style = style,
         )
     }
 }
@@ -57,24 +52,22 @@ inline fun PostInfo(
         UserName(post.userName, onUserNameClick)
         Dot()
         SubredditName(post.subredditName, onSubredditNameClick)
-        if (post.userFlair.types.isNotEmpty()) {
-            Dot()
-            FlairItem(post.userFlair)
-        }
         Dot()
         CreationDate(post.creationDate)
-        if (post.flair.types.isNotEmpty()) {
-            Dot()
-            FlairItem(post.flair)
-        }
         if (post.isNSFW) {
             Dot()
             Text(RainbowStrings.NSFW, fontWeight = FontWeight.Medium, fontSize = 14.sp, color = Color.Red)
         }
-        if (post.awards.isNotEmpty()) {
-            Dot()
-            Awards(post.awards)
-        }
+    }
+}
+
+@Composable
+fun PostFLairs(post: Post, modifier: Modifier = Modifier) {
+    Row(modifier, Arrangement.spacedBy(16.dp), Alignment.CenterVertically) {
+        if (post.userFlair.types.isNotEmpty())
+            FlairItem(post.userFlair)
+        if (post.flair.types.isNotEmpty())
+            FlairItem(post.flair)
     }
 }
 
@@ -243,16 +236,11 @@ fun GifPost(gif: Post.Type.Gif, modifier: Modifier = Modifier) {
 @Composable
 inline fun PostActions(
     post: Post,
-    noinline onUpdate: (Post) -> Unit,
-    focusRequester: FocusRequester,
-    crossinline onShowSnackbar: (String) -> Unit,
     crossinline onClick: (Post) -> Unit,
+    noinline onUpdate: (Post) -> Unit,
     modifier: Modifier = Modifier,
+    menuContent: @Composable () -> Unit,
 ) {
-    var isMenuExpanded by remember { mutableStateOf(false) }
-    val uriHandler = LocalUriHandler.current
-    val clipboardManager = LocalClipboardManager.current
-
     Row(
         modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -271,61 +259,10 @@ inline fun PostActions(
                 post.commentsCount.toString(),
                 RainbowIcons.QuestionAnswer,
                 RainbowIcons.QuestionAnswer.name,
-                onClick = {
-                    onClick(post)
-                    focusRequester.requestFocus()
-                },
+                onClick = { onClick(post) },
             )
         }
-
-        Column {
-            MenuIconButton(onClick = { isMenuExpanded = true })
-
-            RainbowMenu(
-                expanded = isMenuExpanded,
-                onDismissRequest = { isMenuExpanded = false },
-            ) {
-                RainbowMenuItem(
-                    RainbowStrings.OpenInBrowser,
-                    RainbowIcons.OpenInBrowser,
-                    onclick = {
-                        uriHandler.openUri(post.url)
-                        isMenuExpanded = false
-                    }
-                )
-
-                RainbowMenuItem(
-                    RainbowStrings.CopyLink,
-                    RainbowIcons.ContentCopy,
-                    onclick = {
-                        clipboardManager.setText(AnnotatedString(post.url))
-                        isMenuExpanded = false
-                        onShowSnackbar(RainbowStrings.LinkIsCopied)
-                    }
-                )
-
-                if (post.isHidden)
-                    RainbowMenuItem(
-                        RainbowStrings.UnHide,
-                        RainbowIcons.Visibility,
-                        onclick = {
-                            PostActionsModel.unHidePost(post, onUpdate)
-                            isMenuExpanded = false
-                            onShowSnackbar(RainbowStrings.PostIsUnHidden)
-                        }
-                    )
-                else
-                    RainbowMenuItem(
-                        RainbowStrings.Hide,
-                        RainbowIcons.VisibilityOff,
-                        onclick = {
-                            PostActionsModel.hidePost(post, onUpdate)
-                            isMenuExpanded = false
-                            onShowSnackbar(RainbowStrings.PostIsHidden)
-                        }
-                    )
-            }
-        }
+        menuContent()
     }
 }
 
@@ -333,5 +270,13 @@ inline fun PostActions(
 private fun IsPostReadProvider(isRead: Boolean, content: @Composable () -> Unit) {
     CompositionLocalProvider(LocalContentAlpha provides if (isRead) ContentAlpha.medium else ContentAlpha.high) {
         content()
+    }
+}
+
+@Composable
+fun MarkPostIsReadEffect(post: Post, onPostUpdate: (Post) -> Unit, markPostAsRead: MarkPostAsRead) {
+    OneTimeEffect(markPostAsRead) {
+        if (markPostAsRead == MarkPostAsRead.OnScroll)
+            PostActionsModel.readPost(post, onPostUpdate)
     }
 }

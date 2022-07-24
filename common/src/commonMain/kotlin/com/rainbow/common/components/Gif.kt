@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 //import org.jetbrains.skia.Bitmap
 //import org.jetbrains.skia.Codec
 //import org.jetbrains.skia.Data
-import java.net.URL
+//import java.net.URL
 
 //@Composable
 //fun Gif(url: String, contentDescription: String, modifier: Modifier = Modifier) {

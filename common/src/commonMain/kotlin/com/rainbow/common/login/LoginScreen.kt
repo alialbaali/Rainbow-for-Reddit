@@ -6,9 +6,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.unit.dp
 import com.rainbow.common.components.RainbowProgressIndicator
 import com.rainbow.common.settings.SettingsModel
-import com.rainbow.common.ui.dpDimensions
 import com.rainbow.common.utils.RainbowStrings
 import com.rainbow.common.utils.UIState
 import com.rainbow.common.utils.defaultPadding
@@ -44,7 +44,7 @@ fun LoginScreen() {
             ) {
                 Text(RainbowStrings.Intro, style = MaterialTheme.typography.h4)
 
-                Spacer(Modifier.height(MaterialTheme.dpDimensions.extraLarge))
+                Spacer(Modifier.height(32.dp))
 
                 Button(
                     onClick = {

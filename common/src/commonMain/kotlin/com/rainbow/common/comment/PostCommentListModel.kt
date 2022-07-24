@@ -100,7 +100,7 @@ class PostCommentListModel private constructor(private val type: Type) : Model()
                 .also { it.removeIf { it.id == commentId } } + comments.filter { it.parentId == comment.id }
             comment.copy(
                 replies = newReplies.toMutableList()
-                    .replaceViewMore(commentId, comments)
+                    .replaceViewMore(commentId, comments) // Checkout this code if it's keep looping
             )
         }
     }

@@ -12,20 +12,20 @@ import com.rainbow.common.utils.RainbowStrings
 import com.rainbow.common.utils.defaultBackgroundShape
 
 @Composable
-fun RainbowIconButton(
+inline fun RainbowIconButton(
     imageVector: ImageVector,
     contentDescription: String?,
-    onClick: () -> Unit,
+    crossinline onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    IconButton(onClick, modifier.defaultBackgroundShape(shape = CircleShape), enabled) {
+    IconButton(onClick = { onClick() }, modifier.defaultBackgroundShape(shape = CircleShape), enabled) {
         Icon(imageVector, contentDescription)
     }
 }
 
 @Composable
-fun MenuIconButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+inline fun MenuIconButton(crossinline onClick: () -> Unit, modifier: Modifier = Modifier) {
     RainbowIconButton(
         RainbowIcons.MoreVert,
         RainbowStrings.Menu,

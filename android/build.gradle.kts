@@ -15,6 +15,10 @@ dependencies {
     implementation(project(":common"))
     implementation("androidx.activity:activity-compose:1.4.0")
     implementation("com.google.android.material:material:1.4.0")
+    implementation("androidx.appcompat:appcompat:1.4.0")
+    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("com.google.accompanist:accompanist-navigation-material:0.22.0-rc")
+    implementation(AndroidX.Navigation.compose)
 }
 
 android {
@@ -32,7 +36,30 @@ android {
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs.getByName("debug")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        getByName("debug") {
+            versionNameSuffix = "-debug"
+            applicationIdSuffix = ".debug"
+            isDebuggable = true
+        }
+        create("release-candidate") {
+            versionNameSuffix = "-rc"
+            applicationIdSuffix = ".rc"
+            isDebuggable = true
+            isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs.getByName("debug")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     packagingOptions {
