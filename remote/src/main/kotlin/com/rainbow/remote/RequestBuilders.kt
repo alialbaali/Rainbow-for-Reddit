@@ -11,7 +11,7 @@ import io.ktor.http.*
 internal suspend inline fun <reified T> HttpClient.get(
     endpoint: Endpoint,
     builder: HttpRequestBuilder.() -> Unit = {},
-): Result<T> = get<HttpResponse> {
+): Result<T> = get {
     url("${endpoint.path}.json")
     builder()
 }.receiveAsResponse<T>().toResult()
@@ -19,7 +19,7 @@ internal suspend inline fun <reified T> HttpClient.get(
 internal suspend inline fun <reified T> HttpClient.submitForm(
     endpoint: Endpoint,
     block: HttpRequestBuilder .() -> Unit = {},
-): Result<T> = submitForm<HttpResponse> {
+): Result<T> = submitForm {
     url(endpoint.path)
     block()
 }.receiveAsResult()
@@ -27,17 +27,17 @@ internal suspend inline fun <reified T> HttpClient.submitForm(
 internal suspend inline fun <reified T> HttpClient.plainRequest(
     endpoint: Endpoint,
     builder: HttpRequestBuilder.() -> Unit = {},
-): Result<T> = request<HttpResponse> {
+): Result<T> = request {
     url("${endpoint.path}.json")
     builder()
 }.receiveAsResult()
 
 private suspend inline fun <reified T> HttpResponse.receiveAsResponse() =
     if (status.isSuccess())
-        receive<Item<T>>()
+        body<Item<T>>()
     else
         try {
-            receive<Error>()
+            body<Error>()
         } catch (exception: NoTransformationFoundException) {
             Error(status.description, status.value)
         }
@@ -49,6 +49,6 @@ private inline fun <reified T> Response<T>.toResult(): Result<T> = when (this) {
 
 private suspend inline fun <reified T> HttpResponse.receiveAsResult(): Result<T> =
     if (status.isSuccess())
-        Result.success(receive())
+        Result.success(body())
     else
         Result.failure(Throwable("${status.description}, ${status.value}"))

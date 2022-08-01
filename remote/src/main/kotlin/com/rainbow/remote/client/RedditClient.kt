@@ -3,13 +3,14 @@ package com.rainbow.remote.client
 import com.rainbow.remote.dto.TokenResponse
 import com.russhwolf.settings.Settings
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
-import io.ktor.client.features.*
-import io.ktor.client.features.auth.*
-import io.ktor.client.features.auth.providers.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.logging.*
-import io.ktor.client.features.observer.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.auth.*
+import io.ktor.client.plugins.auth.providers.*
+import io.ktor.client.plugins.json.*
+import io.ktor.client.plugins.logging.*
+import io.ktor.client.plugins.observer.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
@@ -84,15 +85,17 @@ private suspend fun HttpClient.loadToken(): TokenResponse {
         append("redirect_uri", RedirectUrl)
         append("code", settings.getString("code"))
     }.build()
-    return submitForm(RefreshTokenUrl, formParameters)
+    return submitForm(RefreshTokenUrl, formParameters).body()
 }
 
-private suspend fun HttpClient.refreshToken(refreshToken: String?): TokenResponse = submitForm(RefreshTokenUrl) {
-    parameter(GrantTypeKey, "refresh_token")
-    parameter(RefreshTokenKey, refreshToken)
-}
+private suspend fun HttpClient.refreshToken(refreshToken: String?): TokenResponse =
+    submitForm(RefreshTokenUrl) {
+        parameter(GrantTypeKey, "refresh_token")
+        parameter(RefreshTokenKey, refreshToken)
+    }.body()
 
-private fun Settings.putRefreshToken(refreshToken: String) = putString(RefreshTokenKey, refreshToken)
+private fun Settings.putRefreshToken(refreshToken: String) =
+    putString(RefreshTokenKey, refreshToken)
 
 private fun Settings.putAccessToken(accessToken: String) = putString(AccessTokenKey, accessToken)
 

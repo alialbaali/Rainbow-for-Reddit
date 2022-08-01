@@ -10,6 +10,7 @@ import com.rainbow.remote.plainRequest
 import com.rainbow.remote.source.RemoteUserDataSource
 import com.rainbow.remote.submitForm
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import java.util.*
 
@@ -24,9 +25,9 @@ private class RemoteUserDataSourceImpl(
 ) : RemoteUserDataSource {
 
     override suspend fun loginUser(uuid: UUID): Result<Unit> {
-        val response = rainbowClient.get<Map<String, String?>>("/code") {
+        val response = rainbowClient.get("/code") {
             parameter("id", uuid.toString())
-        }
+        }.body<Map<String, String?>>()
         return when (val code = response["code"]) {
             null -> Result.failure(Throwable("Login failed"))
             else -> {

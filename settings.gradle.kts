@@ -8,7 +8,7 @@ pluginManagement {
     }
 }
 plugins {
-    id("de.fayard.refreshVersions") version "0.20.0"
+    id("de.fayard.refreshVersions") version "0.40.2"
 }
 rootProject.name = "Rainbow"
 include(":common", ":desktop", ":android", ":remote", ":domain", ":data", ":local")

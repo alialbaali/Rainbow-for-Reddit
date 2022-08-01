@@ -85,6 +85,6 @@ private fun createAuthenticationUrl(uuid: UUID): String {
                 "scope",
                 "submit, vote, mysubreddits, privatemessages, subscribe, history, wikiread, flair, identity, edit, read, report, save, submit"
             )
-        }
+        }.build()
     ).buildString()
 }

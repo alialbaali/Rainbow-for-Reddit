@@ -4,7 +4,7 @@ import com.rainbow.remote.Platform
 import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.JvmPreferencesSettings
 import com.russhwolf.settings.Settings
-import io.ktor.client.features.json.serializer.*
+import io.ktor.client.plugins.kotlinx.serializer.*
 import kotlinx.serialization.json.Json
 
 internal val RainbowUserAgent = "${Platform.current.id}:com.rainbow:v0.0.1 (by /u/EnigmaGram)"

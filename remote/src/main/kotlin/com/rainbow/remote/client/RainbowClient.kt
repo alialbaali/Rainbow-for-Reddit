@@ -2,10 +2,10 @@ package com.rainbow.remote.client
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
-import io.ktor.client.features.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.logging.*
-import io.ktor.client.features.observer.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.json.*
+import io.ktor.client.plugins.logging.*
+import io.ktor.client.plugins.observer.*
 import io.ktor.http.*
 
 internal val rainbowClient by lazy {
