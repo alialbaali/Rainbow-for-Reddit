@@ -5,7 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -50,14 +50,14 @@ fun PostScreen(
                     onSubredditNameClick,
                     onShowSnackbar,
                     Modifier
-                        .background(MaterialTheme.colors.surface)
+                        .background(MaterialTheme.colorScheme.surface)
                         .defaultPadding()
                 )
                 Spacer(Modifier.height(16.dp))
                 AddComment(
                     post,
                     Modifier
-                        .background(MaterialTheme.colors.surface)
+                        .background(MaterialTheme.colorScheme.surface)
                         .fillParentMaxWidth()
                         .defaultPadding()
                 )
@@ -107,7 +107,7 @@ private fun Post(
         PostTitle(
             title = post.title,
             isRead = false,
-            style = MaterialTheme.typography.h3,
+            style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()

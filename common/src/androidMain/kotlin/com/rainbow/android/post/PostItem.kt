@@ -3,7 +3,7 @@ package com.rainbow.android.post
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,7 +46,7 @@ inline fun PostItem(
         if (post.awards.isNotEmpty())
             ItemAwards(post.awards, onClick = { onShowAwards(post) })
         PostFLairs(post)
-        PostTitle(post.title, post.isRead, MaterialTheme.typography.h5)
+        PostTitle(post.title, post.isRead, MaterialTheme.typography.headlineLarge)
         PostContent(post)
         PostActions(post, onPostClick, onPostUpdate) {
             MenuIconButton(onPostMenuClick)

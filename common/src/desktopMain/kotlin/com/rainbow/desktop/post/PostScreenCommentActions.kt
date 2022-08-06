@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,7 +26,7 @@ fun LazyItemScope.CommentActions(model: PostScreenModel) {
     val backStack by model.backStack.collectAsState()
     val forwardStack by model.forwardStack.collectAsState()
     val sorting by commentListModel.sorting.collectAsState()
-    Row(Modifier.fillParentMaxWidth().background(MaterialTheme.colors.surface).defaultPadding()) {
+    Row(Modifier.fillParentMaxWidth().background(MaterialTheme.colorScheme.surface).defaultPadding()) {
         CommentsActions(
             backStack.isNotEmpty(),
             forwardStack.isNotEmpty(),

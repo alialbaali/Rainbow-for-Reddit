@@ -2,10 +2,10 @@ package com.rainbow.desktop.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -54,21 +54,21 @@ fun RainbowDialog(
         Box(
             Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colors.onBackground.copy(0.5F)),
+                .background(MaterialTheme.colorScheme.onBackground.copy(0.5F)),
             contentAlignment = Alignment.Center
         ) {
             Column(
                 modifier = Modifier
                     .width(250.dp)
                     .clip(MaterialTheme.shapes.large)
-                    .background(MaterialTheme.colors.surface),
+                    .background(MaterialTheme.colorScheme.surface),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colors.background)
+                        .background(MaterialTheme.colorScheme.background)
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,

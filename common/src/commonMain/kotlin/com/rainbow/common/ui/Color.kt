@@ -1,24 +1,24 @@
 package com.rainbow.common.ui
 
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
 
-val lightColors = lightColors(
+val lightColors = lightColorScheme(
     primary = Color(0xFF006D77),
-    primaryVariant = Color(0xFF83C5BE),
+    primaryContainer = Color(0xFF83C5BE),
     secondary = Color(0xFFE29578),
-    secondaryVariant = Color(0xFFFFDDD2),
+    secondaryContainer = Color(0xFFFFDDD2),
     surface = Color(0xFFFFFFFF),
     background = Color(0xFFFAFAFA)
 )
 
-val darkColors = darkColors(
+val darkColors = darkColorScheme(
     primary = Color(0xFF006D77),
-    primaryVariant = Color(0xFF83C5BE),
+    primaryContainer = Color(0xFF83C5BE),
     secondary = Color(0xFFE29578),
-    secondaryVariant = Color(0xFFFFDDD2),
+    secondaryContainer = Color(0xFFFFDDD2),
 )
 
 val RainbowColors = listOf(

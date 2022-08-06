@@ -2,7 +2,7 @@ package com.rainbow.desktop.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,15 +64,15 @@ private fun LogoutDialog(
         Column(
             modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colors.background),
+                .background(MaterialTheme.colorScheme.background),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
 
             Text(
                 RainbowStrings.LogoutConfirmation,
                 Modifier.defaultPadding(),
-                color = MaterialTheme.colors.onBackground,
-                style = MaterialTheme.typography.h5,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.headlineLarge,
             )
 
             Row(
@@ -84,7 +84,7 @@ private fun LogoutDialog(
                     onClick = { SettingsModel.logoutUser() },
                     modifier = Modifier
                         .padding(end = 8.dp),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.error),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
                 ) {
                     Text(RainbowStrings.Logout)
                 }

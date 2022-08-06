@@ -2,7 +2,7 @@ package com.rainbow.desktop.post
 
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import com.rainbow.common.components.RainbowProgressIndicator
 import com.rainbow.common.utils.PagingEffect
 import com.rainbow.common.utils.UIState

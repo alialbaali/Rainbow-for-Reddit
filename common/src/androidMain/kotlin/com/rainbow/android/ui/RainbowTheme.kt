@@ -1,14 +1,13 @@
 package com.rainbow.android.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.rainbow.common.settings.SettingsModel
 import com.rainbow.common.ui.darkColors
 import com.rainbow.common.ui.lightColors
-import com.rainbow.common.ui.shapes
 import com.rainbow.domain.models.Theme
 
 @Composable
@@ -24,5 +23,5 @@ fun RainbowTheme(content: @Composable () -> Unit) {
             lightColors
     }
 
-    MaterialTheme(colors, typography, shapes, content)
+    MaterialTheme(colors, typography, content)
 }

@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,8 +19,8 @@ inline fun SettingsOption(
     Row(modifier.fillMaxWidth(), Arrangement.SpaceBetween, Alignment.CenterVertically) {
         Text(
             name,
-            color = MaterialTheme.colors.onBackground,
-            style = MaterialTheme.typography.body1,
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.bodyMedium,
         )
         content()
     }

@@ -9,7 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -144,7 +144,7 @@ private fun Header(
         ) {
             Text(
                 text = subreddit.shortDescription,
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.bodyMedium,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1F)
             )
@@ -237,6 +237,7 @@ private fun SelectFlairDialog(
 //    }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SelectFlairItem(flair: Pair<Flair, Boolean>, onClick: (Flair) -> Unit, modifier: Modifier = Modifier) {
     Row(
@@ -255,7 +256,7 @@ private fun SelectFlairItem(flair: Pair<Flair, Boolean>, onClick: (Flair) -> Uni
 private fun SelectFlairActions(onApply: () -> Unit, onClear: () -> Unit, modifier: Modifier = Modifier) {
     Row(
         modifier
-            .background(MaterialTheme.colors.background)
+            .background(MaterialTheme.colorScheme.background)
             .wrapContentSize(Alignment.BottomEnd),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {

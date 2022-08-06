@@ -1,8 +1,8 @@
 package com.rainbow.common.components
 
 import androidx.compose.foundation.clickable
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -18,7 +18,7 @@ inline fun SubredditName(
         text = subredditName,
         modifier
             .clickable { onClick(subredditName) },
-        color = MaterialTheme.colors.secondary,
+        color = MaterialTheme.colorScheme.secondary,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
     )

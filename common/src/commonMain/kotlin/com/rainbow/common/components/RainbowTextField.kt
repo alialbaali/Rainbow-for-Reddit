@@ -7,9 +7,8 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,16 +33,16 @@ fun RainbowTextField(
     val isPlaceholderVisible by remember(value) { mutableStateOf(value.isBlank()) }
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
-    val minTextWidth = TextFieldDefaults.MinWidth
+    val minTextWidth = 280.dp
     val textStartPadding = 16.dp
     var trailingIconWidth by remember { mutableStateOf(Dp.Unspecified) }
     val borderWidth by animateDpAsState(if (isFocused) 2.dp else 1.dp)
     val textStyle = TextStyle(fontSize = 16.sp)
     val borderColor by animateColorAsState(
         if (isFocused)
-            MaterialTheme.colors.primary
+            MaterialTheme.colorScheme.primary
         else
-            MaterialTheme.colors.onBackground.copy(0.1F)
+            MaterialTheme.colorScheme.onBackground.copy(0.1F)
     )
     BasicTextField(
         value,
@@ -61,12 +60,18 @@ fun RainbowTextField(
         singleLine = singleLine,
         maxLines = maxLines,
         interactionSource = interactionSource,
-        cursorBrush = SolidColor(MaterialTheme.colors.primary),
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
         textStyle = textStyle
     ) { innerTextField ->
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Box(contentAlignment = Alignment.CenterStart) {
-                Box(Modifier.widthIn(max = minTextWidth - trailingIconWidth - textStartPadding).padding(end = 16.dp)) {
+                Box(
+                    Modifier.widthIn(max = minTextWidth - trailingIconWidth - textStartPadding)
+                        .padding(end = 16.dp)
+                ) {
                     innerTextField()
                 }
                 if (isPlaceholderVisible)

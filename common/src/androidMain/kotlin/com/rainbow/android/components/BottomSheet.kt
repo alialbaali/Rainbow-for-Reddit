@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.OpenInBrowser
 import androidx.compose.material.icons.rounded.Visibility
@@ -36,7 +36,7 @@ fun BottomSheet(title: String, modifier: Modifier = Modifier, content: @Composab
             Modifier
                 .fillMaxWidth(0.2f)
                 .height(5.dp)
-                .background(MaterialTheme.colors.primary, CircleShape)
+                .background(MaterialTheme.colorScheme.primary, CircleShape)
                 .align(Alignment.CenterHorizontally)
         )
         Text(

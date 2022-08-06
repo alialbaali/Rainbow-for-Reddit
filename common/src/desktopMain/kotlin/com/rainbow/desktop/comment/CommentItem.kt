@@ -3,8 +3,8 @@ package com.rainbow.desktop.comment
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -29,7 +29,7 @@ inline fun CommentItem(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         CommentInfo(comment, onUserNameClick, onSubredditNameClick, isSubredditNameEnabled = true)
-        Text(comment.body, color = MaterialTheme.colors.onBackground)
+        Text(comment.body, color = MaterialTheme.colorScheme.onBackground)
         CommentActions(comment, onCommentUpdate, false)
     }
 }

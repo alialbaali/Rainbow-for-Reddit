@@ -1,7 +1,7 @@
 package com.rainbow.desktop.user
 
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -15,7 +15,7 @@ fun UserItemName(userName: String, modifier: Modifier = Modifier) {
         modifier = modifier,
         fontSize = 26.sp,
         fontWeight = FontWeight.Medium,
-        color = MaterialTheme.colors.onBackground
+        color = MaterialTheme.colorScheme.onBackground
     )
 }
 

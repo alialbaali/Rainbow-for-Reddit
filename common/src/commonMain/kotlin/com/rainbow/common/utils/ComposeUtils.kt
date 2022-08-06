@@ -3,8 +3,9 @@ package com.rainbow.common.utils
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -60,24 +61,24 @@ fun OneTimeEffect(
 @Composable
 fun Modifier.defaultBackgroundShape(
     borderWidth: Dp = 1.dp,
-    borderColor: Color = MaterialTheme.colors.onBackground.copy(0.1F),
-    shape: Shape = MaterialTheme.shapes.large,
+    borderColor: Color = MaterialTheme.colorScheme.onBackground.copy(0.1F),
+    shape: Shape = RoundedCornerShape(16.dp),
 ) = this.then(
     Modifier
         .border(borderWidth, borderColor, shape)
-        .background(MaterialTheme.colors.background, shape)
+        .background(MaterialTheme.colorScheme.background, shape)
         .clip(shape)
 )
 
 @Composable
 fun Modifier.defaultSurfaceShape(
     borderWidth: Dp = 1.dp,
-    borderColor: Color = MaterialTheme.colors.onBackground.copy(0.1F),
-    shape: Shape = MaterialTheme.shapes.large,
+    borderColor: Color = MaterialTheme.colorScheme.onBackground.copy(0.1F),
+    shape: Shape = RoundedCornerShape(16.dp),
 ) = this.then(
     Modifier
         .border(borderWidth, borderColor, shape)
-        .background(MaterialTheme.colors.surface, shape)
+        .background(MaterialTheme.colorScheme.surface, shape)
         .clip(shape)
 )
 

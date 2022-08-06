@@ -2,8 +2,8 @@ package com.rainbow.desktop.comment
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
@@ -41,7 +41,7 @@ inline fun ReplyItem(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             PostCommentInfo(reply, postUserName, onUserNameClick, onSubredditNameClick, isSubredditNameEnabled = false)
-            Text(reply.body, color = MaterialTheme.colors.onBackground)
+            Text(reply.body, color = MaterialTheme.colorScheme.onBackground)
             CommentActions(reply, onCommentUpdate, isRepliesVisible)
         }
     }
@@ -64,7 +64,7 @@ fun ViewMoreReplyItem(onClick: () -> Unit, depth: Int, modifier: Modifier = Modi
                 .fillMaxWidth()
                 .onSizeChanged { contentSize = it }
                 .padding(vertical = 16.dp),
-            color = MaterialTheme.colors.onBackground
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -86,7 +86,7 @@ fun ContinueThreadReplyItem(onClick: () -> Unit, depth: Int, modifier: Modifier 
                 .fillMaxWidth()
                 .onSizeChanged { contentSize = it }
                 .padding(vertical = 16.dp),
-            color = MaterialTheme.colors.onBackground
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }

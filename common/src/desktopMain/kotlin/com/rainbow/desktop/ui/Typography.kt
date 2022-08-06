@@ -1,8 +1,6 @@
 package com.rainbow.desktop.ui
 
-import androidx.compose.material.Typography
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.material3.Typography
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.platform.Font
@@ -23,4 +21,4 @@ val rubikFonts = listOf(
     Font("Rubik/static/Rubik-BoldItalic.ttf", FontWeight.Bold, FontStyle.Italic),
 )
 
-val typography: Typography = Typography(defaultFontFamily = FontFamily(rubikFonts), button = TextStyle())
+val typography: Typography = Typography()

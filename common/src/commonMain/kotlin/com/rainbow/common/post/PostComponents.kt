@@ -1,11 +1,13 @@
 package com.rainbow.common.post
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -96,7 +98,7 @@ fun TextPost(text: Post.Type.Text, isRead: Boolean, modifier: Modifier = Modifie
                 },
                 modifier = Modifier.animateContentSize(),
                 maxLines = if (shouldLimitLines) maxLines else Int.MAX_VALUE,
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.titleSmall,
                 overflow = TextOverflow.Ellipsis,
                 onTextLayout = { if (it.lineCount > 15) shouldLimitLines = true }
             )
@@ -126,7 +128,7 @@ fun ImagePost(image: Post.Type.Image, isNSFW: Boolean, modifier: Modifier = Modi
     var imageUrl by remember(image) { mutableStateOf(image.urls.first()) }
     var currentImageIndex by remember(image) { mutableStateOf(0) }
     val painterResource = lazyPainterResource(imageUrl)
-    val imageShape = MaterialTheme.shapes.medium
+    val imageShape = RoundedCornerShape(16.dp)
 
     Box(
         modifier
@@ -152,10 +154,10 @@ fun ImagePost(image: Post.Type.Image, isNSFW: Boolean, modifier: Modifier = Modi
             contentDescription = null,
             modifier = modifier
                 .align(Alignment.Center)
-                .background(MaterialTheme.colors.surface),
+                .background(MaterialTheme.colorScheme.surface),
             contentScale = ContentScale.Fit,
             onLoading = { RainbowProgressIndicator(modifier) },
-            crossfade = true,
+            animationSpec = tween(),
             onFailure = {
 
             }
@@ -187,7 +189,7 @@ fun ImagePost(image: Post.Type.Image, isNSFW: Boolean, modifier: Modifier = Modi
 @Composable
 fun LinkPost(link: Post.Type.Link, modifier: Modifier = Modifier) {
     val painterResource = lazyPainterResource(link.previewUrl)
-    val imageShape = MaterialTheme.shapes.medium
+    val imageShape = RoundedCornerShape(8.dp)
     val uriHandler = LocalUriHandler.current
 
     Box(
@@ -202,7 +204,7 @@ fun LinkPost(link: Post.Type.Link, modifier: Modifier = Modifier) {
             modifier = modifier,
             contentScale = ContentScale.Crop,
             onLoading = { RainbowProgressIndicator(modifier) },
-            crossfade = true,
+            animationSpec = tween(),
             onFailure = {
 
             }
@@ -214,10 +216,10 @@ fun LinkPost(link: Post.Type.Link, modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .clip(imageShape)
-                .background(MaterialTheme.colors.onBackground)
+                .background(MaterialTheme.colorScheme.onBackground)
                 .align(Alignment.BottomCenter)
                 .defaultPadding(),
-            MaterialTheme.colors.background,
+            MaterialTheme.colorScheme.background,
             fontSize = 16.sp
         )
     }
@@ -268,9 +270,9 @@ inline fun PostActions(
 
 @Composable
 private fun IsPostReadProvider(isRead: Boolean, content: @Composable () -> Unit) {
-    CompositionLocalProvider(LocalContentAlpha provides if (isRead) ContentAlpha.medium else ContentAlpha.high) {
-        content()
-    }
+//    CompositionLocalProvider(LocalContentAlpha provides if (isRead) ContentAlpha.medium else ContentAlpha.high) {
+//        content()
+//    }
 }
 
 @Composable

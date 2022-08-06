@@ -3,8 +3,9 @@ package com.rainbow.common.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -16,7 +17,7 @@ inline fun UserName(userName: String, crossinline onClick: (String) -> Unit, mod
     Text(
         text = userName,
         modifier = modifier.clickable { onClick(userName) },
-        color = MaterialTheme.colors.primary,
+        color = MaterialTheme.colorScheme.primary,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
     )
@@ -35,13 +36,13 @@ inline fun CommentUserName(
         modifier = modifier
             .then(
                 if (isOP)
-                    Modifier.background(MaterialTheme.colors.primary, MaterialTheme.shapes.small)
+                    Modifier.background(MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
                         .padding(horizontal = 4.dp, vertical = 2.dp)
                 else
                     Modifier
             )
             .clickable { onClick(userName) },
-        color = if (isOP) MaterialTheme.colors.background else MaterialTheme.colors.primary,
+        color = if (isOP) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.primary,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
     )

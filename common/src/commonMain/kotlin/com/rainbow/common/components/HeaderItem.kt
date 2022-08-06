@@ -4,7 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,14 +26,15 @@ private val BoxScope.ImageModifier
     @Composable
     get() = Modifier
         .padding(top = 50.dp)
-        .border(ImageBorderSize, MaterialTheme.colors.background, MaterialTheme.shapes.large)
+        .border(ImageBorderSize, MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
         .size(100.dp)
-        .clip(MaterialTheme.shapes.large)
+        .clip(RoundedCornerShape(16.dp))
         .align(Alignment.BottomCenter)
 
 
 @Composable
 fun HeaderItem(bannerImageUrl: String, imageUrl: String, text: String, modifier: Modifier = Modifier) {
+
     val bannerPainterResource = lazyPainterResource(bannerImageUrl)
     val painterResource = lazyPainterResource(imageUrl)
     Box(modifier) {
@@ -45,7 +47,7 @@ fun HeaderItem(bannerImageUrl: String, imageUrl: String, text: String, modifier:
             onFailure = {
                 Image(
                     ColorPainter(
-                        MaterialTheme.colors.primary,
+                        MaterialTheme.colorScheme.primary,
                     ),
                     text,
                     BannerImageModifier,
@@ -58,7 +60,7 @@ fun HeaderItem(bannerImageUrl: String, imageUrl: String, text: String, modifier:
             contentDescription = text,
             modifier = ImageModifier,
             onLoading = { RainbowProgressIndicator(ImageModifier) },
-            onFailure = { TextBox(text, 40.sp, ImageModifier.background(MaterialTheme.colors.secondary)) }
+            onFailure = { TextBox(text, 40.sp, ImageModifier.background(MaterialTheme.colorScheme.secondary)) }
         )
     }
 }

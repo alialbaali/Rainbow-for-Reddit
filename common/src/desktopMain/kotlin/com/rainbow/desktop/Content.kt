@@ -2,26 +2,26 @@ package com.rainbow.desktop
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.rainbow.desktop.post.CommentActions
 import com.rainbow.common.RainbowModel
-import com.rainbow.desktop.home.HomeScreen
-import com.rainbow.desktop.message.MessageScreen
 import com.rainbow.common.message.MessageScreenModel
-import com.rainbow.desktop.message.MessagesScreen
 import com.rainbow.common.model.ListModel
-import com.rainbow.desktop.navigation.Screen
-import com.rainbow.desktop.navigation.Sidebar
-import com.rainbow.desktop.post.PostScreen
 import com.rainbow.common.post.PostScreenModel
 import com.rainbow.common.utils.*
+import com.rainbow.desktop.home.HomeScreen
+import com.rainbow.desktop.message.MessageScreen
+import com.rainbow.desktop.message.MessagesScreen
+import com.rainbow.desktop.navigation.Screen
+import com.rainbow.desktop.navigation.Sidebar
+import com.rainbow.desktop.post.CommentActions
+import com.rainbow.desktop.post.PostScreen
 import com.rainbow.desktop.profile.ProfileScreen
 import com.rainbow.desktop.search.SearchScreen
 import com.rainbow.desktop.settings.SettingsScreen
@@ -59,7 +59,7 @@ internal fun Content(
             snackbarMessage = null
         }
     }
-    Box(modifier.background(MaterialTheme.colors.background)) {
+    Box(modifier.background(MaterialTheme.colorScheme.background)) {
         Row(Modifier.fillMaxSize()) {
             StartContent(
                 navigationItem,
@@ -83,7 +83,10 @@ internal fun Content(
                     isForwardEnabled,
                     RainbowModel::refreshContent,
                 )
-                Row(Modifier.fillMaxSize().defaultPadding(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Row(
+                    Modifier.fillMaxSize().defaultPadding(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
                     CenterContent(
                         screen,
                         onUserNameClick,

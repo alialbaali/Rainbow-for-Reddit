@@ -26,7 +26,7 @@ kotlin {
                 api(compose.materialIconsExtended)
                 implementation(project(":data"))
                 api("org.jetbrains.kotlinx:kotlinx-datetime:0.3.3")
-                api("com.alialbaali.kamel:kamel-image:0.4.0")
+                api("com.alialbaali.kamel:kamel-image:0.4.21")
                 api("com.halilibo.compose-richtext:richtext-commonmark:0.10.0")
             }
         }

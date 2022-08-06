@@ -1,12 +1,13 @@
 package com.rainbow.desktop.components
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,7 +69,7 @@ fun ScreenHeaderItem(
             clip = true
             shape = imageShape
         }
-        .border(ImageBorderSize, MaterialTheme.colors.surface, imageShape)
+        .border(ImageBorderSize, MaterialTheme.colorScheme.surface, imageShape)
 
     Box(
         modifier
@@ -80,15 +81,15 @@ fun ScreenHeaderItem(
             contentDescription = text,
             modifier = BannerImageModifier,
             contentScale = ContentScale.Crop,
-            crossfade = true,
             onLoading = { RainbowProgressIndicator(BannerImageModifier) },
             onFailure = {
                 Image(
-                    ColorPainter(MaterialTheme.colors.primary),
+                    ColorPainter(MaterialTheme.colorScheme.primary),
                     text,
                     BannerImageModifier,
                 )
-            }
+            },
+            animationSpec = tween(),
         )
 
         KamelImage(
@@ -96,15 +97,15 @@ fun ScreenHeaderItem(
             contentDescription = text,
             modifier = ImageModifier,
             contentScale = ContentScale.Fit,
-            crossfade = true,
             onLoading = { RainbowProgressIndicator(ImageModifier) },
-            onFailure = { TextBox(text, 180.sp, ImageModifier.background(MaterialTheme.colors.secondary)) }
+            onFailure = { TextBox(text, 180.sp, ImageModifier.background(MaterialTheme.colorScheme.secondary)) },
+            animationSpec = tween(),
         )
 
         Text(
             text,
-            style = MaterialTheme.typography.h3,
-            color = MaterialTheme.colors.background,
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.background,
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomStart)
@@ -117,8 +118,8 @@ fun ScreenHeaderItem(
 fun HeaderDescription(user: User, modifier: Modifier = Modifier) {
     Text(
         text = user.description ?: RainbowStrings.EmptyDescription,
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
         modifier = modifier,
-        style = MaterialTheme.typography.h6,
+        style = MaterialTheme.typography.headlineLarge,
     )
 }

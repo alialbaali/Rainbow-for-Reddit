@@ -1,9 +1,9 @@
 package com.rainbow.common.components
 
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -19,7 +19,11 @@ inline fun RainbowIconButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    IconButton(onClick = { onClick() }, modifier.defaultBackgroundShape(shape = CircleShape), enabled) {
+    IconButton(
+        onClick = { onClick() },
+        modifier.defaultBackgroundShape(shape = CircleShape),
+        enabled
+    ) {
         Icon(imageVector, contentDescription)
     }
 }

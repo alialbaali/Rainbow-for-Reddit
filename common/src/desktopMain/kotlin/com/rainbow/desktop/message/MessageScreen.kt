@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.OutlinedTextField
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.rainbow.common.message.MessageScreenModel

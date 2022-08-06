@@ -1,12 +1,13 @@
 package com.rainbow.android.components
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,7 +70,7 @@ fun ScreenHeaderItem(
             clip = true
             shape = imageShape
         }
-        .border(ImageBorderSize, MaterialTheme.colors.surface, imageShape)
+        .border(ImageBorderSize, MaterialTheme.colorScheme.surface, imageShape)
 
     Box(
         modifier
@@ -81,15 +82,15 @@ fun ScreenHeaderItem(
             contentDescription = text,
             modifier = BannerImageModifier,
             contentScale = ContentScale.Crop,
-            crossfade = true,
             onLoading = { RainbowProgressIndicator(BannerImageModifier) },
             onFailure = {
                 Image(
-                    ColorPainter(MaterialTheme.colors.primary),
+                    ColorPainter(MaterialTheme.colorScheme.primary),
                     text,
                     BannerImageModifier,
                 )
-            }
+            },
+            animationSpec = tween(),
         )
 
         KamelImage(
@@ -97,15 +98,21 @@ fun ScreenHeaderItem(
             contentDescription = text,
             modifier = ImageModifier,
             contentScale = ContentScale.Fit,
-            crossfade = true,
+            animationSpec = tween(),
             onLoading = { RainbowProgressIndicator(ImageModifier) },
-            onFailure = { TextBox(text, 180.sp, ImageModifier.background(MaterialTheme.colors.secondary)) }
+            onFailure = {
+                TextBox(
+                    text,
+                    180.sp,
+                    ImageModifier.background(MaterialTheme.colorScheme.secondary)
+                )
+            }
         )
 
         Text(
             text,
-            style = MaterialTheme.typography.h5,
-            color = MaterialTheme.colors.background,
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.background,
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomStart)
@@ -131,7 +138,12 @@ fun Header(user: User, modifier: Modifier = Modifier) {
         )
         Row(Modifier.fillMaxWidth().defaultPadding(start = 132.dp)) {
             Column(Modifier.weight(1F)) {
-                Text(RainbowStrings.PostKarma, fontWeight = FontWeight.Medium, color = Color.DarkGray, fontSize = 16.sp)
+                Text(
+                    RainbowStrings.PostKarma,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.DarkGray,
+                    fontSize = 16.sp
+                )
                 Text(user.postKarma.toString(), fontSize = 14.sp)
             }
             Column(Modifier.weight(1F)) {
@@ -178,8 +190,8 @@ fun Header(user: User, modifier: Modifier = Modifier) {
 fun HeaderDescription(user: User, modifier: Modifier = Modifier) {
     Text(
         text = user.description ?: RainbowStrings.EmptyDescription,
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
         modifier = modifier,
-        style = MaterialTheme.typography.h6,
+        style = MaterialTheme.typography.headlineLarge,
     )
 }

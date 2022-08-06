@@ -2,9 +2,9 @@ package com.rainbow.desktop.post
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.TextField
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.TextField
 import androidx.compose.material.icons.rounded.FormatBold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier

@@ -1,8 +1,8 @@
 package com.rainbow.android
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.material.*
 import androidx.compose.material.icons.rounded.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -18,17 +18,17 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
-import com.rainbow.common.RainbowModel
 import com.rainbow.android.navigation.Screen
 import com.rainbow.android.navigation.icon
 import com.rainbow.android.navigation.title
+import com.rainbow.common.RainbowModel
 import com.rainbow.common.post.PostScreenModel
 import com.rainbow.common.utils.RainbowIcons
 import com.rainbow.common.utils.RainbowStrings
 import com.rainbow.common.utils.defaultPadding
 import com.rainbow.domain.models.*
 
-@OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun App() {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
@@ -39,7 +39,7 @@ internal fun App() {
     val timeSorting by RainbowModel.timeSorting.collectAsState()
     ModalBottomSheetLayout(bottomSheetNavigator) {
         Scaffold(
-//            topBar = { TopAppBar(navController, sorting, timeSorting) },
+            topBar = { TopAppBar(navController, sorting, timeSorting) },
             bottomBar = { NavigationBar(navController) },
             floatingActionButton = { Fab(navController) },
         ) {
@@ -114,8 +114,13 @@ private fun TopAppBar(
 //                else -> ""
 //            } ?: ""
     AnimatedVisibility(navBackStackEntry?.destination?.route?.isMainScreen == true) {
-        TopAppBar(
-            title = { Text(navBackStackEntry?.destination?.route ?: "", fontWeight = FontWeight.Bold) },
+        LargeTopAppBar(
+            title = {
+                Text(
+                    navBackStackEntry?.destination?.route ?: "",
+                    fontWeight = FontWeight.Bold
+                )
+            },
             navigationIcon = {
                 AnimatedVisibility(navBackStackEntry?.destination?.route?.isMainScreen == false) {
                     IconButton(onClick = { navController.popBackStack() }) {
@@ -158,11 +163,11 @@ private fun NavigationBar(
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
-    BottomNavigation(modifier) {
+    NavigationBar(modifier) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
         Screen.NavigationItem.All.forEach { screen ->
-            BottomNavigationItem(
+            NavigationBarItem(
                 icon = { Icon(screen.icon, screen.title) },
                 label = { Text(screen.title, fontSize = 12.sp) },
                 selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,

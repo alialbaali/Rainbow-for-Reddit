@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
@@ -27,11 +27,11 @@ fun TextIconButton(
         onClick,
         modifier,
         colors = ButtonDefaults.buttonColors(
-            MaterialTheme.colors.background,
-            MaterialTheme.colors.onBackground,
+            MaterialTheme.colorScheme.background,
+            MaterialTheme.colorScheme.onBackground,
         ),
         elevation = null,
-        border = BorderStroke(1.dp, MaterialTheme.colors.onBackground.copy(0.1F)),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground.copy(0.1F)),
         shape = shape,
         contentPadding = PaddingValues(16.dp, 12.dp)
     ) {

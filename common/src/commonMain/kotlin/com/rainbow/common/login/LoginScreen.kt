@@ -1,7 +1,7 @@
 package com.rainbow.common.login
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +42,7 @@ fun LoginScreen() {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(RainbowStrings.Intro, style = MaterialTheme.typography.h4)
+                Text(RainbowStrings.Intro, style = MaterialTheme.typography.headlineLarge)
 
                 Spacer(Modifier.height(32.dp))
 

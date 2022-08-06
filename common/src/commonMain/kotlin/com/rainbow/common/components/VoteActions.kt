@@ -5,8 +5,8 @@ import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -29,17 +29,17 @@ fun VoteActions(
 
     val borderColor by animateColorAsState(
         when (vote) {
-            Vote.Up -> MaterialTheme.colors.primary
-            Vote.Down -> MaterialTheme.colors.secondary
-            Vote.None -> MaterialTheme.colors.onBackground.copy(0.1F)
+            Vote.Up -> MaterialTheme.colorScheme.primary
+            Vote.Down -> MaterialTheme.colorScheme.secondary
+            Vote.None -> MaterialTheme.colorScheme.onBackground.copy(0.1F)
         }
     )
 
     val contentColor by animateColorAsState(
         when (vote) {
-            Vote.Up -> MaterialTheme.colors.primary
-            Vote.Down -> MaterialTheme.colors.secondary
-            Vote.None -> MaterialTheme.colors.onBackground
+            Vote.Up -> MaterialTheme.colorScheme.primary
+            Vote.Down -> MaterialTheme.colorScheme.secondary
+            Vote.None -> MaterialTheme.colorScheme.onBackground
         }
     )
 

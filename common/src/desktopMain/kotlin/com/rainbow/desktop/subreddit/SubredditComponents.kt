@@ -5,7 +5,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.rounded.PlaylistAdd
 import androidx.compose.material.icons.rounded.PlaylistAddCheck
 import androidx.compose.material.icons.rounded.Star
@@ -29,7 +29,7 @@ fun SubredditItemName(subredditName: String, modifier: Modifier = Modifier) {
         modifier = modifier,
         fontSize = 26.sp,
         fontWeight = FontWeight.Medium,
-        color = MaterialTheme.colors.onBackground
+        color = MaterialTheme.colorScheme.onBackground
     )
 }
 
@@ -61,7 +61,7 @@ fun SubredditFavoriteIconButton(
             Icon(
                 if (isFavorite) RainbowIcons.Star else RainbowIcons.StarBorder,
                 if (isFavorite) RainbowStrings.UnFavorite else RainbowStrings.Favorite,
-                tint = if (isFavorite) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground
+                tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
             )
         }
     }

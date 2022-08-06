@@ -2,7 +2,7 @@ package com.rainbow.android.item
 
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import com.rainbow.android.comment.CommentItem
 import com.rainbow.common.components.RainbowProgressIndicator
