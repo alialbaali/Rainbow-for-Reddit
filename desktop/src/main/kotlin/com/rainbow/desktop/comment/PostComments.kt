@@ -2,10 +2,13 @@ package com.rainbow.desktop.comment
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.domain.models.Comment
@@ -42,17 +45,17 @@ fun LazyListScope.postComments(
                             onCommentUpdate,
                             onUserNameClick,
                             onSubredditNameClick,
-                            modifier
-                                .background(MaterialTheme.colorScheme.surface)
+                            modifier.background(MaterialTheme.colorScheme.surface)
                         )
+
                         is Comment.Type.ViewMore -> ViewMoreCommentItem(
                             onClick = {
                                 val moreComments = commentType.replies
                                 onRequestMoreComments(comment.id, moreComments)
                             },
-                            modifier
-                                .background(MaterialTheme.colorScheme.surface)
+                            modifier.background(MaterialTheme.colorScheme.surface)
                         )
+
                         is Comment.Type.ContinueThread -> {}
                     }
                 }
@@ -68,8 +71,10 @@ fun LazyListScope.postComments(
                     onCommentUpdate,
                     onRequestThreadComments,
                 )
+                item { Spacer(Modifier.height(16.dp)) }
             }
         }
+
         UIState.Empty -> {}
     }
 }
@@ -105,20 +110,19 @@ fun LazyListScope.replies(
                         onCommentUpdate,
                         onUserNameClick,
                         onSubredditNameClick,
-                        modifier
-                            .background(MaterialTheme.colorScheme.surface)
+                        modifier.background(MaterialTheme.colorScheme.surface)
                     )
+
                     is Comment.Type.ViewMore -> ViewMoreReplyItem(
                         onClick = { onRequestMoreComments(reply.id, replyType.replies) },
                         depth,
-                        modifier
-                            .background(MaterialTheme.colorScheme.surface)
+                        modifier.background(MaterialTheme.colorScheme.surface)
                     )
+
                     is Comment.Type.ContinueThread -> ContinueThreadReplyItem(
                         onClick = { onRequestThreadComments(replyType.parentId) },
                         depth,
-                        modifier
-                            .background(MaterialTheme.colorScheme.surface)
+                        modifier.background(MaterialTheme.colorScheme.surface)
                     )
                 }
             }
