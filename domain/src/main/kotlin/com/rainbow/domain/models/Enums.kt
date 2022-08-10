@@ -85,6 +85,43 @@ sealed interface Sorting {
 
 sealed interface PostSorting : Sorting {
     val isTimeSorting: Boolean
+
+    companion object {
+        fun valuesOf(postSorting: PostSorting): List<PostSorting> {
+            return when (postSorting) {
+                is HomePostSorting -> listOf(
+                    HomePostSorting.Best,
+                    HomePostSorting.New,
+                    HomePostSorting.Controversial,
+                    HomePostSorting.Top,
+                    HomePostSorting.Hot,
+                    HomePostSorting.Rising
+                )
+
+                is UserPostSorting -> listOf(
+                    UserPostSorting.Hot,
+                    UserPostSorting.New,
+                    UserPostSorting.Top,
+                    UserPostSorting.Controversial
+                )
+
+                is SubredditPostSorting -> listOf(
+                    SubredditPostSorting.Hot,
+                    SubredditPostSorting.Top,
+                    SubredditPostSorting.Controversial,
+                    SubredditPostSorting.Rising
+                )
+
+                is SearchPostSorting -> listOf(
+                    SearchPostSorting.Relevance,
+                    SearchPostSorting.New,
+                    SearchPostSorting.Top,
+                    SearchPostSorting.Hot,
+                    SearchPostSorting.CommentsCount
+                )
+            }
+        }
+    }
 }
 
 enum class MessagesSorting {

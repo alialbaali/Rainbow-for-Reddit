@@ -7,18 +7,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import com.rainbow.desktop.navigation.Screen
 
 @Composable
 inline fun MessageScreen(
     model: MessageScreenModel,
-    crossinline onUserNameClick: (String) -> Unit,
-    crossinline onSubredditNameClick: (String) -> Unit,
+    crossinline onNavigate: (Screen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val message by model.message.collectAsState()
     var text by remember { mutableStateOf("") }
     Column(modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceBetween) {
-        MessageItem(message, onUserNameClick, onSubredditNameClick)
+        MessageItem(message, onNavigate)
         OutlinedTextField(
             value = text,
             onValueChange = { text = it },

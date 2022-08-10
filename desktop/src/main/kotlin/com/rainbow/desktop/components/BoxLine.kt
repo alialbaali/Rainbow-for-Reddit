@@ -1,17 +1,18 @@
 package com.rainbow.desktop.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.ui.RainbowColors
 
 @Composable
-fun RowScope.BoxLine(
+fun BoxLine(
     index: Int,
-    height: Dp,
     modifier: Modifier = Modifier,
 ) {
     val color = RainbowColors.getOrNull(index) ?: RainbowColors[0]
@@ -19,7 +20,7 @@ fun RowScope.BoxLine(
         modifier
             .background(color)
             .width(5.dp)
-            .height(height),
+            .fillMaxHeight(),
     )
     Spacer(Modifier.width(16.dp))
 }

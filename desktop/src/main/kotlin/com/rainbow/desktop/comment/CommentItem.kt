@@ -8,6 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.rainbow.desktop.navigation.ContentScreen
+import com.rainbow.desktop.navigation.Screen
 import com.rainbow.desktop.utils.defaultPadding
 import com.rainbow.desktop.utils.defaultSurfaceShape
 import com.rainbow.domain.models.Comment
@@ -15,20 +17,24 @@ import com.rainbow.domain.models.Comment
 @Composable
 inline fun CommentItem(
     comment: Comment,
-    crossinline onUserNameClick: (String) -> Unit,
-    crossinline onSubredditNameClick: (String) -> Unit,
-    crossinline onCommentClick: (Comment) -> Unit,
+    crossinline onNavigate: (Screen) -> Unit,
+    crossinline onNavigateContentScreen: (ContentScreen) -> Unit,
     noinline onCommentUpdate: (Comment) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier
             .defaultSurfaceShape()
-            .clickable { onCommentClick(comment) }
+            .clickable { onNavigateContentScreen(ContentScreen.CommentEntity(comment.postId)) }
             .defaultPadding(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        CommentInfo(comment, onUserNameClick, onSubredditNameClick, isSubredditNameEnabled = true)
+        CommentInfo(
+            comment,
+            onUserNameClick = { userName -> Screen.User(userName) },
+            onSubredditNameClick = { subredditName -> Screen.Subreddit(subredditName) },
+            isSubredditNameEnabled = true
+        )
         Text(comment.body, color = MaterialTheme.colorScheme.onBackground)
         CommentActions(comment, onCommentUpdate, false)
     }

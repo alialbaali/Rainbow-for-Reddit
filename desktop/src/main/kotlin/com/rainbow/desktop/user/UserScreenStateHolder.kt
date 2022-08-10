@@ -1,10 +1,10 @@
 package com.rainbow.desktop.user
 
 import com.rainbow.data.Repos
-import com.rainbow.desktop.comment.CommentListModel
-import com.rainbow.desktop.item.ItemListModel
-import com.rainbow.desktop.model.Model
-import com.rainbow.desktop.post.PostListModel
+import com.rainbow.desktop.comment.CommentListStateHolder
+import com.rainbow.desktop.item.ItemListStateHolder
+import com.rainbow.desktop.model.StateHolder
+import com.rainbow.desktop.post.PostListStateHolder
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.toUIState
 import com.rainbow.domain.models.User
@@ -14,9 +14,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-private val userScreenModels = mutableSetOf<UserScreenModel>()
+private val userScreenModels = mutableSetOf<UserScreenStateHolder>()
 
-class UserScreenModel private constructor(private val userName: String) : Model() {
+class UserScreenStateHolder private constructor(private val userName: String) : StateHolder() {
 
     private val mutableSelectedTab = MutableStateFlow(UserTab.Default)
     val selectedTab get() = mutableSelectedTab.asStateFlow()
@@ -26,15 +26,15 @@ class UserScreenModel private constructor(private val userName: String) : Model(
 
     private val initialPostSorting = Repos.Settings.getUserPostSorting()
 
-    val itemListModel = ItemListModel(initialPostSorting) { postSorting, timeSorting, lastItemId ->
+    val itemListModel = ItemListStateHolder(initialPostSorting) { postSorting, timeSorting, lastItemId ->
         Repos.Item.getUserOverviewItems(userName, postSorting, timeSorting, lastItemId)
     }
 
-    val postListModel = PostListModel(initialPostSorting) { postSorting, timeSorting, lastPostId ->
+    val postListModel = PostListStateHolder(initialPostSorting) { postSorting, timeSorting, lastPostId ->
         Repos.Post.getUserSubmittedPosts(userName, postSorting, timeSorting, lastPostId)
     }
 
-    val commentListModel = CommentListModel(initialPostSorting) { postSorting, timeSorting, lastCommentId ->
+    val commentListModel = CommentListStateHolder(initialPostSorting) { postSorting, timeSorting, lastCommentId ->
         Repos.Comment.getUserComments(userName, postSorting, timeSorting, lastCommentId)
     }
 
@@ -52,9 +52,9 @@ class UserScreenModel private constructor(private val userName: String) : Model(
     }
 
     companion object {
-        fun getOrCreateInstance(userName: String): UserScreenModel {
+        fun getOrCreateInstance(userName: String): UserScreenStateHolder {
             return userScreenModels.find { it.userName == userName }
-                ?: UserScreenModel(userName).also { userScreenModels += it }
+                ?: UserScreenStateHolder(userName).also { userScreenModels += it }
         }
     }
 

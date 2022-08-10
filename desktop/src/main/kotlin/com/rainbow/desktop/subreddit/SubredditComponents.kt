@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rainbow.desktop.subreddit.SubredditActionsModel
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.defaultSurfaceShape
@@ -46,10 +45,10 @@ fun SubredditFavoriteIconButton(
         subreddit.isFavorite,
         onCheckedChange = { isFavorite ->
             if (isFavorite) {
-                SubredditActionsModel.favoriteSubreddit(subreddit, onSubredditUpdate)
+                SubredditActionsStateHolder.favoriteSubreddit(subreddit, onSubredditUpdate)
                 onShowSnackbar(RainbowStrings.FavoriteMessage(subreddit.name))
             } else {
-                SubredditActionsModel.unFavoriteSubreddit(subreddit, onSubredditUpdate)
+                SubredditActionsStateHolder.unFavoriteSubreddit(subreddit, onSubredditUpdate)
                 onShowSnackbar(RainbowStrings.UnFavoriteMessage(subreddit.name))
             }
         },
@@ -78,10 +77,10 @@ fun SubscribeButton(
     Button(
         onClick = {
             if (subreddit.isSubscribed) {
-                SubredditActionsModel.unSubscribeSubreddit(subreddit, onSubredditUpdate)
+                SubredditActionsStateHolder.unSubscribeSubreddit(subreddit, onSubredditUpdate)
                 onShowSnackbar(RainbowStrings.UnsubscribeMessage(subreddit.name))
             } else {
-                SubredditActionsModel.subscribeSubreddit(subreddit, onSubredditUpdate)
+                SubredditActionsStateHolder.subscribeSubreddit(subreddit, onSubredditUpdate)
                 onShowSnackbar(RainbowStrings.SubscribeMessage(subreddit.name))
             }
         },

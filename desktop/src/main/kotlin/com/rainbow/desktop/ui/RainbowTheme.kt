@@ -5,14 +5,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.rainbow.desktop.settings.SettingsModel
-import com.rainbow.desktop.ui.darkColors
-import com.rainbow.desktop.ui.lightColors
+import com.rainbow.desktop.settings.SettingsStateHolder
 import com.rainbow.domain.models.Theme
 
 @Composable
 fun RainbowTheme(content: @Composable () -> Unit) {
-    val theme by SettingsModel.theme.collectAsState()
+    val theme by SettingsStateHolder.theme.collectAsState()
 
     val colors = when (theme) {
         Theme.Dark -> darkColors

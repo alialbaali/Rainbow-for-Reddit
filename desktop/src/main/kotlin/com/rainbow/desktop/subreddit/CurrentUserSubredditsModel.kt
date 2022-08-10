@@ -1,17 +1,16 @@
 package com.rainbow.desktop.subreddit
 
-import com.rainbow.desktop.model.Model
-import com.rainbow.desktop.subreddit.SubredditListModel
+import com.rainbow.desktop.model.StateHolder
 import com.rainbow.data.Repos
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-object CurrentUserSubredditsScreenModel : Model() {
+object CurrentUserSubredditsScreenStateHolder : StateHolder() {
 
     private val mutableSearchTerm = MutableStateFlow("")
     val searchTerm get() = mutableSearchTerm.asStateFlow()
 
-    val subredditListModel = SubredditListModel { lastSubredditId ->
+    val subredditListModel = SubredditListStateHolder { lastSubredditId ->
         Repos.Subreddit.getCurrentUserSubreddits(lastSubredditId)
             .map { it.sortedBy { subreddit -> subreddit.name } }
     }

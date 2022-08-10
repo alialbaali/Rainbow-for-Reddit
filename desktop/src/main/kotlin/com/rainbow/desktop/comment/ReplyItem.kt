@@ -1,13 +1,13 @@
 package com.rainbow.desktop.comment
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.BoxLine
 import com.rainbow.desktop.utils.RainbowStrings
@@ -25,18 +25,19 @@ inline fun ReplyItem(
     crossinline onSubredditNameClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var contentSize by remember { mutableStateOf(IntSize.Zero) }
     Row(
         modifier
+            .height(IntrinsicSize.Min)
+            .clip(MaterialTheme.shapes.medium)
             .clickable(onClick = onClick)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 16.dp)
     ) {
         repeat(depth) {
-            BoxLine(it, contentSize.height.dp)
+            BoxLine(it)
         }
         Column(
             Modifier
-                .onSizeChanged { contentSize = it }
                 .padding(vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -49,20 +50,21 @@ inline fun ReplyItem(
 
 @Composable
 fun ViewMoreReplyItem(onClick: () -> Unit, depth: Int, modifier: Modifier = Modifier) {
-    var contentSize by remember { mutableStateOf(IntSize.Zero) }
     Row(
         modifier
+            .height(IntrinsicSize.Min)
+            .clip(MaterialTheme.shapes.medium)
             .clickable(onClick = onClick)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 16.dp)
     ) {
         repeat(depth) {
-            BoxLine(it, contentSize.height.dp)
+            BoxLine(it)
         }
         Text(
             RainbowStrings.ViewMore,
             Modifier
                 .fillMaxWidth()
-                .onSizeChanged { contentSize = it }
                 .padding(vertical = 16.dp),
             color = MaterialTheme.colorScheme.onBackground
         )
@@ -71,20 +73,21 @@ fun ViewMoreReplyItem(onClick: () -> Unit, depth: Int, modifier: Modifier = Modi
 
 @Composable
 fun ContinueThreadReplyItem(onClick: () -> Unit, depth: Int, modifier: Modifier = Modifier) {
-    var contentSize by remember { mutableStateOf(IntSize.Zero) }
     Row(
         modifier
+            .height(IntrinsicSize.Min)
+            .clip(MaterialTheme.shapes.medium)
             .clickable(onClick = onClick)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 16.dp)
     ) {
         repeat(depth) {
-            BoxLine(it, contentSize.height.dp)
+            BoxLine(it)
         }
         Text(
             RainbowStrings.ContinueThread,
             Modifier
                 .fillMaxWidth()
-                .onSizeChanged { contentSize = it }
                 .padding(vertical = 16.dp),
             color = MaterialTheme.colorScheme.onBackground
         )

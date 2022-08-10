@@ -1,11 +1,11 @@
 package com.rainbow.desktop.subreddit
 
-import com.rainbow.desktop.model.Model
+import com.rainbow.desktop.model.StateHolder
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.Subreddit
 import kotlinx.coroutines.launch
 
-object SubredditActionsModel : Model() {
+object SubredditActionsStateHolder : StateHolder() {
 
     fun subscribeSubreddit(subreddit: Subreddit, onSuccess: (Subreddit) -> Unit) = scope.launch {
         Repos.Subreddit.subscribeSubreddit(subreddit.name)

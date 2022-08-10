@@ -1,42 +1,39 @@
 package com.rainbow.desktop.components
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TextIconButton(
+fun SelectionButton(
+    expanded: Boolean,
     text: String,
     imageVector: ImageVector,
-    contentDescription: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    iconModifier: Modifier = Modifier,
-    shape: Shape = CircleShape,
+    enabled: Boolean = true,
 ) {
+    val iconRotation by animateFloatAsState(if (expanded) 180F else 0F)
     Button(
         onClick,
         modifier,
+        enabled,
+        shape = MaterialTheme.shapes.medium,
         colors = ButtonDefaults.buttonColors(
-            MaterialTheme.colorScheme.background,
-            MaterialTheme.colorScheme.onBackground,
-        ),
-        elevation = null,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground.copy(0.1F)),
-        shape = shape,
-        contentPadding = PaddingValues(16.dp, 12.dp)
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor =  MaterialTheme.colorScheme.onSurface,
+        )
     ) {
-        Text(text = text, fontSize = 14.sp)
+        Text(text = text, fontSize = 14.sp, modifier = Modifier.alignByBaseline())
         Spacer(Modifier.width(16.dp))
-        Icon(imageVector, contentDescription, iconModifier)
+        Icon(imageVector, text, Modifier.rotate(iconRotation).alignByBaseline())
     }
 }

@@ -4,24 +4,20 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import com.rainbow.desktop.comment.CommentItem
 import com.rainbow.desktop.components.RainbowProgressIndicator
-import com.rainbow.desktop.post.CompactPostItem
+import com.rainbow.desktop.navigation.ContentScreen
+import com.rainbow.desktop.navigation.Screen
 import com.rainbow.desktop.post.PostItem
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.Item
 import com.rainbow.domain.models.Post
-import com.rainbow.domain.models.PostLayout
 
 inline fun LazyListScope.items(
     itemsState: UIState<List<Item>>,
-    postLayout: PostLayout,
-    crossinline onUserNameClick: (String) -> Unit,
-    crossinline onSubredditNameClick: (String) -> Unit,
-    crossinline onPostClick: (Post) -> Unit,
-    crossinline onCommentClick: (Comment) -> Unit,
+    crossinline onNavigate: (Screen) -> Unit,
+    crossinline onNavigateContentScreen: (ContentScreen) -> Unit,
     noinline onPostUpdate: (Post) -> Unit,
     noinline onCommentUpdate: (Comment) -> Unit,
     crossinline onAwardsClick: () -> Unit,
@@ -34,35 +30,24 @@ inline fun LazyListScope.items(
             when (item) {
                 is Comment -> CommentItem(
                     item,
-                    onUserNameClick,
-                    onSubredditNameClick,
-                    onCommentClick,
+                    onNavigate,
+                    onNavigateContentScreen,
                     onCommentUpdate,
                     Modifier.fillParentMaxWidth()
                 )
-                is Post -> when (postLayout) {
-                    PostLayout.Card -> PostItem(
-                        item,
-                        onUserNameClick,
-                        onSubredditNameClick,
-                        onPostClick,
-                        onPostUpdate,
-                        onAwardsClick,
-                        onShowSnackbar,
-                        Modifier.fillParentMaxWidth()
-                    )
-                    PostLayout.Compact -> CompactPostItem(
-                        item,
-                        onPostUpdate,
-                        onPostClick,
-                        onUserNameClick,
-                        onSubredditNameClick,
-                        onShowSnackbar,
-                        Modifier.fillParentMaxWidth()
-                    )
-                }
+
+                is Post -> PostItem(
+                    item,
+                    onNavigate,
+                    onNavigateContentScreen,
+                    onPostUpdate,
+                    onAwardsClick,
+                    onShowSnackbar,
+                    Modifier.fillParentMaxWidth()
+                )
             }
         }
+
         UIState.Empty -> {}
     }
 }

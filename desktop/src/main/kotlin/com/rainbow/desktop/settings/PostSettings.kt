@@ -8,7 +8,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.rainbow.desktop.settings.SettingsModel
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.components.DropdownMenuHolder
 
@@ -24,64 +23,64 @@ fun PostSettings(modifier: Modifier = Modifier) {
 
 @Composable
 private fun PostLayoutOption(modifier: Modifier = Modifier) {
-    val postLayout by SettingsModel.postLayout.collectAsState()
+    val postLayout by SettingsStateHolder.postLayout.collectAsState()
     SettingsOption(RainbowStrings.PostLayout, modifier) {
-        DropdownMenuHolder(postLayout, SettingsModel::setPostLayout)
+        DropdownMenuHolder(postLayout, SettingsStateHolder::setPostLayout)
     }
 }
 
 
 @Composable
 private fun PostFullHeightOption(modifier: Modifier = Modifier) {
-    val isPostFulLHeight by SettingsModel.isPostFullHeight.collectAsState()
+    val isPostFulLHeight by SettingsStateHolder.isPostFullHeight.collectAsState()
     SettingsOption(RainbowStrings.PostFullHeight, modifier) {
         Switch(
             isPostFulLHeight,
-            onCheckedChange = { isPostFullHeight -> SettingsModel.setIsPostFullHeight(isPostFullHeight) },
+            onCheckedChange = { isPostFullHeight -> SettingsStateHolder.setIsPostFullHeight(isPostFullHeight) },
         )
     }
 }
 
 @Composable
 private fun MarkPostAsReadOption(modifier: Modifier = Modifier) {
-    val markPostAsRead by SettingsModel.markPostAsRead.collectAsState()
+    val markPostAsRead by SettingsStateHolder.markPostAsRead.collectAsState()
     SettingsOption(RainbowStrings.MarkPostAsRead, modifier) {
-        DropdownMenuHolder(markPostAsRead, SettingsModel::setMarkPostAsRead)
+        DropdownMenuHolder(markPostAsRead, SettingsStateHolder::setMarkPostAsRead)
     }
 }
 
 
 @Composable
 private fun PostSortingOptions(modifier: Modifier = Modifier) {
-    val homePostSorting by SettingsModel.homePostSorting.collectAsState()
-    val profilePostSorting by SettingsModel.profilePostSorting.collectAsState()
-    val userPostSorting by SettingsModel.userPostSorting.collectAsState()
-    val subredditPostSorting by SettingsModel.subredditPostSorting.collectAsState()
-    val searchPostSorting by SettingsModel.searchPostSorting.collectAsState()
+    val homePostSorting by SettingsStateHolder.homePostSorting.collectAsState()
+    val profilePostSorting by SettingsStateHolder.profilePostSorting.collectAsState()
+    val userPostSorting by SettingsStateHolder.userPostSorting.collectAsState()
+    val subredditPostSorting by SettingsStateHolder.subredditPostSorting.collectAsState()
+    val searchPostSorting by SettingsStateHolder.searchPostSorting.collectAsState()
     Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         PostSortingOption(
             homePostSorting,
-            SettingsModel::setHomePostSorting,
+            SettingsStateHolder::setHomePostSorting,
             RainbowStrings.DefaultHomePostSorting,
         )
         PostSortingOption(
             profilePostSorting,
-            SettingsModel::setProfilePostSorting,
+            SettingsStateHolder::setProfilePostSorting,
             RainbowStrings.DefaultProfilePostSorting,
         )
         PostSortingOption(
             userPostSorting,
-            SettingsModel::setUserPostSorting,
+            SettingsStateHolder::setUserPostSorting,
             RainbowStrings.DefaultUserPostSorting,
         )
         PostSortingOption(
             subredditPostSorting,
-            SettingsModel::setSubredditPostSorting,
+            SettingsStateHolder::setSubredditPostSorting,
             RainbowStrings.DefaultSubredditPostSorting,
         )
         PostSortingOption(
             searchPostSorting,
-            SettingsModel::setSearchPostSorting,
+            SettingsStateHolder::setSearchPostSorting,
             RainbowStrings.DefaultSearchPostSorting,
         )
     }

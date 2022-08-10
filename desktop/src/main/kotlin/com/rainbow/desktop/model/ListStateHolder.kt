@@ -5,7 +5,7 @@ import com.rainbow.desktop.utils.map
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-sealed class ListModel<T : Any> : Model() {
+sealed class ListStateHolder<T : Any> : StateHolder() {
 
     protected val mutableItems = MutableStateFlow<UIState<List<T>>>(UIState.Loading)
     val items get() = mutableItems.asStateFlow()

@@ -19,141 +19,107 @@ import com.rainbow.desktop.components.RainbowLazyColumn
 import com.rainbow.desktop.components.ScreenHeaderItem
 import com.rainbow.desktop.components.ScrollableEnumTabRow
 import com.rainbow.desktop.item.items
-import com.rainbow.desktop.model.ListModel
-import com.rainbow.desktop.profile.ProfileScreenModel
-import com.rainbow.desktop.profile.ProfileTab
+import com.rainbow.desktop.navigation.ContentScreen
+import com.rainbow.desktop.navigation.Screen
 import com.rainbow.desktop.post.posts
-import com.rainbow.desktop.utils.*
-import com.rainbow.domain.models.Comment
-import com.rainbow.domain.models.Post
+import com.rainbow.desktop.utils.RainbowStrings
+import com.rainbow.desktop.utils.composed
+import com.rainbow.desktop.utils.defaultPadding
+import com.rainbow.desktop.utils.defaultSurfaceShape
 import com.rainbow.domain.models.User
 
 @Composable
-inline fun ProfileScreen(
-    crossinline onUserNameClick: (String) -> Unit,
-    crossinline onSubredditNameClick: (String) -> Unit,
-    crossinline onPostClick: (Post) -> Unit,
-    crossinline onCommentClick: (Comment) -> Unit,
-    noinline onPostUpdate: (Post) -> Unit,
-    noinline onCommentUpdate: (Comment) -> Unit,
-    noinline onShowSnackbar: (String) -> Unit,
-    crossinline setListModel: (ListModel<*>) -> Unit,
+fun ProfileScreen(
+    onNavigate: (Screen) -> Unit,
+    onNavigateContentScreen: (ContentScreen) -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val selectedTab by ProfileScreenModel.selectedTab.collectAsState(ProfileTab.Overview)
-    val userState by ProfileScreenModel.currentUser.collectAsState()
-    val overViewItemsState by ProfileScreenModel.overViewItemListModel.items.collectAsState()
-    val savedItemsState by ProfileScreenModel.savedItemListModel.items.collectAsState()
-    val submittedPostsState by ProfileScreenModel.submittedPostListModel.items.collectAsState()
-    val hiddenPostsState by ProfileScreenModel.hiddenPostListModel.items.collectAsState()
-    val upvotedPostsState by ProfileScreenModel.upvotedPostListModel.items.collectAsState()
-    val downvotedPostsState by ProfileScreenModel.downvotedPostListModel.items.collectAsState()
-    val commentsState by ProfileScreenModel.commentListModel.items.collectAsState()
-    val postLayout by ProfileScreenModel.postLayout.collectAsState()
-    OneTimeEffect(
-        selectedTab,
-        overViewItemsState.isLoading,
-        submittedPostsState.isLoading,
-        savedItemsState.isLoading,
-        hiddenPostsState.isLoading,
-        upvotedPostsState.isLoading,
-        downvotedPostsState.isLoading,
-        commentsState.isLoading,
-    ) {
-        when (selectedTab) {
-            ProfileTab.Overview -> setListModel(ProfileScreenModel.overViewItemListModel)
-            ProfileTab.Submitted -> setListModel(ProfileScreenModel.submittedPostListModel)
-            ProfileTab.Saved -> setListModel(ProfileScreenModel.savedItemListModel)
-            ProfileTab.Hidden -> setListModel(ProfileScreenModel.hiddenPostListModel)
-            ProfileTab.Upvoted -> setListModel(ProfileScreenModel.upvotedPostListModel)
-            ProfileTab.Downvoted -> setListModel(ProfileScreenModel.downvotedPostListModel)
-            ProfileTab.Comments -> setListModel(ProfileScreenModel.commentListModel)
-        }
-    }
+    val selectedTab by ProfileScreenStateHolder.selectedTab.collectAsState(ProfileTab.Overview)
+    val userState by ProfileScreenStateHolder.currentUser.collectAsState()
+    val overViewItemsState by ProfileScreenStateHolder.overViewItemListModel.items.collectAsState()
+    val savedItemsState by ProfileScreenStateHolder.savedItemListModel.items.collectAsState()
+    val submittedPostsState by ProfileScreenStateHolder.submittedPostListModel.items.collectAsState()
+    val hiddenPostsState by ProfileScreenStateHolder.hiddenPostListModel.items.collectAsState()
+    val upvotedPostsState by ProfileScreenStateHolder.upvotedPostListModel.items.collectAsState()
+    val downvotedPostsState by ProfileScreenStateHolder.downvotedPostListModel.items.collectAsState()
+    val commentsState by ProfileScreenStateHolder.commentListModel.items.collectAsState()
+    val postLayout by ProfileScreenStateHolder.postLayout.collectAsState()
     userState.composed(onShowSnackbar, modifier) { user ->
         RainbowLazyColumn(modifier) {
             item { Header(user) }
             item {
                 ScrollableEnumTabRow(
                     selectedTab = selectedTab,
-                    onTabClick = { ProfileScreenModel.selectTab(it) },
+                    onTabClick = { ProfileScreenStateHolder.selectTab(it) },
                 )
             }
             when (selectedTab) {
                 ProfileTab.Overview -> items(
                     overViewItemsState,
-                    postLayout,
-                    onUserNameClick,
-                    onSubredditNameClick,
-                    onPostClick,
-                    onCommentClick,
-                    onPostUpdate,
-                    onCommentUpdate,
+                    onNavigate,
+                    onNavigateContentScreen,
+                    { },
+                    {},
                     {},
                     {},
                 )
+
                 ProfileTab.Saved -> items(
                     savedItemsState,
-                    postLayout,
-                    onUserNameClick,
-                    onSubredditNameClick,
-                    onPostClick,
-                    onCommentClick,
-                    onPostUpdate,
-                    onCommentUpdate,
+                    onNavigate,
+                    onNavigateContentScreen,
+                    { },
+                    {},
                     {},
                     {},
                 )
+
                 ProfileTab.Comments -> comments(
                     commentsState,
-                    onUserNameClick,
-                    onSubredditNameClick,
-                    onCommentClick,
-                    onCommentUpdate,
+                    onNavigate,
+                    onNavigateContentScreen,
+                    {},
                 )
+
                 ProfileTab.Submitted -> posts(
                     submittedPostsState,
-                    postLayout,
-                    onUserNameClick,
-                    onSubredditNameClick,
-                    onPostClick,
-                    onPostUpdate,
+                    onNavigate,
+                    onNavigateContentScreen,
+                    {},
                     {},
                     onShowSnackbar,
-                    onPostClick
+//                    onPostClick
                 )
+
                 ProfileTab.Hidden -> posts(
                     hiddenPostsState,
-                    postLayout,
-                    onUserNameClick,
-                    onSubredditNameClick,
-                    onPostClick,
-                    onPostUpdate,
+                    onNavigate,
+                    onNavigateContentScreen,
+                    {},
                     {},
                     onShowSnackbar,
-                    onPostClick
+//                    onPostClick
                 )
+
                 ProfileTab.Upvoted -> posts(
                     upvotedPostsState,
-                    postLayout,
-                    onUserNameClick,
-                    onSubredditNameClick,
-                    onPostClick,
-                    onPostUpdate,
+                    onNavigate,
+                    onNavigateContentScreen,
+                    {},
                     {},
                     onShowSnackbar,
-                    onPostClick
+//                    onPostClick
                 )
+
                 ProfileTab.Downvoted -> posts(
                     downvotedPostsState,
-                    postLayout,
-                    onUserNameClick,
-                    onSubredditNameClick,
-                    onPostClick,
-                    onPostUpdate,
+                    onNavigate,
+                    onNavigateContentScreen,
+                    {},
                     {},
                     onShowSnackbar,
-                    {},
+//                    onPostClick
                 )
             }
         }

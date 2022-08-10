@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.RainbowIconButton
 import com.rainbow.desktop.utils.RainbowIcons
@@ -20,12 +22,12 @@ import com.rainbow.desktop.utils.defaultPadding
 import com.rainbow.desktop.components.DropdownMenuHolder
 
 @Composable
-fun LazyItemScope.CommentActions(model: PostScreenModel) {
+fun LazyItemScope.CommentActions(model: PostScreenStateHolder) {
     val commentListModel by model.commentListModel.collectAsState()
     val backStack by model.backStack.collectAsState()
     val forwardStack by model.forwardStack.collectAsState()
     val sorting by commentListModel.sorting.collectAsState()
-    Row(Modifier.fillParentMaxWidth().background(MaterialTheme.colorScheme.surface).defaultPadding()) {
+    Row(Modifier.clip(MaterialTheme.shapes.medium).fillParentMaxWidth().shadow(1.dp).background(MaterialTheme.colorScheme.surface).defaultPadding()) {
         CommentsActions(
             backStack.isNotEmpty(),
             forwardStack.isNotEmpty(),

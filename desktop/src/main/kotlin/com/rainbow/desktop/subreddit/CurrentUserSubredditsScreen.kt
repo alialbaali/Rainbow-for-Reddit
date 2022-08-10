@@ -12,24 +12,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.components.LazyGrid
 import com.rainbow.desktop.components.RainbowTextField
-import com.rainbow.desktop.model.ListModel
-import com.rainbow.desktop.utils.*
-import com.rainbow.domain.models.Subreddit
+import com.rainbow.desktop.navigation.Screen
+import com.rainbow.desktop.utils.RainbowStrings
+import com.rainbow.desktop.utils.composed
+import com.rainbow.desktop.utils.filterContent
+import com.rainbow.desktop.utils.map
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 inline fun CurrentUserSubredditsScreen(
-    crossinline onClick: (String) -> Unit,
-    noinline onSubredditUpdate: (Subreddit) -> Unit,
+    crossinline onNavigate: (Screen) -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
-    crossinline setListModel: (ListModel<*>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val state by CurrentUserSubredditsScreenModel.subredditListModel.items.collectAsState()
-    val searchTerm by CurrentUserSubredditsScreenModel.searchTerm.collectAsState()
-    OneTimeEffect(state.isLoading) {
-        setListModel(CurrentUserSubredditsScreenModel.subredditListModel)
-    }
+    val state by CurrentUserSubredditsScreenStateHolder.subredditListModel.items.collectAsState()
+    val searchTerm by CurrentUserSubredditsScreenStateHolder.searchTerm.collectAsState()
     state
         .map { it.filter { it.isSubscribed }.filterContent(searchTerm) }
         .composed(onShowSnackbar, modifier) { subreddits ->
@@ -42,7 +39,7 @@ inline fun CurrentUserSubredditsScreen(
                     ) {
                         RainbowTextField(
                             value = searchTerm,
-                            onValueChange = { CurrentUserSubredditsScreenModel.setSearchTerm(it) },
+                            onValueChange = { CurrentUserSubredditsScreenStateHolder.setSearchTerm(it) },
                             RainbowStrings.FilterSubreddits,
                         )
 
@@ -53,8 +50,8 @@ inline fun CurrentUserSubredditsScreen(
                 items(subreddits) { subreddit ->
                     SubredditItem(
                         subreddit,
-                        onSubredditUpdate,
-                        onClick = { onClick(subreddit.name) },
+                        {},
+                        onClick = { onNavigate(Screen.Subreddit(subreddit.name)) },
                         onShowSnackbar
                     )
                 }

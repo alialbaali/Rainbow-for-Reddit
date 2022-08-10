@@ -1,18 +1,17 @@
 package com.rainbow.desktop.utils
 
-import com.rainbow.desktop.home.HomeScreenModel
-import com.rainbow.desktop.profile.ProfileScreenModel
+import com.rainbow.desktop.profile.ProfileScreenStateHolder
 import com.rainbow.domain.models.Award
 import com.rainbow.domain.models.Subreddit
 import java.util.*
 
 private val models = listOf(
-    HomeScreenModel.postListModel,
-    ProfileScreenModel.hiddenPostListModel,
-    ProfileScreenModel.upvotedPostListModel,
-    ProfileScreenModel.downvotedPostListModel,
-    ProfileScreenModel.hiddenPostListModel,
-    ProfileScreenModel.submittedPostListModel,
+//    HomeScreenStateHolder.postListModel,
+    ProfileScreenStateHolder.hiddenPostListModel,
+    ProfileScreenStateHolder.upvotedPostListModel,
+    ProfileScreenStateHolder.downvotedPostListModel,
+    ProfileScreenStateHolder.hiddenPostListModel,
+    ProfileScreenStateHolder.submittedPostListModel,
 )
 private const val MinimumNumberToFormat = 10_000
 

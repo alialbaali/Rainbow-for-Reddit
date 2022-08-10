@@ -1,11 +1,11 @@
 package com.rainbow.desktop.subreddit
 
-import com.rainbow.desktop.model.UnSortedListModel
+import com.rainbow.desktop.model.UnSortedListStateHolder
 import com.rainbow.domain.models.Subreddit
 
-class SubredditListModel(
+class SubredditListStateHolder(
     getSubreddits: suspend (String?) -> Result<List<Subreddit>>,
-) : UnSortedListModel<Subreddit>(getSubreddits) {
+) : UnSortedListStateHolder<Subreddit>(getSubreddits) {
     override val Subreddit.itemId: String
         get() = this.id
 }

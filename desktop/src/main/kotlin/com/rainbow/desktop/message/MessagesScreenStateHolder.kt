@@ -1,42 +1,42 @@
 package com.rainbow.desktop.message
 
-import com.rainbow.desktop.model.Model
+import com.rainbow.desktop.model.StateHolder
 import com.rainbow.data.Repos
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-object MessagesScreenModel : Model() {
+object MessagesScreenStateHolder : StateHolder() {
 
     private val mutableSelectedTab = MutableStateFlow(MessageTab.Default)
     val selectedTab get() = mutableSelectedTab.asStateFlow()
 
-    val inboxMessages = MessageListModel { lastMessageId ->
+    val inboxMessages = MessageListStateHolder { lastMessageId ->
         Repos.Message.getInboxMessages(lastMessageId)
     }
 
-    val unreadMessages = MessageListModel { lastMessageId ->
+    val unreadMessages = MessageListStateHolder { lastMessageId ->
         Repos.Message.getUnreadMessages(lastMessageId)
     }
 
-    val sentMessages = MessageListModel { lastMessageId ->
+    val sentMessages = MessageListStateHolder { lastMessageId ->
         Repos.Message.getSentMessages(lastMessageId)
     }
 
-    val messages = MessageListModel { lastMessageId ->
+    val messages = MessageListStateHolder { lastMessageId ->
         Repos.Message.getMessages(lastMessageId)
     }
 
-    val mentions = MessageListModel { lastMessageId ->
+    val mentions = MessageListStateHolder { lastMessageId ->
         Repos.Message.getMentions(lastMessageId)
     }
 
-    val postMessages = MessageListModel { lastMessageId ->
+    val postMessages = MessageListStateHolder { lastMessageId ->
         Repos.Message.getPostMessages(lastMessageId)
     }
 
-    val commentMessages = MessageListModel { lastMessageId ->
+    val commentMessages = MessageListStateHolder { lastMessageId ->
         Repos.Message.getCommentMessages(lastMessageId)
     }
 

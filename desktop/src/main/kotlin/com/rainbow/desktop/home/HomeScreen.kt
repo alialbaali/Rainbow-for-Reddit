@@ -1,71 +1,91 @@
 package com.rainbow.desktop.home
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.rainbow.desktop.comment.comments
+import com.rainbow.desktop.components.DropdownMenuHolder
 import com.rainbow.desktop.components.EnumTabRow
-import com.rainbow.desktop.home.HomeScreenModel
-import com.rainbow.desktop.home.HomeTab
 import com.rainbow.desktop.components.RainbowLazyColumn
-import com.rainbow.desktop.model.ListModel
+import com.rainbow.desktop.navigation.ContentScreen
+import com.rainbow.desktop.navigation.Screen
 import com.rainbow.desktop.post.posts
-import com.rainbow.desktop.utils.OneTimeEffect
-import com.rainbow.domain.models.Comment
-import com.rainbow.domain.models.Post
+import com.rainbow.desktop.ui.dpDimensions
+import com.rainbow.desktop.utils.getOrNull
 
 @Composable
 inline fun HomeScreen(
-    crossinline onUserNameClick: (String) -> Unit,
-    crossinline onSubredditNameClick: (String) -> Unit,
-    crossinline onPostClick: (Post) -> Unit,
-    crossinline onCommentClick: (Comment) -> Unit,
-    noinline onPostUpdate: (Post) -> Unit,
-    noinline onCommentUpdate: (Comment) -> Unit,
+    crossinline onNavigate: (Screen) -> Unit,
+    crossinline onNavigateContentScreen: (ContentScreen) -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
-    crossinline setListModel: (ListModel<*>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val postLayout by HomeScreenModel.postListModel.postLayout.collectAsState()
-    val postsState by HomeScreenModel.postListModel.items.collectAsState()
-    val commentsState by HomeScreenModel.commentListModel.items.collectAsState()
-    val selectedTab by HomeScreenModel.selectedTab.collectAsState()
-    OneTimeEffect(selectedTab, postsState.isLoading, commentsState.isLoading) {
-        when (selectedTab) {
-            HomeTab.Posts -> setListModel(HomeScreenModel.postListModel)
-            HomeTab.Comments -> setListModel(HomeScreenModel.commentListModel)
+    val stateHolder = remember { HomeScreenStateHolder() }
+    val posts by stateHolder.posts.collectAsState()
+    val postSorting by stateHolder.postSorting.collectAsState()
+    val timeSorting by stateHolder.timeSorting.collectAsState()
+    val selectedTab by stateHolder.selectedTab.collectAsState()
+    DisposableEffect(posts) {
+        val post = posts.getOrNull()?.firstOrNull()
+        if (post != null) {
+            onNavigateContentScreen(ContentScreen.PostEntity(post))
+        }
+        onDispose {
+            onNavigateContentScreen(ContentScreen.None)
         }
     }
     RainbowLazyColumn(modifier) {
+
         item {
             EnumTabRow(
                 selectedTab,
-                onTabClick = { HomeScreenModel.selectTab(it) }
+                onTabClick = { stateHolder.selectTab(it) }
             )
         }
+
+        if (selectedTab == HomeTab.Posts) {
+            item {
+                Row(
+                    Modifier.fillParentMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dpDimensions.medium),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    DropdownMenuHolder(
+                        value = postSorting,
+                        onValueUpdate = { stateHolder.setPostSorting(it) },
+                    )
+
+                    DropdownMenuHolder(
+                        value = timeSorting,
+                        onValueUpdate = { stateHolder.setTimeSorting(it) },
+                        enabled = postSorting.isTimeSorting,
+                    )
+                }
+            }
+        }
+
         when (selectedTab) {
             HomeTab.Posts -> {
                 posts(
-                    postsState,
-                    postLayout,
-                    onUserNameClick,
-                    onSubredditNameClick,
-                    onPostClick,
-                    onPostUpdate,
+                    posts,
+                    onNavigate,
+                    onNavigateContentScreen,
+                    stateHolder::updatePost,
                     {},
                     onShowSnackbar,
-                    setLastPost = {},
                 )
             }
+
             HomeTab.Comments -> {
-                comments(
-                    commentsState,
-                    onUserNameClick,
-                    onSubredditNameClick,
-                    onCommentClick,
-                    onCommentUpdate,
-                )
+//                comments(
+//                    commentsState,
+//                    onUserNameClick,
+//                    onSubredditNameClick,
+//                    onCommentClick,
+//                    onCommentUpdate,
+//                )
             }
         }
     }

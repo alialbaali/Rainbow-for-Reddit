@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.RainbowProgressIndicator
-import com.rainbow.desktop.settings.SettingsModel
+import com.rainbow.desktop.settings.SettingsStateHolder
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.defaultPadding
@@ -51,7 +51,7 @@ fun LoginScreen() {
                         state = UIState.Loading
                         val uuid = UUID.randomUUID()
                         currentUriHandler.openUri(createAuthenticationUrl(uuid))
-                        SettingsModel.loginUser(
+                        SettingsStateHolder.loginUser(
                             uuid,
                             onSuccess = { state = UIState.Success(Unit) },
                             onFailure = {

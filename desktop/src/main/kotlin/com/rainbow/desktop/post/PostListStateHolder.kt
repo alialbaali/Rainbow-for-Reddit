@@ -1,6 +1,6 @@
 package com.rainbow.desktop.post
 
-import com.rainbow.desktop.model.SortedListModel
+import com.rainbow.desktop.model.SortedListStateHolder
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.PostLayout
@@ -9,10 +9,10 @@ import com.rainbow.domain.models.TimeSorting
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 
-class PostListModel<S : PostSorting>(
+class PostListStateHolder<S : PostSorting>(
     initialPostSorting: S,
     getPosts: suspend (S, TimeSorting, String?) -> Result<List<Post>>,
-) : SortedListModel<Post, S>(initialPostSorting, getPosts) {
+) : SortedListStateHolder<Post, S>(initialPostSorting, getPosts) {
     override val Post.itemId: String
         get() = this.id
 

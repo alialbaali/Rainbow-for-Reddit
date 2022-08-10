@@ -1,6 +1,6 @@
 package com.rainbow.desktop.comment
 
-import com.rainbow.desktop.model.Model
+import com.rainbow.desktop.model.StateHolder
 import com.rainbow.desktop.utils.Constants
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.map
@@ -12,10 +12,10 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-private val postCommentListModels = mutableSetOf<PostCommentListModel>()
+private val postCommentListModels = mutableSetOf<PostCommentListStateHolder>()
 
 @OptIn(FlowPreview::class)
-class PostCommentListModel private constructor(private val type: Type) : Model() {
+class PostCommentListStateHolder private constructor(private val type: Type) : StateHolder() {
 
     private val mutableComments = MutableStateFlow<UIState<List<Comment>>>(UIState.Loading)
     val comments get() = mutableComments.asStateFlow()
@@ -31,9 +31,9 @@ class PostCommentListModel private constructor(private val type: Type) : Model()
     private val mutableRefreshContent = MutableSharedFlow<Unit>(replay = 1)
 
     companion object {
-        fun getOrCreateInstance(type: Type): PostCommentListModel {
+        fun getOrCreateInstance(type: Type): PostCommentListStateHolder {
             return postCommentListModels.find { it.type == type }
-                ?: PostCommentListModel(type).also { postCommentListModels += it }
+                ?: PostCommentListStateHolder(type).also { postCommentListModels += it }
         }
     }
 

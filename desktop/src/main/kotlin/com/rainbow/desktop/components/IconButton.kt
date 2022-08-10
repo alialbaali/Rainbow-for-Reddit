@@ -1,35 +1,52 @@
 package com.rainbow.desktop.components
 
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material.Icon
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
-import com.rainbow.desktop.utils.defaultBackgroundShape
 
 @Composable
-inline fun RainbowIconButton(
+fun RainbowIconButton(
     imageVector: ImageVector,
     contentDescription: String?,
-    crossinline onClick: () -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    IconButton(
-        onClick = { onClick() },
-        modifier.defaultBackgroundShape(shape = CircleShape),
-        enabled
+    Box(
+        modifier = modifier
+            .clickable(
+                onClick = onClick,
+                enabled = enabled,
+                role = Role.Button,
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple(bounded = false, radius = 16.dp)
+            ),
+        contentAlignment = Alignment.Center
     ) {
-        Icon(imageVector, contentDescription)
+        val contentAlpha = if (enabled) LocalContentAlpha.current else ContentAlpha.disabled
+        CompositionLocalProvider(LocalContentAlpha provides contentAlpha) {
+            Icon(imageVector, contentDescription)
+        }
     }
 }
 
 @Composable
-inline fun MenuIconButton(crossinline onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun MenuIconButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     RainbowIconButton(
         RainbowIcons.MoreVert,
         RainbowStrings.Menu,

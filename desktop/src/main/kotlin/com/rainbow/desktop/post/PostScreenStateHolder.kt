@@ -1,7 +1,7 @@
 package com.rainbow.desktop.post
 
-import com.rainbow.desktop.comment.PostCommentListModel
-import com.rainbow.desktop.model.Model
+import com.rainbow.desktop.comment.PostCommentListStateHolder
+import com.rainbow.desktop.model.StateHolder
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.map
 import com.rainbow.desktop.utils.toUIState
@@ -12,27 +12,27 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlin.jvm.JvmInline
 
-private val postScreenModels = mutableSetOf<PostScreenModel>()
+private val postScreenModels = mutableSetOf<PostScreenStateHolder>()
 
-class PostScreenModel private constructor(private val type: Type) : Model() {
+class PostScreenStateHolder private constructor(private val type: Type) : StateHolder() {
 
     private val mutablePost = MutableStateFlow<UIState<Post>>(UIState.Loading)
     val post get() = mutablePost.asStateFlow()
 
     private val mutableCommentListModel =
-        MutableStateFlow(PostCommentListModel.getOrCreateInstance(PostCommentListModel.Type.Post(type.postId)))
+        MutableStateFlow(PostCommentListStateHolder.getOrCreateInstance(PostCommentListStateHolder.Type.Post(type.postId)))
     val commentListModel get() = mutableCommentListModel.asStateFlow()
 
-    private val mutableBackStack = MutableStateFlow(mutableListOf<PostCommentListModel>())
+    private val mutableBackStack = MutableStateFlow(mutableListOf<PostCommentListStateHolder>())
     val backStack get() = mutableBackStack.asStateFlow()
 
-    private val mutableForwardStack = MutableStateFlow(mutableListOf<PostCommentListModel>())
+    private val mutableForwardStack = MutableStateFlow(mutableListOf<PostCommentListStateHolder>())
     val forwardStack get() = mutableForwardStack.asStateFlow()
 
     companion object {
-        fun getOrCreateInstance(type: Type): PostScreenModel {
+        fun getOrCreateInstance(type: Type): PostScreenStateHolder {
             return postScreenModels.find { it.type.postId == type.postId }
-                ?: PostScreenModel(type).also { postScreenModels += it }
+                ?: PostScreenStateHolder(type).also { postScreenModels += it }
         }
     }
 
@@ -77,7 +77,7 @@ class PostScreenModel private constructor(private val type: Type) : Model() {
     fun setCommentListModel(parentId: String) {
         backStack.value += commentListModel.value
         mutableCommentListModel.value =
-            PostCommentListModel.getOrCreateInstance(PostCommentListModel.Type.Thread(type.postId, parentId))
+            PostCommentListStateHolder.getOrCreateInstance(PostCommentListStateHolder.Type.Thread(type.postId, parentId))
         forwardStack.value.clear()
     }
 

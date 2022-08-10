@@ -15,6 +15,7 @@ import com.rainbow.desktop.components.CreationDate
 import com.rainbow.desktop.components.Dot
 import com.rainbow.desktop.components.SubredditName
 import com.rainbow.desktop.components.UserName
+import com.rainbow.desktop.navigation.Screen
 import com.rainbow.desktop.utils.defaultPadding
 import com.rainbow.desktop.utils.defaultSurfaceShape
 import com.rainbow.domain.models.Message
@@ -22,8 +23,7 @@ import com.rainbow.domain.models.Message
 @Composable
 inline fun MessageItem(
     message: Message,
-    crossinline onUserNameClick: (String) -> Unit,
-    crossinline onSubredditNameClick: (String) -> Unit,
+    crossinline onNavigate: (Screen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -34,10 +34,10 @@ inline fun MessageItem(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            UserName(message.userName, onUserNameClick)
+            UserName(message.userName, { onNavigate(Screen.User(it)) })
             message.subredditName?.let { subredditName ->
                 Dot()
-                SubredditName(subredditName, onSubredditNameClick)
+                SubredditName(subredditName, { onNavigate(Screen.Subreddit(it)) })
             }
             Dot()
             CreationDate(message.creationDate)

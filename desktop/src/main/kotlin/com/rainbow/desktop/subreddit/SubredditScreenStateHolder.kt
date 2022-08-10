@@ -1,8 +1,7 @@
 package com.rainbow.desktop.subreddit
 
-import com.rainbow.desktop.subreddit.SubredditTab
-import com.rainbow.desktop.model.Model
-import com.rainbow.desktop.post.PostListModel
+import com.rainbow.desktop.model.StateHolder
+import com.rainbow.desktop.post.PostListStateHolder
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.map
 import com.rainbow.desktop.utils.toUIState
@@ -17,9 +16,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-private val subredditScreenModels = mutableSetOf<SubredditScreenModel>()
+private val subredditScreenModels = mutableSetOf<SubredditScreenStateHolder>()
 
-class SubredditScreenModel private constructor(private val subredditName: String) : Model() {
+class SubredditScreenStateHolder private constructor(private val subredditName: String) : StateHolder() {
 
     private val mutableSelectedTab = MutableStateFlow(SubredditTab.Default)
     val selectedTab get() = mutableSelectedTab.asStateFlow()
@@ -38,7 +37,7 @@ class SubredditScreenModel private constructor(private val subredditName: String
 
     private val initialPostSorting = Repos.Settings.getSubredditPostSorting()
 
-    val postListModel = PostListModel(initialPostSorting) { postSorting, timeSorting, lastPostId ->
+    val postListModel = PostListStateHolder(initialPostSorting) { postSorting, timeSorting, lastPostId ->
         Repos.Post.getSubredditPosts(subredditName, postSorting, timeSorting, lastPostId)
     }
 
@@ -58,9 +57,9 @@ class SubredditScreenModel private constructor(private val subredditName: String
     }
 
     companion object {
-        fun getOrCreateInstance(subredditName: String): SubredditScreenModel {
+        fun getOrCreateInstance(subredditName: String): SubredditScreenStateHolder {
             return subredditScreenModels.find { it.subredditName == subredditName }
-                ?: SubredditScreenModel(subredditName).also { subredditScreenModels += it }
+                ?: SubredditScreenStateHolder(subredditName).also { subredditScreenModels += it }
         }
 
         fun updateSubreddit(subreddit: Subreddit) {

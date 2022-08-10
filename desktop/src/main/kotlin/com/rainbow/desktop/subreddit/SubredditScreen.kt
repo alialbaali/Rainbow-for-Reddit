@@ -18,30 +18,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.rainbow.data.Repos
 import com.rainbow.desktop.components.FlairItem
 import com.rainbow.desktop.components.MarkdownText
-import com.rainbow.desktop.components.ScrollableEnumTabRow
-import com.rainbow.desktop.model.ListModel
-import com.rainbow.desktop.subreddit.SubredditTab
-import com.rainbow.desktop.utils.*
-import com.rainbow.data.Repos
 import com.rainbow.desktop.components.ScreenHeaderItem
+import com.rainbow.desktop.components.ScrollableEnumTabRow
+import com.rainbow.desktop.navigation.ContentScreen
+import com.rainbow.desktop.navigation.Screen
 import com.rainbow.desktop.post.posts
+import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.*
 
 @Composable
 fun SubredditScreen(
     subredditName: String,
-    onUserNameClick: (String) -> Unit,
-    onSubredditNameClick: (String) -> Unit,
-    onPostClick: (Post) -> Unit,
-    onSubredditUpdate: (Subreddit) -> Unit,
-    onPostUpdate: (Post) -> Unit,
+    onNavigate: (Screen) -> Unit,
+    onNavigateContentScreen: (ContentScreen) -> Unit,
     onShowSnackbar: (String) -> Unit,
-    setListModel: (ListModel<*>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val model = remember { SubredditScreenModel.getOrCreateInstance(subredditName) }
+    val model = remember { SubredditScreenStateHolder.getOrCreateInstance(subredditName) }
     val postLayout by model.postListModel.postLayout.collectAsState()
     val postsState by model.postListModel.items.collectAsState()
     val moderatorsState by model.moderators.collectAsState()
@@ -49,13 +45,10 @@ fun SubredditScreen(
     val selectedTab by model.selectedTab.collectAsState()
     val rulesState by model.rules.collectAsState()
     val wikiState by model.wiki.collectAsState()
-    OneTimeEffect(postsState.isLoading) {
-        setListModel(model.postListModel)
-    }
     LazyColumn(modifier) {
         item {
             subredditState.composed(onShowSnackbar) { subreddit ->
-                Header(subreddit, onSubredditUpdate, onShowSnackbar, Modifier.padding(bottom = 8.dp))
+                Header(subreddit, {}, onShowSnackbar, Modifier.padding(bottom = 8.dp))
             }
         }
         item {
@@ -67,19 +60,17 @@ fun SubredditScreen(
         when (selectedTab) {
             SubredditTab.Posts -> posts(
                 postsState,
-                postLayout,
-                onUserNameClick,
-                onSubredditNameClick,
-                onPostClick,
-                onPostUpdate,
+                onNavigate,
+                onNavigateContentScreen,
+                {},
                 {},
                 onShowSnackbar,
-                {},
             )
+
             SubredditTab.Description -> description(subredditState, onShowSnackbar)
             SubredditTab.Wiki -> wiki(wikiState, onShowSnackbar)
             SubredditTab.Rules -> rules(rulesState, onShowSnackbar)
-            SubredditTab.Moderators -> moderators(moderatorsState, onUserNameClick, onShowSnackbar)
+            SubredditTab.Moderators -> moderators(moderatorsState, { onNavigate(Screen.User(it)) }, onShowSnackbar)
         }
     }
 }

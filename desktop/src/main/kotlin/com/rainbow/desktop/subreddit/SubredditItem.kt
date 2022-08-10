@@ -12,14 +12,13 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.HeaderItem
 import com.rainbow.desktop.components.MenuIconButton
-import com.rainbow.desktop.subreddit.SubredditActionsModel
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.defaultSurfaceShape
 import com.rainbow.desktop.components.RainbowMenu
 import com.rainbow.desktop.components.RainbowMenuItem
 import com.rainbow.domain.models.Subreddit
-import com.rainbow.domain.models.fullUrl
+//import com.rainbow.domain.models.fullUrl
 
 @Composable
 fun SubredditItem(
@@ -69,7 +68,7 @@ private fun SubredditItemActions(
                     RainbowStrings.OpenInBrowser,
                     RainbowIcons.OpenInBrowser,
                     onClick = {
-                        uriHandler.openUri(subreddit.fullUrl)
+                        uriHandler.openUri("subreddit.fullUrl")
                         isMenuExpanded = false
                     }
                 )
@@ -77,7 +76,7 @@ private fun SubredditItemActions(
                     RainbowStrings.UnSubscribe,
                     RainbowIcons.RemoveCircle, // Playlist remove icon (Not available currently)
                     onClick = {
-                        SubredditActionsModel.unSubscribeSubreddit(subreddit, onSubredditUpdate)
+                        SubredditActionsStateHolder.unSubscribeSubreddit(subreddit, onSubredditUpdate)
                         isMenuExpanded = false
                         onShowSnackbar(RainbowStrings.UnsubscribeMessage(subreddit.name))
                     }

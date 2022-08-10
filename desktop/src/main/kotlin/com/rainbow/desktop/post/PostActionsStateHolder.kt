@@ -1,12 +1,12 @@
 package com.rainbow.desktop.post
 
-import com.rainbow.desktop.model.Model
+import com.rainbow.desktop.model.StateHolder
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.Vote
 import kotlinx.coroutines.launch
 
-object PostActionsModel : Model() {
+object PostActionsStateHolder : StateHolder() {
 
     fun upvotePost(post: Post, onSuccess: (Post) -> Unit) = scope.launch {
         Repos.Post.upvotePost(post.id)

@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-abstract class SortedListModel<T : Any, S : Sorting>(
+abstract class SortedListStateHolder<T : Any, S : Sorting>(
     initialSorting: S,
     private val getItems: suspend (S, TimeSorting, String?) -> Result<List<T>>,
-) : ListModel<T>() {
+) : ListStateHolder<T>() {
 
     private val mutableSorting = MutableStateFlow(initialSorting)
     val sorting get() = mutableSorting.asStateFlow()

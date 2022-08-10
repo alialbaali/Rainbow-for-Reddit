@@ -11,7 +11,6 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import com.rainbow.desktop.components.MenuIconButton
-import com.rainbow.desktop.post.PostActionsModel
 import com.rainbow.desktop.components.RainbowMenu
 import com.rainbow.desktop.components.RainbowMenuItem
 import com.rainbow.desktop.utils.RainbowIcons
@@ -60,7 +59,7 @@ inline fun PostActionsMenu(
                     RainbowStrings.UnHide,
                     RainbowIcons.Visibility,
                     onClick = {
-                        PostActionsModel.unHidePost(post, onUpdate)
+                        PostActionsStateHolder.unHidePost(post, onUpdate)
                         isMenuExpanded = false
                         onShowSnackbar(RainbowStrings.PostIsUnHidden)
                     }
@@ -70,7 +69,7 @@ inline fun PostActionsMenu(
                     RainbowStrings.Hide,
                     RainbowIcons.VisibilityOff,
                     onClick = {
-                        PostActionsModel.hidePost(post, onUpdate)
+                        PostActionsStateHolder.hidePost(post, onUpdate)
                         isMenuExpanded = false
                         onShowSnackbar(RainbowStrings.PostIsHidden)
                     }

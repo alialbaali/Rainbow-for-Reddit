@@ -1,19 +1,17 @@
 package com.rainbow.desktop.components
 
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
-//import androidx.compose.material3.DropdownMenu
-//import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.rounded.ArrowDropUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.rainbow.desktop.components.TextIconButton
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.icon
 import com.rainbow.domain.models.Sorting
@@ -22,23 +20,25 @@ import com.rainbow.domain.models.Sorting
 inline fun <reified T : Enum<T>> DropdownMenuHolder(
     value: T,
     crossinline onValueUpdate: (T) -> Unit,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     var isMenuVisible by remember { mutableStateOf(false) }
-    val iconRotation by animateFloatAsState(if (isMenuVisible) 180F else 0F)
     val values = remember { enumValues<T>() }
     Column(modifier) {
-        TextIconButton(
+        SelectionButton(
+            isMenuVisible,
             value.name,
-            RainbowIcons.ArrowDropUp,
-            value.name,
+            RainbowIcons.ExpandLess,
             onClick = { isMenuVisible = !isMenuVisible },
-            iconModifier = Modifier.rotate(iconRotation)
+            enabled = enabled,
         )
 
         DropdownMenu(
             isMenuVisible,
-            onDismissRequest = { isMenuVisible = !isMenuVisible },
+            onDismissRequest = { isMenuVisible = false },
+            modifier = Modifier.clip(MaterialTheme.shapes.medium),
+            offset = DpOffset(0.dp, 16.dp)
         ) {
             values.forEach { value ->
                 DropdownMenuItem(

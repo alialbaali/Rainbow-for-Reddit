@@ -1,17 +1,33 @@
 package com.rainbow.desktop.comment
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.domain.models.Comment
+
+private fun Modifier.clipReplies(isEmpty: Boolean, isVisible: Boolean) = composed {
+    if (!isEmpty && isVisible) {
+        val cornerSize = CornerSize(0.dp)
+        Modifier.clip(
+            MaterialTheme.shapes.medium.copy(
+                bottomEnd = cornerSize,
+                bottomStart = cornerSize
+            )
+        )
+    } else {
+        Modifier.clip(MaterialTheme.shapes.medium)
+    }
+}
 
 fun LazyListScope.postComments(
     commentsState: UIState<List<Comment>>,
@@ -31,11 +47,12 @@ fun LazyListScope.postComments(
         is UIState.Success -> {
             commentsState.value.forEach { comment ->
                 item {
+                    val isRepliesVisible = commentsVisibility[comment.id] ?: true
                     when (val commentType = comment.type) {
                         is Comment.Type.None -> PostCommentItem(
                             comment,
                             postUserName,
-                            isRepliesVisible = commentsVisibility[comment.id] ?: true,
+                            isRepliesVisible = isRepliesVisible,
                             onClick = {
                                 setCommentsVisibility(
                                     comment.id,
@@ -45,7 +62,7 @@ fun LazyListScope.postComments(
                             onCommentUpdate,
                             onUserNameClick,
                             onSubredditNameClick,
-                            modifier.background(MaterialTheme.colorScheme.surface)
+                            modifier.clipReplies(comment.replies.isEmpty(), isRepliesVisible),
                         )
 
                         is Comment.Type.ViewMore -> ViewMoreCommentItem(
@@ -53,7 +70,7 @@ fun LazyListScope.postComments(
                                 val moreComments = commentType.replies
                                 onRequestMoreComments(comment.id, moreComments)
                             },
-                            modifier.background(MaterialTheme.colorScheme.surface)
+                            modifier.clipReplies(isEmpty = true, isVisible = false)
                         )
 
                         is Comment.Type.ContinueThread -> {}
@@ -110,19 +127,19 @@ fun LazyListScope.replies(
                         onCommentUpdate,
                         onUserNameClick,
                         onSubredditNameClick,
-                        modifier.background(MaterialTheme.colorScheme.surface)
+                        modifier.clipReplies(reply.replies.isEmpty(), isRepliesVisible(reply))
                     )
 
                     is Comment.Type.ViewMore -> ViewMoreReplyItem(
                         onClick = { onRequestMoreComments(reply.id, replyType.replies) },
                         depth,
-                        modifier.background(MaterialTheme.colorScheme.surface)
+                        modifier.clipReplies(reply.replies.isEmpty(), isRepliesVisible(reply))
                     )
 
                     is Comment.Type.ContinueThread -> ContinueThreadReplyItem(
                         onClick = { onRequestThreadComments(replyType.parentId) },
                         depth,
-                        modifier.background(MaterialTheme.colorScheme.surface)
+                        modifier.clipReplies(reply.replies.isEmpty(), isRepliesVisible(reply))
                     )
                 }
             }

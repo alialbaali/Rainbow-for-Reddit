@@ -5,8 +5,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.rounded.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -15,7 +15,9 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.RainbowProgressIndicator
+import com.rainbow.desktop.model.StateHolder
 import com.rainbow.domain.models.*
+import kotlinx.coroutines.cancel
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -99,9 +101,11 @@ val LocalDateTime.displayTime: String
                     in 0..60 -> minuteDiff.toString().plus("m")
                     else -> error("Wrong Minute")
                 }
+
                 in 1..24 -> hourDiff.toString().plus("h")
                 else -> error("Wrong Hour")
             }
+
             else -> dayDiff.toString().plus("d")
         }
     }
@@ -144,12 +148,14 @@ val Sorting.icon
             UserPostSorting.Top -> RainbowIcons.BarChart
             UserPostSorting.Controversial -> RainbowIcons.TrendingDown
         }
+
         is SubredditPostSorting -> when (this) {
             SubredditPostSorting.Hot -> RainbowIcons.Whatshot
             SubredditPostSorting.Top -> RainbowIcons.BarChart
             SubredditPostSorting.Controversial -> RainbowIcons.TrendingDown
             SubredditPostSorting.Rising -> RainbowIcons.TrendingUp
         }
+
         is HomePostSorting -> when (this) {
             HomePostSorting.Best -> RainbowIcons.Star
             HomePostSorting.New -> RainbowIcons.BrightnessLow
@@ -158,6 +164,7 @@ val Sorting.icon
             HomePostSorting.Hot -> RainbowIcons.Whatshot
             HomePostSorting.Rising -> RainbowIcons.TrendingUp
         }
+
         is SearchPostSorting -> when (this) {
             SearchPostSorting.Relevance -> RainbowIcons.Star
             SearchPostSorting.New -> RainbowIcons.BrightnessLow
@@ -165,6 +172,7 @@ val Sorting.icon
             SearchPostSorting.Hot -> RainbowIcons.Whatshot
             SearchPostSorting.CommentsCount -> RainbowIcons.TrendingUp
         }
+
         is PostCommentSorting -> when (this) {
             PostCommentSorting.Confidence -> RainbowIcons.Star
             PostCommentSorting.Top -> RainbowIcons.BarChart
@@ -175,3 +183,23 @@ val Sorting.icon
             PostCommentSorting.QA -> RainbowIcons.TrendingDown
         }
     }
+
+inline fun <reified T : StateHolder> rememberStateHolder(crossinline factory: () -> T): T {
+    val stateHolder = factory()
+    object : RememberObserver {
+        override fun onAbandoned() {
+//            stateHolder.scope.cancel()
+        }
+
+        override fun onForgotten() {
+//            stateHolder.scope.cancel()
+        }
+
+        override fun onRemembered() {
+
+        }
+    }
+    return stateHolder
+}
+
+private val stateHolders = mutableListOf<StateHolder>()

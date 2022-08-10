@@ -3,47 +3,41 @@ package com.rainbow.desktop
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.rainbow.desktop.components.PostSortingItem
 import com.rainbow.desktop.components.RainbowIconButton
-import com.rainbow.desktop.components.Sorting
 import com.rainbow.desktop.navigation.Screen
 import com.rainbow.desktop.navigation.title
 import com.rainbow.desktop.search.SearchTextField
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
-import com.rainbow.desktop.utils.defaultSurfaceShape
-import com.rainbow.domain.models.*
+import com.rainbow.desktop.utils.defaultPadding
+import com.rainbow.domain.models.PostSorting
+import com.rainbow.domain.models.TimeSorting
 
 @Composable
 inline fun RainbowTopAppBar(
     screen: Screen,
-    sorting: Sorting?,
-    timeSorting: TimeSorting?,
     noinline onSearchClick: (String) -> Unit,
     noinline onSubredditNameClick: (String) -> Unit,
     noinline onBackClick: () -> Unit,
     noinline onForwardClick: () -> Unit,
-    crossinline setPostSorting: (Sorting) -> Unit,
-    crossinline setTimeSorting: (TimeSorting) -> Unit,
     isBackEnabled: Boolean,
     isForwardEnabled: Boolean,
     noinline onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier
-            .defaultSurfaceShape(shape = RectangleShape)
-            .padding(16.dp),
+        modifier = modifier.defaultPadding(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -83,39 +77,6 @@ inline fun RainbowTopAppBar(
                     fontWeight = FontWeight.Bold
                 )
             }
-            if (sorting != null && timeSorting != null)
-                when (sorting) {
-                    is HomePostSorting -> Sorting(
-                        postsSorting = sorting,
-                        onSortingUpdate = { setPostSorting(it) },
-                        timeSorting = timeSorting,
-                        onTimeSortingUpdate = { setTimeSorting(it) },
-                    )
-                    is SubredditPostSorting -> Sorting(
-                        postsSorting = sorting,
-                        onSortingUpdate = { setPostSorting(it) },
-                        timeSorting = timeSorting,
-                        onTimeSortingUpdate = { setTimeSorting(it) }
-                    )
-                    is UserPostSorting -> Sorting(
-                        postsSorting = sorting,
-                        onSortingUpdate = { setPostSorting(it) },
-                        timeSorting = timeSorting,
-                        onTimeSortingUpdate = { setTimeSorting(it) }
-                    )
-                    is SearchPostSorting -> Sorting(
-                        postsSorting = sorting,
-                        onSortingUpdate = { setPostSorting(it) },
-                        timeSorting = timeSorting,
-                        onTimeSortingUpdate = { setTimeSorting(it) }
-                    )
-                    is PostCommentSorting -> Sorting(
-                        postsSorting = sorting,
-                        onSortingUpdate = { setPostSorting(it) },
-                        timeSorting = timeSorting,
-                        onTimeSortingUpdate = { setTimeSorting(it) }
-                    )
-                }
 
         }
         SearchTextField(

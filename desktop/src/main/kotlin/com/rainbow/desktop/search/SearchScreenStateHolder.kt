@@ -1,40 +1,40 @@
 package com.rainbow.desktop.search
 
-import com.rainbow.desktop.model.Model
-import com.rainbow.desktop.post.PostListModel
-import com.rainbow.desktop.subreddit.SubredditListModel
-import com.rainbow.desktop.user.UserListModel
+import com.rainbow.desktop.model.StateHolder
+import com.rainbow.desktop.post.PostListStateHolder
+import com.rainbow.desktop.subreddit.SubredditListStateHolder
+import com.rainbow.desktop.user.UserListStateHolder
 import com.rainbow.data.Repos
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-private val searchScreenModels = mutableSetOf<SearchScreenModel>()
+private val searchScreenModels = mutableSetOf<SearchScreenStateHolder>()
 
-class SearchScreenModel private constructor(private val searchTerm: String) : Model() {
+class SearchScreenStateHolder private constructor(private val searchTerm: String) : StateHolder() {
 
     private val mutableSelectedTab = MutableStateFlow(SearchTab.Default)
     val selectedTab get() = mutableSelectedTab.asStateFlow()
 
     private val initialPostSorting = Repos.Settings.getSearchPostSorting()
 
-    val postListModel = PostListModel(initialPostSorting) { postSorting, timeSorting, lastPostId ->
+    val postListModel = PostListStateHolder(initialPostSorting) { postSorting, timeSorting, lastPostId ->
         Repos.Post.searchPosts(searchTerm, postSorting, timeSorting, lastPostId)
     }
 
-    val subredditListModel = SubredditListModel { lastSubredditId ->
+    val subredditListModel = SubredditListStateHolder { lastSubredditId ->
         Repos.Subreddit.searchSubreddits(searchTerm, lastSubredditId)
     }
 
-    val userListModel = UserListModel { lastUserId ->
+    val userListModel = UserListStateHolder { lastUserId ->
         Repos.User.searchUsers(searchTerm, lastUserId)
     }
 
     companion object {
-        fun getOrCreateInstance(searchTerm: String): SearchScreenModel {
+        fun getOrCreateInstance(searchTerm: String): SearchScreenStateHolder {
             return searchScreenModels.find { it.searchTerm == searchTerm }
-                ?: SearchScreenModel(searchTerm).also { searchScreenModels += it }
+                ?: SearchScreenStateHolder(searchTerm).also { searchScreenModels += it }
         }
     }
 

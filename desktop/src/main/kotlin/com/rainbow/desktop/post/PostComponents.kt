@@ -252,17 +252,17 @@ inline fun PostActions(
             VoteActions(
                 vote = post.vote,
                 votesCount = post.votesCount,
-                onUpvote = { PostActionsModel.upvotePost(post, onUpdate) },
-                onDownvote = { PostActionsModel.downvotePost(post, onUpdate) },
-                onUnvote = { PostActionsModel.unvotePost(post, onUpdate) }
+                onUpvote = { PostActionsStateHolder.upvotePost(post, onUpdate) },
+                onDownvote = { PostActionsStateHolder.downvotePost(post, onUpdate) },
+                onUnvote = { PostActionsStateHolder.unvotePost(post, onUpdate) }
             )
 
-            TextIconButton(
-                post.commentsCount.toString(),
-                RainbowIcons.QuestionAnswer,
-                RainbowIcons.QuestionAnswer.name,
-                onClick = { onClick(post) },
-            )
+//            SelectionButton(
+//                post.commentsCount.toString(),
+//                RainbowIcons.QuestionAnswer,
+//                RainbowIcons.QuestionAnswer.name,
+//                onClick = { onClick(post) },
+//            )
         }
         menuContent()
     }
@@ -279,6 +279,6 @@ private fun IsPostReadProvider(isRead: Boolean, content: @Composable () -> Unit)
 fun MarkPostIsReadEffect(post: Post, onPostUpdate: (Post) -> Unit, markPostAsRead: MarkPostAsRead) {
     OneTimeEffect(markPostAsRead) {
         if (markPostAsRead == MarkPostAsRead.OnScroll)
-            PostActionsModel.readPost(post, onPostUpdate)
+            PostActionsStateHolder.readPost(post, onPostUpdate)
     }
 }

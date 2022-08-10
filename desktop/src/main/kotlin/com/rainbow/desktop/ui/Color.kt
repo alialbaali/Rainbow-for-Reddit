@@ -11,7 +11,7 @@ val lightColors = lightColorScheme(
     secondary = Color(0xFFE29578),
     secondaryContainer = Color(0xFFFFDDD2),
     surface = Color(0xFFFFFFFF),
-    background = Color(0xFFFAFAFA)
+    background = Color(0xFFF5F5F5),
 )
 
 val darkColors = darkColorScheme(

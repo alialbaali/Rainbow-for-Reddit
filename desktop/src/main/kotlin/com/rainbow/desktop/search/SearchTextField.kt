@@ -13,7 +13,6 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.onSizeChanged
 import com.rainbow.desktop.components.RainbowIconButton
 import com.rainbow.desktop.components.RainbowTextField
-import com.rainbow.desktop.search.SearchTextFieldModel
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
 
@@ -25,15 +24,15 @@ fun SearchTextField(
     modifier: Modifier = Modifier,
 ) {
     var isExpanded by remember { mutableStateOf(false) }
-    val searchTerm by SearchTextFieldModel.searchTerm.collectAsState()
-    val state by SearchTextFieldModel.subredditListModel.items.collectAsState()
+    val searchTerm by SearchTextFieldStateHolder.searchTerm.collectAsState()
+    val state by SearchTextFieldStateHolder.subredditListModel.items.collectAsState()
     var width by remember { mutableStateOf(0) }
     Column(modifier) {
         RainbowTextField(
             searchTerm,
             onValueChange = {
                 isExpanded = it.isNotBlank()
-                SearchTextFieldModel.setSearchTerm(it)
+                SearchTextFieldStateHolder.setSearchTerm(it)
             },
             RainbowStrings.Search,
             trailingIcon = {

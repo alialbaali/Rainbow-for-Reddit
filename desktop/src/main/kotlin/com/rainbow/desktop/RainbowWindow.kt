@@ -25,7 +25,7 @@ fun ApplicationScope.RainbowWindow(
     title = title,
     onPreviewKeyEvent = {
         if (it.isRefreshPressed) {
-            RainbowModel.refreshContent()
+            RainbowStateHolder.refreshContent()
             true
         } else {
             false

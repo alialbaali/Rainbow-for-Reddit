@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.rainbow.desktop.components.LogoutButton
-import com.rainbow.desktop.settings.SettingsModel
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.defaultPadding
 import com.rainbow.desktop.components.DropdownMenuHolder
@@ -25,11 +24,11 @@ fun GeneralSettings(modifier: Modifier = Modifier) {
 
 @Composable
 private fun TextSelectionOption(modifier: Modifier = Modifier) {
-    val isTextSelectionEnabled by SettingsModel.isTextSelectionEnabled.collectAsState()
+    val isTextSelectionEnabled by SettingsStateHolder.isTextSelectionEnabled.collectAsState()
     SettingsOption(RainbowStrings.TextSelection) {
         Switch(
             isTextSelectionEnabled,
-            SettingsModel::setIsTextSelectionEnabled,
+            SettingsStateHolder::setIsTextSelectionEnabled,
         )
     }
 }
@@ -37,9 +36,9 @@ private fun TextSelectionOption(modifier: Modifier = Modifier) {
 
 @Composable
 private fun ThemeOption(modifier: Modifier = Modifier) {
-    val theme by SettingsModel.theme.collectAsState()
+    val theme by SettingsStateHolder.theme.collectAsState()
     SettingsOption(RainbowStrings.Theme, modifier) {
-        DropdownMenuHolder(theme, SettingsModel::setTheme)
+        DropdownMenuHolder(theme, SettingsStateHolder::setTheme)
     }
 }
 
@@ -81,7 +80,7 @@ private fun LogoutDialog(
                     .align(Alignment.End)
             ) {
                 Button(
-                    onClick = { SettingsModel.logoutUser() },
+                    onClick = { SettingsStateHolder.logoutUser() },
                     modifier = Modifier
                         .padding(end = 8.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),

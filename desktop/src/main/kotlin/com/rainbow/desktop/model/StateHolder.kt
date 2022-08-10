@@ -4,6 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
-abstract class Model {
+abstract class StateHolder {
     protected val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 }

@@ -1,19 +1,7 @@
 package com.rainbow.desktop.post
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.unit.dp
-import com.rainbow.desktop.settings.SettingsModel
-import com.rainbow.desktop.utils.OneTimeEffect
-import com.rainbow.desktop.utils.defaultPadding
-import com.rainbow.desktop.utils.defaultSurfaceShape
-import com.rainbow.domain.models.MarkPostAsRead
 import com.rainbow.domain.models.Post
 
 @Composable

@@ -13,7 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.award.ItemAwards
-import com.rainbow.desktop.comment.CommentActionsModel
 import com.rainbow.desktop.components.*
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.domain.models.Comment
@@ -85,9 +84,9 @@ fun CommentActions(
         VoteActions(
             vote = comment.vote,
             votesCount = comment.votesCount,
-            onUpvote = { CommentActionsModel.upvoteComment(comment, onUpdate) },
-            onDownvote = { CommentActionsModel.downvoteComment(comment, onUpdate) },
-            onUnvote = { CommentActionsModel.unvoteComment(comment, onUpdate) }
+            onUpvote = { CommentActionsStateHolder.upvoteComment(comment, onUpdate) },
+            onDownvote = { CommentActionsStateHolder.downvoteComment(comment, onUpdate) },
+            onUnvote = { CommentActionsStateHolder.unvoteComment(comment, onUpdate) }
         )
 
         AnimatedVisibility(comment.replies.isNotEmpty() && !isRepliesVisible) {

@@ -5,14 +5,15 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.components.RainbowProgressIndicator
+import com.rainbow.desktop.navigation.ContentScreen
+import com.rainbow.desktop.navigation.Screen
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.domain.models.Comment
 
 inline fun LazyListScope.comments(
     commentsState: UIState<List<Comment>>,
-    crossinline onUserNameClick: (String) -> Unit,
-    crossinline onSubredditNameClick: (String) -> Unit,
-    crossinline onCommentClick: (Comment) -> Unit,
+    crossinline onNavigate: (Screen) -> Unit,
+    crossinline onNavigateContentScreen: (ContentScreen) -> Unit,
     noinline onCommentUpdate: (Comment) -> Unit,
 ) {
     when (commentsState) {
@@ -21,9 +22,8 @@ inline fun LazyListScope.comments(
         is UIState.Success -> itemsIndexed(commentsState.value) { index, comment ->
             CommentItem(
                 comment,
-                onUserNameClick,
-                onSubredditNameClick,
-                onCommentClick,
+                onNavigate,
+                onNavigateContentScreen,
                 onCommentUpdate,
                 modifier = Modifier.fillParentMaxWidth()
             )

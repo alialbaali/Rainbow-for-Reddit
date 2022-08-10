@@ -1,6 +1,6 @@
 package com.rainbow.desktop.settings
 
-import com.rainbow.desktop.model.Model
+import com.rainbow.desktop.model.StateHolder
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.*
 
-object SettingsModel : Model() {
+object SettingsStateHolder : StateHolder() {
 
     val isSidebarExpanded = Repos.Settings.isSidebarExpanded.stateIn(scope, SharingStarted.Eagerly, true)
 

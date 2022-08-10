@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.rainbow.desktop.settings.SettingsModel
 import com.rainbow.desktop.components.DropdownMenuHolder
 import com.rainbow.desktop.utils.RainbowStrings
 
@@ -19,19 +18,19 @@ fun CommentSettings(modifier: Modifier = Modifier) {
 
 @Composable
 private fun CommentSortingOption(modifier: Modifier = Modifier) {
-    val commentSorting by SettingsModel.postCommentSorting.collectAsState()
+    val commentSorting by SettingsStateHolder.postCommentSorting.collectAsState()
     SettingsOption(RainbowStrings.DefaultCommentSorting, modifier) {
-        DropdownMenuHolder(commentSorting, SettingsModel::setPostCommentSorting)
+        DropdownMenuHolder(commentSorting, SettingsStateHolder::setPostCommentSorting)
     }
 }
 
 @Composable
 private fun IsCommentsCollapsedOption(modifier: Modifier = Modifier) {
-    val isCommentsCollapsed by SettingsModel.isCommentsCollapsed.collectAsState()
+    val isCommentsCollapsed by SettingsStateHolder.isCommentsCollapsed.collectAsState()
     SettingsOption(RainbowStrings.CollapseCommentsByDefault, modifier) {
         Switch(
             isCommentsCollapsed,
-            onCheckedChange = { SettingsModel.setIsCommentsCollapsed(it) },
+            onCheckedChange = { SettingsStateHolder.setIsCommentsCollapsed(it) },
         )
     }
 }
