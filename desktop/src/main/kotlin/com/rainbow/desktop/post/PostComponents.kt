@@ -7,11 +7,18 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.material.icons.rounded.*
+import androidx.compose.material.icons.rounded.ArrowBackIos
+import androidx.compose.material.icons.rounded.ArrowForwardIos
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.KeyboardArrowUp
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -22,12 +29,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.rainbow.desktop.award.ItemAwards
 import com.rainbow.desktop.components.*
 import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.MarkPostAsRead
 import com.rainbow.domain.models.Post
 import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
+
+private val SubredditIconSize = 48.dp
+
+fun Modifier.subredditIcon() = composed {
+    Modifier
+        .clip(MaterialTheme.shapes.medium)
+        .background(MaterialTheme.colorScheme.onSurface, MaterialTheme.shapes.medium)
+        .size(SubredditIconSize)
+}
 
 @Composable
 fun PostTitle(title: String, isRead: Boolean, style: TextStyle, modifier: Modifier = Modifier) {
@@ -45,20 +62,40 @@ inline fun PostInfo(
     post: Post,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
+    crossinline onAwardsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        UserName(post.userName, onUserNameClick)
-        Dot()
-        SubredditName(post.subredditName, onSubredditNameClick)
-        Dot()
-        CreationDate(post.creationDate)
-        if (post.isNSFW) {
-            Dot()
-            Text(RainbowStrings.NSFW, fontWeight = FontWeight.Medium, fontSize = 14.sp, color = Color.Red)
+    val resource = lazyPainterResource(post.subredditImageUrl ?: "")
+    Column {
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            KamelImage(
+                resource,
+                post.subredditName,
+                Modifier.subredditIcon(),
+                onFailure = {
+                    Box(Modifier.subredditIcon()) {
+                        Text(
+                            post.subredditName.first().toString().uppercase(),
+                            color = MaterialTheme.colorScheme.surface,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
+                }
+            )
+            Column(Modifier.fillMaxWidth()) {
+                SubredditName(post.subredditName, onSubredditNameClick)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    UserName(post.userName, onUserNameClick)
+                    Dot()
+                    CreationDate(post.creationDate)
+                    if (post.isNSFW) {
+                        Dot()
+                        Text(RainbowStrings.NSFW, fontWeight = FontWeight.Medium, fontSize = 14.sp, color = Color.Red)
+                    }
+                    Dot()
+                    ItemAwards(post.awards, onAwardsClick)
+                }
+            }
         }
     }
 }
@@ -239,7 +276,6 @@ fun GifPost(gif: Post.Type.Gif, modifier: Modifier = Modifier) {
 inline fun PostActions(
     post: Post,
     crossinline onClick: (Post) -> Unit,
-    noinline onUpdate: (Post) -> Unit,
     modifier: Modifier = Modifier,
     menuContent: @Composable () -> Unit,
 ) {
@@ -252,9 +288,9 @@ inline fun PostActions(
             VoteActions(
                 vote = post.vote,
                 votesCount = post.votesCount,
-                onUpvote = { PostActionsStateHolder.upvotePost(post, onUpdate) },
-                onDownvote = { PostActionsStateHolder.downvotePost(post, onUpdate) },
-                onUnvote = { PostActionsStateHolder.unvotePost(post, onUpdate) }
+                onUpvote = { PostActionsStateHolder.upvotePost(post) },
+                onDownvote = { PostActionsStateHolder.downvotePost(post) },
+                onUnvote = { PostActionsStateHolder.unvotePost(post) }
             )
 
 //            SelectionButton(
@@ -279,6 +315,6 @@ private fun IsPostReadProvider(isRead: Boolean, content: @Composable () -> Unit)
 fun MarkPostIsReadEffect(post: Post, onPostUpdate: (Post) -> Unit, markPostAsRead: MarkPostAsRead) {
     OneTimeEffect(markPostAsRead) {
         if (markPostAsRead == MarkPostAsRead.OnScroll)
-            PostActionsStateHolder.readPost(post, onPostUpdate)
+            PostActionsStateHolder.readPost(post)
     }
 }

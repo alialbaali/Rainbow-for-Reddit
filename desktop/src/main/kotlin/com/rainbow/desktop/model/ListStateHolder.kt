@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 sealed class ListStateHolder<T : Any> : StateHolder() {
 
-    protected val mutableItems = MutableStateFlow<UIState<List<T>>>(UIState.Loading)
+    protected val mutableItems = MutableStateFlow<UIState<List<T>>>(UIState.Loading(emptyList()))
     val items get() = mutableItems.asStateFlow()
 
     protected val mutableLastItem = MutableStateFlow<T?>(null)

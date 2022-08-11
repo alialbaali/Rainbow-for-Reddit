@@ -48,14 +48,14 @@ fun LoginScreen() {
 
                 Button(
                     onClick = {
-                        state = UIState.Loading
+                        state = UIState.Loading(Unit)
                         val uuid = UUID.randomUUID()
                         currentUriHandler.openUri(createAuthenticationUrl(uuid))
                         SettingsStateHolder.loginUser(
                             uuid,
                             onSuccess = { state = UIState.Success(Unit) },
                             onFailure = {
-                                state = UIState.Failure(it)
+                                state = UIState.Failure(Unit, it)
                                 isButtonEnabled = true
                                 isSnackbarEnabled = true
                             }

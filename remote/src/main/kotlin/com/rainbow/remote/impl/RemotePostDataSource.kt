@@ -1,13 +1,10 @@
 package com.rainbow.remote.impl
 
-import com.rainbow.remote.Listing
+import com.rainbow.remote.*
 import com.rainbow.remote.client.redditClient
 import com.rainbow.remote.dto.RemotePost
-import com.rainbow.remote.get
 import com.rainbow.remote.impl.Endpoint.Posts
 import com.rainbow.remote.source.RemotePostDataSource
-import com.rainbow.remote.submitForm
-import com.rainbow.remote.toList
 import io.ktor.client.*
 import io.ktor.client.request.*
 
@@ -20,12 +17,12 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
         timeSorting: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemotePost>> {
-        return client.get<Listing<RemotePost>>(Posts.MainPagePosts(postsSorting)) {
+    ): List<RemotePost> {
+        return client.getOrThrow<Listing<RemotePost>>(Posts.MainPagePosts(postsSorting)) {
             parameter(Keys.Time, timeSorting)
             parameter(Keys.After, after)
             parameter(Keys.Limit, limit)
-        }.mapCatching { it.toList() }
+        }.toList()
     }
 
     override suspend fun getSubredditPosts(
@@ -34,12 +31,12 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
         timeSorting: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemotePost>> {
-        return client.get<Listing<RemotePost>>(Posts.SubredditPosts(subredditName, postsSorting)) {
+    ): List<RemotePost> {
+        return client.getOrThrow<Listing<RemotePost>>(Posts.SubredditPosts(subredditName, postsSorting)) {
             parameter(Keys.Time, timeSorting)
             parameter(Keys.After, after)
             parameter(Keys.Limit, limit)
-        }.mapCatching { it.toList() }
+        }.toList()
     }
 
     override suspend fun getUserSubmittedPosts(
@@ -48,12 +45,12 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
         timeSorting: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemotePost>> {
-        return client.get<Listing<RemotePost>>(Posts.UserSubmittedPosts(userName, postsSorting)) {
+    ): List<RemotePost> {
+        return client.getOrThrow<Listing<RemotePost>>(Posts.UserSubmittedPosts(userName, postsSorting)) {
             parameter(Keys.Time, timeSorting)
             parameter(Keys.After, after)
             parameter(Keys.Limit, limit)
-        }.mapCatching { it.toList() }
+        }.toList()
     }
 
     override suspend fun getUserUpvotedPosts(
@@ -62,12 +59,12 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
         timeSorting: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemotePost>> {
-        return client.get<Listing<RemotePost>>(Posts.UserUpvotedPosts(userName, postsSorting)) {
+    ): List<RemotePost> {
+        return client.getOrThrow<Listing<RemotePost>>(Posts.UserUpvotedPosts(userName, postsSorting)) {
             parameter(Keys.Time, timeSorting)
             parameter(Keys.After, after)
             parameter(Keys.Limit, limit)
-        }.mapCatching { it.toList() }
+        }.toList()
     }
 
     override suspend fun getUserDownvotedPosts(
@@ -76,12 +73,12 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
         timeSorting: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemotePost>> {
-        return client.get<Listing<RemotePost>>(Posts.UserDownvotedPosts(userName, postsSorting)) {
+    ): List<RemotePost> {
+        return client.getOrThrow<Listing<RemotePost>>(Posts.UserDownvotedPosts(userName, postsSorting)) {
             parameter(Keys.Time, timeSorting)
             parameter(Keys.After, after)
             parameter(Keys.Limit, limit)
-        }.mapCatching { it.toList() }
+        }.toList()
     }
 
     override suspend fun getUserHiddenPosts(
@@ -90,18 +87,18 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
         timeSorting: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemotePost>> {
-        return client.get<Listing<RemotePost>>(Posts.UserHiddenPosts(userName, postsSorting)) {
+    ): List<RemotePost> {
+        return client.getOrThrow<Listing<RemotePost>>(Posts.UserHiddenPosts(userName, postsSorting)) {
             parameter(Keys.Time, timeSorting)
             parameter(Keys.After, after)
             parameter(Keys.Limit, limit)
-        }.mapCatching { it.toList() }
+        }.toList()
     }
 
-    override suspend fun getPost(postId: String): Result<RemotePost> {
-        return client.get<Listing<RemotePost>>(Posts.GetPost) {
+    override suspend fun getPost(postId: String): RemotePost {
+        return client.getOrThrow<Listing<RemotePost>>(Posts.GetPost) {
             parameter(Keys.Id, postId)
-        }.mapCatching { it.toList().single() }
+        }.toList().single()
     }
 
     override suspend fun followPost(postId: String): String {
@@ -198,14 +195,14 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
         timeSorting: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemotePost>> {
-        return client.get<Listing<RemotePost>>(Posts.Search) {
+    ): List<RemotePost> {
+        return client.getOrThrow<Listing<RemotePost>>(Posts.Search) {
             parameter(Keys.Query, searchTerm)
             parameter(Keys.Sort, postsSorting)
             parameter(Keys.Time, timeSorting)
             parameter(Keys.Limit, limit)
             parameter(Keys.After, after)
-        }.mapCatching { it.toList() }
+        }.toList()
     }
 
     private suspend fun HttpClient.submitPost(

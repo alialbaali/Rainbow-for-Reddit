@@ -21,7 +21,7 @@ class UserScreenStateHolder private constructor(private val userName: String) : 
     private val mutableSelectedTab = MutableStateFlow(UserTab.Default)
     val selectedTab get() = mutableSelectedTab.asStateFlow()
 
-    private val mutableUser = MutableStateFlow<UIState<User>>(UIState.Loading)
+    private val mutableUser = MutableStateFlow<UIState<User>>(UIState.Empty)
     val user get() = mutableUser.asStateFlow()
 
     private val initialPostSorting = Repos.Settings.getUserPostSorting()

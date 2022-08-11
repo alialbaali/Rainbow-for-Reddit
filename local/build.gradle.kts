@@ -9,6 +9,7 @@ dependencies {
     api("com.squareup.sqldelight:coroutines-extensions-jvm:1.5.3")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.3")
     implementation("com.squareup.sqldelight:sqlite-driver:1.5.3")
+    implementation(project(":domain"))
 }
 
 sqldelight {

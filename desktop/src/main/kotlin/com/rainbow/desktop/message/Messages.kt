@@ -19,7 +19,7 @@ inline fun LazyListScope.messages(
     when (messagesState) {
         is UIState.Failure -> item { Text("Failed loading messages") }
         is UIState.Loading -> item { RainbowProgressIndicator() }
-        is UIState.Success -> items(messagesState.value) { message ->
+        is UIState.Success -> items(messagesState.data) { message ->
             MessageItem(
                 message,
                 onNavigate,
@@ -29,6 +29,6 @@ inline fun LazyListScope.messages(
             )
         }
 
-        UIState.Empty -> {}
+        is UIState.Empty -> {}
     }
 }

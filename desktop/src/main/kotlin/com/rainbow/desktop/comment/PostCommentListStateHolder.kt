@@ -1,11 +1,8 @@
 package com.rainbow.desktop.comment
 
 import com.rainbow.desktop.model.StateHolder
-import com.rainbow.desktop.utils.Constants
-import com.rainbow.desktop.utils.UIState
-import com.rainbow.desktop.utils.map
-import com.rainbow.desktop.utils.toUIState
 import com.rainbow.data.Repos
+import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.PostCommentSorting
 import kotlinx.coroutines.FlowPreview
@@ -17,7 +14,7 @@ private val postCommentListModels = mutableSetOf<PostCommentListStateHolder>()
 @OptIn(FlowPreview::class)
 class PostCommentListStateHolder private constructor(private val type: Type) : StateHolder() {
 
-    private val mutableComments = MutableStateFlow<UIState<List<Comment>>>(UIState.Loading)
+    private val mutableComments = MutableStateFlow<UIState<List<Comment>>>(UIState.Loading(emptyList()))
     val comments get() = mutableComments.asStateFlow()
 
     private val initialSorting = Repos.Settings.getPostCommentSorting()
@@ -54,11 +51,11 @@ class PostCommentListStateHolder private constructor(private val type: Type) : S
     }
 
     private fun loadPostComments(postId: String) {
-        mutableComments.value = UIState.Loading
+        mutableComments.value = UIState.Loading(comments.value.getOrDefault(emptyList()))
         scope.launch {
             mutableComments.value = Repos.Comment.getPostsComments(postId, sorting.value)
                 .onSuccess { mutableCommentsVisibility.value = it.associate { it.id to !isCommentsCollapsed } }
-                .toUIState()
+                .toUIState(comments.value.getOrDefault(emptyList()))
         }
     }
 
@@ -83,7 +80,7 @@ class PostCommentListStateHolder private constructor(private val type: Type) : S
     }
 
     private fun loadThreadComments(postId: String, parentId: String) {
-        mutableComments.value = UIState.Loading
+        mutableComments.value = UIState.Loading(comments.value.getOrDefault(emptyList()))
         scope.launch {
             mutableComments.value = Repos.Comment.getThreadComments(postId, parentId, sorting.value)
                 .onSuccess { mutableCommentsVisibility.value = it.associate { it.id to isCommentsCollapsed } }

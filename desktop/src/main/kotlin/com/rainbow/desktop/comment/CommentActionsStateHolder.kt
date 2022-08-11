@@ -8,19 +8,16 @@ import kotlinx.coroutines.launch
 
 object CommentActionsStateHolder : StateHolder() {
 
-    fun upvoteComment(comment: Comment, onSuccess: (Comment) -> Unit) = scope.launch {
+    fun upvoteComment(comment: Comment) = scope.launch {
         Repos.Comment.upvoteComment(comment.id)
-            .onSuccess { onSuccess(comment.copy(vote = Vote.Up)) }
     }
 
-    fun downvoteComment(comment: Comment, onSuccess: (Comment) -> Unit) = scope.launch {
+    fun downvoteComment(comment: Comment) = scope.launch {
         Repos.Comment.downvoteComment(comment.id)
-            .onSuccess { onSuccess(comment.copy(vote = Vote.Down)) }
     }
 
-    fun unvoteComment(comment: Comment, onSuccess: (Comment) -> Unit) = scope.launch {
+    fun unvoteComment(comment: Comment) = scope.launch {
         Repos.Comment.unvoteComment(comment.id)
-            .onSuccess { onSuccess(comment.copy(vote = Vote.None)) }
     }
 
 }

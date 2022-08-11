@@ -38,7 +38,7 @@ inline fun PostCommentItem(
     ) {
         PostCommentInfo(comment, postUserName, onUserNameClick, onSubredditNameClick, isSubredditNameEnabled = false)
         Text(comment.body, color = MaterialTheme.colorScheme.onBackground)
-        CommentActions(comment, onUpdate, isRepliesVisible)
+        CommentActions(comment, isRepliesVisible)
     }
 }
 

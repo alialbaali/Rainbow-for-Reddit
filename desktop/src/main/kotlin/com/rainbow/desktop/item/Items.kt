@@ -18,21 +18,18 @@ inline fun LazyListScope.items(
     itemsState: UIState<List<Item>>,
     crossinline onNavigate: (Screen) -> Unit,
     crossinline onNavigateContentScreen: (ContentScreen) -> Unit,
-    noinline onPostUpdate: (Post) -> Unit,
-    noinline onCommentUpdate: (Comment) -> Unit,
     crossinline onAwardsClick: () -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
 ) {
     when (itemsState) {
         is UIState.Failure -> item { Text("Failed loading items") }
         is UIState.Loading -> item { RainbowProgressIndicator() }
-        is UIState.Success -> items(itemsState.value) { item ->
+        is UIState.Success -> items(itemsState.data) { item ->
             when (item) {
                 is Comment -> CommentItem(
                     item,
                     onNavigate,
                     onNavigateContentScreen,
-                    onCommentUpdate,
                     Modifier.fillParentMaxWidth()
                 )
 
@@ -40,7 +37,6 @@ inline fun LazyListScope.items(
                     item,
                     onNavigate,
                     onNavigateContentScreen,
-                    onPostUpdate,
                     onAwardsClick,
                     onShowSnackbar,
                     Modifier.fillParentMaxWidth()
@@ -48,6 +44,6 @@ inline fun LazyListScope.items(
             }
         }
 
-        UIState.Empty -> {}
+        is UIState.Empty -> {}
     }
 }

@@ -1,11 +1,11 @@
 package com.rainbow.desktop.subreddit
 
+import com.rainbow.data.Repos
 import com.rainbow.desktop.model.StateHolder
 import com.rainbow.desktop.post.PostListStateHolder
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.map
 import com.rainbow.desktop.utils.toUIState
-import com.rainbow.data.Repos
 import com.rainbow.domain.models.Moderator
 import com.rainbow.domain.models.Rule
 import com.rainbow.domain.models.Subreddit
@@ -23,16 +23,16 @@ class SubredditScreenStateHolder private constructor(private val subredditName: 
     private val mutableSelectedTab = MutableStateFlow(SubredditTab.Default)
     val selectedTab get() = mutableSelectedTab.asStateFlow()
 
-    private val mutableSubreddit = MutableStateFlow<UIState<Subreddit>>(UIState.Loading)
+    private val mutableSubreddit = MutableStateFlow<UIState<Subreddit>>(UIState.Empty)
     val subreddit get() = mutableSubreddit.asStateFlow()
 
-    private val mutableWiki = MutableStateFlow<UIState<WikiPage>>(UIState.Loading)
+    private val mutableWiki = MutableStateFlow<UIState<WikiPage>>(UIState.Empty)
     val wiki get() = mutableWiki.asStateFlow()
 
-    private val mutableModerators = MutableStateFlow<UIState<List<Moderator>>>(UIState.Loading)
+    private val mutableModerators = MutableStateFlow<UIState<List<Moderator>>>(UIState.Empty)
     val moderators get() = mutableModerators.asStateFlow()
 
-    private val mutableRules = MutableStateFlow<UIState<List<Rule>>>(UIState.Loading)
+    private val mutableRules = MutableStateFlow<UIState<List<Rule>>>(UIState.Empty)
     val rules get() = mutableRules.asStateFlow()
 
     private val initialPostSorting = Repos.Settings.getSubredditPostSorting()
@@ -85,11 +85,11 @@ class SubredditScreenStateHolder private constructor(private val subredditName: 
     }
 
     private fun loadRules() = scope.launch {
-        mutableRules.value = Repos.Subreddit.getSubredditRules(subredditName).toUIState()
+        mutableRules.value = Repos.Subreddit.getSubredditRules(subredditName).toUIState(emptyList())
     }
 
     private fun loadWiki() = scope.launch {
-        mutableWiki.value = Repos.Subreddit.getWikiIndex(subredditName).toUIState()
+        mutableWiki.value = Repos.Subreddit.getWikiIndex(subredditName).toUIState(null)
     }
 
     private fun loadModerators() = scope.launch {

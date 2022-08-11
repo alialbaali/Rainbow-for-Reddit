@@ -46,7 +46,7 @@ inline operator fun <I : Intent, S : State, VM : ViewModel<I, S>> VM.component2(
 inline fun <I : Intent, S : State, VM : ViewModel<I, S>> VM.withState(block: S.() -> @UnsafeVariance S): S =
     state.value.block()
 
-fun <T> Result<T>.toUIState(): UIState<T> = fold(
-    onSuccess = { UIState.Success(it) },
-    onFailure = { UIState.Failure(it) }
+fun <T> Result<T>.toUIState(defaultValue: T? = null): UIState<T> = fold(
+    onSuccess = { value -> UIState.Success(value) },
+    onFailure = { exception -> UIState.Failure(defaultValue, exception) },
 )

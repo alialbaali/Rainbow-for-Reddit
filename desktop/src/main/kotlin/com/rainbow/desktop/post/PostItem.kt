@@ -11,7 +11,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.rainbow.desktop.award.ItemAwards
 import com.rainbow.desktop.navigation.ContentScreen
 import com.rainbow.desktop.navigation.Screen
 import com.rainbow.desktop.settings.SettingsStateHolder
@@ -25,21 +24,19 @@ inline fun PostItem(
     post: Post,
     onNavigate: (Screen) -> Unit,
     crossinline onNavigateContentScreen: (ContentScreen) -> Unit,
-    noinline onPostUpdate: (Post) -> Unit,
     crossinline onAwardsClick: () -> Unit,
     crossinline onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val markPostAsRead by SettingsStateHolder.markPostAsRead.collectAsState()
-    MarkPostIsReadEffect(post, onPostUpdate, markPostAsRead)
+//    MarkPostIsReadEffect(post, markPostAsRead)
     Surface(
         onClick = {
-            onNavigateContentScreen(ContentScreen.PostEntity(post))
+            onNavigateContentScreen(ContentScreen.PostEntity(post.id))
             if (markPostAsRead == MarkPostAsRead.OnClick)
-                PostActionsStateHolder.readPost(post, onPostUpdate)
+                PostActionsStateHolder.readPost(post)
         },
         modifier = modifier.fillMaxWidth(),
-        shadowElevation = 8.dp,
         shape = MaterialTheme.shapes.medium
     ) {
         Column(Modifier.defaultPadding(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -47,17 +44,16 @@ inline fun PostItem(
                 post,
                 onUserNameClick = { userName -> Screen.User(userName) },
                 onSubredditNameClick = { subredditName -> Screen.Subreddit(subredditName) },
+                onAwardsClick,
             )
-            ItemAwards(post.awards, onAwardsClick)
             PostFLairs(post)
             PostTitle(post.title, post.isRead, MaterialTheme.typography.headlineLarge)
             PostContent(post)
             PostActions(
                 post,
-                onClick = { post -> onNavigateContentScreen(ContentScreen.PostEntity(post)) },
-                onPostUpdate
+                onClick = { post -> onNavigateContentScreen(ContentScreen.PostEntity(post.id)) },
             ) {
-                PostActionsMenu(post, onPostUpdate, onShowSnackbar)
+                PostActionsMenu(post, onShowSnackbar)
             }
         }
     }

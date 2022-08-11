@@ -19,13 +19,12 @@ inline fun CommentItem(
     comment: Comment,
     crossinline onNavigate: (Screen) -> Unit,
     crossinline onNavigateContentScreen: (ContentScreen) -> Unit,
-    noinline onCommentUpdate: (Comment) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier
             .defaultSurfaceShape()
-            .clickable { onNavigateContentScreen(ContentScreen.CommentEntity(comment.postId)) }
+            .clickable { onNavigateContentScreen(ContentScreen.PostEntity(comment.postId)) }
             .defaultPadding(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -36,6 +35,6 @@ inline fun CommentItem(
             isSubredditNameEnabled = true
         )
         Text(comment.body, color = MaterialTheme.colorScheme.onBackground)
-        CommentActions(comment, onCommentUpdate, false)
+        CommentActions(comment, false)
     }
 }

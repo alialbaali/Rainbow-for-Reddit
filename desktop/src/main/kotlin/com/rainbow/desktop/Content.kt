@@ -195,10 +195,9 @@ private fun EndContent(
                 RainbowProgressIndicator()
             }
         }
-        is ContentScreen.CommentEntity -> TODO()
         is ContentScreen.PostEntity -> {
             PostScreen(
-                type = PostScreenStateHolder.Type.PostEntity(contentScreen.post),
+                contentScreen.postId,
                 onNavigate,
                 onShowSnackbar,
                 modifier,

@@ -31,6 +31,7 @@ data class Post(
     val userFlair: Flair,
     val url: String,
     val creationDate: LocalDateTime,
+    val subredditImageUrl: String? = null,
 ) : Item {
     sealed interface Type {
         object None : Type

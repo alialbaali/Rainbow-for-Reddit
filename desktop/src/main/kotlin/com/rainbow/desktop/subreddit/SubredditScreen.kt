@@ -63,7 +63,6 @@ fun SubredditScreen(
                 onNavigate,
                 onNavigateContentScreen,
                 {},
-                {},
                 onShowSnackbar,
             )
 
@@ -164,7 +163,7 @@ private fun SelectFlairDialog(
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
-    var state by remember { mutableStateOf<UIState<List<Pair<Flair, Boolean>>>>(UIState.Loading) }
+    var state by remember { mutableStateOf<UIState<List<Pair<Flair, Boolean>>>>(UIState.Empty) }
     LaunchedEffect(subredditName) {
         val currentSelectedFlair = Repos.Subreddit.getCurrentSubredditFlair(subredditName)
             .toUIState()

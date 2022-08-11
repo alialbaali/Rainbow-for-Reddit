@@ -14,20 +14,18 @@ inline fun LazyListScope.comments(
     commentsState: UIState<List<Comment>>,
     crossinline onNavigate: (Screen) -> Unit,
     crossinline onNavigateContentScreen: (ContentScreen) -> Unit,
-    noinline onCommentUpdate: (Comment) -> Unit,
 ) {
     when (commentsState) {
         is UIState.Failure -> item { Text("Failed loading comments") }
         is UIState.Loading -> item { RainbowProgressIndicator() }
-        is UIState.Success -> itemsIndexed(commentsState.value) { index, comment ->
+        is UIState.Success -> itemsIndexed(commentsState.data) { index, comment ->
             CommentItem(
                 comment,
                 onNavigate,
                 onNavigateContentScreen,
-                onCommentUpdate,
                 modifier = Modifier.fillParentMaxWidth()
             )
         }
-        UIState.Empty -> {}
+        is UIState.Empty -> {}
     }
 }

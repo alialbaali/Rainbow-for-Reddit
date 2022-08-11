@@ -61,7 +61,6 @@ inline fun SearchScreen(
                     onNavigate,
                     onNavigateContentScreen,
                     {},
-                    {},
                     onShowSnackbar,
 //                    {}
                 )

@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 object ProfileScreenStateHolder : StateHolder() {
 
-    private val mutableCurrentUser = MutableStateFlow<UIState<User>>(UIState.Loading)
+    private val mutableCurrentUser = MutableStateFlow<UIState<User>>(UIState.Empty)
     val currentUser get() = mutableCurrentUser.asStateFlow()
 
     private val mutableSelectedTab = MutableStateFlow(ProfileTab.Default)

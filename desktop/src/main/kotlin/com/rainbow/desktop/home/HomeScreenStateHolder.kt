@@ -3,24 +3,17 @@ package com.rainbow.desktop.home
 import com.rainbow.data.Repos
 import com.rainbow.desktop.model.StateHolder
 import com.rainbow.desktop.utils.UIState
-import com.rainbow.desktop.utils.map
 import com.rainbow.desktop.utils.toUIState
 import com.rainbow.domain.models.HomePostSorting
-import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.TimeSorting
 import com.rainbow.domain.repository.PostRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.*
 
 class HomeScreenStateHolder(
     private val postRepository: PostRepository = Repos.Post,
 ) : StateHolder() {
 
-    private val mutablePosts = MutableStateFlow<UIState<List<Post>>>(UIState.Empty)
-    val posts get() = mutablePosts.asStateFlow()
+    val posts = postRepository.posts.stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     private val mutablePostSorting = MutableStateFlow(HomePostSorting.Default)
     val postSorting get() = mutablePostSorting.asStateFlow()
@@ -31,13 +24,31 @@ class HomeScreenStateHolder(
     private val mutableSelectedTab = MutableStateFlow(HomeTab.Default)
     val selectedTab get() = mutableSelectedTab.asStateFlow()
 
+    private val mutableLastPostId = MutableStateFlow<String?>(null)
+
+    private val mutableState = MutableStateFlow<UIState<Unit>>(UIState.Empty)
+    val state get() = mutableState.asStateFlow()
+
     init {
         combine(
             postSorting,
             timeSorting,
         ) { postSorting, timeSorting ->
-            loadPosts(postSorting, timeSorting)
+            mutableLastPostId.value = null
+            mutableState.value = UIState.Loading()
+            mutableState.value = postRepository.getHomePosts(postSorting, timeSorting, lastPostId = null)
+                .toUIState()
         }.launchIn(scope)
+
+        mutableLastPostId
+            .filterNotNull()
+            .onEach { lastPostId ->
+                mutableState.value = UIState.Loading()
+                mutableState.value = postRepository.getHomePosts(postSorting.value, timeSorting.value, lastPostId)
+                    .toUIState()
+            }
+            .launchIn(scope)
+
 //        selectedTab
 //            .onEach {
 //                when (it) {
@@ -52,15 +63,9 @@ class HomeScreenStateHolder(
         mutableSelectedTab.value = tab
     }
 
-    private fun loadPosts(postSorting: HomePostSorting, timeSorting: TimeSorting) = scope.launch {
-        mutablePosts.value = UIState.Loading
-        mutablePosts.value = postRepository.getHomePosts(
-            postSorting,
-            timeSorting,
-            null,
-        ).toUIState()
+    fun setLastPostId(postId: String) {
+        mutableLastPostId.value = postId
     }
-
 
     fun setPostSorting(postSorting: HomePostSorting) {
         mutablePostSorting.value = postSorting
@@ -70,11 +75,4 @@ class HomeScreenStateHolder(
         mutableTimeSorting.value = timeSorting
     }
 
-    fun updatePost(post: Post) {
-        mutablePosts.value = posts.value.map {
-            it.map { currentPost ->
-                if (currentPost.id == post.id) post else currentPost
-            }
-        }
-    }
 }

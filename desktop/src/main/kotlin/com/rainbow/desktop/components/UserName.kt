@@ -17,7 +17,7 @@ inline fun UserName(userName: String, crossinline onClick: (String) -> Unit, mod
     Text(
         text = userName,
         modifier = modifier.clickable { onClick(userName) },
-        color = MaterialTheme.colorScheme.primary,
+        color = MaterialTheme.colorScheme.surfaceVariant,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
     )

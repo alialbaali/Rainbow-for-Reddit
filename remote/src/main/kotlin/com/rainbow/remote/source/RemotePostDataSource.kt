@@ -9,7 +9,7 @@ interface RemotePostDataSource {
         timeSorting: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemotePost>>
+    ): List<RemotePost>
 
     suspend fun getSubredditPosts(
         subredditName: String,
@@ -17,7 +17,7 @@ interface RemotePostDataSource {
         timeSorting: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemotePost>>
+    ): List<RemotePost>
 
     suspend fun getUserSubmittedPosts(
         userName: String,
@@ -25,7 +25,7 @@ interface RemotePostDataSource {
         timeSorting: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemotePost>>
+    ): List<RemotePost>
 
     suspend fun getUserUpvotedPosts(
         userName: String,
@@ -33,7 +33,7 @@ interface RemotePostDataSource {
         timeSorting: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemotePost>>
+    ): List<RemotePost>
 
     suspend fun getUserDownvotedPosts(
         userName: String,
@@ -41,7 +41,7 @@ interface RemotePostDataSource {
         timeSorting: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemotePost>>
+    ): List<RemotePost>
 
     suspend fun getUserHiddenPosts(
         userName: String,
@@ -49,9 +49,9 @@ interface RemotePostDataSource {
         timeSorting: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemotePost>>
+    ): List<RemotePost>
 
-    suspend fun getPost(postId: String): Result<RemotePost>
+    suspend fun getPost(postId: String): RemotePost
 
     suspend fun followPost(postId: String): String
 
@@ -97,6 +97,6 @@ interface RemotePostDataSource {
         timeSorting: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemotePost>>
+    ): List<RemotePost>
 
 }

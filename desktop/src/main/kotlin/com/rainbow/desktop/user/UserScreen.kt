@@ -45,8 +45,6 @@ fun UserScreen(
                     onNavigate,
                     onNavigateContentScreen,
                     { },
-                    {},
-                    {},
                     onShowSnackbar,
                 )
 
@@ -54,7 +52,6 @@ fun UserScreen(
                     postsState,
                     onNavigate,
                     onNavigateContentScreen,
-                    { },
                     {},
                     onShowSnackbar,
                 )
@@ -63,7 +60,6 @@ fun UserScreen(
                     commentsState,
                     onNavigate,
                     onNavigateContentScreen,
-                    {},
                 )
             }
         }

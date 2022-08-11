@@ -20,7 +20,6 @@ import com.rainbow.domain.models.Post
 @Composable
 inline fun PostActionsMenu(
     post: Post,
-    noinline onUpdate: (Post) -> Unit,
     crossinline onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -59,7 +58,7 @@ inline fun PostActionsMenu(
                     RainbowStrings.UnHide,
                     RainbowIcons.Visibility,
                     onClick = {
-                        PostActionsStateHolder.unHidePost(post, onUpdate)
+                        PostActionsStateHolder.unHidePost(post)
                         isMenuExpanded = false
                         onShowSnackbar(RainbowStrings.PostIsUnHidden)
                     }
@@ -69,7 +68,7 @@ inline fun PostActionsMenu(
                     RainbowStrings.Hide,
                     RainbowIcons.VisibilityOff,
                     onClick = {
-                        PostActionsStateHolder.hidePost(post, onUpdate)
+                        PostActionsStateHolder.hidePost(post)
                         isMenuExpanded = false
                         onShowSnackbar(RainbowStrings.PostIsHidden)
                     }

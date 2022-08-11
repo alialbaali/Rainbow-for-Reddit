@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.rainbow.desktop.components.PostSortingItem
 import com.rainbow.desktop.components.RainbowIconButton
 import com.rainbow.desktop.navigation.Screen
 import com.rainbow.desktop.navigation.title
@@ -21,8 +20,6 @@ import com.rainbow.desktop.search.SearchTextField
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.defaultPadding
-import com.rainbow.domain.models.PostSorting
-import com.rainbow.domain.models.TimeSorting
 
 @Composable
 inline fun RainbowTopAppBar(

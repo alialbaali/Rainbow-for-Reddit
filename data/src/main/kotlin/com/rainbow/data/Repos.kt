@@ -2,6 +2,7 @@ package com.rainbow.data
 
 import com.rainbow.data.repository.*
 import com.rainbow.domain.repository.*
+import com.rainbow.local.LocalPostDataSourceImpl
 import com.rainbow.remote.impl.*
 import com.russhwolf.settings.*
 import com.russhwolf.settings.coroutines.toFlowSettings
@@ -40,9 +41,12 @@ object Repos {
 
     object Post : PostRepository by PostRepositoryImpl(
         RemotePostDataSource(),
+        RemoteSubredditDataSource(),
+        LocalPostDataSourceImpl(),
         flowSettings,
         DefaultDispatcher,
         Mappers.PostMapper,
+        Mappers.SubredditMapper,
     )
 
     @OptIn(ExperimentalSettingsApi::class)

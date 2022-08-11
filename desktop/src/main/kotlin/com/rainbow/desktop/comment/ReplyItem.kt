@@ -43,7 +43,7 @@ inline fun ReplyItem(
         ) {
             PostCommentInfo(reply, postUserName, onUserNameClick, onSubredditNameClick, isSubredditNameEnabled = false)
             Text(reply.body, color = MaterialTheme.colorScheme.onBackground)
-            CommentActions(reply, onCommentUpdate, isRepliesVisible)
+            CommentActions(reply, isRepliesVisible)
         }
     }
 }

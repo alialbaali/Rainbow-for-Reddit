@@ -71,7 +71,6 @@ inline fun CommentInfo(
 @Composable
 fun CommentActions(
     comment: Comment,
-    onUpdate: (Comment) -> Unit,
     isRepliesVisible: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -84,9 +83,9 @@ fun CommentActions(
         VoteActions(
             vote = comment.vote,
             votesCount = comment.votesCount,
-            onUpvote = { CommentActionsStateHolder.upvoteComment(comment, onUpdate) },
-            onDownvote = { CommentActionsStateHolder.downvoteComment(comment, onUpdate) },
-            onUnvote = { CommentActionsStateHolder.unvoteComment(comment, onUpdate) }
+            onUpvote = { CommentActionsStateHolder.upvoteComment(comment) },
+            onDownvote = { CommentActionsStateHolder.downvoteComment(comment) },
+            onUnvote = { CommentActionsStateHolder.unvoteComment(comment) }
         )
 
         AnimatedVisibility(comment.replies.isNotEmpty() && !isRepliesVisible) {

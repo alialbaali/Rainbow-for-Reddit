@@ -3,7 +3,6 @@ package com.rainbow.desktop.post
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,12 +22,12 @@ import com.rainbow.domain.models.Post
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PostScreen(
-    type: PostScreenStateHolder.Type,
+    postId: String,
     onNavigate: (Screen) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val model = PostScreenStateHolder.getOrCreateInstance(type)
+    val model = PostScreenStateHolder.getOrCreateInstance(postId)
     val postState by model.post.collectAsState()
     val commentListModel by model.commentListModel.collectAsState()
     val commentsState by commentListModel.comments.collectAsState()
@@ -42,7 +41,6 @@ fun PostScreen(
 
                 Post(
                     post,
-                    {  },
                     onUserNameClick = { userName -> onNavigate(Screen.User(userName)) },
                     onSubredditNameClick = { subredditName -> onNavigate(Screen.Subreddit(subredditName)) },
                     onShowSnackbar,
@@ -89,7 +87,6 @@ fun PostScreen(
 @Composable
 private fun Post(
     post: Post,
-    onUpdate: (Post) -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
     onShowSnackbar: (String) -> Unit,
@@ -102,7 +99,8 @@ private fun Post(
             onSubredditNameClick,
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight()
+                .wrapContentHeight(),
+            onAwardsClick = {}
         )
 
         PostTitle(
@@ -124,7 +122,6 @@ private fun Post(
         PostActions(
             post,
             {},
-            onUpdate,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),

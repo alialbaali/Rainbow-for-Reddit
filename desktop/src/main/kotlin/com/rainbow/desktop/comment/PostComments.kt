@@ -45,7 +45,7 @@ fun LazyListScope.postComments(
         is UIState.Failure -> item { Text("Failed to load comments") }
         is UIState.Loading -> item { RainbowProgressIndicator() }
         is UIState.Success -> {
-            commentsState.value.forEach { comment ->
+            commentsState.data.forEach { comment ->
                 item {
                     val isRepliesVisible = commentsVisibility[comment.id] ?: true
                     when (val commentType = comment.type) {
@@ -92,7 +92,7 @@ fun LazyListScope.postComments(
             }
         }
 
-        UIState.Empty -> {}
+        is UIState.Empty -> {}
     }
 }
 

@@ -8,6 +8,26 @@ import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 
+internal suspend inline fun <reified T> HttpClient.getOrThrow(
+    endpoint: Endpoint,
+    builder: HttpRequestBuilder.() -> Unit = {},
+): T {
+    val response = get {
+        url("${endpoint.path}.json")
+        builder()
+    }
+    return if (response.status.isSuccess()) {
+        response.body<Item<T>>().data
+    } else {
+        val error = try {
+            response.body()
+        } catch (exception: Throwable) {
+            Error(response.status.description, response.status.value)
+        }
+        error(error.message.toString())
+    }
+}
+
 internal suspend inline fun <reified T> HttpClient.get(
     endpoint: Endpoint,
     builder: HttpRequestBuilder.() -> Unit = {},

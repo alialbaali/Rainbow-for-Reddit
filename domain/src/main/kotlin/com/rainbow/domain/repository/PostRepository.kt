@@ -1,8 +1,11 @@
 package com.rainbow.domain.repository
 
 import com.rainbow.domain.models.*
+import kotlinx.coroutines.flow.Flow
 
 interface PostRepository {
+
+    val posts: Flow<List<Post>>
 
     suspend fun getCurrentUserSubmittedPosts(
         postsSorting: UserPostSorting,
@@ -39,7 +42,7 @@ interface PostRepository {
         postsSorting: HomePostSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
-    ): Result<List<Post>>
+    ): Result<Unit>
 
     suspend fun getSubredditPosts(
         subredditName: String,
@@ -48,7 +51,7 @@ interface PostRepository {
         lastPostId: String?,
     ): Result<List<Post>>
 
-    suspend fun getPost(postId: String): Result<Post>
+    fun getPost(postId: String): Flow<Result<Post>>
 
     suspend fun createPost(post: Post): Result<Unit>
 

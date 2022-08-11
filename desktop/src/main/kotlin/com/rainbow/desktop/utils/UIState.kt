@@ -4,9 +4,12 @@ import com.rainbow.desktop.utils.UIState.*
 
 sealed interface UIState<out T> {
     object Empty : UIState<Nothing>
-    object Loading : UIState<Nothing>
-    data class Success<T>(val value: T) : UIState<T>
-    data class Failure(val exception: Throwable) : UIState<Nothing>
+
+    data class Loading<T>(val data: T? = null) : UIState<T>
+
+    data class Success<T>(val data: T) : UIState<T>
+
+    data class Failure<T>(val data: T? = null, val exception: Throwable) : UIState<T>
 
     val isLoading
         get() = this is Loading
@@ -21,40 +24,40 @@ sealed interface UIState<out T> {
 
 fun <T> UIState<T>.getOrNull(): T? = when (this) {
     is Empty -> null
-    is Loading -> null
-    is Success -> value
-    is Failure -> null
+    is Loading -> data
+    is Success -> data
+    is Failure -> data
 }
 
 fun <T> UIState<T>.getOrDefault(defaultValue: T): T = when (this) {
     is Empty -> defaultValue
-    is Loading -> defaultValue
-    is Success -> value
-    is Failure -> defaultValue
+    is Loading -> data ?: defaultValue
+    is Success -> data
+    is Failure -> data ?: defaultValue
 }
 
 inline fun <T, R> UIState<T>.map(transform: (value: T) -> R): UIState<R> = when (this) {
     is Empty -> Empty
-    is Loading -> Loading
-    is Success -> Success(transform(value))
-    is Failure -> Failure(exception)
+    is Loading -> if (data != null) Loading(transform(data)) else Loading(null)
+    is Success -> Success(transform(data))
+    is Failure -> if (data != null) Failure(transform(data), exception) else Failure(null, exception)
 }
 
 inline fun <R, T> UIState<T>.fold(
     onEmpty: () -> R,
-    onLoading: () -> R,
+    onLoading: (value: T?) -> R,
     onSuccess: (value: T) -> R,
-    onFailure: (exception: Throwable) -> R,
+    onFailure: (value: T?, exception: Throwable) -> R,
 ): R = when (this) {
     is Empty -> onEmpty()
-    is Loading -> onLoading()
-    is Success -> onSuccess(value)
-    is Failure -> onFailure(exception)
+    is Loading -> onLoading(data)
+    is Success -> onSuccess(data)
+    is Failure -> onFailure(data, exception)
 }
 
 
 inline fun <T> UIState<T>.onSuccess(action: (value: T) -> Unit): UIState<T> {
-    if (this is Success) action(value)
+    if (this is Success) action(data)
     return this
 }
 
@@ -67,5 +70,3 @@ inline fun <T> UIState<T>.onLoading(action: () -> Unit): UIState<T> {
     if (this is Loading) action()
     return this
 }
-
-fun <T> UIState<T>.asSuccess() = this as Success

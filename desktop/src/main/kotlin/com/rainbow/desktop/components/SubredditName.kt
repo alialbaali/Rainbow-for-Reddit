@@ -18,7 +18,7 @@ inline fun SubredditName(
         text = subredditName,
         modifier
             .clickable { onClick(subredditName) },
-        color = MaterialTheme.colorScheme.secondary,
+        color = MaterialTheme.colorScheme.onSurface,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
     )

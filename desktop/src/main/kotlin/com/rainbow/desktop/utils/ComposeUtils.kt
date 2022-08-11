@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.model.StateHolder
 import com.rainbow.domain.models.*
-import kotlinx.coroutines.cancel
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -120,7 +119,7 @@ inline fun <T> UIState<T>.composed(
 ) {
     when (this) {
         is UIState.Loading -> onLoading()
-        is UIState.Success -> onSuccess(value)
+        is UIState.Success -> onSuccess(data)
         is UIState.Failure -> onFailure(exception)
         UIState.Empty -> {}
     }

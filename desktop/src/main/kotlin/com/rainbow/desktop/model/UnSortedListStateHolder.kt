@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 abstract class UnSortedListStateHolder<T : Any>(private val getItems: suspend (String?) -> Result<List<T>>) : ListStateHolder<T>() {
     final override fun loadItems() {
         scope.launch {
-            if (lastItem.value == null) mutableItems.value = UIState.Loading
+            if (lastItem.value == null) mutableItems.value = UIState.Loading(emptyList())
             mutableItems.value = getItems(lastItem.value?.itemId)
                 .map {
                     if (lastItem.value != null)
@@ -16,7 +16,7 @@ abstract class UnSortedListStateHolder<T : Any>(private val getItems: suspend (S
                     else
                         it
                 }
-                .toUIState()
+                .toUIState(items.value.getOrDefault(emptyList()))
         }
     }
 }

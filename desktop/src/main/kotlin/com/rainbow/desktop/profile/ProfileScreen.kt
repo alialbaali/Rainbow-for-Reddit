@@ -61,8 +61,6 @@ fun ProfileScreen(
                     onNavigateContentScreen,
                     { },
                     {},
-                    {},
-                    {},
                 )
 
                 ProfileTab.Saved -> items(
@@ -71,22 +69,18 @@ fun ProfileScreen(
                     onNavigateContentScreen,
                     { },
                     {},
-                    {},
-                    {},
                 )
 
                 ProfileTab.Comments -> comments(
                     commentsState,
                     onNavigate,
                     onNavigateContentScreen,
-                    {},
                 )
 
                 ProfileTab.Submitted -> posts(
                     submittedPostsState,
                     onNavigate,
                     onNavigateContentScreen,
-                    {},
                     {},
                     onShowSnackbar,
 //                    onPostClick
@@ -97,7 +91,6 @@ fun ProfileScreen(
                     onNavigate,
                     onNavigateContentScreen,
                     {},
-                    {},
                     onShowSnackbar,
 //                    onPostClick
                 )
@@ -107,7 +100,6 @@ fun ProfileScreen(
                     onNavigate,
                     onNavigateContentScreen,
                     {},
-                    {},
                     onShowSnackbar,
 //                    onPostClick
                 )
@@ -116,7 +108,6 @@ fun ProfileScreen(
                     downvotedPostsState,
                     onNavigate,
                     onNavigateContentScreen,
-                    {},
                     {},
                     onShowSnackbar,
 //                    onPostClick

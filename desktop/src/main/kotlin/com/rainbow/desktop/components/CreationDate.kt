@@ -14,7 +14,7 @@ fun CreationDate(date: LocalDateTime, modifier: Modifier = Modifier) {
     Text(
         date.displayTime,
         modifier,
-        color = MaterialTheme.colorScheme.onBackground.copy(0.5F),
+        color = MaterialTheme.colorScheme.surfaceVariant,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
     )

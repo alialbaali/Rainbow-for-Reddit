@@ -1,6 +1,6 @@
 package com.rainbow.data.utils
 
-const val DefaultLimit = 100
+const val DefaultLimit = 3
 
 fun String.toLongColor() = removePrefix("#").let {
     if (this == "transparent")
