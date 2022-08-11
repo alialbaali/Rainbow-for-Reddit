@@ -22,7 +22,7 @@ import com.rainbow.domain.models.Post
 @Composable
 inline fun PostItem(
     post: Post,
-    onNavigate: (Screen) -> Unit,
+    crossinline onNavigate: (Screen) -> Unit,
     crossinline onNavigateContentScreen: (ContentScreen) -> Unit,
     crossinline onAwardsClick: () -> Unit,
     crossinline onShowSnackbar: (String) -> Unit,
@@ -42,8 +42,8 @@ inline fun PostItem(
         Column(Modifier.defaultPadding(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             PostInfo(
                 post,
-                onUserNameClick = { userName -> Screen.User(userName) },
-                onSubredditNameClick = { subredditName -> Screen.Subreddit(subredditName) },
+                onUserNameClick = { userName -> onNavigate(Screen.User(userName)) },
+                onSubredditNameClick = { subredditName -> onNavigate(Screen.Subreddit(subredditName)) },
                 onAwardsClick,
             )
             PostFLairs(post)
