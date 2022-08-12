@@ -70,8 +70,8 @@ inline fun RainbowTopAppBar(
                         is Screen.User -> screen.userName
                         is Screen.Search -> screen.searchTerm
                     },
-                    style = MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
                 )
             }
 

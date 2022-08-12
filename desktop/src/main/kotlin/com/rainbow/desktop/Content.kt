@@ -74,7 +74,7 @@ internal fun Content(
                     Modifier
                         .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.extraLarge)
                         .fillMaxSize()
-                        .padding(MaterialTheme.dpDimensions.extraLarge),
+                        .padding(horizontal = MaterialTheme.dpDimensions.extraLarge),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     CenterContent(
@@ -194,6 +194,7 @@ private fun EndContent(
                 RainbowProgressIndicator()
             }
         }
+
         is ContentScreen.Post -> {
             PostScreen(
                 contentScreen.postId,
