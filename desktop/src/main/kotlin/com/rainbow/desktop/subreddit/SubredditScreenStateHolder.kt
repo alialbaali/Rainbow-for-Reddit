@@ -2,7 +2,6 @@ package com.rainbow.desktop.subreddit
 
 import com.rainbow.data.Repos
 import com.rainbow.desktop.model.StateHolder
-import com.rainbow.desktop.post.PostListStateHolder
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.map
 import com.rainbow.desktop.utils.toUIState
@@ -12,8 +11,6 @@ import com.rainbow.domain.models.Subreddit
 import com.rainbow.domain.models.WikiPage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 private val subredditScreenModels = mutableSetOf<SubredditScreenStateHolder>()
@@ -37,23 +34,23 @@ class SubredditScreenStateHolder private constructor(private val subredditName: 
 
     private val initialPostSorting = Repos.Settings.getSubredditPostSorting()
 
-    val postListModel = PostListStateHolder(initialPostSorting) { postSorting, timeSorting, lastPostId ->
-        Repos.Post.getSubredditPosts(subredditName, postSorting, timeSorting, lastPostId)
-    }
+//    val postListModel = PostListStateHolder(initialPostSorting) { postSorting, timeSorting, lastPostId ->
+//        Repos.Post.getSubredditPosts(subredditName, postSorting, timeSorting, lastPostId)
+//    }
 
     init {
         loadSubreddit()
-        selectedTab
-            .onEach {
-                when (it) {
-                    SubredditTab.Posts -> if (postListModel.items.value.isLoading) postListModel.loadItems()
-                    SubredditTab.Wiki -> if (wiki.value.isLoading) loadWiki()
-                    SubredditTab.Rules -> if (rules.value.isLoading) loadRules()
-                    SubredditTab.Moderators -> if (moderators.value.isLoading) loadModerators()
-                    SubredditTab.Description -> {}
-                }
-            }
-            .launchIn(scope)
+//        selectedTab
+//            .onEach {
+//                when (it) {
+//                    SubredditTab.Posts -> if (postListModel.items.value.isLoading) postListModel.loadItems()
+//                    SubredditTab.Wiki -> if (wiki.value.isLoading) loadWiki()
+//                    SubredditTab.Rules -> if (rules.value.isLoading) loadRules()
+//                    SubredditTab.Moderators -> if (moderators.value.isLoading) loadModerators()
+//                    SubredditTab.Description -> {}
+//                }
+//            }
+//            .launchIn(scope)
     }
 
     companion object {
@@ -76,7 +73,7 @@ class SubredditScreenStateHolder private constructor(private val subredditName: 
 
     fun loadSubreddit() = scope.launch {
         mutableSubreddit.value = Repos.Subreddit.getSubreddit(subredditName)
-            .onSuccess { postListModel.loadItems() }
+//            .onSuccess { postListModel.loadItems() }
             .toUIState()
     }
 

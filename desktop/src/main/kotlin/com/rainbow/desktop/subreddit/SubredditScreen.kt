@@ -38,8 +38,8 @@ fun SubredditScreen(
     modifier: Modifier = Modifier,
 ) {
     val model = remember { SubredditScreenStateHolder.getOrCreateInstance(subredditName) }
-    val postLayout by model.postListModel.postLayout.collectAsState()
-    val postsState by model.postListModel.items.collectAsState()
+//    val postLayout by model.postListModel.postLayout.collectAsState()
+//    val postsState by model.postListModel.items.collectAsState()
     val moderatorsState by model.moderators.collectAsState()
     val subredditState by model.subreddit.collectAsState()
     val selectedTab by model.selectedTab.collectAsState()
@@ -57,20 +57,20 @@ fun SubredditScreen(
                 onTabClick = { model.selectTab(it) },
             )
         }
-        when (selectedTab) {
-            SubredditTab.Posts -> posts(
-                postsState,
-                onNavigate,
-                onNavigateContentScreen,
-                {},
-                onShowSnackbar,
-            )
+//        when (selectedTab) {
+//            SubredditTab.Posts -> posts(
+//                postsState,
+//                onNavigate,
+//                onNavigateContentScreen,
+//                {},
+//                onShowSnackbar,
+//            )
 
-            SubredditTab.Description -> description(subredditState, onShowSnackbar)
-            SubredditTab.Wiki -> wiki(wikiState, onShowSnackbar)
-            SubredditTab.Rules -> rules(rulesState, onShowSnackbar)
-            SubredditTab.Moderators -> moderators(moderatorsState, { onNavigate(Screen.User(it)) }, onShowSnackbar)
-        }
+//            SubredditTab.Description -> description(subredditState, onShowSnackbar)
+//            SubredditTab.Wiki -> wiki(wikiState, onShowSnackbar)
+//            SubredditTab.Rules -> rules(rulesState, onShowSnackbar)
+//            SubredditTab.Moderators -> moderators(moderatorsState, { onNavigate(Screen.User(it)) }, onShowSnackbar)
+//        }
     }
 }
 

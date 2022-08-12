@@ -1,14 +1,9 @@
 package com.rainbow.desktop.search
 
 import com.rainbow.desktop.model.StateHolder
-import com.rainbow.desktop.post.PostListStateHolder
-import com.rainbow.desktop.subreddit.SubredditListStateHolder
-import com.rainbow.desktop.user.UserListStateHolder
 import com.rainbow.data.Repos
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 
 private val searchScreenModels = mutableSetOf<SearchScreenStateHolder>()
 
@@ -19,17 +14,17 @@ class SearchScreenStateHolder private constructor(private val searchTerm: String
 
     private val initialPostSorting = Repos.Settings.getSearchPostSorting()
 
-    val postListModel = PostListStateHolder(initialPostSorting) { postSorting, timeSorting, lastPostId ->
-        Repos.Post.searchPosts(searchTerm, postSorting, timeSorting, lastPostId)
-    }
+//    val postListModel = PostListStateHolder(initialPostSorting) { postSorting, timeSorting, lastPostId ->
+//        Repos.Post.searchPosts(searchTerm, postSorting, timeSorting, lastPostId)
+//    }
 
-    val subredditListModel = SubredditListStateHolder { lastSubredditId ->
-        Repos.Subreddit.searchSubreddits(searchTerm, lastSubredditId)
-    }
+//    val subredditListModel = SubredditListStateHolder { lastSubredditId ->
+//        Repos.Subreddit.searchSubreddits(searchTerm, lastSubredditId)
+//    }
 
-    val userListModel = UserListStateHolder { lastUserId ->
-        Repos.User.searchUsers(searchTerm, lastUserId)
-    }
+//    val userListModel = UserListStateHolder { lastUserId ->
+//        Repos.User.searchUsers(searchTerm, lastUserId)
+//    }
 
     companion object {
         fun getOrCreateInstance(searchTerm: String): SearchScreenStateHolder {
@@ -39,15 +34,15 @@ class SearchScreenStateHolder private constructor(private val searchTerm: String
     }
 
     init {
-        selectedTab
-            .onEach {
-                when (it) {
-                    SearchTab.Subreddits -> if (subredditListModel.items.value.isLoading) subredditListModel.loadItems()
-                    SearchTab.Posts -> if (postListModel.items.value.isLoading) postListModel.loadItems()
-                    SearchTab.Users -> if (userListModel.items.value.isLoading) userListModel.loadItems()
-                }
-            }
-            .launchIn(scope)
+//        selectedTab
+//            .onEach {
+//                when (it) {
+//                    SearchTab.Subreddits -> if (subredditListModel.items.value.isLoading) subredditListModel.loadItems()
+//                    SearchTab.Posts -> if (postListModel.items.value.isLoading) postListModel.loadItems()
+//                    SearchTab.Users -> if (userListModel.items.value.isLoading) userListModel.loadItems()
+//                }
+//            }
+//            .launchIn(scope)
     }
 
     fun selectTab(tab: SearchTab) {

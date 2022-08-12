@@ -28,10 +28,10 @@ inline fun SearchScreen(
 ) {
     val model = remember(searchTerm) { SearchScreenStateHolder.getOrCreateInstance(searchTerm) }
     val selectedTab by model.selectedTab.collectAsState()
-    val subredditsState by model.subredditListModel.items.collectAsState()
-    val postsState by model.postListModel.items.collectAsState()
-    val usersState by model.userListModel.items.collectAsState()
-    val postLayout by model.postListModel.postLayout.collectAsState()
+//    val subredditsState by model.subredditListModel.items.collectAsState()
+//    val postsState by model.postListModel.items.collectAsState()
+//    val usersState by model.userListModel.items.collectAsState()
+//    val postLayout by model.postListModel.postLayout.collectAsState()
     Column(
         if (selectedTab == SearchTab.Posts) modifier else Modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -41,8 +41,8 @@ inline fun SearchScreen(
             onTabClick = { model.selectTab(it) }
         )
 
-        when (selectedTab) {
-            SearchTab.Subreddits -> subredditsState.composed(onShowSnackbar) { subreddits ->
+//        when (selectedTab) {
+//            SearchTab.Subreddits -> subredditsState.composed(onShowSnackbar) { subreddits ->
 //                LazyGrid {
 //                    items(subreddits) { subreddit ->
 //                        SearchSubredditItem(
@@ -53,26 +53,26 @@ inline fun SearchScreen(
 //                        )
 //                    }
 //                }
-            }
+//            }
 
-            SearchTab.Posts -> LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                posts(
-                    postsState,
-                    onNavigate,
-                    onNavigateContentScreen,
-                    {},
-                    onShowSnackbar,
+//            SearchTab.Posts -> LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+//                posts(
+//                    postsState,
+//                    onNavigate,
+//                    onNavigateContentScreen,
+//                    {},
+//                    onShowSnackbar,
 //                    {}
-                )
-            }
+//                )
+//            }
 
-            SearchTab.Users -> usersState.composed(onShowSnackbar) { users ->
+//            SearchTab.Users -> usersState.composed(onShowSnackbar) { users ->
 //                LazyGrid {
 //                    items(users) { user ->
 //                        UserItem(user, onClick = { onUserNameClick(it.name) }, onShowSnackbar)
 //                    }
 //                }
-            }
-        }
+//            }
+//        }
     }
 }

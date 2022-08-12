@@ -10,13 +10,13 @@ object CurrentUserSubredditsScreenStateHolder : StateHolder() {
     private val mutableSearchTerm = MutableStateFlow("")
     val searchTerm get() = mutableSearchTerm.asStateFlow()
 
-    val subredditListModel = SubredditListStateHolder { lastSubredditId ->
-        Repos.Subreddit.getCurrentUserSubreddits(lastSubredditId)
-            .map { it.sortedBy { subreddit -> subreddit.name } }
-    }
+//    val subredditListModel = SubredditListStateHolder { lastSubredditId ->
+//        Repos.Subreddit.getCurrentUserSubreddits(lastSubredditId)
+//            .map { it.sortedBy { subreddit -> subreddit.name } }
+//    }
 
     init {
-        subredditListModel.loadItems()
+//        subredditListModel.loadItems()
     }
 
     fun setSearchTerm(searchTerm: String) {

@@ -104,15 +104,19 @@ internal class PostRepositoryImpl(
         postsSorting: UserPostSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
-    ): Result<List<Post>> = runCatching {
+    ): Result<Unit> = runCatching {
         withContext(dispatcher) {
+            if (lastPostId == null) localPostDataSource.clearPosts()
+
             remotePostDataSource.getUserSubmittedPosts(
                 userName,
                 postsSorting.lowercaseName,
                 timeSorting.lowercaseName,
                 DefaultLimit,
-                lastPostId
-            ).quickMap(postMapper)
+                lastPostId,
+            ).quickMap(postMapper).mapWithSubredditImageUrl().forEach { post ->
+                localPostDataSource.insertPost(post)
+            }
         }
     }
 
@@ -121,21 +125,16 @@ internal class PostRepositoryImpl(
         timeSorting: TimeSorting,
         lastPostId: String?,
     ): Result<Unit> = runCatching {
-        if (lastPostId == null) localPostDataSource.clearPosts()
-
-        remotePostDataSource.getHomePosts(
-            postsSorting.lowercaseName,
-            timeSorting.lowercaseName,
-            DefaultLimit,
-            lastPostId,
-        ).quickMap(postMapper).map {
-            val subredditImageUrl = remoteSubredditDataSource.getSubreddit(it.subredditName)
-                .getOrNull()
-                ?.let(subredditMapper::map)
-                ?.imageUrl
-            it.copy(subredditImageUrl = subredditImageUrl)
-        }.forEach { post ->
-            localPostDataSource.insertPost(post)
+        withContext(dispatcher) {
+            if (lastPostId == null) localPostDataSource.clearPosts()
+            remotePostDataSource.getHomePosts(
+                postsSorting.lowercaseName,
+                timeSorting.lowercaseName,
+                DefaultLimit,
+                lastPostId,
+            ).quickMap(postMapper).mapWithSubredditImageUrl().forEach { post ->
+                localPostDataSource.insertPost(post)
+            }
         }
     }
 
@@ -255,5 +254,13 @@ internal class PostRepositoryImpl(
                 lastPostId
             ).quickMap(postMapper)
         }
+    }
+
+    private suspend fun List<Post>.mapWithSubredditImageUrl() = map {
+        val subredditImageUrl = remoteSubredditDataSource.getSubreddit(it.subredditName)
+            .getOrNull()
+            ?.let(subredditMapper::map)
+            ?.imageUrl
+        it.copy(subredditImageUrl = subredditImageUrl)
     }
 }

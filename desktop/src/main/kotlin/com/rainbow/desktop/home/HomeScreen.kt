@@ -2,7 +2,6 @@ package com.rainbow.desktop.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -10,12 +9,11 @@ import androidx.compose.ui.Modifier
 import com.rainbow.desktop.components.DropdownMenuHolder
 import com.rainbow.desktop.components.EnumTabRow
 import com.rainbow.desktop.components.RainbowLazyColumn
-import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.navigation.ContentScreen
 import com.rainbow.desktop.navigation.Screen
-import com.rainbow.desktop.post.PostItem
+import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.ui.dpDimensions
-import com.rainbow.desktop.utils.PagingEffect
+import com.rainbow.desktop.utils.getOrNull
 
 @Composable
 inline fun HomeScreen(
@@ -25,13 +23,12 @@ inline fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
     val stateHolder = remember { HomeScreenStateHolder() }
-    val state by stateHolder.state.collectAsState()
     val posts by stateHolder.posts.collectAsState()
     val postSorting by stateHolder.postSorting.collectAsState()
     val timeSorting by stateHolder.timeSorting.collectAsState()
     val selectedTab by stateHolder.selectedTab.collectAsState()
-    DisposableEffect(posts.isEmpty()) {
-        val post = posts.firstOrNull()
+    DisposableEffect(posts.isLoading) {
+        val post = posts.getOrNull()?.firstOrNull()
         if (post != null) {
             onNavigateContentScreen(ContentScreen.PostEntity(post.id))
         }
@@ -71,21 +68,14 @@ inline fun HomeScreen(
 
         when (selectedTab) {
             HomeTab.Posts -> {
-                itemsIndexed(posts) { index, post ->
-                    PostItem(
-                        post,
-                        onNavigate,
-                        onNavigateContentScreen,
-                        {},
-                        onShowSnackbar,
-                        Modifier.fillParentMaxWidth(),
-                    )
-                    if (state.isSuccess) {
-                        PagingEffect(posts, index) {
-                            stateHolder.setLastPostId(it.id)
-                        }
-                    }
-                }
+                posts(
+                    posts,
+                    onNavigate,
+                    onNavigateContentScreen,
+                    {},
+                    onShowSnackbar,
+                    stateHolder::setLastPostId,
+                )
             }
 
             HomeTab.Comments -> {
@@ -96,12 +86,6 @@ inline fun HomeScreen(
 //                    onCommentClick,
 //                    onCommentUpdate,
 //                )
-            }
-        }
-
-        if (state.isLoading) {
-            item {
-                RainbowProgressIndicator()
             }
         }
     }

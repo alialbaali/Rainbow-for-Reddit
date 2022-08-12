@@ -25,7 +25,7 @@ fun SearchTextField(
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     val searchTerm by SearchTextFieldStateHolder.searchTerm.collectAsState()
-    val state by SearchTextFieldStateHolder.subredditListModel.items.collectAsState()
+//    val state by SearchTextFieldStateHolder.subredditListModel.items.collectAsState()
     var width by remember { mutableStateOf(0) }
     Column(modifier) {
         RainbowTextField(

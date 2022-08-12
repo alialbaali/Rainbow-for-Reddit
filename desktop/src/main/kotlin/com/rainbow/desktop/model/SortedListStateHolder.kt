@@ -1,18 +1,12 @@
 package com.rainbow.desktop.model
 
 import com.rainbow.desktop.utils.UIState
-import com.rainbow.desktop.utils.getOrDefault
-import com.rainbow.desktop.utils.toUIState
 import com.rainbow.domain.models.Sorting
 import com.rainbow.domain.models.TimeSorting
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.*
 
-abstract class SortedListStateHolder<T : Any, S : Sorting>(
-    initialSorting: S,
-    private val getItems: suspend (S, TimeSorting, String?) -> Result<List<T>>,
-) : ListStateHolder<T>() {
+abstract class SortedListStateHolder<T : Any, S : Sorting>(initialSorting: S, items: Flow<List<T>>) : ListStateHolder<T>() {
 
     private val mutableSorting = MutableStateFlow(initialSorting)
     val sorting get() = mutableSorting.asStateFlow()
@@ -20,29 +14,35 @@ abstract class SortedListStateHolder<T : Any, S : Sorting>(
     private val mutableTimeSorting = MutableStateFlow(TimeSorting.Default)
     val timeSorting get() = mutableTimeSorting.asStateFlow()
 
-    final override fun loadItems() {
-        scope.launch {
-            if (lastItem.value == null) mutableItems.value = UIState.Loading(emptyList())
-            mutableItems.value = getItems(sorting.value, timeSorting.value, lastItem.value?.itemId)
-                .map {
-                    if (lastItem.value != null)
-                        mutableItems.value.getOrDefault(emptyList()) + it
-                    else
-                        it
+    private var previousJob: Job? = null
+
+    init {
+        combine(
+            sorting,
+            timeSorting,
+        ) { sorting, timeSorting ->
+            previousJob?.cancel()
+            mutableLastItem.value = null
+            mutableItems.value = UIState.Loading()
+            loadNewItems(sorting, timeSorting)
+                .onSuccess {
+                    previousJob = items
+                        .map { UIState.Success(it) }
+                        .onEach { mutableItems.value = it }
+                        .launchIn(scope)
                 }
-                .toUIState(items.value.getOrDefault(emptyList()))
-        }
+                .onFailure { mutableItems.value = UIState.Failure(null, it) }
+        }.launchIn(scope)
+    }
+
+    abstract suspend fun loadNewItems(sorting: S, timeSorting: TimeSorting): Result<Unit>
+
+    fun setSorting(sorting: S) {
+        mutableSorting.value = sorting
     }
 
     fun setTimeSorting(timeSorting: TimeSorting) {
         mutableTimeSorting.value = timeSorting
-        mutableLastItem.value = null
-        loadItems()
     }
 
-    fun setSorting(sorting: S) {
-        mutableSorting.value = sorting
-        mutableLastItem.value = null
-        loadItems()
-    }
 }

@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -35,84 +36,85 @@ fun ProfileScreen(
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val selectedTab by ProfileScreenStateHolder.selectedTab.collectAsState(ProfileTab.Overview)
-    val userState by ProfileScreenStateHolder.currentUser.collectAsState()
-    val overViewItemsState by ProfileScreenStateHolder.overViewItemListModel.items.collectAsState()
-    val savedItemsState by ProfileScreenStateHolder.savedItemListModel.items.collectAsState()
-    val submittedPostsState by ProfileScreenStateHolder.submittedPostListModel.items.collectAsState()
-    val hiddenPostsState by ProfileScreenStateHolder.hiddenPostListModel.items.collectAsState()
-    val upvotedPostsState by ProfileScreenStateHolder.upvotedPostListModel.items.collectAsState()
-    val downvotedPostsState by ProfileScreenStateHolder.downvotedPostListModel.items.collectAsState()
-    val commentsState by ProfileScreenStateHolder.commentListModel.items.collectAsState()
-    val postLayout by ProfileScreenStateHolder.postLayout.collectAsState()
+    val stateHolder = remember { ProfileScreenStateHolder() }
+    val selectedTab by stateHolder.selectedTab.collectAsState(ProfileTab.Overview)
+    val userState by stateHolder.currentUser.collectAsState()
+//    val overViewItemsState by stateHolder.overViewItemListModel.items.collectAsState()
+//    val savedItemsState by stateHolder.savedItemListModel.items.collectAsState()
+//    val submittedPostsState by stateHolder.submittedPostListModel.items.collectAsState()
+//    val hiddenPostsState by stateHolder.hiddenPostListModel.items.collectAsState()
+//    val upvotedPostsState by stateHolder.upvotedPostListModel.items.collectAsState()
+//    val downvotedPostsState by stateHolder.downvotedPostListModel.items.collectAsState()
+//    val commentsState by stateHolder.commentListModel.items.collectAsState()
+//    val postLayout by stateHolder.postLayout.collectAsState()
     userState.composed(onShowSnackbar, modifier) { user ->
         RainbowLazyColumn(modifier) {
             item { Header(user) }
             item {
                 ScrollableEnumTabRow(
                     selectedTab = selectedTab,
-                    onTabClick = { ProfileScreenStateHolder.selectTab(it) },
+                    onTabClick = { stateHolder.selectTab(it) },
                 )
             }
-            when (selectedTab) {
-                ProfileTab.Overview -> items(
-                    overViewItemsState,
-                    onNavigate,
-                    onNavigateContentScreen,
-                    { },
-                    {},
-                )
-
-                ProfileTab.Saved -> items(
-                    savedItemsState,
-                    onNavigate,
-                    onNavigateContentScreen,
-                    { },
-                    {},
-                )
-
-                ProfileTab.Comments -> comments(
-                    commentsState,
-                    onNavigate,
-                    onNavigateContentScreen,
-                )
-
-                ProfileTab.Submitted -> posts(
-                    submittedPostsState,
-                    onNavigate,
-                    onNavigateContentScreen,
-                    {},
-                    onShowSnackbar,
-//                    onPostClick
-                )
-
-                ProfileTab.Hidden -> posts(
-                    hiddenPostsState,
-                    onNavigate,
-                    onNavigateContentScreen,
-                    {},
-                    onShowSnackbar,
-//                    onPostClick
-                )
-
-                ProfileTab.Upvoted -> posts(
-                    upvotedPostsState,
-                    onNavigate,
-                    onNavigateContentScreen,
-                    {},
-                    onShowSnackbar,
-//                    onPostClick
-                )
-
-                ProfileTab.Downvoted -> posts(
-                    downvotedPostsState,
-                    onNavigate,
-                    onNavigateContentScreen,
-                    {},
-                    onShowSnackbar,
-//                    onPostClick
-                )
-            }
+//            when (selectedTab) {
+//                ProfileTab.Overview -> items(
+//                    overViewItemsState,
+//                    onNavigate,
+//                    onNavigateContentScreen,
+//                    { },
+//                    {},
+//                )
+//
+//                ProfileTab.Saved -> items(
+//                    savedItemsState,
+//                    onNavigate,
+//                    onNavigateContentScreen,
+//                    { },
+//                    {},
+//                )
+//
+//                ProfileTab.Comments -> comments(
+//                    commentsState,
+//                    onNavigate,
+//                    onNavigateContentScreen,
+//                )
+//
+//                ProfileTab.Submitted -> posts(
+//                    submittedPostsState,
+//                    onNavigate,
+//                    onNavigateContentScreen,
+//                    {},
+//                    onShowSnackbar,
+////                    onPostClick
+//                )
+//
+//                ProfileTab.Hidden -> posts(
+//                    hiddenPostsState,
+//                    onNavigate,
+//                    onNavigateContentScreen,
+//                    {},
+//                    onShowSnackbar,
+////                    onPostClick
+//                )
+//
+//                ProfileTab.Upvoted -> posts(
+//                    upvotedPostsState,
+//                    onNavigate,
+//                    onNavigateContentScreen,
+//                    {},
+//                    onShowSnackbar,
+////                    onPostClick
+//                )
+//
+//                ProfileTab.Downvoted -> posts(
+//                    downvotedPostsState,
+//                    onNavigate,
+//                    onNavigateContentScreen,
+//                    {},
+//                    onShowSnackbar,
+////                    onPostClick
+//                )
+//            }
         }
     }
 }
