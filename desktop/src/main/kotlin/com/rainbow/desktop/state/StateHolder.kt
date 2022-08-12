@@ -1,4 +1,4 @@
-package com.rainbow.desktop.model
+package com.rainbow.desktop.state
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

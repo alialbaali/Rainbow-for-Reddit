@@ -1,6 +1,6 @@
 package com.rainbow.desktop
 
-import com.rainbow.desktop.model.StateHolder
+import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.navigation.ContentScreen
 import com.rainbow.desktop.navigation.Screen
 import kotlinx.coroutines.FlowPreview

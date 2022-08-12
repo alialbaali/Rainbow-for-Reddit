@@ -1,7 +1,6 @@
 package com.rainbow.desktop.subreddit
 
-import com.rainbow.desktop.model.StateHolder
-import com.rainbow.data.Repos
+import com.rainbow.desktop.state.StateHolder
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 

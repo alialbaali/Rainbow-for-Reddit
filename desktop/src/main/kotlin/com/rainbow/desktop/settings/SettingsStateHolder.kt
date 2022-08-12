@@ -1,6 +1,6 @@
 package com.rainbow.desktop.settings
 
-import com.rainbow.desktop.model.StateHolder
+import com.rainbow.desktop.state.StateHolder
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.*
 import kotlinx.coroutines.flow.MutableStateFlow

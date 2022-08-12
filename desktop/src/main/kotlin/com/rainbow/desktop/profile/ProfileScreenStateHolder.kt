@@ -1,7 +1,7 @@
 package com.rainbow.desktop.profile
 
 import com.rainbow.data.Repos
-import com.rainbow.desktop.model.StateHolder
+import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.toUIState
 import com.rainbow.domain.models.Item

@@ -1,6 +1,6 @@
 package com.rainbow.desktop.search
 
-import com.rainbow.desktop.model.StateHolder
+import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.utils.Constants
 import com.rainbow.domain.models.Subreddit
 import kotlinx.coroutines.FlowPreview

@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.RainbowProgressIndicator
-import com.rainbow.desktop.model.StateHolder
+import com.rainbow.desktop.state.StateHolder
 import com.rainbow.domain.models.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime

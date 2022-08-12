@@ -1,7 +1,7 @@
 package com.rainbow.desktop.post
 
 import com.rainbow.data.Repos
-import com.rainbow.desktop.model.SortedListStateHolder
+import com.rainbow.desktop.state.SortedListStateHolder
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.PostLayout
 import com.rainbow.domain.models.PostSorting

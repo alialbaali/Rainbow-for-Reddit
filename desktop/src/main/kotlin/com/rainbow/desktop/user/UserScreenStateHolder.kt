@@ -1,7 +1,7 @@
 package com.rainbow.desktop.user
 
 import com.rainbow.data.Repos
-import com.rainbow.desktop.model.StateHolder
+import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.post.PostsStateHolder
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.toUIState
@@ -34,13 +34,11 @@ class UserScreenStateHolder private constructor(
 //    }
 
     val postsStateHolder = object : PostsStateHolder<UserPostSorting>(initialPostSorting, postRepository.posts) {
-        override suspend fun loadItems(lastItem: Post?): Result<Unit> {
-            return postRepository.getUserSubmittedPosts(userName, sorting.value, timeSorting.value, lastItem?.id)
-        }
-
-        override suspend fun loadNewSortingItems(sorting: UserPostSorting, timeSorting: TimeSorting): Result<Unit> {
-            return postRepository.getUserSubmittedPosts(userName, sorting, timeSorting, lastPostId = null)
-        }
+        override suspend fun loadItems(
+            sorting: UserPostSorting,
+            timeSorting: TimeSorting,
+            lastItem: Post?
+        ): Result<Unit> = postRepository.getUserSubmittedPosts(userName, sorting, timeSorting, lastItem?.id)
     }
 
 //    val commentListModel = CommentListStateHolder(initialPostSorting) { postSorting, timeSorting, lastCommentId ->

@@ -1,11 +1,8 @@
 package com.rainbow.desktop.message
 
-import com.rainbow.desktop.model.StateHolder
-import com.rainbow.data.Repos
+import com.rainbow.desktop.state.StateHolder
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 
 object MessagesScreenStateHolder : StateHolder() {
 

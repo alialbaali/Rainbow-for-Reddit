@@ -1,4 +1,4 @@
-package com.rainbow.desktop.model
+package com.rainbow.desktop.state
 
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.getOrNull
@@ -13,7 +13,7 @@ abstract class ListStateHolder<T : Any> : StateHolder() {
     protected val mutableLastItem = MutableStateFlow<T?>(null)
     val lastItem get() = mutableLastItem.asStateFlow()
 
-    abstract suspend fun loadItems(lastItem: T?): Result<Unit>
+    protected abstract suspend fun loadItems(lastItem: T?): Result<Unit>
 
     init {
         lastItem

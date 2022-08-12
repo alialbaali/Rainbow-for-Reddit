@@ -1,9 +1,8 @@
 package com.rainbow.desktop.comment
 
-import com.rainbow.desktop.model.StateHolder
+import com.rainbow.desktop.state.StateHolder
 import com.rainbow.data.Repos
 import com.rainbow.domain.models.Comment
-import com.rainbow.domain.models.Vote
 import kotlinx.coroutines.launch
 
 object CommentActionsStateHolder : StateHolder() {

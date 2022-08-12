@@ -1,4 +1,4 @@
-package com.rainbow.desktop.model
+package com.rainbow.desktop.state
 
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.domain.models.Sorting
@@ -6,7 +6,8 @@ import com.rainbow.domain.models.TimeSorting
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 
-abstract class SortedListStateHolder<T : Any, S : Sorting>(initialSorting: S, items: Flow<List<T>>) : ListStateHolder<T>() {
+abstract class SortedListStateHolder<T : Any, S : Sorting>(initialSorting: S, items: Flow<List<T>>) :
+    ListStateHolder<T>() {
 
     private val mutableSorting = MutableStateFlow(initialSorting)
     val sorting get() = mutableSorting.asStateFlow()
@@ -24,7 +25,7 @@ abstract class SortedListStateHolder<T : Any, S : Sorting>(initialSorting: S, it
             previousJob?.cancel()
             mutableLastItem.value = null
             mutableItems.value = UIState.Loading()
-            loadNewItems(sorting, timeSorting)
+            loadItems(sorting, timeSorting, lastItem = null)
                 .onSuccess {
                     previousJob = items
                         .map { UIState.Success(it) }
@@ -35,7 +36,11 @@ abstract class SortedListStateHolder<T : Any, S : Sorting>(initialSorting: S, it
         }.launchIn(scope)
     }
 
-    abstract suspend fun loadNewItems(sorting: S, timeSorting: TimeSorting): Result<Unit>
+    final override suspend fun loadItems(lastItem: T?): Result<Unit> {
+        return loadItems(sorting.value, timeSorting.value, lastItem)
+    }
+
+    protected abstract suspend fun loadItems(sorting: S, timeSorting: TimeSorting, lastItem: T?): Result<Unit>
 
     fun setSorting(sorting: S) {
         mutableSorting.value = sorting

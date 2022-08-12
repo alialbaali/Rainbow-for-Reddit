@@ -23,9 +23,9 @@ inline fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
     val stateHolder = remember { HomeScreenStateHolder() }
-    val posts by stateHolder.posts.collectAsState()
-    val postSorting by stateHolder.postSorting.collectAsState()
-    val timeSorting by stateHolder.timeSorting.collectAsState()
+    val posts by stateHolder.postsStateHolder.items.collectAsState()
+    val postSorting by stateHolder.postsStateHolder.sorting.collectAsState()
+    val timeSorting by stateHolder.postsStateHolder.timeSorting.collectAsState()
     val selectedTab by stateHolder.selectedTab.collectAsState()
     DisposableEffect(posts.isLoading) {
         val post = posts.getOrNull()?.firstOrNull()
@@ -54,12 +54,12 @@ inline fun HomeScreen(
                 ) {
                     DropdownMenuHolder(
                         value = postSorting,
-                        onValueUpdate = { stateHolder.setPostSorting(it) },
+                        onValueUpdate = stateHolder.postsStateHolder::setSorting,
                     )
 
                     DropdownMenuHolder(
                         value = timeSorting,
-                        onValueUpdate = { stateHolder.setTimeSorting(it) },
+                        onValueUpdate = stateHolder.postsStateHolder::setTimeSorting,
                         enabled = postSorting.isTimeSorting,
                     )
                 }
@@ -74,7 +74,7 @@ inline fun HomeScreen(
                     onNavigateContentScreen,
                     {},
                     onShowSnackbar,
-                    stateHolder::setLastPostId,
+                    stateHolder.postsStateHolder::setLastItem,
                 )
             }
 

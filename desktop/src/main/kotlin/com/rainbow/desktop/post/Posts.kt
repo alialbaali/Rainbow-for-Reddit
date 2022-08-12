@@ -17,7 +17,7 @@ inline fun LazyListScope.posts(
     crossinline onNavigateContentScreen: (ContentScreen) -> Unit,
     crossinline onAwardsClick: () -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
-    crossinline onLoadMore: (String) -> Unit = {},
+    crossinline onLoadMore: (Post) -> Unit = {},
 ) {
     val posts = state.getOrDefault(emptyList())
     itemsIndexed(posts) { index, post ->
@@ -29,9 +29,7 @@ inline fun LazyListScope.posts(
             onShowSnackbar,
             Modifier.fillParentMaxWidth(),
         )
-        PagingEffect(posts, index) {
-            onLoadMore(it.id)
-        }
+        PagingEffect(posts, index, onLoadMore)
     }
     if (state.isLoading) {
         item {
