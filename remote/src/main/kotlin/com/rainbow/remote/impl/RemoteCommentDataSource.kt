@@ -15,11 +15,11 @@ private typealias CommentsList = List<Item<Listing<RemoteComment>>>
 
 private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommentDataSource {
 
-    override suspend fun getHomeComments(limit: Int, after: String?): Result<List<RemoteComment>> {
-        return client.get<Listing<RemoteComment>>(Comments.Home) {
+    override suspend fun getHomeComments(limit: Int, after: String?): List<RemoteComment> {
+        return client.getOrThrow<Listing<RemoteComment>>(Comments.Home) {
             parameter(Keys.Limit, limit)
             parameter(Keys.After, after)
-        }.mapCatching { it.toList() }
+        }.toList()
     }
 
     override suspend fun getPostComments(
@@ -68,7 +68,12 @@ private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommen
         commentsSorting: String,
         limit: Int,
     ): Result<List<RemoteComment>> {
-        return client.plainRequest<CommentsList>(Comments.ThreadComments(postId.removeIdPrefix(), parentId.removeIdPrefix())) {
+        return client.plainRequest<CommentsList>(
+            Comments.ThreadComments(
+                postId.removeIdPrefix(),
+                parentId.removeIdPrefix()
+            )
+        ) {
             parameter(Keys.Sort, commentsSorting)
             parameter(Keys.Limit, limit)
         }.mapCatching { it.map { it.data.toList() }[1] }

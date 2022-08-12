@@ -24,7 +24,7 @@ inline fun LazyListScope.messages(
                 message,
                 onNavigate,
                 Modifier.clickable {
-                    onNavigateContentScreen(ContentScreen.MessageEntity(message))
+                    onNavigateContentScreen(ContentScreen.Message(message))
                 }
             )
         }

@@ -4,8 +4,11 @@ import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.PostCommentSorting
 import com.rainbow.domain.models.TimeSorting
 import com.rainbow.domain.models.UserPostSorting
+import kotlinx.coroutines.flow.Flow
 
 interface CommentRepository {
+
+    val comments: Flow<List<Comment>>
 
     suspend fun getCurrentUserComments(
         commentsSorting: UserPostSorting,
@@ -13,7 +16,7 @@ interface CommentRepository {
         lastCommentId: String?,
     ): Result<List<Comment>>
 
-    suspend fun getHomeComments(lastCommentId: String?): Result<List<Comment>>
+    suspend fun getHomeComments(lastCommentId: String?): Result<Unit>
 
     suspend fun getPostsComments(
         postId: String,

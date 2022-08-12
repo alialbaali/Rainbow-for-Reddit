@@ -4,23 +4,27 @@ import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.getOrNull
 import kotlinx.coroutines.flow.*
 
-abstract class ListStateHolder<T : Any> : StateHolder() {
+abstract class ListStateHolder<T : Any>(private val dataItems: Flow<List<T>>) : StateHolder() {
 
-    protected val mutableItems = MutableStateFlow<UIState<List<T>>>(UIState.Loading(emptyList()))
+    protected val mutableItems = MutableStateFlow<UIState<List<T>>>(UIState.Empty)
     val items get() = mutableItems.asStateFlow()
-    private val currentItems get() = items.value.getOrNull()
+    protected val currentItems get() = items.value.getOrNull()
 
     protected val mutableLastItem = MutableStateFlow<T?>(null)
     val lastItem get() = mutableLastItem.asStateFlow()
 
-    protected abstract suspend fun loadItems(lastItem: T?): Result<Unit>
+    protected abstract suspend fun getItems(lastItem: T?): Result<Unit>
 
-    init {
+    open fun loadItems() {
+        dataItems
+            .map { UIState.Success(it) }
+            .onEach { mutableItems.value = it }
+            .launchIn(scope)
+
         lastItem
-            .filterNotNull()
             .onEach { lastItem ->
                 mutableItems.value = UIState.Loading(currentItems)
-                loadItems(lastItem)
+                getItems(lastItem)
                     .onFailure { mutableItems.value = UIState.Failure(currentItems, it) }
             }
             .launchIn(scope)

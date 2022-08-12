@@ -24,7 +24,7 @@ inline fun CommentItem(
     Column(
         modifier
             .defaultSurfaceShape()
-            .clickable { onNavigateContentScreen(ContentScreen.PostEntity(comment.postId)) }
+            .clickable { onNavigateContentScreen(ContentScreen.Post(comment.postId)) }
             .defaultPadding(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {

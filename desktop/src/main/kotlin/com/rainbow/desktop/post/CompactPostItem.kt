@@ -25,7 +25,7 @@ inline fun CompactPostItem(
     Column(
         modifier
             .padding(vertical = 8.dp)
-            .clickable { onNavigateContentScreen(ContentScreen.PostEntity(post.id)) }
+            .clickable { onNavigateContentScreen(ContentScreen.Post(post.id)) }
             .defaultPadding(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -74,7 +74,7 @@ inline fun CompactPostItem(
         }
         PostActions(
             post,
-            onClick = { post -> onNavigateContentScreen(ContentScreen.PostEntity(post.id)) },
+            onClick = { post -> onNavigateContentScreen(ContentScreen.Post(post.id)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),

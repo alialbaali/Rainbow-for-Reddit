@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.rainbow.desktop.comment.comments
 import com.rainbow.desktop.components.DropdownMenuHolder
 import com.rainbow.desktop.components.EnumTabRow
 import com.rainbow.desktop.components.RainbowLazyColumn
@@ -26,11 +27,21 @@ inline fun HomeScreen(
     val posts by stateHolder.postsStateHolder.items.collectAsState()
     val postSorting by stateHolder.postsStateHolder.sorting.collectAsState()
     val timeSorting by stateHolder.postsStateHolder.timeSorting.collectAsState()
+    val comments by stateHolder.commentsStateHolder.items.collectAsState()
     val selectedTab by stateHolder.selectedTab.collectAsState()
     DisposableEffect(posts.isLoading) {
         val post = posts.getOrNull()?.firstOrNull()
         if (post != null) {
-            onNavigateContentScreen(ContentScreen.PostEntity(post.id))
+            onNavigateContentScreen(ContentScreen.Post(post.id))
+        }
+        onDispose {
+            onNavigateContentScreen(ContentScreen.None)
+        }
+    }
+    DisposableEffect(comments.isLoading) {
+        val comment = comments.getOrNull()?.firstOrNull()
+        if (comment != null) {
+            onNavigateContentScreen(ContentScreen.Post(comment.postId))
         }
         onDispose {
             onNavigateContentScreen(ContentScreen.None)
@@ -79,13 +90,12 @@ inline fun HomeScreen(
             }
 
             HomeTab.Comments -> {
-//                comments(
-//                    commentsState,
-//                    onUserNameClick,
-//                    onSubredditNameClick,
-//                    onCommentClick,
-//                    onCommentUpdate,
-//                )
+                comments(
+                    comments,
+                    onNavigate,
+                    onNavigateContentScreen,
+                    stateHolder.commentsStateHolder::setLastItem,
+                )
             }
         }
     }

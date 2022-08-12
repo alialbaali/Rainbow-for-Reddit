@@ -3,15 +3,21 @@ package com.rainbow.desktop.home
 import com.rainbow.data.Repos
 import com.rainbow.desktop.post.PostsStateHolder
 import com.rainbow.desktop.state.StateHolder
+import com.rainbow.desktop.utils.UIState
+import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.HomePostSorting
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.TimeSorting
+import com.rainbow.domain.repository.CommentRepository
 import com.rainbow.domain.repository.PostRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class HomeScreenStateHolder(
     private val postRepository: PostRepository = Repos.Post,
+    private val commentRepository: CommentRepository = Repos.Comment,
 ) : StateHolder() {
 
     private val mutableSelectedTab = MutableStateFlow(HomeTab.Default)
@@ -21,23 +27,28 @@ class HomeScreenStateHolder(
         HomePostSorting.Default,
         postRepository.posts,
     ) {
-        override suspend fun loadItems(
+        override suspend fun getItems(
             sorting: HomePostSorting,
             timeSorting: TimeSorting,
             lastItem: Post?
         ): Result<Unit> = postRepository.getHomePosts(sorting, timeSorting, lastItem?.id)
     }
 
-    init {
+    val commentsStateHolder = object : HomeScreenCommentsStateHolder(commentRepository.comments) {
+        override suspend fun getItems(lastItem: Comment?): Result<Unit> {
+            return commentRepository.getHomeComments(lastItem?.id)
+        }
+    }
 
-        //        selectedTab
-//            .onEach {
-//                when (it) {
-//                    HomeTab.Posts -> if (!posts.value.isLoading) postListModel.loadItems()
-//                    HomeTab.Comments -> if (commentListModel.items.value.isLoading) commentListModel.loadItems()
-//                }
-//            }
-//            .launchIn(scope)
+    init {
+        selectedTab
+            .onEach {
+                when (it) {
+                    HomeTab.Posts -> if (postsStateHolder.items.value is UIState.Empty) postsStateHolder.loadItems()
+                    HomeTab.Comments -> if (commentsStateHolder.items.value is UIState.Empty) commentsStateHolder.loadItems()
+                }
+            }
+            .launchIn(scope)
     }
 
     fun selectTab(tab: HomeTab) {

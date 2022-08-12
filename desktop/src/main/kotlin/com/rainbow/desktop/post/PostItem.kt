@@ -32,7 +32,7 @@ inline fun PostItem(
 //    MarkPostIsReadEffect(post, markPostAsRead)
     Surface(
         onClick = {
-            onNavigateContentScreen(ContentScreen.PostEntity(post.id))
+            onNavigateContentScreen(ContentScreen.Post(post.id))
             if (markPostAsRead == MarkPostAsRead.OnClick)
                 PostActionsStateHolder.readPost(post)
         },
@@ -51,7 +51,7 @@ inline fun PostItem(
             PostContent(post)
             PostActions(
                 post,
-                onClick = { post -> onNavigateContentScreen(ContentScreen.PostEntity(post.id)) },
+                onClick = { post -> onNavigateContentScreen(ContentScreen.Post(post.id)) },
             ) {
                 PostActionsMenu(post, onShowSnackbar)
             }

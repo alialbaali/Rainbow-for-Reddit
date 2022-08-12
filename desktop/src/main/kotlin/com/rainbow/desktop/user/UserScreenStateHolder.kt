@@ -34,7 +34,7 @@ class UserScreenStateHolder private constructor(
 //    }
 
     val postsStateHolder = object : PostsStateHolder<UserPostSorting>(initialPostSorting, postRepository.posts) {
-        override suspend fun loadItems(
+        override suspend fun getItems(
             sorting: UserPostSorting,
             timeSorting: TimeSorting,
             lastItem: Post?

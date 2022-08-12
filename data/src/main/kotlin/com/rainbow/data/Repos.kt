@@ -2,6 +2,7 @@ package com.rainbow.data
 
 import com.rainbow.data.repository.*
 import com.rainbow.domain.repository.*
+import com.rainbow.local.LocalCommentDataSourceImpl
 import com.rainbow.local.LocalPostDataSourceImpl
 import com.rainbow.remote.impl.*
 import com.russhwolf.settings.*
@@ -67,6 +68,7 @@ object Repos {
     @OptIn(ExperimentalSettingsApi::class)
     object Comment : CommentRepository by CommentRepositoryImpl(
         RemoteCommentDataSource(),
+        LocalCommentDataSourceImpl(),
         flowSettings,
         DefaultDispatcher,
         Mappers.CommentMapper,

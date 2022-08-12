@@ -10,20 +10,25 @@ import com.rainbow.domain.models.PostCommentSorting
 import com.rainbow.domain.models.TimeSorting
 import com.rainbow.domain.models.UserPostSorting
 import com.rainbow.domain.repository.CommentRepository
+import com.rainbow.local.LocalCommentDataSource
 import com.rainbow.remote.dto.RemoteComment
 import com.rainbow.remote.source.RemoteCommentDataSource
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalSettingsApi::class)
 internal class CommentRepositoryImpl(
     private val remoteCommentDataSource: RemoteCommentDataSource,
+    private val localCommentDataSource: LocalCommentDataSource,
     private val settings: FlowSettings,
     private val dispatcher: CoroutineDispatcher,
     private val mapper: Mapper<RemoteComment, Comment>,
 ) : CommentRepository {
+
+    override val comments: Flow<List<Comment>> = localCommentDataSource.comments
 
     override suspend fun getCurrentUserComments(
         commentsSorting: UserPostSorting,
@@ -40,9 +45,13 @@ internal class CommentRepositoryImpl(
         ).mapCatching { it.quickMap(mapper) }
     }
 
-    override suspend fun getHomeComments(lastCommentId: String?): Result<List<Comment>> = withContext(dispatcher) {
-        remoteCommentDataSource.getHomeComments(DefaultLimit, lastCommentId)
-            .mapCatching { it.quickMap(mapper) }
+    override suspend fun getHomeComments(lastCommentId: String?): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            if (lastCommentId == null) localCommentDataSource.clearComments()
+            remoteCommentDataSource.getHomeComments(DefaultLimit, lastCommentId)
+                .quickMap(mapper)
+                .forEach(localCommentDataSource::insertComment)
+        }
     }
 
     override suspend fun getPostsComments(
@@ -59,7 +68,8 @@ internal class CommentRepositoryImpl(
         timeSorting: TimeSorting,
         lastCommentId: String?,
     ): Result<List<Comment>> = withContext(dispatcher) {
-        remoteCommentDataSource.getUserComments(userName,
+        remoteCommentDataSource.getUserComments(
+            userName,
             commentsSorting.lowercaseName,
             timeSorting.lowercaseName,
             DefaultLimit,
@@ -99,13 +109,16 @@ internal class CommentRepositoryImpl(
 
     override suspend fun upvoteComment(commentId: String): Result<Unit> = withContext(dispatcher) {
         remoteCommentDataSource.upvoteComment(commentId)
+            .onSuccess { localCommentDataSource.upvoteComment(commentId) }
     }
 
     override suspend fun unvoteComment(commentId: String): Result<Unit> = withContext(dispatcher) {
         remoteCommentDataSource.unvoteComment(commentId)
+            .onSuccess { localCommentDataSource.unvoteComment(commentId) }
     }
 
     override suspend fun downvoteComment(commentId: String): Result<Unit> = withContext(dispatcher) {
         remoteCommentDataSource.downvoteComment(commentId)
+            .onSuccess { localCommentDataSource.downvoteComment(commentId) }
     }
 }

@@ -17,7 +17,6 @@ import com.rainbow.desktop.navigation.ContentScreen
 import com.rainbow.desktop.navigation.Screen
 import com.rainbow.desktop.navigation.Sidebar
 import com.rainbow.desktop.post.PostScreen
-import com.rainbow.desktop.post.PostScreenStateHolder
 import com.rainbow.desktop.profile.ProfileScreen
 import com.rainbow.desktop.search.SearchScreen
 import com.rainbow.desktop.settings.SettingsScreen
@@ -195,7 +194,7 @@ private fun EndContent(
                 RainbowProgressIndicator()
             }
         }
-        is ContentScreen.PostEntity -> {
+        is ContentScreen.Post -> {
             PostScreen(
                 contentScreen.postId,
                 onNavigate,
@@ -204,7 +203,7 @@ private fun EndContent(
             )
         }
 
-        is ContentScreen.MessageEntity -> TODO()
+        is ContentScreen.Message -> TODO()
     }
 //    val isMessageScreen = messageModelState
 //        .map { it.message.value.type is Message.Type.Message }
