@@ -1,10 +1,13 @@
 package com.rainbow.domain.repository
 
 import com.rainbow.domain.models.*
+import kotlinx.coroutines.flow.Flow
 
 interface SubredditRepository {
 
-    suspend fun getCurrentUserSubreddits(lastSubredditId: String?): Result<List<Subreddit>>
+    val currentUserSubreddits: Flow<List<Subreddit>>
+
+    suspend fun getCurrentUserSubreddits(lastSubredditId: String?): Result<Unit>
 
     suspend fun getSubreddit(subredditName: String): Result<Subreddit>
 

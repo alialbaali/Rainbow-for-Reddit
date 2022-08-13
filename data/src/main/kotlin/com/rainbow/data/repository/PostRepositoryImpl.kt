@@ -143,15 +143,18 @@ internal class PostRepositoryImpl(
         postsSorting: SubredditPostSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
-    ): Result<List<Post>> = runCatching {
+    ): Result<Unit> = runCatching {
         withContext(dispatcher) {
+            if (lastPostId == null) localPostDataSource.clearPosts()
             remotePostDataSource.getSubredditPosts(
                 subredditName,
                 postsSorting.lowercaseName,
                 timeSorting.lowercaseName,
                 DefaultLimit,
-                lastPostId
-            ).quickMap(postMapper)
+                lastPostId,
+            ).quickMap(postMapper).mapWithSubredditImageUrl().forEach { post ->
+                localPostDataSource.insertPost(post)
+            }
         }
     }
 

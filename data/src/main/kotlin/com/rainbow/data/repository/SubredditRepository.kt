@@ -7,6 +7,7 @@ import com.rainbow.data.utils.DefaultLimit
 import com.rainbow.data.utils.SettingsKeys
 import com.rainbow.domain.models.*
 import com.rainbow.domain.repository.SubredditRepository
+import com.rainbow.local.LocalSubredditDataSource
 import com.rainbow.remote.dto.RemoteModerator
 import com.rainbow.remote.dto.RemoteRule
 import com.rainbow.remote.dto.RemoteSubreddit
@@ -15,6 +16,7 @@ import com.rainbow.remote.source.*
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalSettingsApi::class)
@@ -24,6 +26,7 @@ internal class SubredditRepositoryImpl(
     private val remoteWikiDataSource: RemoteWikiDataSource,
     private val remoteSubredditFlairDataSource: RemoteSubredditFlairDataSource,
     private val remoteRuleDataSource: RemoteRuleDataSource,
+    private val localSubredditDataSource: LocalSubredditDataSource,
     private val settings: FlowSettings,
     private val dispatcher: CoroutineDispatcher,
     private val subredditMapper: Mapper<RemoteSubreddit, Subreddit>,
@@ -31,22 +34,16 @@ internal class SubredditRepositoryImpl(
     private val wikiPageMapper: Mapper<RemoteWikiPage, WikiPage>,
     private val ruleMapper: Mapper<RemoteRule, Rule>,
 ) : SubredditRepository {
+    override val currentUserSubreddits: Flow<List<Subreddit>>
+        get() = localSubredditDataSource.currentUserSubreddits
 
-    override suspend fun getCurrentUserSubreddits(lastSubredditId: String?): Result<List<Subreddit>> =
+    override suspend fun getCurrentUserSubreddits(lastSubredditId: String?): Result<Unit> = runCatching {
         withContext(dispatcher) {
-            val subreddits = mutableListOf<Subreddit>()
-            var id = lastSubredditId
-            do {
-                remoteSubredditDataSource.getCurrentUserSubreddits(DefaultLimit, id)
-                    .mapCatching { it.quickMap(subredditMapper) }
-                    .onSuccess {
-                        subreddits += it
-                        id = it.lastOrNull()?.id
-                    }
-                    .onFailure { return@withContext Result.failure(it) }
-            } while (id != null)
-            Result.success(subreddits)
+            remoteSubredditDataSource.getCurrentUserSubreddits(DefaultLimit, lastSubredditId)
+                .quickMap(subredditMapper)
+                .forEach(localSubredditDataSource::insertSubreddit)
         }
+    }
 
     override suspend fun getSubreddit(subredditName: String): Result<Subreddit> = withContext(dispatcher) {
         remoteSubredditDataSource.getSubreddit(subredditName)
@@ -66,18 +63,22 @@ internal class SubredditRepositoryImpl(
 
     override suspend fun subscribeSubreddit(subredditName: String): Result<Unit> = withContext(dispatcher) {
         remoteSubredditDataSource.subscribeSubreddit(subredditName)
+            .onSuccess { localSubredditDataSource.subscribeSubreddit(subredditName) }
     }
 
     override suspend fun unSubscribeSubreddit(subredditName: String): Result<Unit> = withContext(dispatcher) {
         remoteSubredditDataSource.unSubscribeSubreddit(subredditName)
+            .onSuccess { localSubredditDataSource.unsubscribeSubreddit(subredditName) }
     }
 
     override suspend fun favoriteSubreddit(subredditName: String): Result<Unit> = withContext(dispatcher) {
         remoteSubredditDataSource.favoriteSubreddit(subredditName)
+            .onSuccess { localSubredditDataSource.favoriteSubreddit(subredditName) }
     }
 
     override suspend fun unFavoriteSubreddit(subredditName: String): Result<Unit> = withContext(dispatcher) {
         remoteSubredditDataSource.unFavoriteSubreddit(subredditName)
+            .onSuccess { localSubredditDataSource.unFavoriteSubreddit(subredditName) }
     }
 
     override suspend fun getSubredditSubmitText(subredditName: String): Result<String> = withContext(dispatcher) {

@@ -13,16 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rainbow.desktop.components.RainbowProgressIndicator
-import com.rainbow.desktop.components.TextBox
 import com.rainbow.desktop.utils.ImageBorderSize
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.defaultPadding
@@ -39,8 +34,8 @@ fun ScreenHeaderItem(
     modifier: Modifier = Modifier,
     imageShape: Shape = CircleShape,
 ) {
-    val bannerImageResource = lazyPainterResource(bannerImageUrl)
-    val profileImageResource = lazyPainterResource(imageUrl)
+    val bannerImageResource = lazyPainterResource(bannerImageUrl, filterQuality = FilterQuality.High)
+    val profileImageResource = lazyPainterResource(imageUrl, filterQuality = FilterQuality.High)
     val bannerImageHeight = 200.dp
     val profileImageSize = 200.dp
     val bannerImageGradientHeight = bannerImageHeight / 2.dp

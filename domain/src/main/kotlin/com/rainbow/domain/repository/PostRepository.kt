@@ -49,7 +49,7 @@ interface PostRepository {
         postsSorting: SubredditPostSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
-    ): Result<List<Post>>
+    ): Result<Unit>
 
     fun getPost(postId: String): Flow<Result<Post>>
 

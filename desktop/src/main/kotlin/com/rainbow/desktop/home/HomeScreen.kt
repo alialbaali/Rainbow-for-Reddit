@@ -23,7 +23,7 @@ inline fun HomeScreen(
     noinline onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val stateHolder = remember { HomeScreenStateHolder() }
+    val stateHolder = remember { HomeScreenStateHolder.getInstance() }
     val posts by stateHolder.postsStateHolder.items.collectAsState()
     val postSorting by stateHolder.postsStateHolder.sorting.collectAsState()
     val timeSorting by stateHolder.postsStateHolder.timeSorting.collectAsState()

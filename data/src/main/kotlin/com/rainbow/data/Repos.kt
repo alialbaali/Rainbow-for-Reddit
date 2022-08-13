@@ -4,8 +4,12 @@ import com.rainbow.data.repository.*
 import com.rainbow.domain.repository.*
 import com.rainbow.local.LocalCommentDataSourceImpl
 import com.rainbow.local.LocalPostDataSourceImpl
+import com.rainbow.local.LocalSubredditDataSourceImpl
 import com.rainbow.remote.impl.*
-import com.russhwolf.settings.*
+import com.russhwolf.settings.ExperimentalSettingsApi
+import com.russhwolf.settings.ExperimentalSettingsImplementation
+import com.russhwolf.settings.ObservableSettings
+import com.russhwolf.settings.Settings
 import com.russhwolf.settings.coroutines.toFlowSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,7 +46,7 @@ object Repos {
 
     object Post : PostRepository by PostRepositoryImpl(
         RemotePostDataSource(),
-        RemoteSubredditDataSource(),
+        RemoteSubredditDataSourceImpl(),
         LocalPostDataSourceImpl(),
         flowSettings,
         DefaultDispatcher,
@@ -52,11 +56,12 @@ object Repos {
 
     @OptIn(ExperimentalSettingsApi::class)
     object Subreddit : SubredditRepository by SubredditRepositoryImpl(
-        RemoteSubredditDataSource(),
+        RemoteSubredditDataSourceImpl(),
         RemoteModeratorDataSource(),
         RemoteWikiDataSourceImpl(),
         RemoteSubredditFlairDataSource(),
         RemoteRuleDataSource(),
+        LocalSubredditDataSourceImpl(),
         flowSettings,
         DefaultDispatcher,
         Mappers.SubredditMapper,

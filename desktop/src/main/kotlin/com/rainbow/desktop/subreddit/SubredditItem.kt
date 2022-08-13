@@ -1,36 +1,38 @@
 package com.rainbow.desktop.subreddit
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.rounded.OpenInBrowser
+import androidx.compose.material.icons.rounded.PlaylistRemove
 import androidx.compose.material.icons.rounded.PostAdd
-import androidx.compose.material.icons.rounded.RemoveCircle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.HeaderItem
 import com.rainbow.desktop.components.MenuIconButton
-import com.rainbow.desktop.utils.RainbowIcons
-import com.rainbow.desktop.utils.RainbowStrings
-import com.rainbow.desktop.utils.defaultSurfaceShape
 import com.rainbow.desktop.components.RainbowMenu
 import com.rainbow.desktop.components.RainbowMenuItem
+import com.rainbow.desktop.utils.RainbowIcons
+import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.domain.models.Subreddit
-//import com.rainbow.domain.models.fullUrl
 
 @Composable
 fun SubredditItem(
     subreddit: Subreddit,
-    onSubredditUpdate: (Subreddit) -> Unit,
     onClick: (Subreddit) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier.defaultSurfaceShape()
-            .clickable { onClick(subreddit) },
+        modifier
+            .clip(MaterialTheme.shapes.small)
+            .clickable { onClick(subreddit) }
+            .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.small),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -38,7 +40,6 @@ fun SubredditItem(
         SubredditItemName(subreddit.name, Modifier.padding(horizontal = 16.dp))
         SubredditItemActions(
             subreddit,
-            onSubredditUpdate,
             onShowSnackbar,
             Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
         )
@@ -48,7 +49,6 @@ fun SubredditItem(
 @Composable
 private fun SubredditItemActions(
     subreddit: Subreddit,
-    onSubredditUpdate: (Subreddit) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -60,7 +60,7 @@ private fun SubredditItemActions(
             .wrapContentHeight(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        SubredditFavoriteIconButton(subreddit, onSubredditUpdate, onShowSnackbar)
+        SubredditFavoriteIconButton(subreddit, onShowSnackbar)
         Column {
             MenuIconButton(onClick = { isMenuExpanded = true })
             RainbowMenu(isMenuExpanded, onDismissRequest = { isMenuExpanded = false }) {
@@ -74,9 +74,9 @@ private fun SubredditItemActions(
                 )
                 RainbowMenuItem(
                     RainbowStrings.UnSubscribe,
-                    RainbowIcons.RemoveCircle, // Playlist remove icon (Not available currently)
+                    RainbowIcons.PlaylistRemove,
                     onClick = {
-                        SubredditActionsStateHolder.unSubscribeSubreddit(subreddit, onSubredditUpdate)
+                        SubredditActionsStateHolder.unSubscribeSubreddit(subreddit)
                         isMenuExpanded = false
                         onShowSnackbar(RainbowStrings.UnsubscribeMessage(subreddit.name))
                     }

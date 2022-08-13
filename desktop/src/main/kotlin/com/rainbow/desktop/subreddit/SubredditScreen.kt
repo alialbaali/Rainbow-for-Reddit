@@ -37,9 +37,8 @@ fun SubredditScreen(
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val model = remember { SubredditScreenStateHolder.getOrCreateInstance(subredditName) }
-//    val postLayout by model.postListModel.postLayout.collectAsState()
-//    val postsState by model.postListModel.items.collectAsState()
+    val model = remember { SubredditScreenStateHolder.getInstance(subredditName) }
+    val postsState by model.postsStateHolder.items.collectAsState()
     val moderatorsState by model.moderators.collectAsState()
     val subredditState by model.subreddit.collectAsState()
     val selectedTab by model.selectedTab.collectAsState()
@@ -48,7 +47,7 @@ fun SubredditScreen(
     LazyColumn(modifier) {
         item {
             subredditState.composed(onShowSnackbar) { subreddit ->
-                Header(subreddit, {}, onShowSnackbar, Modifier.padding(bottom = 8.dp))
+                Header(subreddit, onShowSnackbar, Modifier.padding(bottom = 8.dp))
             }
         }
         item {
@@ -57,20 +56,20 @@ fun SubredditScreen(
                 onTabClick = { model.selectTab(it) },
             )
         }
-//        when (selectedTab) {
-//            SubredditTab.Posts -> posts(
-//                postsState,
-//                onNavigate,
-//                onNavigateContentScreen,
-//                {},
-//                onShowSnackbar,
-//            )
+        when (selectedTab) {
+            SubredditTab.Posts -> posts(
+                postsState,
+                onNavigate,
+                onNavigateContentScreen,
+                {},
+                onShowSnackbar,
+            )
 
-//            SubredditTab.Description -> description(subredditState, onShowSnackbar)
-//            SubredditTab.Wiki -> wiki(wikiState, onShowSnackbar)
-//            SubredditTab.Rules -> rules(rulesState, onShowSnackbar)
-//            SubredditTab.Moderators -> moderators(moderatorsState, { onNavigate(Screen.User(it)) }, onShowSnackbar)
-//        }
+            SubredditTab.Description -> description(subredditState, onShowSnackbar)
+            SubredditTab.Wiki -> wiki(wikiState, onShowSnackbar)
+            SubredditTab.Rules -> rules(rulesState, onShowSnackbar)
+            SubredditTab.Moderators -> moderators(moderatorsState, { onNavigate(Screen.User(it)) }, onShowSnackbar)
+        }
     }
 }
 
@@ -107,7 +106,6 @@ private fun LazyListScope.description(state: UIState<Subreddit>, onShowSnackbar:
 @Composable
 private fun Header(
     subreddit: Subreddit,
-    onSubredditUpdate: (Subreddit) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -124,22 +122,27 @@ private fun Header(
             imageShape = MaterialTheme.shapes.large,
         )
 
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .defaultPadding(start = 232.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
                 text = subreddit.shortDescription,
                 style = MaterialTheme.typography.bodyMedium,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1F)
             )
-            SubredditFavoriteIconButton(subreddit, onSubredditUpdate, onShowSnackbar, enabled = subreddit.isSubscribed)
-            SelectFlairButton(subreddit.name, onShowSnackbar)
-            SubscribeButton(subreddit, onSubredditUpdate, onShowSnackbar)
+            Row {
+                SubredditFavoriteIconButton(
+                    subreddit,
+                    onShowSnackbar,
+                    enabled = subreddit.isSubscribed
+                )
+                SelectFlairButton(subreddit.name, onShowSnackbar)
+                SubscribeButton(subreddit, onShowSnackbar)
+            }
         }
     }
 }

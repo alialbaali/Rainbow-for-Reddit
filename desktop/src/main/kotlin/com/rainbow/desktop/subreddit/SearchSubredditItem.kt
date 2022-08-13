@@ -42,7 +42,6 @@ fun SearchSubredditItem(
         SubredditInfoItems(subreddit, Modifier.padding(horizontal = 16.dp))
         SubredditItemActions(
             subreddit,
-            onSubredditUpdate,
             onShowSnackbar,
             Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
         )
@@ -62,7 +61,6 @@ private fun SubredditItemDescription(subredditDescription: String, modifier: Mod
 @Composable
 private fun SubredditItemActions(
     subreddit: Subreddit,
-    onSubredditUpdate: (Subreddit) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -74,7 +72,7 @@ private fun SubredditItemActions(
             .wrapContentHeight(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        SubscribeButton(subreddit, onSubredditUpdate, onShowSnackbar)
+        SubscribeButton(subreddit, onShowSnackbar)
 //        Column {
 //            MenuIconButton(onClick = { isMenuExpanded = true })
 //            RainbowMenu(isMenuExpanded, onDismissRequest = { isMenuExpanded = false }) {

@@ -1,21 +1,24 @@
 package com.rainbow.desktop.subreddit
 
 import com.rainbow.data.Repos
+import com.rainbow.desktop.post.PostsStateHolder
 import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.utils.UIState
-import com.rainbow.desktop.utils.map
 import com.rainbow.desktop.utils.toUIState
-import com.rainbow.domain.models.Moderator
-import com.rainbow.domain.models.Rule
-import com.rainbow.domain.models.Subreddit
-import com.rainbow.domain.models.WikiPage
+import com.rainbow.domain.models.*
+import com.rainbow.domain.repository.PostRepository
+import com.rainbow.domain.repository.SubredditRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-private val subredditScreenModels = mutableSetOf<SubredditScreenStateHolder>()
-
-class SubredditScreenStateHolder private constructor(private val subredditName: String) : StateHolder() {
+class SubredditScreenStateHolder private constructor(
+    private val subredditName: String,
+    private val postRepository: PostRepository = Repos.Post,
+    private val subredditRepository: SubredditRepository = Repos.Subreddit,
+) : StateHolder() {
 
     private val mutableSelectedTab = MutableStateFlow(SubredditTab.Default)
     val selectedTab get() = mutableSelectedTab.asStateFlow()
@@ -32,48 +35,41 @@ class SubredditScreenStateHolder private constructor(private val subredditName: 
     private val mutableRules = MutableStateFlow<UIState<List<Rule>>>(UIState.Empty)
     val rules get() = mutableRules.asStateFlow()
 
-    private val initialPostSorting = Repos.Settings.getSubredditPostSorting()
-
-//    val postListModel = PostListStateHolder(initialPostSorting) { postSorting, timeSorting, lastPostId ->
-//        Repos.Post.getSubredditPosts(subredditName, postSorting, timeSorting, lastPostId)
-//    }
+    val postsStateHolder =
+        object : PostsStateHolder<SubredditPostSorting>(SubredditPostSorting.Default, postRepository.posts) {
+            override suspend fun getItems(
+                sorting: SubredditPostSorting,
+                timeSorting: TimeSorting,
+                lastItem: Post?
+            ): Result<Unit> = postRepository.getSubredditPosts(subredditName, sorting, timeSorting, lastItem?.id)
+        }
 
     init {
         loadSubreddit()
-//        selectedTab
-//            .onEach {
-//                when (it) {
-//                    SubredditTab.Posts -> if (postListModel.items.value.isLoading) postListModel.loadItems()
-//                    SubredditTab.Wiki -> if (wiki.value.isLoading) loadWiki()
-//                    SubredditTab.Rules -> if (rules.value.isLoading) loadRules()
-//                    SubredditTab.Moderators -> if (moderators.value.isLoading) loadModerators()
-//                    SubredditTab.Description -> {}
-//                }
-//            }
-//            .launchIn(scope)
+        selectedTab
+            .onEach {
+                when (it) {
+                    SubredditTab.Posts -> if (postsStateHolder.items.value.isEmpty) postsStateHolder.loadItems()
+                    SubredditTab.Wiki -> if (wiki.value.isEmpty) loadWiki()
+                    SubredditTab.Rules -> if (rules.value.isEmpty) loadRules()
+                    SubredditTab.Moderators -> if (moderators.value.isEmpty) loadModerators()
+                    SubredditTab.Description -> {}
+                }
+            }
+            .launchIn(scope)
     }
 
     companion object {
-        fun getOrCreateInstance(subredditName: String): SubredditScreenStateHolder {
-            return subredditScreenModels.find { it.subredditName == subredditName }
-                ?: SubredditScreenStateHolder(subredditName).also { subredditScreenModels += it }
-        }
+        private val stateHolders = mutableSetOf<SubredditScreenStateHolder>()
 
-        fun updateSubreddit(subreddit: Subreddit) {
-            subredditScreenModels.onEach {
-                it.mutableSubreddit.value = it.subreddit.value.map {
-                    if (it.name == subreddit.name)
-                        subreddit
-                    else
-                        it
-                }
-            }
+        fun getInstance(subredditName: String): SubredditScreenStateHolder {
+            return stateHolders.find { it.subredditName == subredditName }
+                ?: SubredditScreenStateHolder(subredditName).also { stateHolders += it }
         }
     }
 
-    fun loadSubreddit() = scope.launch {
-        mutableSubreddit.value = Repos.Subreddit.getSubreddit(subredditName)
-//            .onSuccess { postListModel.loadItems() }
+    private fun loadSubreddit() = scope.launch {
+        mutableSubreddit.value = subredditRepository.getSubreddit(subredditName)
             .toUIState()
     }
 
@@ -82,14 +78,14 @@ class SubredditScreenStateHolder private constructor(private val subredditName: 
     }
 
     private fun loadRules() = scope.launch {
-        mutableRules.value = Repos.Subreddit.getSubredditRules(subredditName).toUIState(emptyList())
+        mutableRules.value = subredditRepository.getSubredditRules(subredditName).toUIState(emptyList())
     }
 
     private fun loadWiki() = scope.launch {
-        mutableWiki.value = Repos.Subreddit.getWikiIndex(subredditName).toUIState(null)
+        mutableWiki.value = subredditRepository.getWikiIndex(subredditName).toUIState(null)
     }
 
     private fun loadModerators() = scope.launch {
-        mutableModerators.value = Repos.Subreddit.getSubredditModerators(subredditName).toUIState()
+        mutableModerators.value = subredditRepository.getSubredditModerators(subredditName).toUIState()
     }
 }

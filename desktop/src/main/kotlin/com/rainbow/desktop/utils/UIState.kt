@@ -11,6 +11,9 @@ sealed interface UIState<out T> {
 
     data class Failure<T>(val data: T? = null, val exception: Throwable) : UIState<T>
 
+    val isEmpty
+        get() = this is Empty
+
     val isLoading
         get() = this is Loading
 

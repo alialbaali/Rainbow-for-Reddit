@@ -9,20 +9,17 @@ import com.rainbow.remote.source.RemoteSubredditDataSource
 import io.ktor.client.*
 import io.ktor.client.request.*
 
-fun RemoteSubredditDataSource(client: HttpClient = redditClient): RemoteSubredditDataSource =
-    RemoteSubredditDataSourceImpl(client)
-
-private class RemoteSubredditDataSourceImpl(private val client: HttpClient) : RemoteSubredditDataSource {
+class RemoteSubredditDataSourceImpl(private val client: HttpClient = redditClient) : RemoteSubredditDataSource {
 
     override suspend fun getSubreddit(subredditName: String): Result<RemoteSubreddit> {
         return client.get(Subreddits.About(subredditName))
     }
 
-    override suspend fun getCurrentUserSubreddits(limit: Int, after: String?): Result<List<RemoteSubreddit>> {
-        return client.get<Listing<RemoteSubreddit>>(Subreddits.Mine) {
+    override suspend fun getCurrentUserSubreddits(limit: Int, after: String?): List<RemoteSubreddit> {
+        return client.getOrThrow<Listing<RemoteSubreddit>>(Subreddits.Mine) {
             parameter(Keys.Limit, limit)
             parameter(Keys.After, after)
-        }.mapCatching { it.toList() }
+        }.toList()
     }
 
     override suspend fun subscribeSubreddit(subredditId: String): Result<Unit> {
@@ -74,9 +71,4 @@ private class RemoteSubredditDataSourceImpl(private val client: HttpClient) : Re
         }.mapCatching { it.toList() }
     }
 
-}
-
-suspend fun main() {
-    RemoteSubredditDataSource()
-        .getCurrentUserSubreddits(5, "").also(::println)
 }

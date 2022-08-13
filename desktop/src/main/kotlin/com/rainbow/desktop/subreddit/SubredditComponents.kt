@@ -26,9 +26,7 @@ fun SubredditItemName(subredditName: String, modifier: Modifier = Modifier) {
     Text(
         text = subredditName,
         modifier = modifier,
-        fontSize = 26.sp,
-        fontWeight = FontWeight.Medium,
-        color = MaterialTheme.colorScheme.onBackground
+        style = MaterialTheme.typography.titleLarge
     )
 }
 
@@ -36,7 +34,6 @@ fun SubredditItemName(subredditName: String, modifier: Modifier = Modifier) {
 @Composable
 fun SubredditFavoriteIconButton(
     subreddit: Subreddit,
-    onSubredditUpdate: (Subreddit) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -45,10 +42,10 @@ fun SubredditFavoriteIconButton(
         subreddit.isFavorite,
         onCheckedChange = { isFavorite ->
             if (isFavorite) {
-                SubredditActionsStateHolder.favoriteSubreddit(subreddit, onSubredditUpdate)
+                SubredditActionsStateHolder.favoriteSubreddit(subreddit)
                 onShowSnackbar(RainbowStrings.FavoriteMessage(subreddit.name))
             } else {
-                SubredditActionsStateHolder.unFavoriteSubreddit(subreddit, onSubredditUpdate)
+                SubredditActionsStateHolder.unFavoriteSubreddit(subreddit)
                 onShowSnackbar(RainbowStrings.UnFavoriteMessage(subreddit.name))
             }
         },
@@ -70,17 +67,16 @@ fun SubredditFavoriteIconButton(
 @Composable
 fun SubscribeButton(
     subreddit: Subreddit,
-    onSubredditUpdate: (Subreddit) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Button(
         onClick = {
             if (subreddit.isSubscribed) {
-                SubredditActionsStateHolder.unSubscribeSubreddit(subreddit, onSubredditUpdate)
+                SubredditActionsStateHolder.unSubscribeSubreddit(subreddit)
                 onShowSnackbar(RainbowStrings.UnsubscribeMessage(subreddit.name))
             } else {
-                SubredditActionsStateHolder.subscribeSubreddit(subreddit, onSubredditUpdate)
+                SubredditActionsStateHolder.subscribeSubreddit(subreddit)
                 onShowSnackbar(RainbowStrings.SubscribeMessage(subreddit.name))
             }
         },
