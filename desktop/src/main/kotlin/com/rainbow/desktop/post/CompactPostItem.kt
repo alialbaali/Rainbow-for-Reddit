@@ -7,16 +7,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.rainbow.desktop.navigation.ContentScreen
-import com.rainbow.desktop.navigation.Screen
+import com.rainbow.desktop.navigation.DetailsScreen
+import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.utils.defaultPadding
 import com.rainbow.domain.models.Post
 
 @Composable
 inline fun CompactPostItem(
     post: Post,
-    crossinline onNavigate: (Screen) -> Unit,
-    crossinline onNavigateContentScreen: (ContentScreen) -> Unit,
+    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
+    crossinline onNavigateDetailsScreen: (DetailsScreen) -> Unit,
     crossinline onAwardsClick: () -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -25,14 +25,14 @@ inline fun CompactPostItem(
     Column(
         modifier
             .padding(vertical = 8.dp)
-            .clickable { onNavigateContentScreen(ContentScreen.Post(post.id)) }
+            .clickable { onNavigateDetailsScreen(DetailsScreen.Post(post.id)) }
             .defaultPadding(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         PostInfo(
             post = post,
-            onUserNameClick = { userName -> onNavigate(Screen.User(userName)) },
-            onSubredditNameClick = { subredditName -> onNavigate(Screen.Subreddit(subredditName)) },
+            onUserNameClick = { userName -> onNavigateMainScreen(MainScreen.User(userName)) },
+            onSubredditNameClick = { subredditName -> onNavigateMainScreen(MainScreen.Subreddit(subredditName)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
@@ -74,7 +74,7 @@ inline fun CompactPostItem(
         }
         PostActions(
             post,
-            onClick = { post -> onNavigateContentScreen(ContentScreen.Post(post.id)) },
+            onClick = { post -> onNavigateDetailsScreen(DetailsScreen.Post(post.id)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),

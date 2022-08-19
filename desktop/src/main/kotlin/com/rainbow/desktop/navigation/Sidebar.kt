@@ -16,8 +16,8 @@ import com.rainbow.desktop.utils.defaultPadding
 
 @Composable
 fun Sidebar(
-    navigationItem: Screen.NavigationItem,
-    onNavigationItemClick: (Screen.NavigationItem) -> Unit,
+    navigationItem: MainScreen.NavigationItem,
+    onNavigationItemClick: (MainScreen.NavigationItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
@@ -35,15 +35,15 @@ fun Sidebar(
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             SidebarItem(
-                Screen.NavigationItem.Profile,
+                MainScreen.NavigationItem.Profile,
                 navigationItem,
                 onNavigationItemClick,
             )
             Column {
                 listOf(
-                    Screen.NavigationItem.Home,
-                    Screen.NavigationItem.Subreddits,
-                    Screen.NavigationItem.Messages,
+                    MainScreen.NavigationItem.Home,
+                    MainScreen.NavigationItem.Subreddits,
+                    MainScreen.NavigationItem.Messages,
                 ).forEach { item ->
                     NavigationRailItem(
                         selected = item == navigationItem,
@@ -55,7 +55,7 @@ fun Sidebar(
                 }
             }
             SidebarItem(
-                Screen.NavigationItem.Settings,
+                MainScreen.NavigationItem.Settings,
                 navigationItem,
                 onNavigationItemClick,
             )
@@ -65,9 +65,9 @@ fun Sidebar(
 
 @Composable
 private fun SidebarItem(
-    item: Screen.NavigationItem,
-    currentNavigationItem: Screen.NavigationItem,
-    onNavigationItemClick: (Screen.NavigationItem) -> Unit,
+    item: MainScreen.NavigationItem,
+    currentNavigationItem: MainScreen.NavigationItem,
+    onNavigationItemClick: (MainScreen.NavigationItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavigationRailItem(

@@ -18,13 +18,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.components.RainbowTextField
-import com.rainbow.desktop.navigation.Screen
+import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.ui.dpDimensions
 import com.rainbow.desktop.utils.*
 
 @Composable
 inline fun CurrentUserSubredditsScreen(
-    crossinline onNavigate: (Screen) -> Unit,
+    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -57,7 +57,7 @@ inline fun CurrentUserSubredditsScreen(
         itemsIndexed(subreddits) { index, subreddit ->
             SubredditItem(
                 subreddit,
-                onClick = { onNavigate(Screen.Subreddit(subreddit.name)) },
+                onClick = { onNavigateMainScreen(MainScreen.Subreddit(subreddit.name)) },
                 onShowSnackbar
             )
             PagingEffect(subreddits, index, stateHolder::setLastItem)

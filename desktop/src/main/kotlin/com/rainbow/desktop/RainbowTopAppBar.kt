@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.RainbowIconButton
-import com.rainbow.desktop.navigation.Screen
+import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.navigation.title
 import com.rainbow.desktop.search.SearchTextField
 import com.rainbow.desktop.utils.RainbowIcons
@@ -23,7 +23,7 @@ import com.rainbow.desktop.utils.defaultPadding
 
 @Composable
 inline fun RainbowTopAppBar(
-    screen: Screen,
+    mainScreen: MainScreen,
     noinline onSearchClick: (String) -> Unit,
     noinline onSubredditNameClick: (String) -> Unit,
     noinline onBackClick: () -> Unit,
@@ -64,11 +64,11 @@ inline fun RainbowTopAppBar(
                 )
 
                 Text(
-                    when (screen) {
-                        is Screen.NavigationItem -> screen.title
-                        is Screen.Subreddit -> screen.subredditName
-                        is Screen.User -> screen.userName
-                        is Screen.Search -> screen.searchTerm
+                    when (mainScreen) {
+                        is MainScreen.NavigationItem -> mainScreen.title
+                        is MainScreen.Subreddit -> mainScreen.subredditName
+                        is MainScreen.User -> mainScreen.userName
+                        is MainScreen.Search -> mainScreen.searchTerm
                     },
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,

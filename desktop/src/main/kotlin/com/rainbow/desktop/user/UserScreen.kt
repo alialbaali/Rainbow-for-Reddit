@@ -7,8 +7,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.components.ScrollableEnumTabRow
-import com.rainbow.desktop.navigation.ContentScreen
-import com.rainbow.desktop.navigation.Screen
+import com.rainbow.desktop.navigation.DetailsScreen
+import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.profile.Header
 import com.rainbow.desktop.utils.composed
@@ -16,8 +16,8 @@ import com.rainbow.desktop.utils.composed
 @Composable
 fun UserScreen(
     userName: String,
-    onNavigate: (Screen) -> Unit,
-    onNavigateContentScreen: (ContentScreen) -> Unit,
+    onNavigateMainScreen: (MainScreen) -> Unit,
+    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -40,8 +40,8 @@ fun UserScreen(
             when (selectedTab) {
 //                UserTab.Overview -> items(
 //                    itemsState,
-//                    onNavigate,
-//                    onNavigateContentScreen,
+//                    onNavigateMainScreen,
+//                    onNavigateDetailsScreen,
 //                    { },
 //                    onShowSnackbar,
 //                )
@@ -49,8 +49,8 @@ fun UserScreen(
                 UserTab.Submitted -> {
                     posts(
                         posts,
-                        onNavigate,
-                        onNavigateContentScreen,
+                        onNavigateMainScreen,
+                        onNavigateDetailsScreen,
                         onAwardsClick = {},
                         onShowSnackbar,
                         stateHolder.postsStateHolder::setLastItem,
@@ -59,8 +59,8 @@ fun UserScreen(
 
 //                UserTab.Comments -> comments(
 //                    commentsState,
-//                    onNavigate,
-//                    onNavigateContentScreen,
+//                    onNavigateMainScreen,
+//                    onNavigateDetailsScreen,
 //                )
                 else -> {}
             }

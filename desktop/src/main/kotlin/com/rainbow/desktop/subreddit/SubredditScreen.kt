@@ -23,8 +23,8 @@ import com.rainbow.desktop.components.FlairItem
 import com.rainbow.desktop.components.MarkdownText
 import com.rainbow.desktop.components.ScreenHeaderItem
 import com.rainbow.desktop.components.ScrollableEnumTabRow
-import com.rainbow.desktop.navigation.ContentScreen
-import com.rainbow.desktop.navigation.Screen
+import com.rainbow.desktop.navigation.DetailsScreen
+import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.*
@@ -32,8 +32,8 @@ import com.rainbow.domain.models.*
 @Composable
 fun SubredditScreen(
     subredditName: String,
-    onNavigate: (Screen) -> Unit,
-    onNavigateContentScreen: (ContentScreen) -> Unit,
+    onNavigateMainScreen: (MainScreen) -> Unit,
+    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -59,8 +59,8 @@ fun SubredditScreen(
         when (selectedTab) {
             SubredditTab.Posts -> posts(
                 postsState,
-                onNavigate,
-                onNavigateContentScreen,
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
                 {},
                 onShowSnackbar,
             )
@@ -68,7 +68,7 @@ fun SubredditScreen(
             SubredditTab.Description -> description(subredditState, onShowSnackbar)
             SubredditTab.Wiki -> wiki(wikiState, onShowSnackbar)
             SubredditTab.Rules -> rules(rulesState, onShowSnackbar)
-            SubredditTab.Moderators -> moderators(moderatorsState, { onNavigate(Screen.User(it)) }, onShowSnackbar)
+            SubredditTab.Moderators -> moderators(moderatorsState, { onNavigateMainScreen(MainScreen.User(it)) }, onShowSnackbar)
         }
     }
 }

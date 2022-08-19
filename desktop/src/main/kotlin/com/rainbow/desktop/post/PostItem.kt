@@ -11,8 +11,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.rainbow.desktop.navigation.ContentScreen
-import com.rainbow.desktop.navigation.Screen
+import com.rainbow.desktop.navigation.DetailsScreen
+import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.settings.SettingsStateHolder
 import com.rainbow.desktop.utils.defaultPadding
 import com.rainbow.domain.models.MarkPostAsRead
@@ -22,8 +22,8 @@ import com.rainbow.domain.models.Post
 @Composable
 inline fun PostItem(
     post: Post,
-    crossinline onNavigate: (Screen) -> Unit,
-    crossinline onNavigateContentScreen: (ContentScreen) -> Unit,
+    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
+    crossinline onNavigateDetailsScreen: (DetailsScreen) -> Unit,
     crossinline onAwardsClick: () -> Unit,
     crossinline onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -32,7 +32,7 @@ inline fun PostItem(
 //    MarkPostIsReadEffect(post, markPostAsRead)
     Surface(
         onClick = {
-            onNavigateContentScreen(ContentScreen.Post(post.id))
+            onNavigateDetailsScreen(DetailsScreen.Post(post.id))
             if (markPostAsRead == MarkPostAsRead.OnClick)
                 PostActionsStateHolder.readPost(post)
         },
@@ -42,8 +42,8 @@ inline fun PostItem(
         Column(Modifier.defaultPadding(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             PostInfo(
                 post,
-                onUserNameClick = { userName -> onNavigate(Screen.User(userName)) },
-                onSubredditNameClick = { subredditName -> onNavigate(Screen.Subreddit(subredditName)) },
+                onUserNameClick = { userName -> onNavigateMainScreen(MainScreen.User(userName)) },
+                onSubredditNameClick = { subredditName -> onNavigateMainScreen(MainScreen.Subreddit(subredditName)) },
                 onAwardsClick,
             )
             PostFLairs(post)
@@ -51,7 +51,7 @@ inline fun PostItem(
             PostContent(post)
             PostActions(
                 post,
-                onClick = { post -> onNavigateContentScreen(ContentScreen.Post(post.id)) },
+                onClick = { post -> onNavigateDetailsScreen(DetailsScreen.Post(post.id)) },
             ) {
                 PostActionsMenu(post, onShowSnackbar)
             }

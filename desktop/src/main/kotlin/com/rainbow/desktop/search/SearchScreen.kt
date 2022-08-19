@@ -11,15 +11,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.ScrollableEnumTabRow
-import com.rainbow.desktop.navigation.ContentScreen
-import com.rainbow.desktop.navigation.Screen
+import com.rainbow.desktop.navigation.DetailsScreen
+import com.rainbow.desktop.navigation.MainScreen
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 inline fun SearchScreen(
     searchTerm: String,
-    crossinline onNavigate: (Screen) -> Unit,
-    crossinline onNavigateContentScreen: (ContentScreen) -> Unit,
+    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
+    crossinline onNavigateDetailsScreen: (DetailsScreen) -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -55,8 +55,8 @@ inline fun SearchScreen(
 //            SearchTab.Posts -> LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
 //                posts(
 //                    postsState,
-//                    onNavigate,
-//                    onNavigateContentScreen,
+//                    onNavigateMainScreen,
+//                    onNavigateDetailsScreen,
 //                    {},
 //                    onShowSnackbar,
 //                    {}

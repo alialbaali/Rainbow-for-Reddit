@@ -1,8 +1,8 @@
 package com.rainbow.desktop
 
 import com.rainbow.desktop.state.StateHolder
-import com.rainbow.desktop.navigation.ContentScreen
-import com.rainbow.desktop.navigation.Screen
+import com.rainbow.desktop.navigation.DetailsScreen
+import com.rainbow.desktop.navigation.MainScreen
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,17 +11,17 @@ import kotlinx.coroutines.flow.asStateFlow
 @OptIn(FlowPreview::class)
 object RainbowStateHolder : StateHolder() {
 
-    private val mutableScreen = MutableStateFlow<Screen>(Screen.NavigationItem.Home)
-    val screen get() = mutableScreen.asStateFlow()
+    private val mutableMainScreen = MutableStateFlow<MainScreen>(MainScreen.NavigationItem.Home)
+    val mainScreen get() = mutableMainScreen.asStateFlow()
 
-    private val mutableBackStack = MutableStateFlow<List<Screen>>(emptyList())
+    private val mutableBackStack = MutableStateFlow<List<MainScreen>>(emptyList())
     val backStack get() = mutableBackStack.asStateFlow()
 
-    private val mutableForwardStack = MutableStateFlow<List<Screen>>(emptyList())
+    private val mutableForwardStack = MutableStateFlow<List<MainScreen>>(emptyList())
     val forwardStack get() = mutableBackStack.asStateFlow()
 
-    private val mutableContentScreen = MutableStateFlow<ContentScreen>(ContentScreen.None)
-    val contentScreen get() = mutableContentScreen.asStateFlow()
+    private val mutableDetailsScreen = MutableStateFlow<DetailsScreen>(DetailsScreen.None)
+    val detailsScreen get() = mutableDetailsScreen.asStateFlow()
 
     private val mutableRefreshContent = MutableSharedFlow<Unit>(replay = 1)
 
@@ -29,40 +29,40 @@ object RainbowStateHolder : StateHolder() {
 //        mutableRefreshContent
 //            .debounce(Constants.RefreshContentDebounceTime)
 //            .onEach {
-//                when (screen.value) {
-//                    Screen.NavigationItem.Home -> loadHomePosts(postSorting.value, timeSorting.value)
-//                    Screen.NavigationItem.Messages -> TODO()
-//                    Screen.NavigationItem.Profile -> TODO()
-//                    Screen.NavigationItem.Settings -> TODO()
-//                    Screen.NavigationItem.Subreddits -> TODO()
-//                    is Screen.Search -> TODO()
-//                    is Screen.Subreddit -> TODO()
-//                    is Screen.User -> TODO()
+//                when (mainScreen.value) {
+//                    MainScreen.NavigationItem.Home -> loadHomePosts(postSorting.value, timeSorting.value)
+//                    MainScreen.NavigationItem.Messages -> TODO()
+//                    MainScreen.NavigationItem.Profile -> TODO()
+//                    MainScreen.NavigationItem.Settings -> TODO()
+//                    MainScreen.NavigationItem.Subreddits -> TODO()
+//                    is MainScreen.Search -> TODO()
+//                    is MainScreen.Subreddit -> TODO()
+//                    is MainScreen.User -> TODO()
 //                }
 //            }
 //            .launchIn(scope)
     }
 
     fun navigateBack() {
-        mutableForwardStack.value = forwardStack.value + screen.value
-        mutableScreen.value = backStack.value.last()
+        mutableForwardStack.value = forwardStack.value + mainScreen.value
+        mutableMainScreen.value = backStack.value.last()
         mutableBackStack.value = backStack.value.dropLast(1)
     }
 
     fun navigateForward() {
-        mutableBackStack.value = backStack.value + screen.value
-        mutableScreen.value = forwardStack.value.last()
+        mutableBackStack.value = backStack.value + mainScreen.value
+        mutableMainScreen.value = forwardStack.value.last()
         mutableForwardStack.value = forwardStack.value.dropLast(1)
     }
 
-    fun navigateToScreen(screen: Screen) {
-        mutableBackStack.value = backStack.value + this.screen.value
-        mutableScreen.value = screen
+    fun navigateToMainScreen(mainScreen: MainScreen) {
+        mutableBackStack.value = backStack.value + this.mainScreen.value
+        mutableMainScreen.value = mainScreen
         mutableForwardStack.value = emptyList()
     }
 
-    fun navigateToContentScreen(contentScreen: ContentScreen) {
-        mutableContentScreen.value = contentScreen
+    fun navigateToDetailsScreen(detailsScreen: DetailsScreen) {
+        mutableDetailsScreen.value = detailsScreen
     }
 
     fun refreshContent() {

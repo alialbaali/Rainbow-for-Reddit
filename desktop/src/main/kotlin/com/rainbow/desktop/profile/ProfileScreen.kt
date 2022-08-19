@@ -15,8 +15,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.desktop.components.*
-import com.rainbow.desktop.navigation.ContentScreen
-import com.rainbow.desktop.navigation.Screen
+import com.rainbow.desktop.navigation.DetailsScreen
+import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.defaultPadding
@@ -26,8 +26,8 @@ import com.rainbow.domain.models.User
 
 @Composable
 fun ProfileScreen(
-    onNavigate: (Screen) -> Unit,
-    onNavigateContentScreen: (ContentScreen) -> Unit,
+    onNavigateMainScreen: (MainScreen) -> Unit,
+    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -67,30 +67,30 @@ fun ProfileScreen(
         when (selectedTab) {
 //                ProfileTab.Overview -> items(
 //                    overViewItemsState,
-//                    onNavigate,
-//                    onNavigateContentScreen,
+//                    onNavigateMainScreen,
+//                    onNavigateDetailsScreen,
 //                    { },
 //                    {},
 //                )
 
 //                ProfileTab.Saved -> items(
 //                    savedItemsState,
-//                    onNavigate,
-//                    onNavigateContentScreen,
+//                    onNavigateMainScreen,
+//                    onNavigateDetailsScreen,
 //                    { },
 //                    {},
 //                )
 
 //                ProfileTab.Comments -> comments(
 //                    commentsState,
-//                    onNavigate,
-//                    onNavigateContentScreen,
+//                    onNavigateMainScreen,
+//                    onNavigateDetailsScreen,
 //                )
 
             ProfileTab.Submitted -> posts(
                 submittedPostsState,
-                onNavigate,
-                onNavigateContentScreen,
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
                 {},
                 onShowSnackbar,
                 stateHolder.submittedPostsStateHolder::setLastItem,
@@ -98,8 +98,8 @@ fun ProfileScreen(
 
             ProfileTab.Hidden -> posts(
                 hiddenPostsState,
-                onNavigate,
-                onNavigateContentScreen,
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
                 {},
                 onShowSnackbar,
                 stateHolder.hiddenPostsStateHolder::setLastItem,
@@ -107,8 +107,8 @@ fun ProfileScreen(
 
             ProfileTab.Upvoted -> posts(
                 upvotedPostsState,
-                onNavigate,
-                onNavigateContentScreen,
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
                 {},
                 onShowSnackbar,
                 stateHolder.upvotedPostsStateHolder::setLastItem,
@@ -116,8 +116,8 @@ fun ProfileScreen(
 
             ProfileTab.Downvoted -> posts(
                 downvotedPostsState,
-                onNavigate,
-                onNavigateContentScreen,
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
                 {},
                 onShowSnackbar,
                 stateHolder.downvotedPostsStateHolder::setLastItem,

@@ -13,8 +13,8 @@ import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.home.HomeScreen
 import com.rainbow.desktop.message.MessagesScreen
-import com.rainbow.desktop.navigation.ContentScreen
-import com.rainbow.desktop.navigation.Screen
+import com.rainbow.desktop.navigation.DetailsScreen
+import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.navigation.Sidebar
 import com.rainbow.desktop.post.PostScreen
 import com.rainbow.desktop.profile.ProfileScreen
@@ -27,10 +27,10 @@ import com.rainbow.desktop.user.UserScreen
 
 @Composable
 internal fun Content(
-    screen: Screen,
-    contentScreen: ContentScreen,
-    onNavigate: (Screen) -> Unit,
-    onNavigateContentScreen: (ContentScreen) -> Unit,
+    mainScreen: MainScreen,
+    detailsScreen: DetailsScreen,
+    onNavigateMainScreen: (MainScreen) -> Unit,
+    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
     onBackClick: () -> Unit,
     onForwardClick: () -> Unit,
     isBackEnabled: Boolean,
@@ -47,21 +47,21 @@ internal fun Content(
     }
     Box(modifier.background(MaterialTheme.colorScheme.surface)) {
         Row(Modifier.fillMaxSize()) {
-            val navigateItem = remember(screen) {
-                screen as? Screen.NavigationItem
+            val navigateItem = remember(mainScreen) {
+                mainScreen as? MainScreen.NavigationItem
                     ?: RainbowStateHolder.backStack.value
-                        .lastOrNull { it is Screen.NavigationItem } as Screen.NavigationItem
+                        .lastOrNull { it is MainScreen.NavigationItem } as MainScreen.NavigationItem
             }
             StartContent(
                 navigateItem,
-                onNavigate,
+                onNavigateMainScreen,
                 Modifier
                     .wrapContentWidth(unbounded = true)
                     .fillMaxHeight(),
             )
             Column(Modifier.fillMaxSize()) {
                 RainbowTopAppBar(
-                    screen,
+                    mainScreen,
                     {},
                     { },
                     onBackClick,
@@ -78,15 +78,15 @@ internal fun Content(
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     CenterContent(
-                        screen,
-                        onNavigate,
-                        onNavigateContentScreen,
+                        mainScreen,
+                        onNavigateMainScreen,
+                        onNavigateDetailsScreen,
                         onShowSnackbar = { snackbarMessage = it },
                         Modifier.weight(1F),
                     )
                     EndContent(
-                        contentScreen,
-                        onNavigate,
+                        detailsScreen,
+                        onNavigateMainScreen,
                         onShowSnackbar = { snackbarMessage = it },
                         Modifier.weight(1F),
                     )
@@ -104,8 +104,8 @@ internal fun Content(
 
 @Composable
 private fun StartContent(
-    navigationItem: Screen.NavigationItem,
-    onNavigationItemClick: (Screen.NavigationItem) -> Unit,
+    navigationItem: MainScreen.NavigationItem,
+    onNavigationItemClick: (MainScreen.NavigationItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Sidebar(
@@ -117,63 +117,63 @@ private fun StartContent(
 
 @Composable
 private fun CenterContent(
-    screen: Screen,
-    onNavigate: (Screen) -> Unit,
-    onNavigateContentScreen: (ContentScreen) -> Unit,
+    mainScreen: MainScreen,
+    onNavigateMainScreen: (MainScreen) -> Unit,
+    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    when (screen) {
-        is Screen.NavigationItem -> when (screen) {
-            Screen.NavigationItem.Profile -> ProfileScreen(
-                onNavigate,
-                onNavigateContentScreen,
+    when (mainScreen) {
+        is MainScreen.NavigationItem -> when (mainScreen) {
+            MainScreen.NavigationItem.Profile -> ProfileScreen(
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
                 onShowSnackbar,
                 modifier,
             )
 
-            Screen.NavigationItem.Home -> HomeScreen(
-                onNavigate,
-                onNavigateContentScreen,
+            MainScreen.NavigationItem.Home -> HomeScreen(
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
                 onShowSnackbar,
                 modifier,
             )
 
-            Screen.NavigationItem.Subreddits -> CurrentUserSubredditsScreen(
-                onNavigate,
+            MainScreen.NavigationItem.Subreddits -> CurrentUserSubredditsScreen(
+                onNavigateMainScreen,
                 onShowSnackbar,
             )
 
-            Screen.NavigationItem.Messages -> MessagesScreen(
-                onNavigate,
-                onNavigateContentScreen,
+            MainScreen.NavigationItem.Messages -> MessagesScreen(
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
                 onShowSnackbar,
                 modifier,
             )
 
-            Screen.NavigationItem.Settings -> SettingsScreen(Modifier.fillMaxWidth(0.5F))
+            MainScreen.NavigationItem.Settings -> SettingsScreen(Modifier.fillMaxWidth(0.5F))
         }
 
-        is Screen.Subreddit -> SubredditScreen(
-            screen.subredditName,
-            onNavigate,
-            onNavigateContentScreen,
+        is MainScreen.Subreddit -> SubredditScreen(
+            mainScreen.subredditName,
+            onNavigateMainScreen,
+            onNavigateDetailsScreen,
             onShowSnackbar,
             modifier,
         )
 
-        is Screen.User -> UserScreen(
-            screen.userName,
-            onNavigate,
-            onNavigateContentScreen,
+        is MainScreen.User -> UserScreen(
+            mainScreen.userName,
+            onNavigateMainScreen,
+            onNavigateDetailsScreen,
             onShowSnackbar,
             modifier,
         )
 
-        is Screen.Search -> SearchScreen(
-            screen.searchTerm,
-            onNavigate,
-            onNavigateContentScreen,
+        is MainScreen.Search -> SearchScreen(
+            mainScreen.searchTerm,
+            onNavigateMainScreen,
+            onNavigateDetailsScreen,
             onShowSnackbar,
             modifier,
         )
@@ -183,34 +183,34 @@ private fun CenterContent(
 
 @Composable
 private fun EndContent(
-    contentScreen: ContentScreen,
-    onNavigate: (Screen) -> Unit,
+    detailsScreen: DetailsScreen,
+    onNavigateMainScreen: (MainScreen) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    when (contentScreen) {
-        is ContentScreen.None -> {
+    when (detailsScreen) {
+        is DetailsScreen.None -> {
             Box(modifier) {
                 RainbowProgressIndicator()
             }
         }
 
-        is ContentScreen.Post -> {
+        is DetailsScreen.Post -> {
             PostScreen(
-                contentScreen.postId,
-                onNavigate,
+                detailsScreen.postId,
+                onNavigateMainScreen,
                 onShowSnackbar,
                 modifier,
             )
         }
 
-        is ContentScreen.Message -> TODO()
+        is DetailsScreen.Message -> TODO()
     }
 //    val isMessageScreen = messageModelState
 //        .map { it.message.value.type is Message.Type.Message }
 //        .getOrDefault(false)
 //    when {
-//        screen is Screen.NavigationItem.Messages && isMessageScreen ->
+//        mainScreen is MainScreen.NavigationItem.Messages && isMessageScreen ->
 //            messageModelState.composed(onShowSnackbar, modifier) { model ->
 //                MessageScreen(
 //                    model,
@@ -220,8 +220,8 @@ private fun EndContent(
 //                )
 //            }
 //
-//        screen is Screen.NavigationItem.Settings -> {}
-//        screen is Screen.NavigationItem.Subreddits -> {}
+//        mainScreen is MainScreen.NavigationItem.Settings -> {}
+//        mainScreen is MainScreen.NavigationItem.Subreddits -> {}
 //        else -> postScreenModelType.composed(onShowSnackbar, modifier) { type ->
 //            PostScreen(
 //                type,

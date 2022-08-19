@@ -11,18 +11,18 @@ import androidx.compose.ui.Modifier
 
 @Composable
 internal fun App() {
-    val screen by RainbowStateHolder.screen.collectAsState()
+    val mainScreen by RainbowStateHolder.mainScreen.collectAsState()
+    val detailsScreen by RainbowStateHolder.detailsScreen.collectAsState()
     val backStack by RainbowStateHolder.backStack.collectAsState()
     val forwardStack by RainbowStateHolder.forwardStack.collectAsState()
-    val contentScreen by RainbowStateHolder.contentScreen.collectAsState()
     val stateHolder = rememberSaveableStateHolder()
-    Crossfade(screen) { animatedScreen ->
+    Crossfade(mainScreen) { animatedScreen ->
         stateHolder.SaveableStateProvider(animatedScreen) {
             Content(
-                screen = animatedScreen,
-                contentScreen = contentScreen,
-                onNavigate = RainbowStateHolder::navigateToScreen,
-                onNavigateContentScreen = RainbowStateHolder::navigateToContentScreen,
+                mainScreen = animatedScreen,
+                detailsScreen = detailsScreen,
+                onNavigateMainScreen = RainbowStateHolder::navigateToMainScreen,
+                onNavigateDetailsScreen = RainbowStateHolder::navigateToDetailsScreen,
                 onBackClick = RainbowStateHolder::navigateBack,
                 onForwardClick = RainbowStateHolder::navigateForward,
                 isBackEnabled = backStack.isNotEmpty(),

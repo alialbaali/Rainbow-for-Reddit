@@ -10,8 +10,8 @@ import com.rainbow.desktop.comment.comments
 import com.rainbow.desktop.components.DropdownMenuHolder
 import com.rainbow.desktop.components.EnumTabRow
 import com.rainbow.desktop.components.RainbowLazyColumn
-import com.rainbow.desktop.navigation.ContentScreen
-import com.rainbow.desktop.navigation.Screen
+import com.rainbow.desktop.navigation.DetailsScreen
+import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.ui.dpDimensions
 import com.rainbow.desktop.utils.getOrDefault
@@ -19,8 +19,8 @@ import com.rainbow.desktop.utils.getOrNull
 
 @Composable
 inline fun HomeScreen(
-    crossinline onNavigate: (Screen) -> Unit,
-    crossinline onNavigateContentScreen: (ContentScreen) -> Unit,
+    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
+    crossinline onNavigateDetailsScreen: (DetailsScreen) -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -33,19 +33,19 @@ inline fun HomeScreen(
     DisposableEffect(posts.getOrDefault(emptyList()).isEmpty()) {
         val post = posts.getOrNull()?.firstOrNull()
         if (post != null) {
-            onNavigateContentScreen(ContentScreen.Post(post.id))
+            onNavigateDetailsScreen(DetailsScreen.Post(post.id))
         }
         onDispose {
-            onNavigateContentScreen(ContentScreen.None)
+            onNavigateDetailsScreen(DetailsScreen.None)
         }
     }
     DisposableEffect(comments.isLoading) {
         val comment = comments.getOrNull()?.firstOrNull()
         if (comment != null) {
-            onNavigateContentScreen(ContentScreen.Post(comment.postId))
+            onNavigateDetailsScreen(DetailsScreen.Post(comment.postId))
         }
         onDispose {
-            onNavigateContentScreen(ContentScreen.None)
+            onNavigateDetailsScreen(DetailsScreen.None)
         }
     }
     RainbowLazyColumn(modifier) {
@@ -82,8 +82,8 @@ inline fun HomeScreen(
             HomeTab.Posts -> {
                 posts(
                     posts,
-                    onNavigate,
-                    onNavigateContentScreen,
+                    onNavigateMainScreen,
+                    onNavigateDetailsScreen,
                     {},
                     onShowSnackbar,
                     stateHolder.postsStateHolder::setLastItem,
@@ -93,8 +93,8 @@ inline fun HomeScreen(
             HomeTab.Comments -> {
                 comments(
                     comments,
-                    onNavigate,
-                    onNavigateContentScreen,
+                    onNavigateMainScreen,
+                    onNavigateDetailsScreen,
                     stateHolder.commentsStateHolder::setLastItem,
                 )
             }

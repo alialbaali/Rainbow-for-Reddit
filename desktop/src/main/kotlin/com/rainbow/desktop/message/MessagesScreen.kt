@@ -6,13 +6,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.components.ScrollableEnumTabRow
-import com.rainbow.desktop.navigation.ContentScreen
-import com.rainbow.desktop.navigation.Screen
+import com.rainbow.desktop.navigation.DetailsScreen
+import com.rainbow.desktop.navigation.MainScreen
 
 @Composable
 inline fun MessagesScreen(
-    crossinline onNavigate: (Screen) -> Unit,
-    crossinline onNavigateContentScreen: (ContentScreen) -> Unit,
+    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
+    crossinline onNavigateDetailsScreen: (DetailsScreen) -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -35,44 +35,44 @@ inline fun MessagesScreen(
 //        when (selectedTab) {
 //            MessageTab.Inbox -> messages(
 //                inboxMessages,
-//                onNavigate,
-//                onNavigateContentScreen,
+//                onNavigateMainScreen,
+//                onNavigateDetailsScreen,
 //            )
 //
 //            MessageTab.Unread -> messages(
 //                unreadMessages,
-//                onNavigate,
-//                onNavigateContentScreen,
+//                onNavigateMainScreen,
+//                onNavigateDetailsScreen,
 //            )
 //
 //            MessageTab.Sent -> messages(
 //                sentMessages,
-//                onNavigate,
-//                onNavigateContentScreen,
+//                onNavigateMainScreen,
+//                onNavigateDetailsScreen,
 //            )
 //
 //            MessageTab.Messages -> messages(
 //                messages,
-//                onNavigate,
-//                onNavigateContentScreen,
+//                onNavigateMainScreen,
+//                onNavigateDetailsScreen,
 //            )
 //
 //            MessageTab.Mentions -> messages(
 //                mentions,
-//                onNavigate,
-//                onNavigateContentScreen,
+//                onNavigateMainScreen,
+//                onNavigateDetailsScreen,
 //            )
 //
 //            MessageTab.PostMessages -> messages(
 //                postMessages,
-//                onNavigate,
-//                onNavigateContentScreen,
+//                onNavigateMainScreen,
+//                onNavigateDetailsScreen,
 //            )
 //
 //            MessageTab.CommentMessages -> messages(
 //                commentMessages,
-//                onNavigate,
-//                onNavigateContentScreen,
+//                onNavigateMainScreen,
+//                onNavigateDetailsScreen,
 //            )
 //        }
     }

@@ -6,8 +6,8 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.comment.CommentItem
 import com.rainbow.desktop.components.RainbowProgressIndicator
-import com.rainbow.desktop.navigation.ContentScreen
-import com.rainbow.desktop.navigation.Screen
+import com.rainbow.desktop.navigation.DetailsScreen
+import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.PostItem
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.domain.models.Comment
@@ -16,8 +16,8 @@ import com.rainbow.domain.models.Post
 
 inline fun LazyListScope.items(
     itemsState: UIState<List<Item>>,
-    crossinline onNavigate: (Screen) -> Unit,
-    crossinline onNavigateContentScreen: (ContentScreen) -> Unit,
+    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
+    crossinline onNavigateDetailsScreen: (DetailsScreen) -> Unit,
     crossinline onAwardsClick: () -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
 ) {
@@ -28,15 +28,15 @@ inline fun LazyListScope.items(
             when (item) {
                 is Comment -> CommentItem(
                     item,
-                    onNavigate,
-                    onNavigateContentScreen,
+                    onNavigateMainScreen,
+                    onNavigateDetailsScreen,
                     Modifier.fillParentMaxWidth()
                 )
 
                 is Post -> PostItem(
                     item,
-                    onNavigate,
-                    onNavigateContentScreen,
+                    onNavigateMainScreen,
+                    onNavigateDetailsScreen,
                     onAwardsClick,
                     onShowSnackbar,
                     Modifier.fillParentMaxWidth()

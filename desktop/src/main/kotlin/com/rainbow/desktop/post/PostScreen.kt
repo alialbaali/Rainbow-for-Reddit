@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.comment.AddComment
 import com.rainbow.desktop.comment.postComments
 import com.rainbow.desktop.components.RainbowLazyColumn
-import com.rainbow.desktop.navigation.Screen
+import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.utils.composed
 import com.rainbow.desktop.utils.defaultPadding
 import com.rainbow.domain.models.Post
@@ -23,7 +23,7 @@ import com.rainbow.domain.models.Post
 @Composable
 fun PostScreen(
     postId: String,
-    onNavigate: (Screen) -> Unit,
+    onNavigateMainScreen: (MainScreen) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -41,8 +41,8 @@ fun PostScreen(
 
                 Post(
                     post,
-                    onUserNameClick = { userName -> onNavigate(Screen.User(userName)) },
-                    onSubredditNameClick = { subredditName -> onNavigate(Screen.Subreddit(subredditName)) },
+                    onUserNameClick = { userName -> onNavigateMainScreen(MainScreen.User(userName)) },
+                    onSubredditNameClick = { subredditName -> onNavigateMainScreen(MainScreen.Subreddit(subredditName)) },
                     onShowSnackbar,
                     Modifier
                         .clip(MaterialTheme.shapes.medium)
@@ -71,8 +71,8 @@ fun PostScreen(
                 setCommentsVisibility = { commentId, isVisible ->
                     commentListModel.setCommentVisibility(commentId, isVisible)
                 },
-                onUserNameClick = { userName -> onNavigate(Screen.User(userName)) },
-                onSubredditNameClick = { subredditName -> onNavigate(Screen.Subreddit(subredditName)) },
+                onUserNameClick = { userName -> onNavigateMainScreen(MainScreen.User(userName)) },
+                onSubredditNameClick = { subredditName -> onNavigateMainScreen(MainScreen.Subreddit(subredditName)) },
                 onRequestMoreComments = { commentId, moreComments ->
                     commentListModel.loadMoreComments(commentId, moreComments)
                 },
