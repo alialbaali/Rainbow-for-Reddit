@@ -1,31 +1,28 @@
 package com.rainbow.desktop.profile
 
 import com.rainbow.data.Repos
+import com.rainbow.desktop.post.PostsStateHolder
 import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.toUIState
-import com.rainbow.domain.models.Item
+import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.ProfilePostSorting
+import com.rainbow.domain.models.TimeSorting
 import com.rainbow.domain.models.User
 import com.rainbow.domain.repository.CommentRepository
 import com.rainbow.domain.repository.ItemRepository
 import com.rainbow.domain.repository.PostRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-class ProfileScreenStateHolder(
+class ProfileScreenStateHolder private constructor(
     private val itemRepository: ItemRepository = Repos.Item,
     private val postRepository: PostRepository = Repos.Post,
     private val commentRepository: CommentRepository = Repos.Comment,
 ) : StateHolder() {
-
-    private val mutableOverviewItems = MutableStateFlow(emptyList<Item>())
-    val overviewItems get() = mutableOverviewItems.asStateFlow()
-
-    private val mutableOverviewItemsState = MutableStateFlow<UIState<Unit>>(UIState.Empty)
-    val overviewItemsState get() = mutableOverviewItemsState.asStateFlow()
-
 
     private val mutableCurrentUser = MutableStateFlow<UIState<User>>(UIState.Empty)
     val currentUser get() = mutableCurrentUser.asStateFlow()
@@ -35,7 +32,7 @@ class ProfileScreenStateHolder(
 
     private val initialPostSorting = MutableStateFlow(ProfilePostSorting.Default)
 
-//    val overViewItemListModel = ItemListStateHolder(initialPostSorting) { itemSorting, timeSorting, lastItemId ->
+    //    val overViewItemListModel = ItemListStateHolder(initialPostSorting) { itemSorting, timeSorting, lastItemId ->
 //        itemRepository.getCurrentUserOverviewItems(itemSorting, timeSorting, lastItemId)
 //    }
 //
@@ -43,42 +40,78 @@ class ProfileScreenStateHolder(
 //        itemRepository.getCurrentUserSavedItems(itemSorting, timeSorting, lastItemId)
 //    }
 //
-//    val submittedPostListModel = PostListStateHolder(initialPostSorting) { postSorting, timeSorting, lastPostId ->
-//        postRepository.getCurrentUserSubmittedPosts(postSorting, timeSorting, lastPostId)
-//    }
-//
-//    val hiddenPostListModel = PostListStateHolder(initialPostSorting) { postSorting, timeSorting, lastPostId ->
-//        postRepository.getCurrentUserHiddenPosts(postSorting, timeSorting, lastPostId)
-//    }
-//
-//    val upvotedPostListModel = PostListStateHolder(initialPostSorting) { postSorting, timeSorting, lastPostId ->
-//        postRepository.getCurrentUserUpvotedPosts(postSorting, timeSorting, lastPostId)
-//    }
-//
-//    val downvotedPostListModel = PostListStateHolder(initialPostSorting) { postSorting, timeSorting, lastPostId ->
-//        postRepository.getCurrentUserDownvotedPosts(postSorting, timeSorting, lastPostId)
-//    }
-//
+    val submittedPostsStateHolder = object : PostsStateHolder<ProfilePostSorting>(
+        ProfilePostSorting.Default,
+        postRepository.profileSubmittedPosts
+    ) {
+        override suspend fun getItems(
+            sorting: ProfilePostSorting,
+            timeSorting: TimeSorting,
+            lastItem: Post?
+        ): Result<Unit> = postRepository.getProfileSubmittedPosts(sorting, timeSorting, lastItem?.id)
+    }
+
+    val upvotedPostsStateHolder = object : PostsStateHolder<ProfilePostSorting>(
+        ProfilePostSorting.Default,
+        postRepository.profileUpvotedPosts
+    ) {
+        override suspend fun getItems(
+            sorting: ProfilePostSorting,
+            timeSorting: TimeSorting,
+            lastItem: Post?
+        ): Result<Unit> = postRepository.getProfileUpvotedPosts(sorting, timeSorting, lastItem?.id)
+    }
+
+    val downvotedPostsStateHolder = object : PostsStateHolder<ProfilePostSorting>(
+        ProfilePostSorting.Default,
+        postRepository.profileDownvotedPosts
+    ) {
+        override suspend fun getItems(
+            sorting: ProfilePostSorting,
+            timeSorting: TimeSorting,
+            lastItem: Post?
+        ): Result<Unit> = postRepository.getProfileDownvotedPosts(sorting, timeSorting, lastItem?.id)
+    }
+
+    val hiddenPostsStateHolder = object : PostsStateHolder<ProfilePostSorting>(
+        ProfilePostSorting.Default,
+        postRepository.profileHiddenPosts
+    ) {
+        override suspend fun getItems(
+            sorting: ProfilePostSorting,
+            timeSorting: TimeSorting,
+            lastItem: Post?
+        ): Result<Unit> = postRepository.getProfileHiddenPosts(sorting, timeSorting, lastItem?.id)
+    }
+
 //    val commentListModel = CommentListStateHolder(initialPostSorting) { commentSorting, timeSorting, lastCommentId ->
 //        commentRepository.getCurrentUserComments(commentSorting, timeSorting, lastCommentId)
 //    }
 
     init {
-
-//        loadUser()
-//        selectedTab
-//            .onEach {
-//                when (it) {
+        loadUser()
+        selectedTab
+            .onEach {
+                when (it) {
 //                    ProfileTab.Overview -> if (overViewItemListModel.items.value.isLoading) overViewItemListModel.loadItems()
-//                    ProfileTab.Submitted -> if (submittedPostListModel.items.value.isLoading) submittedPostListModel.loadItems()
+                    ProfileTab.Submitted -> if (submittedPostsStateHolder.items.value.isEmpty) submittedPostsStateHolder.loadItems()
 //                    ProfileTab.Saved -> if (savedItemListModel.items.value.isLoading) savedItemListModel.loadItems()
-//                    ProfileTab.Hidden -> if (hiddenPostListModel.items.value.isLoading) hiddenPostListModel.loadItems()
-//                    ProfileTab.Upvoted -> if (upvotedPostListModel.items.value.isLoading) upvotedPostListModel.loadItems()
-//                    ProfileTab.Downvoted -> if (downvotedPostListModel.items.value.isLoading) downvotedPostListModel.loadItems()
+                    ProfileTab.Hidden -> if (hiddenPostsStateHolder.items.value.isEmpty) hiddenPostsStateHolder.loadItems()
+                    ProfileTab.Upvoted -> if (upvotedPostsStateHolder.items.value.isEmpty) upvotedPostsStateHolder.loadItems()
+                    ProfileTab.Downvoted -> if (downvotedPostsStateHolder.items.value.isEmpty) downvotedPostsStateHolder.loadItems()
 //                    ProfileTab.Comments -> if (commentListModel.items.value.isLoading) commentListModel.loadItems()
-//                }
-//            }
-//            .launchIn(scope)
+                    else -> {}
+                }
+            }
+            .launchIn(scope)
+    }
+
+    companion object {
+        private var stateHolder: ProfileScreenStateHolder? = null
+
+        fun getInstance(): ProfileScreenStateHolder {
+            return stateHolder ?: ProfileScreenStateHolder().also { stateHolder = it }
+        }
     }
 
     private fun loadUser() = scope.launch {

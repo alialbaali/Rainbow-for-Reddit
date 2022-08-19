@@ -19,6 +19,7 @@ import com.rainbow.desktop.components.RainbowMenu
 import com.rainbow.desktop.components.RainbowMenuItem
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
+import com.rainbow.desktop.utils.defaultPadding
 import com.rainbow.domain.models.Subreddit
 
 @Composable
@@ -41,7 +42,7 @@ fun SubredditItem(
         SubredditItemActions(
             subreddit,
             onShowSnackbar,
-            Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+            Modifier.defaultPadding()
         )
     }
 }

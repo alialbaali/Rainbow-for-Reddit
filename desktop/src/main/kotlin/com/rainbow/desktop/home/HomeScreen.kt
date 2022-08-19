@@ -14,6 +14,7 @@ import com.rainbow.desktop.navigation.ContentScreen
 import com.rainbow.desktop.navigation.Screen
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.ui.dpDimensions
+import com.rainbow.desktop.utils.getOrDefault
 import com.rainbow.desktop.utils.getOrNull
 
 @Composable
@@ -29,7 +30,7 @@ inline fun HomeScreen(
     val timeSorting by stateHolder.postsStateHolder.timeSorting.collectAsState()
     val comments by stateHolder.commentsStateHolder.items.collectAsState()
     val selectedTab by stateHolder.selectedTab.collectAsState()
-    DisposableEffect(posts.isLoading) {
+    DisposableEffect(posts.getOrDefault(emptyList()).isEmpty()) {
         val post = posts.getOrNull()?.firstOrNull()
         if (post != null) {
             onNavigateContentScreen(ContentScreen.Post(post.id))

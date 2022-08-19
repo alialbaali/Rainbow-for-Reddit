@@ -25,7 +25,7 @@ class HomeScreenStateHolder private constructor(
 
     val postsStateHolder = object : PostsStateHolder<HomePostSorting>(
         HomePostSorting.Default,
-        postRepository.posts,
+        postRepository.homePosts,
     ) {
         override suspend fun getItems(
             sorting: HomePostSorting,

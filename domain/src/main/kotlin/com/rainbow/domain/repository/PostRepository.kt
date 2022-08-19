@@ -7,29 +7,45 @@ interface PostRepository {
 
     val posts: Flow<List<Post>>
 
-    suspend fun getCurrentUserSubmittedPosts(
-        postsSorting: UserPostSorting,
-        timeSorting: TimeSorting,
-        lastPostId: String?,
-    ): Result<List<Post>>
+    val homePosts: Flow<List<Post>>
 
-    suspend fun getCurrentUserUpvotedPosts(
-        postsSorting: UserPostSorting,
-        timeSorting: TimeSorting,
-        lastPostId: String?,
-    ): Result<List<Post>>
+    val profileSubmittedPosts: Flow<List<Post>>
 
-    suspend fun getCurrentUserDownvotedPosts(
-        postsSorting: UserPostSorting,
-        timeSorting: TimeSorting,
-        lastPostId: String?,
-    ): Result<List<Post>>
+    val profileUpvotedPosts: Flow<List<Post>>
 
-    suspend fun getCurrentUserHiddenPosts(
+    val profileDownvotedPosts: Flow<List<Post>>
+
+    val profileHiddenPosts: Flow<List<Post>>
+
+    val userSubmittedPosts: Flow<List<Post>>
+
+    val subredditPosts: Flow<List<Post>>
+
+    val searchPosts: Flow<List<Post>>
+
+    suspend fun getProfileSubmittedPosts(
         postsSorting: UserPostSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
-    ): Result<List<Post>>
+    ): Result<Unit>
+
+    suspend fun getProfileUpvotedPosts(
+        postsSorting: UserPostSorting,
+        timeSorting: TimeSorting,
+        lastPostId: String?,
+    ): Result<Unit>
+
+    suspend fun getProfileDownvotedPosts(
+        postsSorting: UserPostSorting,
+        timeSorting: TimeSorting,
+        lastPostId: String?,
+    ): Result<Unit>
+
+    suspend fun getProfileHiddenPosts(
+        postsSorting: UserPostSorting,
+        timeSorting: TimeSorting,
+        lastPostId: String?,
+    ): Result<Unit>
 
     suspend fun getUserSubmittedPosts(
         userName: String,

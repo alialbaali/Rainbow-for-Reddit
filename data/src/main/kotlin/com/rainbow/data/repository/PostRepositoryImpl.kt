@@ -18,8 +18,8 @@ import com.russhwolf.settings.coroutines.FlowSettings
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalSettingsApi::class)
@@ -33,30 +33,59 @@ internal class PostRepositoryImpl(
     private val subredditMapper: Mapper<RemoteSubreddit, Subreddit>,
 ) : PostRepository {
 
-    override val posts: Flow<List<Post>> get() = localPostDataSource.posts
+    override val posts: Flow<List<Post>>
+        get() = localPostDataSource.posts.flowOn(dispatcher)
 
-    override suspend fun getCurrentUserSubmittedPosts(
+    override val homePosts: Flow<List<Post>>
+        get() = localPostDataSource.homePosts.flowOn(dispatcher)
+
+    override val profileSubmittedPosts: Flow<List<Post>>
+        get() = localPostDataSource.profileSubmittedPosts.flowOn(dispatcher)
+
+    override val profileUpvotedPosts: Flow<List<Post>>
+        get() = localPostDataSource.profileUpvotedPosts.flowOn(dispatcher)
+
+    override val profileDownvotedPosts: Flow<List<Post>>
+        get() = localPostDataSource.profileDownvotedPosts.flowOn(dispatcher)
+
+    override val profileHiddenPosts: Flow<List<Post>>
+        get() = localPostDataSource.profileHiddenPosts.flowOn(dispatcher)
+
+    override val userSubmittedPosts: Flow<List<Post>>
+        get() = localPostDataSource.userSubmittedPosts.flowOn(dispatcher)
+
+    override val subredditPosts: Flow<List<Post>>
+        get() = localPostDataSource.subredditPosts.flowOn(dispatcher)
+
+    override val searchPosts: Flow<List<Post>>
+        get() = localPostDataSource.searchPosts.flowOn(dispatcher)
+
+    override suspend fun getProfileSubmittedPosts(
         postsSorting: UserPostSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
-    ): Result<List<Post>> = runCatching {
+    ): Result<Unit> = runCatching {
         withContext(dispatcher) {
+            if (lastPostId == null) localPostDataSource.clearProfileSubmittedPosts()
             remotePostDataSource.getUserSubmittedPosts(
                 settings.getString(SettingsKeys.UserName),
                 postsSorting.lowercaseName,
                 timeSorting.lowercaseName,
                 DefaultLimit,
-                lastPostId
+                lastPostId,
             ).quickMap(postMapper)
+                .mapWithSubredditImageUrl()
+                .forEach(localPostDataSource::insertProfileSubmittedPost)
         }
     }
 
-    override suspend fun getCurrentUserUpvotedPosts(
+    override suspend fun getProfileUpvotedPosts(
         postsSorting: UserPostSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
-    ): Result<List<Post>> = runCatching {
+    ): Result<Unit> = runCatching {
         withContext(dispatcher) {
+            if (lastPostId == null) localPostDataSource.clearProfileUpvotedPosts()
             remotePostDataSource.getUserUpvotedPosts(
                 settings.getString(SettingsKeys.UserName),
                 postsSorting.lowercaseName,
@@ -64,15 +93,18 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId
             ).quickMap(postMapper)
+                .mapWithSubredditImageUrl()
+                .forEach(localPostDataSource::insertProfileUpvotedPost)
         }
     }
 
-    override suspend fun getCurrentUserDownvotedPosts(
+    override suspend fun getProfileDownvotedPosts(
         postsSorting: UserPostSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
-    ): Result<List<Post>> = runCatching {
+    ): Result<Unit> = runCatching {
         withContext(dispatcher) {
+            if (lastPostId == null) localPostDataSource.clearProfileDownvotedPosts()
             remotePostDataSource.getUserDownvotedPosts(
                 settings.getString(SettingsKeys.UserName),
                 postsSorting.lowercaseName,
@@ -80,15 +112,18 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId
             ).quickMap(postMapper)
+                .mapWithSubredditImageUrl()
+                .forEach(localPostDataSource::insertProfileDownvotedPost)
         }
     }
 
-    override suspend fun getCurrentUserHiddenPosts(
+    override suspend fun getProfileHiddenPosts(
         postsSorting: UserPostSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
-    ): Result<List<Post>> = runCatching {
+    ): Result<Unit> = runCatching {
         withContext(dispatcher) {
+            if (lastPostId == null) localPostDataSource.clearProfileHiddenPosts()
             remotePostDataSource.getUserHiddenPosts(
                 settings.getString(SettingsKeys.UserName),
                 postsSorting.lowercaseName,
@@ -96,6 +131,8 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId
             ).quickMap(postMapper)
+                .mapWithSubredditImageUrl()
+                .forEach(localPostDataSource::insertProfileHiddenPost)
         }
     }
 
@@ -114,9 +151,8 @@ internal class PostRepositoryImpl(
                 timeSorting.lowercaseName,
                 DefaultLimit,
                 lastPostId,
-            ).quickMap(postMapper).mapWithSubredditImageUrl().forEach { post ->
-                localPostDataSource.insertPost(post)
-            }
+            ).quickMap(postMapper).mapWithSubredditImageUrl()
+                .forEach(localPostDataSource::insertUserSubmittedPost)
         }
     }
 
@@ -132,9 +168,9 @@ internal class PostRepositoryImpl(
                 timeSorting.lowercaseName,
                 DefaultLimit,
                 lastPostId,
-            ).quickMap(postMapper).mapWithSubredditImageUrl().forEach { post ->
-                localPostDataSource.insertPost(post)
-            }
+            ).quickMap(postMapper)
+                .mapWithSubredditImageUrl()
+                .forEach(localPostDataSource::insertHomePost)
         }
     }
 
@@ -152,28 +188,23 @@ internal class PostRepositoryImpl(
                 timeSorting.lowercaseName,
                 DefaultLimit,
                 lastPostId,
-            ).quickMap(postMapper).mapWithSubredditImageUrl().forEach { post ->
-                localPostDataSource.insertPost(post)
-            }
+            ).quickMap(postMapper)
+                .mapWithSubredditImageUrl()
+                .forEach(localPostDataSource::insertSubredditPost)
         }
     }
 
-    override fun getPost(postId: String): Flow<Result<Post>> = flow {
-        posts.collect {
-            if (it.isNotEmpty()) {
-                val cachedPost = it.firstOrNull { post -> post.id == postId }
-                val result = if (cachedPost != null) {
-                    Result.success(cachedPost)
-                } else {
-                    remotePostDataSource.getPost(postId)
-                        .let(postMapper::map)
-                        .also(localPostDataSource::insertPost)
-                        .let { Result.success(it) }
-                }
-                emit(result)
+    override fun getPost(postId: String): Flow<Result<Post>> {
+        return localPostDataSource.getPost(postId)
+            .map { post ->
+                post ?: remotePostDataSource.getPost(postId)
+                    .let(postMapper::map)
+                    .also(localPostDataSource::insertPost)
             }
-        }
-    }.catch { emit(Result.failure(it)) }.flowOn(dispatcher)
+            .map { Result.success(it) }
+            .catch { emit(Result.failure(it)) }
+            .flowOn(dispatcher)
+    }
 
     override suspend fun createPost(post: Post): Result<Unit> = withContext(dispatcher) {
         with(post) {

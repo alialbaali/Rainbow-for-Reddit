@@ -80,6 +80,7 @@ object RainbowStrings {
     const val TextSelection = "Enable text selection"
     const val MarkPostAsRead = "Mark post as read"
     const val PostMenu = "Post menu"
+    const val Subreddits = "Subreddits"
 
     fun SubredditsCount(count: Int) = "$count subreddits"
     fun UnsubscribeMessage(subredditName: String) = "You have unsubscribed from $subredditName."

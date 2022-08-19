@@ -4,7 +4,6 @@ package com.rainbow.desktop.search
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -14,8 +13,6 @@ import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.ScrollableEnumTabRow
 import com.rainbow.desktop.navigation.ContentScreen
 import com.rainbow.desktop.navigation.Screen
-import com.rainbow.desktop.post.posts
-import com.rainbow.desktop.utils.composed
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

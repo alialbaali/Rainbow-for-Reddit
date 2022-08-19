@@ -26,9 +26,10 @@ private val BoxScope.ImageModifier
     @Composable
     get() = Modifier
         .padding(top = 50.dp)
-        .border(ImageBorderSize, MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
+        .border(ImageBorderSize, MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
         .size(100.dp)
         .clip(RoundedCornerShape(16.dp))
+        .background(MaterialTheme.colorScheme.onSurface)
         .align(Alignment.BottomCenter)
 
 
@@ -47,7 +48,7 @@ fun HeaderItem(bannerImageUrl: String, imageUrl: String, text: String, modifier:
             onFailure = {
                 Image(
                     ColorPainter(
-                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.onSurface,
                     ),
                     text,
                     BannerImageModifier,
@@ -60,7 +61,7 @@ fun HeaderItem(bannerImageUrl: String, imageUrl: String, text: String, modifier:
             contentDescription = text,
             modifier = ImageModifier,
             onLoading = { RainbowProgressIndicator(ImageModifier) },
-            onFailure = { TextBox(text, 40.sp, ImageModifier.background(MaterialTheme.colorScheme.secondary)) }
+            onFailure = { TextBox(text, 40.sp, ImageModifier) }
         )
     }
 }

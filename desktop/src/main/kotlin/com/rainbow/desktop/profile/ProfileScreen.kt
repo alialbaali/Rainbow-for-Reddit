@@ -14,19 +14,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rainbow.desktop.comment.comments
-import com.rainbow.desktop.components.HeaderDescription
-import com.rainbow.desktop.components.RainbowLazyColumn
-import com.rainbow.desktop.components.ScreenHeaderItem
-import com.rainbow.desktop.components.ScrollableEnumTabRow
-import com.rainbow.desktop.item.items
+import com.rainbow.desktop.components.*
 import com.rainbow.desktop.navigation.ContentScreen
 import com.rainbow.desktop.navigation.Screen
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.utils.RainbowStrings
-import com.rainbow.desktop.utils.composed
 import com.rainbow.desktop.utils.defaultPadding
 import com.rainbow.desktop.utils.defaultSurfaceShape
+import com.rainbow.desktop.utils.fold
 import com.rainbow.domain.models.User
 
 @Composable
@@ -36,27 +31,40 @@ fun ProfileScreen(
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val stateHolder = remember { ProfileScreenStateHolder() }
+    val stateHolder = remember { ProfileScreenStateHolder.getInstance() }
     val selectedTab by stateHolder.selectedTab.collectAsState(ProfileTab.Overview)
     val userState by stateHolder.currentUser.collectAsState()
 //    val overViewItemsState by stateHolder.overViewItemListModel.items.collectAsState()
 //    val savedItemsState by stateHolder.savedItemListModel.items.collectAsState()
-//    val submittedPostsState by stateHolder.submittedPostListModel.items.collectAsState()
-//    val hiddenPostsState by stateHolder.hiddenPostListModel.items.collectAsState()
-//    val upvotedPostsState by stateHolder.upvotedPostListModel.items.collectAsState()
-//    val downvotedPostsState by stateHolder.downvotedPostListModel.items.collectAsState()
+    val submittedPostsState by stateHolder.submittedPostsStateHolder.items.collectAsState()
+    val upvotedPostsState by stateHolder.upvotedPostsStateHolder.items.collectAsState()
+    val downvotedPostsState by stateHolder.downvotedPostsStateHolder.items.collectAsState()
+    val hiddenPostsState by stateHolder.hiddenPostsStateHolder.items.collectAsState()
 //    val commentsState by stateHolder.commentListModel.items.collectAsState()
 //    val postLayout by stateHolder.postLayout.collectAsState()
-    userState.composed(onShowSnackbar, modifier) { user ->
-        RainbowLazyColumn(modifier) {
-            item { Header(user) }
-            item {
-                ScrollableEnumTabRow(
-                    selectedTab = selectedTab,
-                    onTabClick = { stateHolder.selectTab(it) },
-                )
-            }
-//            when (selectedTab) {
+
+    RainbowLazyColumn(modifier) {
+        userState.fold(
+            onLoading = {
+                item {
+                    RainbowProgressIndicator()
+                }
+            },
+            onSuccess = { user ->
+                item { Header(user) }
+                item {
+                    ScrollableEnumTabRow(
+                        selectedTab = selectedTab,
+                        onTabClick = { stateHolder.selectTab(it) },
+                    )
+                }
+            },
+            onFailure = { value, exception ->
+
+            },
+            onEmpty = {},
+        )
+        when (selectedTab) {
 //                ProfileTab.Overview -> items(
 //                    overViewItemsState,
 //                    onNavigate,
@@ -64,7 +72,7 @@ fun ProfileScreen(
 //                    { },
 //                    {},
 //                )
-//
+
 //                ProfileTab.Saved -> items(
 //                    savedItemsState,
 //                    onNavigate,
@@ -72,49 +80,50 @@ fun ProfileScreen(
 //                    { },
 //                    {},
 //                )
-//
+
 //                ProfileTab.Comments -> comments(
 //                    commentsState,
 //                    onNavigate,
 //                    onNavigateContentScreen,
 //                )
-//
-//                ProfileTab.Submitted -> posts(
-//                    submittedPostsState,
-//                    onNavigate,
-//                    onNavigateContentScreen,
-//                    {},
-//                    onShowSnackbar,
-////                    onPostClick
-//                )
-//
-//                ProfileTab.Hidden -> posts(
-//                    hiddenPostsState,
-//                    onNavigate,
-//                    onNavigateContentScreen,
-//                    {},
-//                    onShowSnackbar,
-////                    onPostClick
-//                )
-//
-//                ProfileTab.Upvoted -> posts(
-//                    upvotedPostsState,
-//                    onNavigate,
-//                    onNavigateContentScreen,
-//                    {},
-//                    onShowSnackbar,
-////                    onPostClick
-//                )
-//
-//                ProfileTab.Downvoted -> posts(
-//                    downvotedPostsState,
-//                    onNavigate,
-//                    onNavigateContentScreen,
-//                    {},
-//                    onShowSnackbar,
-////                    onPostClick
-//                )
-//            }
+
+            ProfileTab.Submitted -> posts(
+                submittedPostsState,
+                onNavigate,
+                onNavigateContentScreen,
+                {},
+                onShowSnackbar,
+                stateHolder.submittedPostsStateHolder::setLastItem,
+            )
+
+            ProfileTab.Hidden -> posts(
+                hiddenPostsState,
+                onNavigate,
+                onNavigateContentScreen,
+                {},
+                onShowSnackbar,
+                stateHolder.hiddenPostsStateHolder::setLastItem,
+            )
+
+            ProfileTab.Upvoted -> posts(
+                upvotedPostsState,
+                onNavigate,
+                onNavigateContentScreen,
+                {},
+                onShowSnackbar,
+                stateHolder.upvotedPostsStateHolder::setLastItem,
+            )
+
+            ProfileTab.Downvoted -> posts(
+                downvotedPostsState,
+                onNavigate,
+                onNavigateContentScreen,
+                {},
+                onShowSnackbar,
+                stateHolder.downvotedPostsStateHolder::setLastItem,
+            )
+
+            else -> {}
         }
     }
 }

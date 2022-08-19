@@ -4,20 +4,17 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.*
 import androidx.compose.material.icons.rounded.PlaylistAdd
 import androidx.compose.material.icons.rounded.PlaylistAddCheck
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarBorder
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
-import com.rainbow.desktop.utils.defaultSurfaceShape
 import com.rainbow.domain.models.Subreddit
 
 
@@ -49,8 +46,7 @@ fun SubredditFavoriteIconButton(
                 onShowSnackbar(RainbowStrings.UnFavoriteMessage(subreddit.name))
             }
         },
-        modifier = modifier
-            .defaultSurfaceShape(shape = CircleShape),
+        modifier = modifier,
         enabled = enabled
     ) {
         AnimatedContent(subreddit.isFavorite) { isFavorite ->
