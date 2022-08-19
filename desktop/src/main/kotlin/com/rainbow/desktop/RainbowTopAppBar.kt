@@ -65,7 +65,7 @@ inline fun RainbowTopAppBar(
 
                 Text(
                     when (mainScreen) {
-                        is MainScreen.NavigationItem -> mainScreen.title
+                        is MainScreen.SidebarItem -> mainScreen.title
                         is MainScreen.Subreddit -> mainScreen.subredditName
                         is MainScreen.User -> mainScreen.userName
                         is MainScreen.Search -> mainScreen.searchTerm

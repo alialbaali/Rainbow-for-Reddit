@@ -8,12 +8,12 @@ sealed interface MainScreen {
     data class Subreddit(val subredditName: String) : MainScreen
     data class User(val userName: String) : MainScreen
     data class Search(val searchTerm: String) : MainScreen
-    sealed interface NavigationItem : MainScreen {
-        object Profile : NavigationItem
-        object Home : NavigationItem
-        object Subreddits : NavigationItem
-        object Messages : NavigationItem
-        object Settings : NavigationItem
+    sealed interface SidebarItem : MainScreen {
+        object Profile : SidebarItem
+        object Home : SidebarItem
+        object Subreddits : SidebarItem
+        object Messages : SidebarItem
+        object Settings : SidebarItem
 
         companion object {
             val All = listOf(Profile, Home, Subreddits, Messages, Settings)
@@ -21,21 +21,21 @@ sealed interface MainScreen {
     }
 }
 
-inline val MainScreen.NavigationItem.icon
+inline val MainScreen.SidebarItem.icon
     @Composable
     get() = when (this) {
-        MainScreen.NavigationItem.Home -> RainbowIcons.Home
-        MainScreen.NavigationItem.Subreddits -> RainbowIcons.GridView
-        MainScreen.NavigationItem.Messages -> RainbowIcons.Message
-        MainScreen.NavigationItem.Profile -> RainbowIcons.Person
-        MainScreen.NavigationItem.Settings -> RainbowIcons.Settings
+        MainScreen.SidebarItem.Home -> RainbowIcons.Home
+        MainScreen.SidebarItem.Subreddits -> RainbowIcons.GridView
+        MainScreen.SidebarItem.Messages -> RainbowIcons.Message
+        MainScreen.SidebarItem.Profile -> RainbowIcons.Person
+        MainScreen.SidebarItem.Settings -> RainbowIcons.Settings
     }
 
-inline val MainScreen.NavigationItem.title
+inline val MainScreen.SidebarItem.title
     get() = when (this) {
-        MainScreen.NavigationItem.Profile -> "Profile"
-        MainScreen.NavigationItem.Home -> "Home"
-        MainScreen.NavigationItem.Subreddits -> "Subreddits"
-        MainScreen.NavigationItem.Messages -> "Messages"
-        MainScreen.NavigationItem.Settings -> "Settings"
+        MainScreen.SidebarItem.Profile -> "Profile"
+        MainScreen.SidebarItem.Home -> "Home"
+        MainScreen.SidebarItem.Subreddits -> "Subreddits"
+        MainScreen.SidebarItem.Messages -> "Messages"
+        MainScreen.SidebarItem.Settings -> "Settings"
     }

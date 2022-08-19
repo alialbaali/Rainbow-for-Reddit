@@ -16,8 +16,8 @@ import com.rainbow.desktop.utils.defaultPadding
 
 @Composable
 fun Sidebar(
-    navigationItem: MainScreen.NavigationItem,
-    onNavigationItemClick: (MainScreen.NavigationItem) -> Unit,
+    sidebarItem: MainScreen.SidebarItem,
+    onSidebarItemClick: (MainScreen.SidebarItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
@@ -35,19 +35,19 @@ fun Sidebar(
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             SidebarItem(
-                MainScreen.NavigationItem.Profile,
-                navigationItem,
-                onNavigationItemClick,
+                MainScreen.SidebarItem.Profile,
+                sidebarItem,
+                onSidebarItemClick,
             )
             Column {
                 listOf(
-                    MainScreen.NavigationItem.Home,
-                    MainScreen.NavigationItem.Subreddits,
-                    MainScreen.NavigationItem.Messages,
+                    MainScreen.SidebarItem.Home,
+                    MainScreen.SidebarItem.Subreddits,
+                    MainScreen.SidebarItem.Messages,
                 ).forEach { item ->
                     NavigationRailItem(
-                        selected = item == navigationItem,
-                        onClick = { onNavigationItemClick(item) },
+                        selected = item == sidebarItem,
+                        onClick = { onSidebarItemClick(item) },
                         icon = { Icon(item.icon, item.icon.name) },
                         label = { Text(item.title) },
                         alwaysShowLabel = false
@@ -55,9 +55,9 @@ fun Sidebar(
                 }
             }
             SidebarItem(
-                MainScreen.NavigationItem.Settings,
-                navigationItem,
-                onNavigationItemClick,
+                MainScreen.SidebarItem.Settings,
+                sidebarItem,
+                onSidebarItemClick,
             )
         }
     }
@@ -65,14 +65,14 @@ fun Sidebar(
 
 @Composable
 private fun SidebarItem(
-    item: MainScreen.NavigationItem,
-    currentNavigationItem: MainScreen.NavigationItem,
-    onNavigationItemClick: (MainScreen.NavigationItem) -> Unit,
+    item: MainScreen.SidebarItem,
+    currentSidebarItem: MainScreen.SidebarItem,
+    onSidebarItemClick: (MainScreen.SidebarItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavigationRailItem(
-        selected = item == currentNavigationItem,
-        onClick = { onNavigationItemClick(item) },
+        selected = item == currentSidebarItem,
+        onClick = { onSidebarItemClick(item) },
         icon = { Icon(item.icon, item.icon.name) },
         label = { Text(item.title) },
         alwaysShowLabel = false,

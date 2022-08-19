@@ -47,17 +47,17 @@ internal fun Content(
     }
     Box(modifier.background(MaterialTheme.colorScheme.surface)) {
         Row(Modifier.fillMaxSize()) {
-            val navigateItem = remember(mainScreen) {
-                mainScreen as? MainScreen.NavigationItem
+            val sidebarItem = remember(mainScreen) {
+                mainScreen as? MainScreen.SidebarItem
                     ?: RainbowStateHolder.backStack.value
-                        .lastOrNull { it is MainScreen.NavigationItem } as MainScreen.NavigationItem
+                        .lastOrNull { it is MainScreen.SidebarItem } as MainScreen.SidebarItem
             }
-            StartContent(
-                navigateItem,
+            Sidebar(
+                sidebarItem,
                 onNavigateMainScreen,
                 Modifier
                     .wrapContentWidth(unbounded = true)
-                    .fillMaxHeight(),
+                    .fillMaxHeight()
             )
             Column(Modifier.fillMaxSize()) {
                 RainbowTopAppBar(
@@ -77,14 +77,14 @@ internal fun Content(
                         .padding(horizontal = MaterialTheme.dpDimensions.extraLarge),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    CenterContent(
+                    MainScreenContent(
                         mainScreen,
                         onNavigateMainScreen,
                         onNavigateDetailsScreen,
                         onShowSnackbar = { snackbarMessage = it },
                         Modifier.weight(1F),
                     )
-                    EndContent(
+                    DetailsScreenContent(
                         detailsScreen,
                         onNavigateMainScreen,
                         onShowSnackbar = { snackbarMessage = it },
@@ -103,20 +103,7 @@ internal fun Content(
 }
 
 @Composable
-private fun StartContent(
-    navigationItem: MainScreen.NavigationItem,
-    onNavigationItemClick: (MainScreen.NavigationItem) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Sidebar(
-        navigationItem,
-        onNavigationItemClick,
-        modifier
-    )
-}
-
-@Composable
-private fun CenterContent(
+private fun MainScreenContent(
     mainScreen: MainScreen,
     onNavigateMainScreen: (MainScreen) -> Unit,
     onNavigateDetailsScreen: (DetailsScreen) -> Unit,
@@ -124,34 +111,34 @@ private fun CenterContent(
     modifier: Modifier = Modifier,
 ) {
     when (mainScreen) {
-        is MainScreen.NavigationItem -> when (mainScreen) {
-            MainScreen.NavigationItem.Profile -> ProfileScreen(
+        is MainScreen.SidebarItem -> when (mainScreen) {
+            MainScreen.SidebarItem.Profile -> ProfileScreen(
                 onNavigateMainScreen,
                 onNavigateDetailsScreen,
                 onShowSnackbar,
                 modifier,
             )
 
-            MainScreen.NavigationItem.Home -> HomeScreen(
+            MainScreen.SidebarItem.Home -> HomeScreen(
                 onNavigateMainScreen,
                 onNavigateDetailsScreen,
                 onShowSnackbar,
                 modifier,
             )
 
-            MainScreen.NavigationItem.Subreddits -> CurrentUserSubredditsScreen(
+            MainScreen.SidebarItem.Subreddits -> CurrentUserSubredditsScreen(
                 onNavigateMainScreen,
                 onShowSnackbar,
             )
 
-            MainScreen.NavigationItem.Messages -> MessagesScreen(
+            MainScreen.SidebarItem.Messages -> MessagesScreen(
                 onNavigateMainScreen,
                 onNavigateDetailsScreen,
                 onShowSnackbar,
                 modifier,
             )
 
-            MainScreen.NavigationItem.Settings -> SettingsScreen(Modifier.fillMaxWidth(0.5F))
+            MainScreen.SidebarItem.Settings -> SettingsScreen(Modifier.fillMaxWidth(0.5F))
         }
 
         is MainScreen.Subreddit -> SubredditScreen(
@@ -180,9 +167,8 @@ private fun CenterContent(
     }
 }
 
-
 @Composable
-private fun EndContent(
+private fun DetailsScreenContent(
     detailsScreen: DetailsScreen,
     onNavigateMainScreen: (MainScreen) -> Unit,
     onShowSnackbar: (String) -> Unit,

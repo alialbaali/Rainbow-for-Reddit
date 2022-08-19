@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 @OptIn(FlowPreview::class)
 object RainbowStateHolder : StateHolder() {
 
-    private val mutableMainScreen = MutableStateFlow<MainScreen>(MainScreen.NavigationItem.Home)
+    private val mutableMainScreen = MutableStateFlow<MainScreen>(MainScreen.SidebarItem.Home)
     val mainScreen get() = mutableMainScreen.asStateFlow()
 
     private val mutableBackStack = MutableStateFlow<List<MainScreen>>(emptyList())
@@ -30,11 +30,11 @@ object RainbowStateHolder : StateHolder() {
 //            .debounce(Constants.RefreshContentDebounceTime)
 //            .onEach {
 //                when (mainScreen.value) {
-//                    MainScreen.NavigationItem.Home -> loadHomePosts(postSorting.value, timeSorting.value)
-//                    MainScreen.NavigationItem.Messages -> TODO()
-//                    MainScreen.NavigationItem.Profile -> TODO()
-//                    MainScreen.NavigationItem.Settings -> TODO()
-//                    MainScreen.NavigationItem.Subreddits -> TODO()
+//                    MainScreen.SidebarItem.Home -> loadHomePosts(postSorting.value, timeSorting.value)
+//                    MainScreen.SidebarItem.Messages -> TODO()
+//                    MainScreen.SidebarItem.Profile -> TODO()
+//                    MainScreen.SidebarItem.Settings -> TODO()
+//                    MainScreen.SidebarItem.Subreddits -> TODO()
 //                    is MainScreen.Search -> TODO()
 //                    is MainScreen.Subreddit -> TODO()
 //                    is MainScreen.User -> TODO()
