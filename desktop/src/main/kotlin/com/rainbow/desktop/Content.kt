@@ -28,6 +28,7 @@ import com.rainbow.desktop.user.UserScreen
 @Composable
 internal fun Content(
     mainScreen: MainScreen,
+    sidebarItem: MainScreen.SidebarItem,
     detailsScreen: DetailsScreen,
     onNavigateMainScreen: (MainScreen) -> Unit,
     onNavigateDetailsScreen: (DetailsScreen) -> Unit,
@@ -47,11 +48,6 @@ internal fun Content(
     }
     Box(modifier.background(MaterialTheme.colorScheme.surface)) {
         Row(Modifier.fillMaxSize()) {
-            val sidebarItem = remember(mainScreen) {
-                mainScreen as? MainScreen.SidebarItem
-                    ?: RainbowStateHolder.backStack.value
-                        .lastOrNull { it is MainScreen.SidebarItem } as MainScreen.SidebarItem
-            }
             Sidebar(
                 sidebarItem,
                 onNavigateMainScreen,

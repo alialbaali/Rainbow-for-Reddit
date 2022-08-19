@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 @Composable
 internal fun App() {
     val mainScreen by RainbowStateHolder.mainScreen.collectAsState()
+    val sidebarItem by RainbowStateHolder.sidebarItem.collectAsState()
     val detailsScreen by RainbowStateHolder.detailsScreen.collectAsState()
     val backStack by RainbowStateHolder.backStack.collectAsState()
     val forwardStack by RainbowStateHolder.forwardStack.collectAsState()
@@ -21,6 +22,7 @@ internal fun App() {
             Content(
                 mainScreen = animatedScreen,
                 detailsScreen = detailsScreen,
+                sidebarItem = sidebarItem,
                 onNavigateMainScreen = RainbowStateHolder::navigateToMainScreen,
                 onNavigateDetailsScreen = RainbowStateHolder::navigateToDetailsScreen,
                 onBackClick = RainbowStateHolder::navigateBack,

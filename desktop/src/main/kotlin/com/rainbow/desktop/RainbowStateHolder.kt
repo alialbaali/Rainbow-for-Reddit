@@ -1,18 +1,21 @@
 package com.rainbow.desktop
 
-import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
+import com.rainbow.desktop.state.StateHolder
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 
 @OptIn(FlowPreview::class)
 object RainbowStateHolder : StateHolder() {
 
     private val mutableMainScreen = MutableStateFlow<MainScreen>(MainScreen.SidebarItem.Home)
     val mainScreen get() = mutableMainScreen.asStateFlow()
+    val sidebarItem
+        get() = mainScreen.map {
+            it as? MainScreen.SidebarItem ?: backStack.value
+                .last { it is MainScreen.SidebarItem } as MainScreen.SidebarItem
+        }.stateIn(scope, SharingStarted.Eagerly, MainScreen.SidebarItem.Home)
 
     private val mutableBackStack = MutableStateFlow<List<MainScreen>>(emptyList())
     val backStack get() = mutableBackStack.asStateFlow()
