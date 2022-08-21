@@ -143,7 +143,7 @@ internal class PostRepositoryImpl(
         lastPostId: String?,
     ): Result<Unit> = runCatching {
         withContext(dispatcher) {
-            if (lastPostId == null) localPostDataSource.clearPosts()
+            if (lastPostId == null) localPostDataSource.clearUserSubmittedPosts()
 
             remotePostDataSource.getUserSubmittedPosts(
                 userName,
@@ -162,7 +162,7 @@ internal class PostRepositoryImpl(
         lastPostId: String?,
     ): Result<Unit> = runCatching {
         withContext(dispatcher) {
-            if (lastPostId == null) localPostDataSource.clearPosts()
+            if (lastPostId == null) localPostDataSource.clearHomePosts()
             remotePostDataSource.getHomePosts(
                 postsSorting.lowercaseName,
                 timeSorting.lowercaseName,
@@ -181,7 +181,7 @@ internal class PostRepositoryImpl(
         lastPostId: String?,
     ): Result<Unit> = runCatching {
         withContext(dispatcher) {
-            if (lastPostId == null) localPostDataSource.clearPosts()
+            if (lastPostId == null) localPostDataSource.clearSubredditPosts()
             remotePostDataSource.getSubredditPosts(
                 subredditName,
                 postsSorting.lowercaseName,
