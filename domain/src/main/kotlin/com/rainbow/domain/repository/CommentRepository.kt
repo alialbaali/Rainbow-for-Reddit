@@ -8,7 +8,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface CommentRepository {
 
-    val comments: Flow<List<Comment>>
+    val homeComments: Flow<List<Comment>>
+
+    val postComments: Flow<List<Comment>>
 
     suspend fun getCurrentUserComments(
         commentsSorting: UserPostSorting,
@@ -18,11 +20,6 @@ interface CommentRepository {
 
     suspend fun getHomeComments(lastCommentId: String?): Result<Unit>
 
-    suspend fun getPostsComments(
-        postId: String,
-        commentsSorting: PostCommentSorting,
-    ): Result<List<Comment>>
-
     suspend fun getUserComments(
         userName: String,
         commentsSorting: UserPostSorting,
@@ -30,17 +27,23 @@ interface CommentRepository {
         lastCommentId: String?,
     ): Result<List<Comment>>
 
-    suspend fun getMorePostComments(
+    suspend fun getPostsComments(
         postId: String,
+        commentsSorting: PostCommentSorting,
+    ): Result<Unit>
+
+    suspend fun getViewMoreComments(
+        postId: String,
+        commentId: String,
         children: List<String>,
         commentsSorting: PostCommentSorting,
-    ): Result<List<Comment>>
+    ): Result<Unit>
 
     suspend fun getThreadComments(
         postId: String,
         parentId: String,
         commentsSorting: PostCommentSorting,
-    ): Result<List<Comment>>
+    ): Result<Unit>
 
     suspend fun createComment(comment: Comment): Result<Comment>
 

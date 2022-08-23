@@ -22,6 +22,7 @@ data class Comment(
     val vote: Vote = Vote.None,
     val flair: Flair, // make it nullable when it's empty?
     val creationDate: LocalDateTime,
+    val isContinueThread: Boolean = false,
 ) : Item {
     sealed interface Type {
         object None: Type

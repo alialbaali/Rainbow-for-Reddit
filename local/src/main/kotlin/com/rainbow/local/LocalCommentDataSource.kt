@@ -5,9 +5,15 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocalCommentDataSource {
 
-    val comments: Flow<List<Comment>>
+    val homeComments: Flow<List<Comment>>
 
-    fun insertComment(comment: Comment)
+    val postComments: Flow<List<Comment>>
+
+    fun insertHomeComment(comment: Comment)
+
+    fun insertPostComment(comment: Comment)
+
+    fun updatePostComment(comment: Comment)
 
     fun upvoteComment(commentId: String)
 
@@ -15,6 +21,10 @@ interface LocalCommentDataSource {
 
     fun unvoteComment(commentId: String)
 
-    fun clearComments()
+    fun clearHomeComments()
+
+    fun clearPostComments()
+
+    fun clearThreadComments(parentId: String)
 
 }

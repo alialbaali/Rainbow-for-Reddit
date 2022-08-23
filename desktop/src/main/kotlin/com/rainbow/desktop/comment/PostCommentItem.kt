@@ -22,7 +22,6 @@ inline fun PostCommentItem(
     postUserName: String,
     isRepliesVisible: Boolean,
     crossinline onClick: () -> Unit,
-    noinline onUpdate: (Comment) -> Unit,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
     modifier: Modifier = Modifier,

@@ -30,8 +30,8 @@ inline fun CommentItem(
     ) {
         CommentInfo(
             comment,
-            onUserNameClick = { userName -> MainScreen.User(userName) },
-            onSubredditNameClick = { subredditName -> MainScreen.Subreddit(subredditName) },
+            onUserNameClick = { userName -> onNavigateMainScreen(MainScreen.User(userName)) },
+            onSubredditNameClick = { subredditName -> onNavigateMainScreen(MainScreen.Subreddit(subredditName)) },
             isSubredditNameEnabled = true
         )
         Text(comment.body, color = MaterialTheme.colorScheme.onBackground)

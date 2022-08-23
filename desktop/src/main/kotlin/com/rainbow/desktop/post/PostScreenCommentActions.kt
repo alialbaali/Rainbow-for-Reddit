@@ -6,89 +6,77 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.rounded.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
+import com.rainbow.desktop.components.DropdownMenuHolder
 import com.rainbow.desktop.components.RainbowIconButton
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.defaultPadding
-import com.rainbow.desktop.components.DropdownMenuHolder
+import com.rainbow.domain.models.PostCommentSorting
 
 @Composable
-fun LazyItemScope.CommentActions(model: PostScreenStateHolder) {
-    val commentListModel by model.commentListModel.collectAsState()
-    val backStack by model.backStack.collectAsState()
-    val forwardStack by model.forwardStack.collectAsState()
-    val sorting by commentListModel.sorting.collectAsState()
-    Row(Modifier.clip(MaterialTheme.shapes.medium).fillParentMaxWidth().shadow(1.dp).background(MaterialTheme.colorScheme.surface).defaultPadding()) {
-        CommentsActions(
-            backStack.isNotEmpty(),
-            forwardStack.isNotEmpty(),
-            model::back,
-            model::forward,
-            commentListModel::refreshComments,
-            commentListModel::expandComments,
-            commentListModel::collapseComments,
-            Modifier.weight(1F)
-        )
-        DropdownMenuHolder(
-            sorting,
-            commentListModel::setSorting,
-        )
-    }
-    Spacer(Modifier.height(16.dp))
-}
-
-
-@Composable
-private fun CommentsActions(
+fun LazyItemScope.CommentActions(
+    sorting: PostCommentSorting,
     isBackEnabled: Boolean,
     isForwardEnabled: Boolean,
-    onBackClick: () -> Unit,
-    onForwardClick: () -> Unit,
+    setCommentSorting: (PostCommentSorting) -> Unit,
     onRefresh: () -> Unit,
     onExpand: () -> Unit,
     onCollapse: () -> Unit,
-    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit,
+    onForwardClick: () -> Unit,
 ) {
-    Row(modifier, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        RainbowIconButton(
-            RainbowIcons.ArrowBack,
-            RainbowStrings.NavigateBack,
-            onBackClick,
-            enabled = isBackEnabled,
-        )
+    Row(
+        Modifier
+            .clip(MaterialTheme.shapes.medium)
+            .fillParentMaxWidth()
+            .shadow(1.dp)
+            .background(MaterialTheme.colorScheme.surface)
+            .defaultPadding()
+    ) {
+        Row(Modifier.weight(1F), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            RainbowIconButton(
+                RainbowIcons.ArrowBack,
+                RainbowStrings.NavigateBack,
+                onBackClick,
+                enabled = isBackEnabled,
+            )
 
-        RainbowIconButton(
-            RainbowIcons.ArrowForward,
-            RainbowStrings.NavigateForward,
-            onForwardClick,
-            enabled = isForwardEnabled
-        )
+            RainbowIconButton(
+                RainbowIcons.ArrowForward,
+                RainbowStrings.NavigateForward,
+                onForwardClick,
+                enabled = isForwardEnabled
+            )
 
-        RainbowIconButton(
-            RainbowIcons.Refresh,
-            RainbowStrings.Refresh,
-            onRefresh,
-        )
+            RainbowIconButton(
+                RainbowIcons.Refresh,
+                RainbowStrings.Refresh,
+                onRefresh,
+            )
 
-        RainbowIconButton(
-            RainbowIcons.UnfoldMore,
-            RainbowStrings.ExpandComments,
-            onExpand,
-        )
+            RainbowIconButton(
+                RainbowIcons.UnfoldMore,
+                RainbowStrings.ExpandComments,
+                onExpand,
+            )
 
-        RainbowIconButton(
-            RainbowIcons.UnfoldLess,
-            RainbowStrings.CollapseComments,
-            onCollapse,
+            RainbowIconButton(
+                RainbowIcons.UnfoldLess,
+                RainbowStrings.CollapseComments,
+                onCollapse,
+            )
+        }
+        DropdownMenuHolder(
+            sorting,
+            setCommentSorting,
         )
     }
+    Spacer(Modifier.height(16.dp))
 }

@@ -7,42 +7,77 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class LocalCommentDataSourceImpl : LocalCommentDataSource {
 
-    private val mutableComments = MutableStateFlow(emptyList<Comment>())
-    override val comments get() = mutableComments.asStateFlow()
+    private val mutableHomeComments = MutableStateFlow(emptyList<Comment>())
+    override val homeComments get() = mutableHomeComments.asStateFlow()
 
-    override fun insertComment(comment: Comment) {
-        mutableComments.value = comments.value + comment
+    private val mutablePostComments = MutableStateFlow(emptyList<Comment>())
+    override val postComments get() = mutablePostComments.asStateFlow()
+
+    private val allComments = listOf(
+        mutableHomeComments,
+        mutablePostComments,
+    )
+
+    override fun insertHomeComment(comment: Comment) {
+        mutableHomeComments.value = homeComments.value + comment
+    }
+
+    override fun insertPostComment(comment: Comment) {
+        mutablePostComments.value = postComments.value + comment
+    }
+
+    override fun updatePostComment(comment: Comment) {
+        mutablePostComments.value = postComments.value.map { oldComment ->
+            if (oldComment.id == comment.id)
+                comment
+            else
+                oldComment
+        }
     }
 
     override fun upvoteComment(commentId: String) {
-        mutableComments.value = comments.value.map { comment ->
-            if (comment.id == commentId)
-                comment.copy(vote = Vote.Up)
-            else
-                comment
+        allComments.forEach { state ->
+            state.value = state.value.map { comment ->
+                if (comment.id == commentId)
+                    comment.copy(vote = Vote.Up)
+                else
+                    comment
+            }
         }
     }
 
     override fun downvoteComment(commentId: String) {
-        mutableComments.value = comments.value.map { comment ->
-            if (comment.id == commentId)
-                comment.copy(vote = Vote.Down)
-            else
-                comment
+        allComments.forEach { state ->
+            state.value = state.value.map { comment ->
+                if (comment.id == commentId)
+                    comment.copy(vote = Vote.Down)
+                else
+                    comment
+            }
         }
     }
 
     override fun unvoteComment(commentId: String) {
-        mutableComments.value = comments.value.map { comment ->
-            if (comment.id == commentId)
-                comment.copy(vote = Vote.None)
-            else
-                comment
+        allComments.forEach { state ->
+            state.value = state.value.map { comment ->
+                if (comment.id == commentId)
+                    comment.copy(vote = Vote.None)
+                else
+                    comment
+            }
         }
     }
 
-    override fun clearComments() {
-        mutableComments.value = emptyList()
+    override fun clearHomeComments() {
+        mutableHomeComments.value = emptyList()
+    }
+
+    override fun clearPostComments() {
+        mutablePostComments.value = emptyList()
+    }
+
+    override fun clearThreadComments(parentId: String) {
+        mutablePostComments.value = postComments.value.filterNot { it.isContinueThread && it.id == parentId }
     }
 
 }

@@ -26,11 +26,11 @@ private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommen
         postId: String,
         commentsSorting: String,
         limit: Int,
-    ): Result<List<RemoteComment>> {
-        return client.plainRequest<CommentsList>(Comments.PostComments(postId.removeIdPrefix())) {
+    ): List<RemoteComment> {
+        return client.requestOrThrow<CommentsList>(Comments.PostComments(postId.removeIdPrefix())) {
             parameter(Keys.Sort, commentsSorting)
             parameter(Keys.Limit, limit)
-        }.mapCatching { it.map { it.data.toList() }[1] }
+        }.map { it.data.toList() }[1]
     }
 
     override suspend fun getUserComments(
@@ -48,18 +48,18 @@ private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommen
         }.mapCatching { it.toList() }
     }
 
-    override suspend fun getMorePostComments(
+    override suspend fun getViewMoreComments(
         postId: String,
         childrenIds: List<String>,
         commentsSorting: String,
         limit: Int,
-    ): Result<List<RemoteComment>> {
-        return client.plainRequest<Map<String, Item<Map<String, List<Item<RemoteComment>>>>>>(Comments.Replies) {
+    ): List<RemoteComment> {
+        return client.requestOrThrow<Map<String, Item<Map<String, List<Item<RemoteComment>>>>>>(Comments.Replies) {
             parameter(Keys.Sort, commentsSorting)
             parameter(Keys.PostId, postId)
             parameter(Keys.ApiType, Values.Json)
             parameter(Keys.Children, childrenIds.take(limit).joinToString())
-        }.map { it["json"]?.data?.get("things")?.map { it.data } ?: emptyList() }
+        }["json"]?.data?.get("things")?.map { it.data } ?: emptyList()
     }
 
     override suspend fun getThreadComments(
@@ -67,8 +67,8 @@ private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommen
         parentId: String,
         commentsSorting: String,
         limit: Int,
-    ): Result<List<RemoteComment>> {
-        return client.plainRequest<CommentsList>(
+    ): List<RemoteComment> {
+        return client.requestOrThrow<CommentsList>(
             Comments.ThreadComments(
                 postId.removeIdPrefix(),
                 parentId.removeIdPrefix()
@@ -76,7 +76,7 @@ private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommen
         ) {
             parameter(Keys.Sort, commentsSorting)
             parameter(Keys.Limit, limit)
-        }.mapCatching { it.map { it.data.toList() }[1] }
+        }.map { it.data.toList() }[1]
     }
 
     override suspend fun submitComment(postId: String?, parentCommentId: String?, text: String): Result<Unit> {

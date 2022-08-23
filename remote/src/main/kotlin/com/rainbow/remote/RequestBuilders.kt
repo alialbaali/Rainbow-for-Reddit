@@ -28,6 +28,26 @@ internal suspend inline fun <reified T> HttpClient.getOrThrow(
     }
 }
 
+internal suspend inline fun <reified T> HttpClient.requestOrThrow(
+    endpoint: Endpoint,
+    builder: HttpRequestBuilder.() -> Unit = {},
+): T {
+    val response = request {
+        url("${endpoint.path}.json")
+        builder()
+    }
+    return if (response.status.isSuccess()) {
+        response.body()
+    } else {
+        val error = try {
+            response.body()
+        } catch (exception: Throwable) {
+            Error(response.status.description, response.status.value)
+        }
+        error(error.message.toString())
+    }
+}
+
 internal suspend inline fun <reified T> HttpClient.get(
     endpoint: Endpoint,
     builder: HttpRequestBuilder.() -> Unit = {},

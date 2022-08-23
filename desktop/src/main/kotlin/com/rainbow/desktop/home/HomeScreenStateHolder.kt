@@ -34,7 +34,7 @@ class HomeScreenStateHolder private constructor(
         ): Result<Unit> = postRepository.getHomePosts(sorting, timeSorting, lastItem?.id)
     }
 
-    val commentsStateHolder = object : HomeScreenCommentsStateHolder(commentRepository.comments) {
+    val commentsStateHolder = object : HomeScreenCommentsStateHolder(commentRepository.homeComments) {
         override suspend fun getItems(lastItem: Comment?): Result<Unit> {
             return commentRepository.getHomeComments(lastItem?.id)
         }

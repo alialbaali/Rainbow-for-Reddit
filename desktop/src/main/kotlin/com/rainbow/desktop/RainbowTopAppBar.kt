@@ -22,15 +22,15 @@ import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.defaultPadding
 
 @Composable
-inline fun RainbowTopAppBar(
+fun RainbowTopAppBar(
     mainScreen: MainScreen,
-    noinline onSearchClick: (String) -> Unit,
-    noinline onSubredditNameClick: (String) -> Unit,
-    noinline onBackClick: () -> Unit,
-    noinline onForwardClick: () -> Unit,
+    onSearchClick: (String) -> Unit,
+    onSubredditNameClick: (String) -> Unit,
+    onBackClick: () -> Unit,
+    onForwardClick: () -> Unit,
     isBackEnabled: Boolean,
     isForwardEnabled: Boolean,
-    noinline onRefresh: () -> Unit,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(

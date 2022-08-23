@@ -20,7 +20,6 @@ inline fun ReplyItem(
     isRepliesVisible: Boolean,
     depth: Int,
     noinline onClick: () -> Unit,
-    noinline onCommentUpdate: (Comment) -> Unit,
     crossinline onUserNameClick: (String) -> Unit,
     crossinline onSubredditNameClick: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -28,7 +27,6 @@ inline fun ReplyItem(
     Row(
         modifier
             .height(IntrinsicSize.Min)
-            .clip(MaterialTheme.shapes.medium)
             .clickable(onClick = onClick)
             .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 16.dp)
@@ -53,7 +51,6 @@ fun ViewMoreReplyItem(onClick: () -> Unit, depth: Int, modifier: Modifier = Modi
     Row(
         modifier
             .height(IntrinsicSize.Min)
-            .clip(MaterialTheme.shapes.medium)
             .clickable(onClick = onClick)
             .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 16.dp)
@@ -76,7 +73,6 @@ fun ContinueThreadReplyItem(onClick: () -> Unit, depth: Int, modifier: Modifier 
     Row(
         modifier
             .height(IntrinsicSize.Min)
-            .clip(MaterialTheme.shapes.medium)
             .clickable(onClick = onClick)
             .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 16.dp)
