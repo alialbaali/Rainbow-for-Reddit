@@ -1,14 +1,10 @@
 package com.rainbow.remote.impl
 
 import com.rainbow.remote.*
-import com.rainbow.remote.Listing
 import com.rainbow.remote.client.settings
 import com.rainbow.remote.dto.RemoteUser
-import com.rainbow.remote.get
 import com.rainbow.remote.impl.Endpoint.Users
-import com.rainbow.remote.plainRequest
 import com.rainbow.remote.source.RemoteUserDataSource
-import com.rainbow.remote.submitForm
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -37,12 +33,12 @@ private class RemoteUserDataSourceImpl(
         }
     }
 
-    override suspend fun getCurrentUser(): Result<RemoteUser> {
-        return redditClient.plainRequest(Users.CurrentUser)
+    override suspend fun getCurrentUser(): RemoteUser {
+        return redditClient.requestOrThrow(Users.CurrentUser)
     }
 
-    override suspend fun getUserAbout(userName: String): Result<RemoteUser> {
-        return redditClient.get(Users.About(userName))
+    override suspend fun getUserAbout(userName: String): RemoteUser {
+        return redditClient.getOrThrow(Users.About(userName))
     }
 
     override suspend fun checkUserName(userName: String): Result<Boolean> {

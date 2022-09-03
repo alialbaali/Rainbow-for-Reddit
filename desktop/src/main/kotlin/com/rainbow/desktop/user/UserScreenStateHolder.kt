@@ -1,31 +1,35 @@
 package com.rainbow.desktop.user
 
 import com.rainbow.data.Repos
-import com.rainbow.desktop.state.StateHolder
+import com.rainbow.desktop.comment.CommentsStateHolder
 import com.rainbow.desktop.post.PostsStateHolder
+import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.toUIState
+import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.TimeSorting
-import com.rainbow.domain.models.User
 import com.rainbow.domain.models.UserPostSorting
+import com.rainbow.domain.repository.CommentRepository
 import com.rainbow.domain.repository.PostRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import com.rainbow.domain.repository.UserRepository
+import kotlinx.coroutines.flow.*
 
 private val userScreenModels = mutableSetOf<UserScreenStateHolder>()
 
 class UserScreenStateHolder private constructor(
     private val userName: String,
+    private val userRepository: UserRepository = Repos.User,
     private val postRepository: PostRepository = Repos.Post,
+    private val commentRepository: CommentRepository = Repos.Comment,
 ) : StateHolder() {
 
     private val mutableSelectedTab = MutableStateFlow(UserTab.Default)
     val selectedTab get() = mutableSelectedTab.asStateFlow()
 
-    private val mutableUser = MutableStateFlow<UIState<User>>(UIState.Empty)
-    val user get() = mutableUser.asStateFlow()
+    val user = userRepository.getUser(userName)
+        .map { it.toUIState() }
+        .stateIn(scope, SharingStarted.Eagerly, UIState.Loading())
 
     private val initialPostSorting = Repos.Settings.getUserPostSorting()
 
@@ -33,7 +37,10 @@ class UserScreenStateHolder private constructor(
 //        Repos.Item.getUserOverviewItems(userName, postSorting, timeSorting, lastItemId)
 //    }
 
-    val postsStateHolder = object : PostsStateHolder<UserPostSorting>(initialPostSorting, postRepository.posts) {
+    val postsStateHolder = object : PostsStateHolder<UserPostSorting>(
+        initialPostSorting,
+        postRepository.userSubmittedPosts,
+    ) {
         override suspend fun getItems(
             sorting: UserPostSorting,
             timeSorting: TimeSorting,
@@ -41,21 +48,24 @@ class UserScreenStateHolder private constructor(
         ): Result<Unit> = postRepository.getUserSubmittedPosts(userName, sorting, timeSorting, lastItem?.id)
     }
 
-//    val commentListModel = CommentListStateHolder(initialPostSorting) { postSorting, timeSorting, lastCommentId ->
-//        Repos.Comment.getUserComments(userName, postSorting, timeSorting, lastCommentId)
-//    }
+    val commentsStateHolder = object : CommentsStateHolder(commentRepository.userComments) {
+        override suspend fun getItems(
+            sorting: UserPostSorting,
+            timeSorting: TimeSorting,
+            lastItem: Comment?
+        ): Result<Unit> = commentRepository.getUserComments(userName, sorting, timeSorting, lastItem?.id)
+    }
 
     init {
-        loadUser()
-//        selectedTab
-//            .onEach {
-//                when (it) {
-//                    UserTab.Overview -> if (itemListModel.items.value.isLoading) itemListModel.loadItems()
-//                    UserTab.Submitted -> if (postListModel.items.value.isLoading) postListModel.loadItems()
-//                    UserTab.Comments -> if (commentListModel.items.value.isLoading) commentListModel.loadItems()
-//                }
-//            }
-//            .launchIn(scope)
+        selectedTab
+            .onEach {
+                when (it) {
+                    UserTab.Overview -> {}
+                    UserTab.Submitted -> if (postsStateHolder.items.value.isEmpty) postsStateHolder.loadItems()
+                    UserTab.Comments -> if (commentsStateHolder.items.value.isEmpty) commentsStateHolder.loadItems()
+                }
+            }
+            .launchIn(scope)
     }
 
     companion object {
@@ -63,10 +73,6 @@ class UserScreenStateHolder private constructor(
             return userScreenModels.find { it.userName == userName }
                 ?: UserScreenStateHolder(userName).also { userScreenModels += it }
         }
-    }
-
-    fun loadUser() = scope.launch {
-        mutableUser.value = Repos.User.getUser(userName).toUIState()
     }
 
     fun selectTab(tab: UserTab) {

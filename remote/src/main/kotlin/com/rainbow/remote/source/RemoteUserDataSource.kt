@@ -7,9 +7,9 @@ interface RemoteUserDataSource {
 
     suspend fun loginUser(uuid: UUID): Result<Unit>
 
-    suspend fun getCurrentUser(): Result<RemoteUser>
+    suspend fun getCurrentUser(): RemoteUser
 
-    suspend fun getUserAbout(userName: String): Result<RemoteUser>
+    suspend fun getUserAbout(userName: String): RemoteUser
 
     suspend fun checkUserName(userName: String): Result<Boolean>
 

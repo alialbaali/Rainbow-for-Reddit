@@ -5,6 +5,7 @@ import com.rainbow.domain.repository.*
 import com.rainbow.local.LocalCommentDataSourceImpl
 import com.rainbow.local.LocalPostDataSourceImpl
 import com.rainbow.local.LocalSubredditDataSourceImpl
+import com.rainbow.local.LocalUserDataSourceImpl
 import com.rainbow.remote.impl.*
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ExperimentalSettingsImplementation
@@ -39,6 +40,7 @@ object Repos {
     @OptIn(ExperimentalSettingsApi::class)
     object User : UserRepository by UserRepositoryImpl(
         RemoteUserDataSource(),
+        LocalUserDataSourceImpl(),
         flowSettings,
         DefaultDispatcher,
         Mappers.UserMapper,

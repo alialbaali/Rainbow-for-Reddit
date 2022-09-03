@@ -4,7 +4,6 @@ import com.rainbow.data.Repos
 import com.rainbow.desktop.post.PostsStateHolder
 import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.utils.UIState
-import com.rainbow.desktop.utils.toUIState
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.ProfilePostSorting
 import com.rainbow.domain.models.TimeSorting
@@ -12,20 +11,22 @@ import com.rainbow.domain.models.User
 import com.rainbow.domain.repository.CommentRepository
 import com.rainbow.domain.repository.ItemRepository
 import com.rainbow.domain.repository.PostRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import com.rainbow.domain.repository.UserRepository
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class ProfileScreenStateHolder private constructor(
+    private val userRepository: UserRepository = Repos.User,
     private val itemRepository: ItemRepository = Repos.Item,
     private val postRepository: PostRepository = Repos.Post,
     private val commentRepository: CommentRepository = Repos.Comment,
 ) : StateHolder() {
 
-    private val mutableCurrentUser = MutableStateFlow<UIState<User>>(UIState.Empty)
-    val currentUser get() = mutableCurrentUser.asStateFlow()
+    val currentUser
+        get() = userRepository.currentUser
+            .map { UIState.Success(it) as UIState<User> }
+            .catch { emit(UIState.Failure(null, it)) }
+            .stateIn(scope, SharingStarted.Eagerly, UIState.Empty)
 
     private val mutableSelectedTab = MutableStateFlow(ProfileTab.Default)
     val selectedTab get() = mutableSelectedTab.asStateFlow()
@@ -90,6 +91,7 @@ class ProfileScreenStateHolder private constructor(
 
     init {
         loadUser()
+
         selectedTab
             .onEach {
                 when (it) {
@@ -115,7 +117,7 @@ class ProfileScreenStateHolder private constructor(
     }
 
     private fun loadUser() = scope.launch {
-        mutableCurrentUser.value = Repos.User.getCurrentUser().toUIState()
+        userRepository.getCurrentUser()
     }
 
     fun selectTab(tab: ProfileTab) {

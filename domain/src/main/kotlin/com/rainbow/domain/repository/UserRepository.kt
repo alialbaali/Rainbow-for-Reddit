@@ -8,13 +8,15 @@ interface UserRepository {
 
     val isUserLoggedIn: Flow<Boolean>
 
+    val currentUser: Flow<User>
+
     suspend fun loginUser(uuid: UUID): Result<Unit>
 
     suspend fun logoutUser()
 
-    suspend fun getCurrentUser(): Result<User>
+    suspend fun getCurrentUser(): Result<Unit>
 
-    suspend fun getUser(userName: String): Result<User>
+    fun getUser(userName: String): Flow<Result<User>>
 
     suspend fun checkUserName(userName: String): Result<Boolean>
 

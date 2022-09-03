@@ -12,11 +12,13 @@ interface CommentRepository {
 
     val postComments: Flow<List<Comment>>
 
+    val userComments: Flow<List<Comment>>
+
     suspend fun getCurrentUserComments(
         commentsSorting: UserPostSorting,
         timeSorting: TimeSorting,
         lastCommentId: String?,
-    ): Result<List<Comment>>
+    ): Result<Unit>
 
     suspend fun getHomeComments(lastCommentId: String?): Result<Unit>
 
@@ -25,7 +27,7 @@ interface CommentRepository {
         commentsSorting: UserPostSorting,
         timeSorting: TimeSorting,
         lastCommentId: String?,
-    ): Result<List<Comment>>
+    ): Result<Unit>
 
     suspend fun getPostsComments(
         postId: String,

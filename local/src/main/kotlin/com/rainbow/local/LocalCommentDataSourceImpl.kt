@@ -13,9 +13,13 @@ class LocalCommentDataSourceImpl : LocalCommentDataSource {
     private val mutablePostComments = MutableStateFlow(emptyList<Comment>())
     override val postComments get() = mutablePostComments.asStateFlow()
 
+    private val mutableUserComments = MutableStateFlow(emptyList<Comment>())
+    override val userComments get() = mutableUserComments.asStateFlow()
+
     private val allComments = listOf(
         mutableHomeComments,
         mutablePostComments,
+        mutableUserComments,
     )
 
     override fun insertHomeComment(comment: Comment) {
@@ -24,6 +28,10 @@ class LocalCommentDataSourceImpl : LocalCommentDataSource {
 
     override fun insertPostComment(comment: Comment) {
         mutablePostComments.value = postComments.value + comment
+    }
+
+    override fun insertUserComment(comment: Comment) {
+        mutableUserComments.value = userComments.value + comment
     }
 
     override fun updatePostComment(comment: Comment) {
@@ -74,6 +82,10 @@ class LocalCommentDataSourceImpl : LocalCommentDataSource {
 
     override fun clearPostComments() {
         mutablePostComments.value = emptyList()
+    }
+
+    override fun clearUserComments() {
+        mutableUserComments.value = emptyList()
     }
 
     override fun clearThreadComments(parentId: String) {

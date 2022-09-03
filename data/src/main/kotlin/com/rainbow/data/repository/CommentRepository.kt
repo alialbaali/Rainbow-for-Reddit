@@ -31,20 +31,23 @@ internal class CommentRepositoryImpl(
 
     override val homeComments: Flow<List<Comment>> = localCommentDataSource.homeComments
     override val postComments: Flow<List<Comment>> = localCommentDataSource.postComments
+    override val userComments: Flow<List<Comment>> = localCommentDataSource.userComments
 
     override suspend fun getCurrentUserComments(
         commentsSorting: UserPostSorting,
         timeSorting: TimeSorting,
         lastCommentId: String?,
-    ): Result<List<Comment>> = withContext(dispatcher) {
-        val currentUserId = settings.getString(SettingsKeys.UserName)
-        remoteCommentDataSource.getUserComments(
-            currentUserId,
-            commentsSorting.lowercaseName,
-            timeSorting.lowercaseName,
-            DefaultLimit,
-            lastCommentId
-        ).mapCatching { it.quickMap(mapper) }
+    ): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            val currentUserId = settings.getString(SettingsKeys.UserName)
+            remoteCommentDataSource.getUserComments(
+                currentUserId,
+                commentsSorting.lowercaseName,
+                timeSorting.lowercaseName,
+                DefaultLimit,
+                lastCommentId
+            ).quickMap(mapper)
+        }
     }
 
     override suspend fun getHomeComments(lastCommentId: String?): Result<Unit> = runCatching {
@@ -61,14 +64,17 @@ internal class CommentRepositoryImpl(
         commentsSorting: UserPostSorting,
         timeSorting: TimeSorting,
         lastCommentId: String?,
-    ): Result<List<Comment>> = withContext(dispatcher) {
-        remoteCommentDataSource.getUserComments(
-            userName,
-            commentsSorting.lowercaseName,
-            timeSorting.lowercaseName,
-            DefaultLimit,
-            lastCommentId
-        ).mapCatching { it.quickMap(mapper) }
+    ): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            if (lastCommentId == null) localCommentDataSource.clearUserComments()
+            remoteCommentDataSource.getUserComments(
+                userName,
+                commentsSorting.lowercaseName,
+                timeSorting.lowercaseName,
+                DefaultLimit,
+                lastCommentId
+            ).quickMap(mapper).forEach(localCommentDataSource::insertUserComment)
+        }
     }
 
     override suspend fun getPostsComments(

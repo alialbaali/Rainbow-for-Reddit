@@ -39,13 +39,13 @@ private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommen
         timeSorting: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemoteComment>> {
-        return client.get<Listing<RemoteComment>>(Comments.UserComments(userName)) {
+    ): List<RemoteComment> {
+        return client.getOrThrow<Listing<RemoteComment>>(Comments.UserComments(userName)) {
             parameter(Keys.Sort, commentsSorting)
             parameter(Keys.Time, timeSorting)
             parameter(Keys.Limit, limit)
             parameter(Keys.After, after)
-        }.mapCatching { it.toList() }
+        }.toList()
     }
 
     override suspend fun getViewMoreComments(
