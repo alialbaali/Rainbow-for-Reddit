@@ -45,6 +45,8 @@ data class Post(
             val Default = None
         }
     }
+
+    override val postId: String = id
 }
 
 val Post.userDisplayName

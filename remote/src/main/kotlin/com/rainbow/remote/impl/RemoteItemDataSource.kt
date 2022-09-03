@@ -3,7 +3,7 @@ package com.rainbow.remote.impl
 import com.rainbow.remote.Listing
 import com.rainbow.remote.client.redditClient
 import com.rainbow.remote.dto.RemoteItem
-import com.rainbow.remote.get
+import com.rainbow.remote.getOrThrow
 import com.rainbow.remote.source.RemoteItemDataSource
 import com.rainbow.remote.toList
 import io.ktor.client.*
@@ -17,11 +17,11 @@ class RemoteItemDataSourceImpl(private val client: HttpClient = redditClient) : 
         timeSorting: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemoteItem>> = client.get<Listing<RemoteItem>>(Endpoint.Items.OverView(userName, postsSorting)) {
+    ): List<RemoteItem> = client.getOrThrow<Listing<RemoteItem>>(Endpoint.Items.OverView(userName, postsSorting)) {
         parameter(Keys.Time, timeSorting)
         parameter(Keys.Limit, limit)
         parameter(Keys.After, after)
-    }.map { it.toList() }
+    }.toList()
 
     override suspend fun getUserSavedItems(
         userName: String,
@@ -29,10 +29,10 @@ class RemoteItemDataSourceImpl(private val client: HttpClient = redditClient) : 
         timeSorting: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemoteItem>> = client.get<Listing<RemoteItem>>(Endpoint.Items.Saved(userName, postsSorting)) {
+    ): List<RemoteItem> = client.getOrThrow<Listing<RemoteItem>>(Endpoint.Items.Saved(userName, postsSorting)) {
         parameter(Keys.Time, timeSorting)
         parameter(Keys.Limit, limit)
         parameter(Keys.After, after)
-    }.map { it.toList() }
+    }.toList()
 
 }

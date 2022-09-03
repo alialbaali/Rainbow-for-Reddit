@@ -1,18 +1,18 @@
 package com.rainbow.desktop.user
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.comment.comments
 import com.rainbow.desktop.components.RainbowLazyColumn
 import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.components.ScrollableEnumTabRow
+import com.rainbow.desktop.item.items
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.profile.Header
+import com.rainbow.desktop.utils.getOrDefault
+import com.rainbow.desktop.utils.getOrNull
 import com.rainbow.desktop.utils.onLoading
 import com.rainbow.desktop.utils.onSuccess
 
@@ -27,10 +27,40 @@ fun UserScreen(
     val stateHolder = remember(userName) { UserScreenStateHolder.getOrCreateInstance(userName) }
     val userState by stateHolder.user.collectAsState()
     val selectedTab by stateHolder.selectedTab.collectAsState()
-//    val postLayout by model.itemListModel.postLayout.collectAsState()
-//    val itemsState by model.itemListModel.items.collectAsState()
+    val items by stateHolder.itemsStateHolder.items.collectAsState()
     val posts by stateHolder.postsStateHolder.items.collectAsState()
     val comments by stateHolder.commentsStateHolder.items.collectAsState()
+
+    DisposableEffect(items.getOrDefault(emptyList()).isEmpty()) {
+        val item = items.getOrNull()?.firstOrNull()
+        if (item != null) {
+            onNavigateDetailsScreen(DetailsScreen.Post(item.postId))
+        }
+        onDispose {
+            onNavigateDetailsScreen(DetailsScreen.None)
+        }
+    }
+
+    DisposableEffect(posts.getOrDefault(emptyList()).isEmpty()) {
+        val post = posts.getOrNull()?.firstOrNull()
+        if (post != null) {
+            onNavigateDetailsScreen(DetailsScreen.Post(post.id))
+        }
+        onDispose {
+            onNavigateDetailsScreen(DetailsScreen.None)
+        }
+    }
+
+    DisposableEffect(comments.getOrDefault(emptyList()).isEmpty()) {
+        val comment = comments.getOrNull()?.firstOrNull()
+        if (comment != null) {
+            onNavigateDetailsScreen(DetailsScreen.Post(comment.postId))
+        }
+        onDispose {
+            onNavigateDetailsScreen(DetailsScreen.None)
+        }
+    }
+
     userState
         .onLoading { RainbowProgressIndicator() }
         .onSuccess { user ->
@@ -43,24 +73,22 @@ fun UserScreen(
                     )
                 }
                 when (selectedTab) {
-//                UserTab.Overview -> items(
-//                    itemsState,
-//                    onNavigateMainScreen,
-//                    onNavigateDetailsScreen,
-//                    { },
-//                    onShowSnackbar,
-//                )
+                    UserTab.Overview -> items(
+                        items,
+                        onNavigateMainScreen,
+                        onNavigateDetailsScreen,
+                        onAwardsClick = {},
+                        onShowSnackbar,
+                    )
 
-                    UserTab.Submitted -> {
-                        posts(
-                            posts,
-                            onNavigateMainScreen,
-                            onNavigateDetailsScreen,
-                            onAwardsClick = {},
-                            onShowSnackbar,
-                            stateHolder.postsStateHolder::setLastItem,
-                        )
-                    }
+                    UserTab.Submitted -> posts(
+                        posts,
+                        onNavigateMainScreen,
+                        onNavigateDetailsScreen,
+                        onAwardsClick = {},
+                        onShowSnackbar,
+                        stateHolder.postsStateHolder::setLastItem,
+                    )
 
                     UserTab.Comments -> comments(
                         comments,
@@ -68,10 +96,7 @@ fun UserScreen(
                         onNavigateDetailsScreen,
                         stateHolder.commentsStateHolder::setLastItem,
                     )
-
-                    else -> {}
                 }
             }
         }
-
 }

@@ -2,15 +2,14 @@ package com.rainbow.desktop.user
 
 import com.rainbow.data.Repos
 import com.rainbow.desktop.comment.CommentsStateHolder
+import com.rainbow.desktop.item.ItemsStateHolder
 import com.rainbow.desktop.post.PostsStateHolder
 import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.toUIState
-import com.rainbow.domain.models.Comment
-import com.rainbow.domain.models.Post
-import com.rainbow.domain.models.TimeSorting
-import com.rainbow.domain.models.UserPostSorting
+import com.rainbow.domain.models.*
 import com.rainbow.domain.repository.CommentRepository
+import com.rainbow.domain.repository.ItemRepository
 import com.rainbow.domain.repository.PostRepository
 import com.rainbow.domain.repository.UserRepository
 import kotlinx.coroutines.flow.*
@@ -22,6 +21,7 @@ class UserScreenStateHolder private constructor(
     private val userRepository: UserRepository = Repos.User,
     private val postRepository: PostRepository = Repos.Post,
     private val commentRepository: CommentRepository = Repos.Comment,
+    private val itemRepository: ItemRepository = Repos.Item,
 ) : StateHolder() {
 
     private val mutableSelectedTab = MutableStateFlow(UserTab.Default)
@@ -33,9 +33,16 @@ class UserScreenStateHolder private constructor(
 
     private val initialPostSorting = Repos.Settings.getUserPostSorting()
 
-//    val itemListModel = ItemListStateHolder(initialPostSorting) { postSorting, timeSorting, lastItemId ->
-//        Repos.Item.getUserOverviewItems(userName, postSorting, timeSorting, lastItemId)
-//    }
+    val itemsStateHolder = object : ItemsStateHolder<UserPostSorting>(
+        UserPostSorting.Default,
+        itemRepository.userOverviewItems
+    ) {
+        override suspend fun getItems(
+            sorting: UserPostSorting,
+            timeSorting: TimeSorting,
+            lastItem: Item?
+        ): Result<Unit> = itemRepository.getUserOverviewItems(userName, sorting, timeSorting, lastItem?.id)
+    }
 
     val postsStateHolder = object : PostsStateHolder<UserPostSorting>(
         initialPostSorting,
@@ -60,7 +67,7 @@ class UserScreenStateHolder private constructor(
         selectedTab
             .onEach {
                 when (it) {
-                    UserTab.Overview -> {}
+                    UserTab.Overview -> if (itemsStateHolder.items.value.isEmpty) itemsStateHolder.loadItems()
                     UserTab.Submitted -> if (postsStateHolder.items.value.isEmpty) postsStateHolder.loadItems()
                     UserTab.Comments -> if (commentsStateHolder.items.value.isEmpty) commentsStateHolder.loadItems()
                 }

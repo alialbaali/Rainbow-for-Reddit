@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 
-abstract class ItemListStateHolder<S : Sorting>(
+abstract class ItemsStateHolder<S : Sorting>(
     initialItemSorting: S,
     items: Flow<List<Item>>
 ) : SortedListStateHolder<Item, S>(initialItemSorting, items) {

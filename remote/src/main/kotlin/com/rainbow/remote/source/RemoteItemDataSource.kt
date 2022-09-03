@@ -10,7 +10,7 @@ interface RemoteItemDataSource {
         timeSorting: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemoteItem>>
+    ): List<RemoteItem>
 
     suspend fun getUserSavedItems(
         userName: String,
@@ -18,6 +18,6 @@ interface RemoteItemDataSource {
         timeSorting: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemoteItem>>
+    ): List<RemoteItem>
 
 }

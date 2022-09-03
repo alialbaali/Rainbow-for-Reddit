@@ -2,10 +2,7 @@ package com.rainbow.data
 
 import com.rainbow.data.repository.*
 import com.rainbow.domain.repository.*
-import com.rainbow.local.LocalCommentDataSourceImpl
-import com.rainbow.local.LocalPostDataSourceImpl
-import com.rainbow.local.LocalSubredditDataSourceImpl
-import com.rainbow.local.LocalUserDataSourceImpl
+import com.rainbow.local.*
 import com.rainbow.remote.impl.*
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ExperimentalSettingsImplementation
@@ -89,6 +86,7 @@ object Repos {
 
     object Item : ItemRepository by ItemRepositoryImpl(
         RemoteItemDataSourceImpl(),
+        LocalItemDataSourceImpl(),
         flowSettings,
         DefaultDispatcher,
         Mappers.ItemMapper,

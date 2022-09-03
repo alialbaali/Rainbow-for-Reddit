@@ -7,7 +7,7 @@ import kotlinx.datetime.LocalDateTime
 data class Comment(
     override val id: String,
     val parentId: String,
-    val postId: String,
+    override val postId: String,
     val userId: String,
     val subredditId: String,
     val userName: String,
@@ -25,8 +25,8 @@ data class Comment(
     val isContinueThread: Boolean = false,
 ) : Item {
     sealed interface Type {
-        object None: Type
-        class ViewMore(val replies: List<String>): Type
+        object None : Type
+        class ViewMore(val replies: List<String>) : Type
         class ContinueThread(val parentId: String) : Type
     }
 }
