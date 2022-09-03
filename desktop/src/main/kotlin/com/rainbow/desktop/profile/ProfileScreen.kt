@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -20,7 +22,6 @@ import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.defaultPadding
-import com.rainbow.desktop.utils.defaultSurfaceShape
 import com.rainbow.desktop.utils.fold
 import com.rainbow.domain.models.User
 
@@ -130,53 +131,60 @@ fun ProfileScreen(
 
 @Composable
 fun Header(user: User, modifier: Modifier = Modifier) {
-    Column(
+    Surface(
         modifier
-            .defaultSurfaceShape()
             .heightIn(min = 350.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium
     ) {
-        ScreenHeaderItem(user.bannerImageUrl.toString(), user.imageUrl.toString(), user.name)
-        HeaderDescription(
-            user,
-            Modifier
-                .fillMaxWidth()
-                .defaultPadding(start = 232.dp)
-        )
-        Row(Modifier.fillMaxWidth().defaultPadding(start = 232.dp)) {
-            Column(Modifier.weight(1F)) {
-                Text(RainbowStrings.PostKarma, fontWeight = FontWeight.Medium, color = Color.DarkGray, fontSize = 16.sp)
-                Text(user.postKarma.toString(), fontSize = 14.sp)
+        Column {
+            ScreenHeaderItem(user.bannerImageUrl.toString(), user.imageUrl.toString(), user.name)
+            HeaderDescription(
+                user,
+                Modifier
+                    .fillMaxWidth()
+                    .defaultPadding(start = 232.dp)
+            )
+            Row(Modifier.fillMaxWidth().defaultPadding(start = 232.dp)) {
+                Column(Modifier.weight(1F)) {
+                    Text(
+                        RainbowStrings.PostKarma,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.DarkGray,
+                        fontSize = 16.sp
+                    )
+                    Text(user.postKarma.toString(), fontSize = 14.sp)
+                }
+                Column(Modifier.weight(1F)) {
+                    Text(
+                        RainbowStrings.CommentKarma,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.DarkGray,
+                        fontSize = 16.sp
+                    )
+                    Text(user.commentKarma.toString(), fontSize = 14.sp)
+                }
             }
-            Column(Modifier.weight(1F)) {
-                Text(
-                    RainbowStrings.CommentKarma,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.DarkGray,
-                    fontSize = 16.sp
-                )
-                Text(user.commentKarma.toString(), fontSize = 14.sp)
-            }
-        }
 
-        Row(Modifier.fillMaxWidth().defaultPadding(start = 232.dp)) {
-            Column(Modifier.weight(1F)) {
-                Text(
-                    RainbowStrings.AwardeeKarma,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.DarkGray,
-                    fontSize = 16.sp
-                )
-                Text(user.awardeeKarma.toString(), fontSize = 14.sp)
-            }
-            Column(Modifier.weight(1F)) {
-                Text(
-                    RainbowStrings.AwarderKarma,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.DarkGray,
-                    fontSize = 16.sp
-                )
-                Text(user.awarderKarma.toString(), fontSize = 14.sp)
+            Row(Modifier.fillMaxWidth().defaultPadding(start = 232.dp)) {
+                Column(Modifier.weight(1F)) {
+                    Text(
+                        RainbowStrings.AwardeeKarma,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.DarkGray,
+                        fontSize = 16.sp
+                    )
+                    Text(user.awardeeKarma.toString(), fontSize = 14.sp)
+                }
+                Column(Modifier.weight(1F)) {
+                    Text(
+                        RainbowStrings.AwarderKarma,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.DarkGray,
+                        fontSize = 16.sp
+                    )
+                    Text(user.awarderKarma.toString(), fontSize = 14.sp)
+                }
             }
         }
 
