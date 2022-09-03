@@ -14,7 +14,9 @@ interface CommentRepository {
 
     val userComments: Flow<List<Comment>>
 
-    suspend fun getCurrentUserComments(
+    val profileComments: Flow<List<Comment>>
+
+    suspend fun getProfileComments(
         commentsSorting: UserPostSorting,
         timeSorting: TimeSorting,
         lastCommentId: String?,

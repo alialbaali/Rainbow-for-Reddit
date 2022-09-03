@@ -7,22 +7,19 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.rainbow.desktop.comment.comments
 import com.rainbow.desktop.components.*
+import com.rainbow.desktop.item.items
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.posts
-import com.rainbow.desktop.utils.RainbowStrings
-import com.rainbow.desktop.utils.defaultPadding
-import com.rainbow.desktop.utils.fold
+import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.User
 
 @Composable
@@ -35,14 +32,83 @@ fun ProfileScreen(
     val stateHolder = remember { ProfileScreenStateHolder.getInstance() }
     val selectedTab by stateHolder.selectedTab.collectAsState(ProfileTab.Overview)
     val userState by stateHolder.currentUser.collectAsState()
-//    val overViewItemsState by stateHolder.overViewItemListModel.items.collectAsState()
-//    val savedItemsState by stateHolder.savedItemListModel.items.collectAsState()
+    val overViewItemsState by stateHolder.overviewItemsStateHolder.items.collectAsState()
+    val savedItemsState by stateHolder.savedItemsStateHolder.items.collectAsState()
     val submittedPostsState by stateHolder.submittedPostsStateHolder.items.collectAsState()
     val upvotedPostsState by stateHolder.upvotedPostsStateHolder.items.collectAsState()
     val downvotedPostsState by stateHolder.downvotedPostsStateHolder.items.collectAsState()
     val hiddenPostsState by stateHolder.hiddenPostsStateHolder.items.collectAsState()
-//    val commentsState by stateHolder.commentListModel.items.collectAsState()
-//    val postLayout by stateHolder.postLayout.collectAsState()
+    val commentsState by stateHolder.commentsStateHolder.items.collectAsState()
+
+    DisposableEffect(overViewItemsState.getOrDefault(emptyList()).isEmpty()) {
+        val item = overViewItemsState.getOrNull()?.firstOrNull()
+        if (item != null) {
+            onNavigateDetailsScreen(DetailsScreen.Post(item.postId))
+        }
+        onDispose {
+            onNavigateDetailsScreen(DetailsScreen.None)
+        }
+    }
+
+    DisposableEffect(savedItemsState.getOrDefault(emptyList()).isEmpty()) {
+        val item = savedItemsState.getOrNull()?.firstOrNull()
+        if (item != null) {
+            onNavigateDetailsScreen(DetailsScreen.Post(item.postId))
+        }
+        onDispose {
+            onNavigateDetailsScreen(DetailsScreen.None)
+        }
+    }
+
+    DisposableEffect(submittedPostsState.getOrDefault(emptyList()).isEmpty()) {
+        val post = submittedPostsState.getOrNull()?.firstOrNull()
+        if (post != null) {
+            onNavigateDetailsScreen(DetailsScreen.Post(post.id))
+        }
+        onDispose {
+            onNavigateDetailsScreen(DetailsScreen.None)
+        }
+    }
+
+    DisposableEffect(upvotedPostsState.getOrDefault(emptyList()).isEmpty()) {
+        val post = upvotedPostsState.getOrNull()?.firstOrNull()
+        if (post != null) {
+            onNavigateDetailsScreen(DetailsScreen.Post(post.id))
+        }
+        onDispose {
+            onNavigateDetailsScreen(DetailsScreen.None)
+        }
+    }
+
+    DisposableEffect(downvotedPostsState.getOrDefault(emptyList()).isEmpty()) {
+        val post = downvotedPostsState.getOrNull()?.firstOrNull()
+        if (post != null) {
+            onNavigateDetailsScreen(DetailsScreen.Post(post.id))
+        }
+        onDispose {
+            onNavigateDetailsScreen(DetailsScreen.None)
+        }
+    }
+
+    DisposableEffect(hiddenPostsState.getOrDefault(emptyList()).isEmpty()) {
+        val post = hiddenPostsState.getOrNull()?.firstOrNull()
+        if (post != null) {
+            onNavigateDetailsScreen(DetailsScreen.Post(post.id))
+        }
+        onDispose {
+            onNavigateDetailsScreen(DetailsScreen.None)
+        }
+    }
+
+    DisposableEffect(commentsState.getOrDefault(emptyList()).isEmpty()) {
+        val comment = commentsState.getOrNull()?.firstOrNull()
+        if (comment != null) {
+            onNavigateDetailsScreen(DetailsScreen.Post(comment.postId))
+        }
+        onDispose {
+            onNavigateDetailsScreen(DetailsScreen.None)
+        }
+    }
 
     RainbowLazyColumn(modifier) {
         userState.fold(
@@ -65,28 +131,32 @@ fun ProfileScreen(
             },
             onEmpty = {},
         )
+
         when (selectedTab) {
-//                ProfileTab.Overview -> items(
-//                    overViewItemsState,
-//                    onNavigateMainScreen,
-//                    onNavigateDetailsScreen,
-//                    { },
-//                    {},
-//                )
+            ProfileTab.Overview -> items(
+                overViewItemsState,
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
+                onAwardsClick = {},
+                onShowSnackbar,
+                stateHolder.overviewItemsStateHolder::setLastItem,
+            )
 
-//                ProfileTab.Saved -> items(
-//                    savedItemsState,
-//                    onNavigateMainScreen,
-//                    onNavigateDetailsScreen,
-//                    { },
-//                    {},
-//                )
+            ProfileTab.Saved -> items(
+                savedItemsState,
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
+                onAwardsClick = {},
+                onShowSnackbar,
+                stateHolder.savedItemsStateHolder::setLastItem,
+            )
 
-//                ProfileTab.Comments -> comments(
-//                    commentsState,
-//                    onNavigateMainScreen,
-//                    onNavigateDetailsScreen,
-//                )
+            ProfileTab.Comments -> comments(
+                commentsState,
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
+                stateHolder.commentsStateHolder::setLastItem,
+            )
 
             ProfileTab.Submitted -> posts(
                 submittedPostsState,
@@ -123,8 +193,6 @@ fun ProfileScreen(
                 onShowSnackbar,
                 stateHolder.downvotedPostsStateHolder::setLastItem,
             )
-
-            else -> {}
         }
     }
 }

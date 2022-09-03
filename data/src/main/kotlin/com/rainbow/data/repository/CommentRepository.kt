@@ -32,13 +32,16 @@ internal class CommentRepositoryImpl(
     override val homeComments: Flow<List<Comment>> = localCommentDataSource.homeComments
     override val postComments: Flow<List<Comment>> = localCommentDataSource.postComments
     override val userComments: Flow<List<Comment>> = localCommentDataSource.userComments
+    override val profileComments: Flow<List<Comment>> = localCommentDataSource.profileComments
 
-    override suspend fun getCurrentUserComments(
+    override suspend fun getProfileComments(
         commentsSorting: UserPostSorting,
         timeSorting: TimeSorting,
         lastCommentId: String?,
     ): Result<Unit> = runCatching {
         withContext(dispatcher) {
+            if (lastCommentId == null) localCommentDataSource.clearProfileComments()
+
             val currentUserId = settings.getString(SettingsKeys.UserName)
             remoteCommentDataSource.getUserComments(
                 currentUserId,
@@ -46,7 +49,7 @@ internal class CommentRepositoryImpl(
                 timeSorting.lowercaseName,
                 DefaultLimit,
                 lastCommentId
-            ).quickMap(mapper)
+            ).quickMap(mapper).forEach(localCommentDataSource::insertProfileComment)
         }
     }
 

@@ -9,11 +9,15 @@ interface LocalCommentDataSource {
 
     val postComments: Flow<List<Comment>>
 
+    val profileComments: Flow<List<Comment>>
+
     val userComments: Flow<List<Comment>>
 
     fun insertHomeComment(comment: Comment)
 
     fun insertPostComment(comment: Comment)
+
+    fun insertProfileComment(comment: Comment)
 
     fun insertUserComment(comment: Comment)
 
@@ -28,6 +32,8 @@ interface LocalCommentDataSource {
     fun clearHomeComments()
 
     fun clearPostComments()
+
+    fun clearProfileComments()
 
     fun clearUserComments()
 

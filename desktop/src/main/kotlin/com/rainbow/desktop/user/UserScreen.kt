@@ -11,10 +11,9 @@ import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.profile.Header
+import com.rainbow.desktop.utils.fold
 import com.rainbow.desktop.utils.getOrDefault
 import com.rainbow.desktop.utils.getOrNull
-import com.rainbow.desktop.utils.onLoading
-import com.rainbow.desktop.utils.onSuccess
 
 @Composable
 fun UserScreen(
@@ -61,42 +60,57 @@ fun UserScreen(
         }
     }
 
-    userState
-        .onLoading { RainbowProgressIndicator() }
-        .onSuccess { user ->
-            RainbowLazyColumn(modifier) {
+    RainbowLazyColumn(modifier) {
+        userState.fold(
+            onLoading = {
+                item {
+                    RainbowProgressIndicator()
+                }
+            },
+            onSuccess = { user ->
                 item { Header(user) }
                 item {
                     ScrollableEnumTabRow(
                         selectedTab = selectedTab,
-                        onTabClick = { stateHolder.selectTab(it) }
+                        onTabClick = { stateHolder.selectTab(it) },
                     )
                 }
-                when (selectedTab) {
-                    UserTab.Overview -> items(
-                        items,
-                        onNavigateMainScreen,
-                        onNavigateDetailsScreen,
-                        onAwardsClick = {},
-                        onShowSnackbar,
-                    )
+            },
+            onFailure = { value, exception ->
 
-                    UserTab.Submitted -> posts(
-                        posts,
-                        onNavigateMainScreen,
-                        onNavigateDetailsScreen,
-                        onAwardsClick = {},
-                        onShowSnackbar,
-                        stateHolder.postsStateHolder::setLastItem,
-                    )
+            },
+            onEmpty = {},
+        )
 
-                    UserTab.Comments -> comments(
-                        comments,
-                        onNavigateMainScreen,
-                        onNavigateDetailsScreen,
-                        stateHolder.commentsStateHolder::setLastItem,
-                    )
-                }
-            }
+        when (selectedTab) {
+            UserTab.Overview -> items(
+                items,
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
+                onAwardsClick = {},
+                onShowSnackbar,
+                stateHolder.itemsStateHolder::setLastItem,
+            )
+
+            UserTab.Submitted -> posts(
+                posts,
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
+                onAwardsClick = {},
+                onShowSnackbar,
+                stateHolder.postsStateHolder::setLastItem,
+            )
+
+            UserTab.Comments -> comments(
+                comments,
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
+                stateHolder.commentsStateHolder::setLastItem,
+            )
         }
+
+        if (userState.isLoading) {
+            item { RainbowProgressIndicator() }
+        }
+    }
 }

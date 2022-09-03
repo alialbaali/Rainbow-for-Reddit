@@ -1,13 +1,12 @@
 package com.rainbow.desktop.profile
 
 import com.rainbow.data.Repos
+import com.rainbow.desktop.comment.CommentsStateHolder
+import com.rainbow.desktop.item.ItemsStateHolder
 import com.rainbow.desktop.post.PostsStateHolder
 import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.utils.UIState
-import com.rainbow.domain.models.Post
-import com.rainbow.domain.models.ProfilePostSorting
-import com.rainbow.domain.models.TimeSorting
-import com.rainbow.domain.models.User
+import com.rainbow.domain.models.*
 import com.rainbow.domain.repository.CommentRepository
 import com.rainbow.domain.repository.ItemRepository
 import com.rainbow.domain.repository.PostRepository
@@ -33,14 +32,28 @@ class ProfileScreenStateHolder private constructor(
 
     private val initialPostSorting = MutableStateFlow(ProfilePostSorting.Default)
 
-    //    val overViewItemListModel = ItemListStateHolder(initialPostSorting) { itemSorting, timeSorting, lastItemId ->
-//        itemRepository.getCurrentUserOverviewItems(itemSorting, timeSorting, lastItemId)
-//    }
-//
-//    val savedItemListModel = ItemListStateHolder(initialPostSorting) { itemSorting, timeSorting, lastItemId ->
-//        itemRepository.getCurrentUserSavedItems(itemSorting, timeSorting, lastItemId)
-//    }
-//
+    val overviewItemsStateHolder = object : ItemsStateHolder<UserPostSorting>(
+        UserPostSorting.Default,
+        itemRepository.profileOverviewItems,
+    ) {
+        override suspend fun getItems(
+            sorting: UserPostSorting,
+            timeSorting: TimeSorting,
+            lastItem: Item?
+        ): Result<Unit> = itemRepository.getProfileOverviewItems(sorting, timeSorting, lastItem?.id)
+    }
+
+    val savedItemsStateHolder = object : ItemsStateHolder<UserPostSorting>(
+        UserPostSorting.Default,
+        itemRepository.profileSavedItems,
+    ) {
+        override suspend fun getItems(
+            sorting: UserPostSorting,
+            timeSorting: TimeSorting,
+            lastItem: Item?
+        ): Result<Unit> = itemRepository.getProfileSavedItems(sorting, timeSorting, lastItem?.id)
+    }
+
     val submittedPostsStateHolder = object : PostsStateHolder<ProfilePostSorting>(
         ProfilePostSorting.Default,
         postRepository.profileSubmittedPosts
@@ -85,9 +98,13 @@ class ProfileScreenStateHolder private constructor(
         ): Result<Unit> = postRepository.getProfileHiddenPosts(sorting, timeSorting, lastItem?.id)
     }
 
-//    val commentListModel = CommentListStateHolder(initialPostSorting) { commentSorting, timeSorting, lastCommentId ->
-//        commentRepository.getCurrentUserComments(commentSorting, timeSorting, lastCommentId)
-//    }
+    val commentsStateHolder = object : CommentsStateHolder(commentRepository.profileComments) {
+        override suspend fun getItems(
+            sorting: UserPostSorting,
+            timeSorting: TimeSorting,
+            lastItem: Comment?
+        ): Result<Unit> = commentRepository.getProfileComments(sorting, timeSorting, lastItem?.id)
+    }
 
     init {
         loadUser()
@@ -95,13 +112,13 @@ class ProfileScreenStateHolder private constructor(
         selectedTab
             .onEach {
                 when (it) {
-//                    ProfileTab.Overview -> if (overViewItemListModel.items.value.isLoading) overViewItemListModel.loadItems()
+                    ProfileTab.Overview -> if (overviewItemsStateHolder.items.value.isEmpty) overviewItemsStateHolder.loadItems()
                     ProfileTab.Submitted -> if (submittedPostsStateHolder.items.value.isEmpty) submittedPostsStateHolder.loadItems()
-//                    ProfileTab.Saved -> if (savedItemListModel.items.value.isLoading) savedItemListModel.loadItems()
+                    ProfileTab.Saved -> if (savedItemsStateHolder.items.value.isEmpty) savedItemsStateHolder.loadItems()
                     ProfileTab.Hidden -> if (hiddenPostsStateHolder.items.value.isEmpty) hiddenPostsStateHolder.loadItems()
                     ProfileTab.Upvoted -> if (upvotedPostsStateHolder.items.value.isEmpty) upvotedPostsStateHolder.loadItems()
                     ProfileTab.Downvoted -> if (downvotedPostsStateHolder.items.value.isEmpty) downvotedPostsStateHolder.loadItems()
-//                    ProfileTab.Comments -> if (commentListModel.items.value.isLoading) commentListModel.loadItems()
+                    ProfileTab.Comments -> if (commentsStateHolder.items.value.isEmpty) commentsStateHolder.loadItems()
                     else -> {}
                 }
             }
