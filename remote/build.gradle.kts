@@ -7,7 +7,7 @@ dependencies {
     implementation(Ktor.Client.serialization)
     implementation(Ktor.Client.auth)
     implementation(Ktor.Client.core)
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     api(Ktor.Client.cio)
     implementation(Ktor.Client.logging)
     implementation(Ktor.Client.json)
