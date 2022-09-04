@@ -1,6 +1,7 @@
 package com.rainbow.desktop.subreddit
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,6 +19,7 @@ import com.rainbow.desktop.components.*
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.posts
+import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.*
 
@@ -60,33 +62,35 @@ fun SubredditScreen(
                 item {
                     Header(subreddit, onShowSnackbar, Modifier.padding(bottom = 8.dp))
                 }
+
                 item {
                     ScrollableEnumTabRow(
                         selectedTab = selectedTab,
                         onTabClick = { stateHolder.selectTab(it) },
                     )
                 }
+
+                when (selectedTab) {
+                    SubredditTab.Posts -> posts(
+                        postsState,
+                        onNavigateMainScreen,
+                        onNavigateDetailsScreen,
+                        {},
+                        onShowSnackbar,
+                        stateHolder.postsStateHolder::setLastItem,
+                    )
+
+                    SubredditTab.Description -> description(subreddit)
+                    SubredditTab.Wiki -> wiki(wikiState, onShowSnackbar)
+                    SubredditTab.Rules -> rules(rulesState, onShowSnackbar)
+                    SubredditTab.Moderators -> moderators(
+                        moderatorsState,
+                        { onNavigateMainScreen(MainScreen.User(it)) },
+                        onShowSnackbar
+                    )
+                }
             }
         )
-        when (selectedTab) {
-            SubredditTab.Posts -> posts(
-                postsState,
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                {},
-                onShowSnackbar,
-                stateHolder.postsStateHolder::setLastItem,
-            )
-
-            SubredditTab.Description -> description(subredditState, onShowSnackbar)
-            SubredditTab.Wiki -> wiki(wikiState, onShowSnackbar)
-            SubredditTab.Rules -> rules(rulesState, onShowSnackbar)
-            SubredditTab.Moderators -> moderators(
-                moderatorsState,
-                { onNavigateMainScreen(MainScreen.User(it)) },
-                onShowSnackbar
-            )
-        }
     }
 }
 
@@ -107,16 +111,14 @@ private fun LazyListScope.wiki(wikiState: UIState<WikiPage>, onShowSnackbar: (St
     }
 }
 
-private fun LazyListScope.description(state: UIState<Subreddit>, onShowSnackbar: (String) -> Unit) {
+private fun LazyListScope.description(subreddit: Subreddit) {
     item {
-        state.composed(onShowSnackbar) {
-            MarkdownText(
-                it.longDescription,
-                Modifier.defaultSurfaceShape()
-                    .defaultPadding()
-                    .fillMaxWidth()
-            )
-        }
+        MarkdownText(
+            subreddit.longDescription,
+            Modifier.defaultSurfaceShape()
+                .defaultPadding()
+                .fillMaxWidth()
+        )
     }
 }
 
@@ -152,13 +154,19 @@ private fun Header(
                     style = MaterialTheme.typography.bodyMedium,
                     overflow = TextOverflow.Ellipsis,
                 )
-                Row {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    SelectFlairButton(subreddit.name, onShowSnackbar)
+                    Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
                     SubredditFavoriteIconButton(
                         subreddit,
                         onShowSnackbar,
                         enabled = subreddit.isSubscribed
                     )
-                    SelectFlairButton(subreddit.name, onShowSnackbar)
+                    Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
                     SubscribeButton(subreddit, onShowSnackbar)
                 }
             }
@@ -169,7 +177,13 @@ private fun Header(
 @Composable
 private fun SelectFlairButton(subredditName: String, onShowSnackbar: (String) -> Unit, modifier: Modifier = Modifier) {
     var isDialogVisible by remember { mutableStateOf(false) }
-    OutlinedButton(onClick = { isDialogVisible = true }, modifier) {
+    OutlinedButton(
+        onClick = { isDialogVisible = true },
+        modifier = modifier,
+        shape = MaterialTheme.shapes.medium,
+        contentPadding = PaddingValues(RainbowTheme.dpDimensions.medium),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
+    ) {
         Text(RainbowStrings.Flair)
     }
     AnimatedVisibility(isDialogVisible) {

@@ -53,6 +53,7 @@ internal class SubredditRepositoryImpl(
             .map { subreddit ->
                 subreddit ?: remoteSubredditDataSource.getSubreddit(subredditName)
                     .let(subredditMapper::map)
+                    .also(localSubredditDataSource::insertSubreddit)
             }
             .map { Result.success(it) }
             .catch { emit(Result.failure(it)) }

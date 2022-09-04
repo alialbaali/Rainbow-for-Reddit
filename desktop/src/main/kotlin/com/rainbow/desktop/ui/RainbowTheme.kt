@@ -2,9 +2,7 @@ package com.rainbow.desktop.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import com.rainbow.desktop.settings.SettingsStateHolder
 import com.rainbow.domain.models.Theme
 
@@ -23,3 +21,19 @@ fun RainbowTheme(content: @Composable () -> Unit) {
 
     MaterialTheme(colors, typography = typography, content = content)
 }
+
+object RainbowTheme {
+
+    val dpDimensions: DpDimensions
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDpDimensions.current
+
+}
+
+private val LocalDpDimensions = staticCompositionLocalOf { DpDimensions() }
+
+val MaterialTheme.dpDimensions: DpDimensions
+    @Composable
+    @ReadOnlyComposable
+    get() = LocalDpDimensions.current

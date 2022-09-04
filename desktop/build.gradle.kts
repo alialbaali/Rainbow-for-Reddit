@@ -20,6 +20,8 @@ dependencies {
     implementation(compose.materialIconsExtended)
     implementation(KotlinX.Coroutines.swing)
     implementation("com.alialbaali.kamel:kamel-image:0.4.1")
+    implementation("com.halilibo.compose-richtext:richtext-commonmark:0.13.0")
+    implementation("com.halilibo.compose-richtext:richtext-ui-material:0.13.0")
     api(compose.preview)
     implementation(project(":domain"))
     implementation(project(":data"))

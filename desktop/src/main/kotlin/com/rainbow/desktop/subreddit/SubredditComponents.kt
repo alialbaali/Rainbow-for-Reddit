@@ -2,6 +2,8 @@ package com.rainbow.desktop.subreddit
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.rounded.PlaylistAdd
@@ -11,12 +13,13 @@ import androidx.compose.material.icons.rounded.StarBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.domain.models.Subreddit
-
 
 @Composable
 fun SubredditItemName(subredditName: String, modifier: Modifier = Modifier) {
@@ -27,7 +30,7 @@ fun SubredditItemName(subredditName: String, modifier: Modifier = Modifier) {
     )
 }
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SubredditFavoriteIconButton(
     subreddit: Subreddit,
@@ -35,8 +38,8 @@ fun SubredditFavoriteIconButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    IconToggleButton(
-        subreddit.isFavorite,
+    OutlinedIconToggleButton(
+        checked = subreddit.isFavorite,
         onCheckedChange = { isFavorite ->
             if (isFavorite) {
                 SubredditActionsStateHolder.favoriteSubreddit(subreddit)
@@ -47,13 +50,16 @@ fun SubredditFavoriteIconButton(
             }
         },
         modifier = modifier,
-        enabled = enabled
+        enabled = enabled,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+        colors = IconButtonDefaults.iconToggleButtonColors(checkedContentColor = Color.Transparent),
+        shape = MaterialTheme.shapes.medium
     ) {
         AnimatedContent(subreddit.isFavorite) { isFavorite ->
             Icon(
-                if (isFavorite) RainbowIcons.Star else RainbowIcons.StarBorder,
-                if (isFavorite) RainbowStrings.UnFavorite else RainbowStrings.Favorite,
-                tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
+                imageVector = if (isFavorite) RainbowIcons.Star else RainbowIcons.StarBorder,
+                contentDescription = if (isFavorite) RainbowStrings.UnFavorite else RainbowStrings.Favorite,
+                tint = MaterialTheme.colorScheme.primary,
             )
         }
     }
@@ -77,6 +83,8 @@ fun SubscribeButton(
             }
         },
         modifier = modifier,
+        shape = MaterialTheme.shapes.medium,
+        contentPadding = PaddingValues(RainbowTheme.dpDimensions.medium)
     ) {
         AnimatedContent(subreddit.isSubscribed) { isSubscribed ->
             Icon(
@@ -84,7 +92,7 @@ fun SubscribeButton(
                 if (isSubscribed) RainbowStrings.Subscribed else RainbowStrings.Subscribe,
             )
         }
-        Spacer(Modifier.width(16.dp))
+        Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
         AnimatedContent(subreddit.isSubscribed) { isSubscribed ->
             Text(
                 if (isSubscribed) RainbowStrings.Subscribed else RainbowStrings.Subscribe,
