@@ -5,11 +5,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface SubredditRepository {
 
-    val currentUserSubreddits: Flow<List<Subreddit>>
+    val profileSubreddits: Flow<List<Subreddit>>
 
-    suspend fun getCurrentUserSubreddits(lastSubredditId: String?): Result<Unit>
+    suspend fun getProfileSubreddits(lastSubredditId: String?): Result<Unit>
 
-    suspend fun getSubreddit(subredditName: String): Result<Subreddit>
+    fun getSubreddit(subredditName: String): Flow<Result<Subreddit>>
 
     suspend fun getSubredditModerators(subredditName: String): Result<List<Moderator>>
 

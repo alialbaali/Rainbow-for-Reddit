@@ -17,6 +17,9 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalSettingsApi::class)
@@ -34,20 +37,26 @@ internal class SubredditRepositoryImpl(
     private val wikiPageMapper: Mapper<RemoteWikiPage, WikiPage>,
     private val ruleMapper: Mapper<RemoteRule, Rule>,
 ) : SubredditRepository {
-    override val currentUserSubreddits: Flow<List<Subreddit>>
-        get() = localSubredditDataSource.currentUserSubreddits
 
-    override suspend fun getCurrentUserSubreddits(lastSubredditId: String?): Result<Unit> = runCatching {
+    override val profileSubreddits: Flow<List<Subreddit>> = localSubredditDataSource.profileSubreddits
+
+    override suspend fun getProfileSubreddits(lastSubredditId: String?): Result<Unit> = runCatching {
         withContext(dispatcher) {
-            remoteSubredditDataSource.getCurrentUserSubreddits(DefaultLimit, lastSubredditId)
+            remoteSubredditDataSource.getProfileSubreddits(DefaultLimit, lastSubredditId)
                 .quickMap(subredditMapper)
-                .forEach(localSubredditDataSource::insertSubreddit)
+                .forEach(localSubredditDataSource::insertProfileSubreddit)
         }
     }
 
-    override suspend fun getSubreddit(subredditName: String): Result<Subreddit> = withContext(dispatcher) {
-        remoteSubredditDataSource.getSubreddit(subredditName)
-            .mapCatching { subredditMapper.map(it) }
+    override fun getSubreddit(subredditName: String): Flow<Result<Subreddit>> {
+        return localSubredditDataSource.getSubreddit(subredditName)
+            .map { subreddit ->
+                subreddit ?: remoteSubredditDataSource.getSubreddit(subredditName)
+                    .let(subredditMapper::map)
+            }
+            .map { Result.success(it) }
+            .catch { emit(Result.failure(it)) }
+            .flowOn(dispatcher)
     }
 
     override suspend fun getSubredditModerators(subredditName: String): Result<List<Moderator>> =

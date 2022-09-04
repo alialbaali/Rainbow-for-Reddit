@@ -5,9 +5,9 @@ import com.rainbow.remote.dto.RemoteSubreddit
 
 interface RemoteSubredditDataSource {
 
-    suspend fun getSubreddit(subredditName: String): Result<RemoteSubreddit>
+    suspend fun getSubreddit(subredditName: String): RemoteSubreddit
 
-    suspend fun getCurrentUserSubreddits(limit: Int, after: String?): List<RemoteSubreddit>
+    suspend fun getProfileSubreddits(limit: Int, after: String?): List<RemoteSubreddit>
 
     suspend fun subscribeSubreddit(subredditId: String): Result<Unit>
 

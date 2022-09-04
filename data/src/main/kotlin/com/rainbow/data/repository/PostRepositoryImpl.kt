@@ -292,9 +292,7 @@ internal class PostRepositoryImpl(
 
     private suspend fun List<Post>.mapWithSubredditImageUrl() = map {
         val subredditImageUrl = remoteSubredditDataSource.getSubreddit(it.subredditName)
-            .getOrNull()
-            ?.let(subredditMapper::map)
-            ?.imageUrl
+            .let(subredditMapper::map).imageUrl
         it.copy(subredditImageUrl = subredditImageUrl)
     }
 }

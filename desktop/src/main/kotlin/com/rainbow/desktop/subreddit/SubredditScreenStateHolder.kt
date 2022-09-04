@@ -8,10 +8,7 @@ import com.rainbow.desktop.utils.toUIState
 import com.rainbow.domain.models.*
 import com.rainbow.domain.repository.PostRepository
 import com.rainbow.domain.repository.SubredditRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class SubredditScreenStateHolder private constructor(
@@ -23,8 +20,9 @@ class SubredditScreenStateHolder private constructor(
     private val mutableSelectedTab = MutableStateFlow(SubredditTab.Default)
     val selectedTab get() = mutableSelectedTab.asStateFlow()
 
-    private val mutableSubreddit = MutableStateFlow<UIState<Subreddit>>(UIState.Empty)
-    val subreddit get() = mutableSubreddit.asStateFlow()
+    val subreddit = subredditRepository.getSubreddit(subredditName)
+        .map { it.toUIState() }
+        .stateIn(scope, SharingStarted.Eagerly, UIState.Loading())
 
     private val mutableWiki = MutableStateFlow<UIState<WikiPage>>(UIState.Empty)
     val wiki get() = mutableWiki.asStateFlow()
@@ -35,17 +33,18 @@ class SubredditScreenStateHolder private constructor(
     private val mutableRules = MutableStateFlow<UIState<List<Rule>>>(UIState.Empty)
     val rules get() = mutableRules.asStateFlow()
 
-    val postsStateHolder =
-        object : PostsStateHolder<SubredditPostSorting>(SubredditPostSorting.Default, postRepository.posts) {
-            override suspend fun getItems(
-                sorting: SubredditPostSorting,
-                timeSorting: TimeSorting,
-                lastItem: Post?
-            ): Result<Unit> = postRepository.getSubredditPosts(subredditName, sorting, timeSorting, lastItem?.id)
-        }
+    val postsStateHolder = object : PostsStateHolder<SubredditPostSorting>(
+        SubredditPostSorting.Default,
+        postRepository.subredditPosts,
+    ) {
+        override suspend fun getItems(
+            sorting: SubredditPostSorting,
+            timeSorting: TimeSorting,
+            lastItem: Post?
+        ): Result<Unit> = postRepository.getSubredditPosts(subredditName, sorting, timeSorting, lastItem?.id)
+    }
 
     init {
-        loadSubreddit()
         selectedTab
             .onEach {
                 when (it) {
@@ -66,11 +65,6 @@ class SubredditScreenStateHolder private constructor(
             return stateHolders.find { it.subredditName == subredditName }
                 ?: SubredditScreenStateHolder(subredditName).also { stateHolders += it }
         }
-    }
-
-    private fun loadSubreddit() = scope.launch {
-        mutableSubreddit.value = subredditRepository.getSubreddit(subredditName)
-            .toUIState()
     }
 
     fun selectTab(tab: SubredditTab) {

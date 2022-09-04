@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.onEach
 
 class CurrentUserSubredditsScreenStateHolder private constructor(
     private val subredditRepository: SubredditRepository = Repos.Subreddit,
-) : ListStateHolder<Subreddit>(subredditRepository.currentUserSubreddits) {
+) : ListStateHolder<Subreddit>(subredditRepository.profileSubreddits) {
 
     private val mutableSearchTerm = MutableStateFlow("")
     val searchTerm get() = mutableSearchTerm.asStateFlow()
@@ -44,6 +44,6 @@ class CurrentUserSubredditsScreenStateHolder private constructor(
     }
 
     override suspend fun getItems(lastItem: Subreddit?): Result<Unit> {
-        return subredditRepository.getCurrentUserSubreddits(lastItem?.id)
+        return subredditRepository.getProfileSubreddits(lastItem?.id)
     }
 }

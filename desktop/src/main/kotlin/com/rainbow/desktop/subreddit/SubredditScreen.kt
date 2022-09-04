@@ -1,13 +1,9 @@
 package com.rainbow.desktop.subreddit
 
-//import androidx.compose.foundation.VerticalScrollbar
-//import androidx.compose.foundation.rememberScrollbarAdapter
-//import androidx.compose.ui.window.Dialog
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,11 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rainbow.data.Repos
-import com.rainbow.desktop.components.FlairItem
-import com.rainbow.desktop.components.MarkdownText
-import com.rainbow.desktop.components.ScreenHeaderItem
-import com.rainbow.desktop.components.ScrollableEnumTabRow
+import com.rainbow.desktop.components.*
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.posts
@@ -37,25 +29,45 @@ fun SubredditScreen(
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val model = remember { SubredditScreenStateHolder.getInstance(subredditName) }
-    val postsState by model.postsStateHolder.items.collectAsState()
-    val moderatorsState by model.moderators.collectAsState()
-    val subredditState by model.subreddit.collectAsState()
-    val selectedTab by model.selectedTab.collectAsState()
-    val rulesState by model.rules.collectAsState()
-    val wikiState by model.wiki.collectAsState()
-    LazyColumn(modifier) {
-        item {
-            subredditState.composed(onShowSnackbar) { subreddit ->
-                Header(subreddit, onShowSnackbar, Modifier.padding(bottom = 8.dp))
+    val stateHolder = remember { SubredditScreenStateHolder.getInstance(subredditName) }
+    val postsState by stateHolder.postsStateHolder.items.collectAsState()
+    val moderatorsState by stateHolder.moderators.collectAsState()
+    val subredditState by stateHolder.subreddit.collectAsState()
+    val selectedTab by stateHolder.selectedTab.collectAsState()
+    val rulesState by stateHolder.rules.collectAsState()
+    val wikiState by stateHolder.wiki.collectAsState()
+
+    DisposableEffect(postsState.getOrDefault(emptyList()).isEmpty()) {
+        val post = postsState.getOrNull()?.firstOrNull()
+        if (post != null) {
+            onNavigateDetailsScreen(DetailsScreen.Post(post.id))
+        }
+        onDispose {
+            onNavigateDetailsScreen(DetailsScreen.None)
+        }
+    }
+
+    RainbowLazyColumn(modifier) {
+        subredditState.fold(
+            onEmpty = {},
+            onFailure = { value, exception -> },
+            onLoading = {
+                item {
+                    RainbowProgressIndicator()
+                }
+            },
+            onSuccess = { subreddit ->
+                item {
+                    Header(subreddit, onShowSnackbar, Modifier.padding(bottom = 8.dp))
+                }
+                item {
+                    ScrollableEnumTabRow(
+                        selectedTab = selectedTab,
+                        onTabClick = { stateHolder.selectTab(it) },
+                    )
+                }
             }
-        }
-        item {
-            ScrollableEnumTabRow(
-                selectedTab = selectedTab,
-                onTabClick = { model.selectTab(it) },
-            )
-        }
+        )
         when (selectedTab) {
             SubredditTab.Posts -> posts(
                 postsState,
@@ -63,12 +75,17 @@ fun SubredditScreen(
                 onNavigateDetailsScreen,
                 {},
                 onShowSnackbar,
+                stateHolder.postsStateHolder::setLastItem,
             )
 
             SubredditTab.Description -> description(subredditState, onShowSnackbar)
             SubredditTab.Wiki -> wiki(wikiState, onShowSnackbar)
             SubredditTab.Rules -> rules(rulesState, onShowSnackbar)
-            SubredditTab.Moderators -> moderators(moderatorsState, { onNavigateMainScreen(MainScreen.User(it)) }, onShowSnackbar)
+            SubredditTab.Moderators -> moderators(
+                moderatorsState,
+                { onNavigateMainScreen(MainScreen.User(it)) },
+                onShowSnackbar
+            )
         }
     }
 }
@@ -109,39 +126,41 @@ private fun Header(
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
+    Surface(
         modifier
-            .defaultSurfaceShape()
             .heightIn(min = 350.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium
     ) {
-        ScreenHeaderItem(
-            subreddit.bannerImageUrl.toString(),
-            subreddit.imageUrl.toString(),
-            subreddit.name,
-            imageShape = MaterialTheme.shapes.large,
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .defaultPadding(start = 232.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Text(
-                text = subreddit.shortDescription,
-                style = MaterialTheme.typography.bodyMedium,
-                overflow = TextOverflow.Ellipsis,
+        Column {
+            ScreenHeaderItem(
+                subreddit.bannerImageUrl.toString(),
+                subreddit.imageUrl.toString(),
+                subreddit.name,
+                imageShape = MaterialTheme.shapes.large,
             )
-            Row {
-                SubredditFavoriteIconButton(
-                    subreddit,
-                    onShowSnackbar,
-                    enabled = subreddit.isSubscribed
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .defaultPadding(start = 232.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Text(
+                    text = subreddit.shortDescription,
+                    style = MaterialTheme.typography.bodyMedium,
+                    overflow = TextOverflow.Ellipsis,
                 )
-                SelectFlairButton(subreddit.name, onShowSnackbar)
-                SubscribeButton(subreddit, onShowSnackbar)
+                Row {
+                    SubredditFavoriteIconButton(
+                        subreddit,
+                        onShowSnackbar,
+                        enabled = subreddit.isSubscribed
+                    )
+                    SelectFlairButton(subreddit.name, onShowSnackbar)
+                    SubscribeButton(subreddit, onShowSnackbar)
+                }
             }
         }
     }
@@ -165,19 +184,6 @@ private fun SelectFlairDialog(
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
-    var state by remember { mutableStateOf<UIState<List<Pair<Flair, Boolean>>>>(UIState.Empty) }
-    LaunchedEffect(subredditName) {
-        val currentSelectedFlair = Repos.Subreddit.getCurrentSubredditFlair(subredditName)
-            .toUIState()
-            .getOrNull()
-        Repos.Subreddit.getSubredditFlairs(subredditName)
-            .map { it.associateWith { it.id == currentSelectedFlair?.id }.toList() }
-            .toUIState()
-            .also { state = it }
-    }
-
-
 //    Dialog(onCloseRequest) {
 //        state.composed(onShowSnackbar, modifier) { flairs ->
 //            val scrollState = rememberLazyListState()

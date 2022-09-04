@@ -11,11 +11,11 @@ import io.ktor.client.request.*
 
 class RemoteSubredditDataSourceImpl(private val client: HttpClient = redditClient) : RemoteSubredditDataSource {
 
-    override suspend fun getSubreddit(subredditName: String): Result<RemoteSubreddit> {
-        return client.get(Subreddits.About(subredditName))
+    override suspend fun getSubreddit(subredditName: String): RemoteSubreddit {
+        return client.getOrThrow(Subreddits.About(subredditName))
     }
 
-    override suspend fun getCurrentUserSubreddits(limit: Int, after: String?): List<RemoteSubreddit> {
+    override suspend fun getProfileSubreddits(limit: Int, after: String?): List<RemoteSubreddit> {
         return client.getOrThrow<Listing<RemoteSubreddit>>(Subreddits.Mine) {
             parameter(Keys.Limit, limit)
             parameter(Keys.After, after)

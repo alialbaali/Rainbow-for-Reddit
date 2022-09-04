@@ -5,9 +5,19 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocalSubredditDataSource {
 
-    val currentUserSubreddits: Flow<List<Subreddit>>
+    val subreddits: Flow<List<Subreddit>>
+
+    val profileSubreddits: Flow<List<Subreddit>>
+
+    val searchSubreddits: Flow<List<Subreddit>>
+
+    fun getSubreddit(subredditName: String): Flow<Subreddit?>
 
     fun insertSubreddit(subreddit: Subreddit)
+
+    fun insertProfileSubreddit(subreddit: Subreddit)
+
+    fun insertSearchSubreddit(subreddit: Subreddit)
 
     fun subscribeSubreddit(subredditName: String)
 
@@ -18,5 +28,9 @@ interface LocalSubredditDataSource {
     fun unFavoriteSubreddit(subredditName: String)
 
     fun clearSubreddits()
+
+    fun clearProfileSubreddits()
+
+    fun clearSearchSubreddits()
 
 }
