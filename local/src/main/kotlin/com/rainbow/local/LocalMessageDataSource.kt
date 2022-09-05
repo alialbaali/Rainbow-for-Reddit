@@ -19,6 +19,8 @@ interface LocalMessageDataSource {
 
     val commentMessages: Flow<List<Message>>
 
+    fun getMessage(messageId: String): Flow<Message?>
+
     fun insertInboxMessage(message: Message)
 
     fun insertUnreadMessage(message: Message)

@@ -1,8 +1,10 @@
 package com.rainbow.local
 
 import com.rainbow.domain.models.Message
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 
 class LocalMessageDataSourceImpl : LocalMessageDataSource {
 
@@ -26,6 +28,24 @@ class LocalMessageDataSourceImpl : LocalMessageDataSource {
 
     private val mutableCommentMessages = MutableStateFlow(emptyList<Message>())
     override val commentMessages get() = mutableCommentMessages.asStateFlow()
+
+    private val allMessages = listOf(
+        mutableInboxMessages,
+        mutableUnreadMessages,
+        mutableSentMessages,
+        mutableMessages,
+        mutableMentions,
+        mutablePostMessages,
+        mutableCommentMessages,
+    )
+
+    override fun getMessage(messageId: String): Flow<Message?> {
+        return combine(allMessages) { arrayOfMessages ->
+            arrayOfMessages.toList()
+                .flatten()
+                .find { message -> message.id == messageId }
+        }
+    }
 
     override fun insertInboxMessage(message: Message) {
         mutableInboxMessages.value += message

@@ -8,6 +8,6 @@ sealed interface DetailsScreen {
     value class Post(val postId: String) : DetailsScreen
 
     @JvmInline
-    value class Message(val message: com.rainbow.domain.models.Message) : DetailsScreen
+    value class Message(val messageId: String) : DetailsScreen
 
 }

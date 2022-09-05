@@ -24,7 +24,7 @@ inline fun LazyListScope.messages(
             message,
             onNavigateMainScreen,
             Modifier.clickable {
-                onNavigateDetailsScreen(DetailsScreen.Message(message))
+                onNavigateDetailsScreen(DetailsScreen.Message(message.id))
             }
         )
         PagingEffect(messages, index, onLoadMore)

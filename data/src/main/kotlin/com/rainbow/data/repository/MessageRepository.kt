@@ -9,7 +9,7 @@ import com.rainbow.local.LocalMessageDataSource
 import com.rainbow.remote.dto.RemoteMessage
 import com.rainbow.remote.source.RemoteMessageDataSource
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
 internal class MessageRepositoryImpl(
@@ -94,6 +94,14 @@ internal class MessageRepositoryImpl(
                 .quickMap(mapper)
                 .forEach(localMessageDataSource::insertCommentMessage)
         }
+    }
+
+    override fun getMessage(messageId: String): Flow<Result<Message>> {
+        return localMessageDataSource.getMessage(messageId)
+            .filterNotNull()
+            .map { Result.success(it) }
+            .catch { Result.failure<Message>(it) }
+            .flowOn(dispatcher)
     }
 
     override suspend fun createMessage(message: Message): Result<Message> {

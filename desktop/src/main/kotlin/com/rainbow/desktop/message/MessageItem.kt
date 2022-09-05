@@ -1,9 +1,11 @@
 package com.rainbow.desktop.message
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,7 +19,6 @@ import com.rainbow.desktop.components.SubredditName
 import com.rainbow.desktop.components.UserName
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.utils.defaultPadding
-import com.rainbow.desktop.utils.defaultSurfaceShape
 import com.rainbow.domain.models.Message
 
 @Composable
@@ -28,7 +29,7 @@ inline fun MessageItem(
 ) {
     Column(
         modifier
-            .defaultSurfaceShape()
+            .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
             .defaultPadding()
             .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp),

@@ -1,20 +1,29 @@
 package com.rainbow.desktop.message
 
-import com.rainbow.domain.models.Message
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.rainbow.data.Repos
+import com.rainbow.desktop.state.StateHolder
+import com.rainbow.desktop.utils.UIState
+import com.rainbow.desktop.utils.toUIState
+import com.rainbow.domain.repository.MessageRepository
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
-class MessageScreenStateHolder private constructor(private val initialMessage: Message) {
+class MessageScreenStateHolder private constructor(
+    private val messageId: String,
+    private val messageRepository: MessageRepository = Repos.Message,
+) : StateHolder() {
 
-    private val mutableMessage = MutableStateFlow(initialMessage)
-    val message get() = mutableMessage.asStateFlow()
+    val message = messageRepository.getMessage(messageId)
+        .map { it.toUIState() }
+        .stateIn(scope, SharingStarted.Eagerly, UIState.Loading())
 
     companion object {
-        fun getOrCreateInstance(initialMessage: Message): MessageScreenStateHolder {
+        fun getInstance(messageId: String): MessageScreenStateHolder {
             val messageScreenStateHolders = mutableSetOf<MessageScreenStateHolder>()
 
-            return messageScreenStateHolders.find { it.initialMessage == initialMessage }
-                ?: MessageScreenStateHolder(initialMessage).also { messageScreenStateHolders += it }
+            return messageScreenStateHolders.find { it.messageId == messageId }
+                ?: MessageScreenStateHolder(messageId).also { messageScreenStateHolders += it }
         }
     }
 }

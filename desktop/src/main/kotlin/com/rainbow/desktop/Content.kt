@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.home.HomeScreen
+import com.rainbow.desktop.message.MessageScreen
 import com.rainbow.desktop.message.MessagesScreen
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
@@ -186,35 +187,12 @@ private fun DetailsScreenContent(
             )
         }
 
-        is DetailsScreen.Message -> TODO()
+        is DetailsScreen.Message -> {
+            MessageScreen(
+                detailsScreen.messageId,
+                onNavigateMainScreen,
+                modifier,
+            )
+        }
     }
-//    val isMessageScreen = messageModelState
-//        .map { it.message.value.type is Message.Type.Message }
-//        .getOrDefault(false)
-//    when {
-//        mainScreen is MainScreen.NavigationItem.Messages && isMessageScreen ->
-//            messageModelState.composed(onShowSnackbar, modifier) { model ->
-//                MessageScreen(
-//                    model,
-//                    onUserNameClick,
-//                    onSubredditNameClick,
-//                    modifier
-//                )
-//            }
-//
-//        mainScreen is MainScreen.NavigationItem.Settings -> {}
-//        mainScreen is MainScreen.NavigationItem.Subreddits -> {}
-//        else -> postScreenModelType.composed(onShowSnackbar, modifier) { type ->
-//            PostScreen(
-//                type,
-//                onUserNameClick,
-//                onSubredditNameClick,
-//                onPostUpdate,
-//                onCommentUpdate,
-//                { model -> CommentActions(model) },
-//                onShowSnackbar,
-//                modifier
-//            )
-//        }
-//    }
 }

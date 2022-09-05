@@ -33,6 +33,8 @@ interface MessageRepository {
 
     suspend fun getCommentMessages(lastMessageId: String?): Result<Unit>
 
+    fun getMessage(messageId: String): Flow<Result<Message>>
+
     suspend fun createMessage(message: Message): Result<Message>
 
 }
