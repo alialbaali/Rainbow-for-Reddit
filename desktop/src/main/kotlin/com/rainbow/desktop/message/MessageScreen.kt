@@ -11,7 +11,7 @@ import com.rainbow.desktop.navigation.MainScreen
 
 @Composable
 inline fun MessageScreen(
-    model: MessageScreenModel,
+    model: MessageScreenStateHolder,
     crossinline onNavigateMainScreen: (MainScreen) -> Unit,
     modifier: Modifier = Modifier,
 ) {

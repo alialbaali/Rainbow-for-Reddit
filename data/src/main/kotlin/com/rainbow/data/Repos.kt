@@ -80,6 +80,7 @@ object Repos {
 
     object Message : MessageRepository by MessageRepositoryImpl(
         RemoteMessageDataSource(),
+        LocalMessageDataSourceImpl(),
         DefaultDispatcher,
         Mappers.MessageMapper
     )

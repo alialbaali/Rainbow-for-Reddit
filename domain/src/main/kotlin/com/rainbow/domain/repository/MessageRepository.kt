@@ -1,22 +1,37 @@
 package com.rainbow.domain.repository
 
 import com.rainbow.domain.models.Message
+import kotlinx.coroutines.flow.Flow
 
 interface MessageRepository {
 
-    suspend fun getInboxMessages(lastMessageId: String?): Result<List<Message>>
+    val inboxMessages: Flow<List<Message>>
 
-    suspend fun getUnreadMessages(lastMessageId: String?): Result<List<Message>>
+    val unreadMessages: Flow<List<Message>>
 
-    suspend fun getSentMessages(lastMessageId: String?): Result<List<Message>>
+    val sentMessages: Flow<List<Message>>
 
-    suspend fun getMessages(lastMessageId: String?): Result<List<Message>>
+    val messages: Flow<List<Message>>
 
-    suspend fun getMentions(lastMessageId: String?): Result<List<Message>>
+    val mentions: Flow<List<Message>>
 
-    suspend fun getPostMessages(lastMessageId: String?): Result<List<Message>>
+    val postMessages: Flow<List<Message>>
 
-    suspend fun getCommentMessages(lastMessageId: String?): Result<List<Message>>
+    val commentMessages: Flow<List<Message>>
+
+    suspend fun getInboxMessages(lastMessageId: String?): Result<Unit>
+
+    suspend fun getUnreadMessages(lastMessageId: String?): Result<Unit>
+
+    suspend fun getSentMessages(lastMessageId: String?): Result<Unit>
+
+    suspend fun getMessages(lastMessageId: String?): Result<Unit>
+
+    suspend fun getMentions(lastMessageId: String?): Result<Unit>
+
+    suspend fun getPostMessages(lastMessageId: String?): Result<Unit>
+
+    suspend fun getCommentMessages(lastMessageId: String?): Result<Unit>
 
     suspend fun createMessage(message: Message): Result<Message>
 
