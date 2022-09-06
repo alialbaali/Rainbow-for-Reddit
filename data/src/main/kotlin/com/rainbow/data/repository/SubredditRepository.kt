@@ -39,6 +39,7 @@ internal class SubredditRepositoryImpl(
 ) : SubredditRepository {
 
     override val profileSubreddits: Flow<List<Subreddit>> = localSubredditDataSource.profileSubreddits
+    override val searchSubreddits: Flow<List<Subreddit>> = localSubredditDataSource.searchSubreddits
 
     override suspend fun getProfileSubreddits(lastSubredditId: String?): Result<Unit> = runCatching {
         withContext(dispatcher) {
@@ -111,10 +112,15 @@ internal class SubredditRepositoryImpl(
                 .map { wikiPageMapper.map(it) }
         }
 
-    override suspend fun searchSubreddits(subredditName: String, lastSubredditId: String?): Result<List<Subreddit>> =
-        withContext(dispatcher) {
-            remoteSubredditDataSource.searchSubreddit(subredditName, DefaultLimit, lastSubredditId)
-                .mapCatching { it.quickMap(subredditMapper) }
+    override suspend fun searchSubreddits(subredditName: String, lastSubredditId: String?): Result<Unit> =
+        runCatching {
+            withContext(dispatcher) {
+                if (lastSubredditId == null) localSubredditDataSource.clearSearchSubreddits()
+
+                remoteSubredditDataSource.searchSubreddit(subredditName, DefaultLimit, lastSubredditId)
+                    .quickMap(subredditMapper)
+                    .forEach(localSubredditDataSource::insertSearchSubreddit)
+            }
         }
 
     override suspend fun getSubredditFlairs(subredditName: String): Result<List<Flair>> = withContext(dispatcher) {

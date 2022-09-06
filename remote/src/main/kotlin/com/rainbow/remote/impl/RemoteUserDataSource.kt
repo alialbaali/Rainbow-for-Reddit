@@ -60,11 +60,11 @@ private class RemoteUserDataSourceImpl(
         }
     }
 
-    override suspend fun searchUsers(searchTerm: String, limit: Int, after: String?): Result<List<RemoteUser>> {
-        return redditClient.get<Listing<RemoteUser>>(Users.Search) {
+    override suspend fun searchUsers(searchTerm: String, limit: Int, after: String?): List<RemoteUser> {
+        return redditClient.getOrThrow<Listing<RemoteUser>>(Users.Search) {
             parameter(Keys.Query, searchTerm)
             parameter(Keys.Limit, limit)
             parameter(Keys.After, after)
-        }.mapCatching { it.toList() }
+        }.toList()
     }
 }

@@ -1,11 +1,8 @@
 package com.rainbow.desktop.components
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,7 +15,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rainbow.desktop.utils.defaultBackgroundShape
+import com.rainbow.desktop.utils.defaultPadding
 
 @Composable
 fun RainbowTextField(
@@ -32,25 +29,17 @@ fun RainbowTextField(
 ) {
     val isPlaceholderVisible by remember(value) { mutableStateOf(value.isBlank()) }
     val interactionSource = remember { MutableInteractionSource() }
-    val isFocused by interactionSource.collectIsFocusedAsState()
     val minTextWidth = 280.dp
     val textStartPadding = 16.dp
     var trailingIconWidth by remember { mutableStateOf(Dp.Unspecified) }
-    val borderWidth by animateDpAsState(if (isFocused) 2.dp else 1.dp)
     val textStyle = TextStyle(fontSize = 16.sp)
-    val borderColor by animateColorAsState(
-        if (isFocused)
-            MaterialTheme.colorScheme.primary
-        else
-            MaterialTheme.colorScheme.onBackground.copy(0.1F)
-    )
     BasicTextField(
         value,
         onValueChange,
         modifier
             .defaultMinSize(minTextWidth)
-            .defaultBackgroundShape(borderWidth, borderColor, CircleShape)
-            .padding(start = textStartPadding)
+            .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.medium)
+            .defaultPadding(start = textStartPadding)
             .then(
                 if (trailingIcon != null)
                     Modifier

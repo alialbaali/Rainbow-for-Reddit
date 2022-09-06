@@ -9,8 +9,14 @@ interface LocalUserDataSource {
 
     val users: Flow<List<User>>
 
+    val searchUsers: Flow<List<User>>
+
     fun setCurrentUser(user: User)
 
     fun insertUser(user: User)
+
+    fun insertSearchUser(user: User)
+
+    fun clearSearchUsers()
 
 }

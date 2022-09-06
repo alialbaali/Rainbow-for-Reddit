@@ -1,6 +1,9 @@
 package com.rainbow.desktop.post
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.components.RainbowProgressIndicator
@@ -17,7 +20,7 @@ inline fun LazyListScope.posts(
     crossinline onNavigateDetailsScreen: (DetailsScreen) -> Unit,
     crossinline onAwardsClick: () -> Unit,
     noinline onShowSnackbar: (String) -> Unit,
-    crossinline onLoadMore: (Post) -> Unit = {},
+    crossinline onLoadMore: (Post) -> Unit,
 ) {
     val posts = state.getOrDefault(emptyList())
     itemsIndexed(posts) { index, post ->
@@ -28,6 +31,33 @@ inline fun LazyListScope.posts(
             onAwardsClick,
             onShowSnackbar,
             Modifier.fillParentMaxWidth(),
+        )
+        PagingEffect(posts, index, onLoadMore)
+    }
+    if (state.isLoading) {
+        item {
+            RainbowProgressIndicator()
+        }
+    }
+}
+
+inline fun LazyGridScope.posts(
+    state: UIState<List<Post>>,
+    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
+    crossinline onNavigateDetailsScreen: (DetailsScreen) -> Unit,
+    crossinline onAwardsClick: () -> Unit,
+    noinline onShowSnackbar: (String) -> Unit,
+    crossinline onLoadMore: (Post) -> Unit,
+) {
+    val posts = state.getOrDefault(emptyList())
+    itemsIndexed(posts) { index, post ->
+        PostItem(
+            post,
+            onNavigateMainScreen,
+            onNavigateDetailsScreen,
+            onAwardsClick,
+            onShowSnackbar,
+            Modifier.fillMaxWidth(),
         )
         PagingEffect(posts, index, onLoadMore)
     }

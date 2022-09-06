@@ -31,8 +31,8 @@ internal class UserRepositoryImpl(
 ) : UserRepository {
 
     override val isUserLoggedIn: Flow<Boolean> = settings.getBooleanFlow(IsUserLoggedInKey)
-
     override val currentUser: Flow<User> = localDataSource.currentUser
+    override val searchUsers: Flow<List<User>> = localDataSource.searchUsers
 
     override suspend fun loginUser(uuid: UUID): Result<Unit> = withContext(dispatcher) {
         remoteDataSource.loginUser(uuid)
@@ -76,8 +76,13 @@ internal class UserRepositoryImpl(
     override suspend fun searchUsers(
         searchTerm: String,
         lastUserId: String?,
-    ): Result<List<User>> = withContext(dispatcher) {
-        remoteDataSource.searchUsers(searchTerm, DefaultLimit, lastUserId)
-            .mapCatching { it.quickMap(mapper) }
+    ): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            if (lastUserId == null) localDataSource.clearSearchUsers()
+
+            remoteDataSource.searchUsers(searchTerm, DefaultLimit, lastUserId)
+                .quickMap(mapper)
+                .forEach(localDataSource::insertSearchUser)
+        }
     }
 }

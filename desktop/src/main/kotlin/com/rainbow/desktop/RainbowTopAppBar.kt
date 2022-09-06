@@ -24,8 +24,7 @@ import com.rainbow.desktop.utils.defaultPadding
 @Composable
 fun RainbowTopAppBar(
     mainScreen: MainScreen,
-    onSearchClick: (String) -> Unit,
-    onSubredditNameClick: (String) -> Unit,
+    onNavigateMainScreen: (MainScreen) -> Unit,
     onBackClick: () -> Unit,
     onForwardClick: () -> Unit,
     isBackEnabled: Boolean,
@@ -77,8 +76,7 @@ fun RainbowTopAppBar(
 
         }
         SearchTextField(
-            onSearchClick,
-            onSubredditNameClick,
+            onNavigateMainScreen,
             Modifier
                 .weight(1F)
                 .padding(end = 16.dp)

@@ -21,6 +21,6 @@ interface RemoteSubredditDataSource {
 
     suspend fun getSubredditPostRequirements(subredditName: String): Result<RemotePostRequirements>
 
-    suspend fun searchSubreddit(subredditName: String, limit: Int, after: String?): Result<List<RemoteSubreddit>>
+    suspend fun searchSubreddit(subredditName: String, limit: Int, after: String?): List<RemoteSubreddit>
 
 }

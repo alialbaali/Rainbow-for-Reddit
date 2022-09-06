@@ -13,14 +13,14 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.onSizeChanged
 import com.rainbow.desktop.components.RainbowIconButton
 import com.rainbow.desktop.components.RainbowTextField
+import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchTextField(
-    onSearchClick: (String) -> Unit,
-    onSubredditNameClick: (String) -> Unit,
+    onNavigateMainScreen: (MainScreen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var isExpanded by remember { mutableStateOf(false) }
@@ -39,7 +39,11 @@ fun SearchTextField(
                 RainbowIconButton(
                     RainbowIcons.Search,
                     RainbowIcons.Search.name,
-                    onClick = { searchTerm.takeIf { it.isNotBlank() }?.let(onSearchClick) }
+                    onClick = {
+                        searchTerm.takeIf { it.isNotBlank() }?.let {
+                            onNavigateMainScreen(MainScreen.Search(it))
+                        }
+                    }
                 )
             },
             modifier = Modifier
@@ -51,7 +55,7 @@ fun SearchTextField(
                 .onKeyEvent {
                     if (it.key == Key.Enter && searchTerm.isNotBlank()) {
                         isExpanded = false
-                        onSearchClick(searchTerm)
+                        onNavigateMainScreen(MainScreen.Search(searchTerm))
                     }
                     false
                 },

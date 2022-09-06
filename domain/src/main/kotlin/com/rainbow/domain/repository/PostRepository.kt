@@ -88,5 +88,5 @@ interface PostRepository {
         postSorting: SearchPostSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
-    ): Result<List<Post>>
+    ): Result<Unit>
 }

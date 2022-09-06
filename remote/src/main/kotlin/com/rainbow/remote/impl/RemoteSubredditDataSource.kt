@@ -63,12 +63,12 @@ class RemoteSubredditDataSourceImpl(private val client: HttpClient = redditClien
         subredditName: String,
         limit: Int,
         after: String?,
-    ): Result<List<RemoteSubreddit>> {
-        return client.get<Listing<RemoteSubreddit>>(Subreddits.Search) {
+    ): List<RemoteSubreddit> {
+        return client.getOrThrow<Listing<RemoteSubreddit>>(Subreddits.Search) {
             parameter(Keys.Query, subredditName)
             parameter(Keys.Limit, limit)
             parameter(Keys.After, after)
-        }.mapCatching { it.toList() }
+        }.toList()
     }
 
 }

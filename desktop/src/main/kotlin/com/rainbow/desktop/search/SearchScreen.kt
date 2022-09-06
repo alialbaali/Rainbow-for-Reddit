@@ -1,20 +1,23 @@
 package com.rainbow.desktop.search
 
-//import com.rainbow.desktop.components.LazyGrid
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.rainbow.desktop.components.RainbowLazyVerticalGrid
 import com.rainbow.desktop.components.ScrollableEnumTabRow
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
+import com.rainbow.desktop.post.posts
+import com.rainbow.desktop.subreddit.subreddits
+import com.rainbow.desktop.ui.RainbowTheme
+import com.rainbow.desktop.user.users
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 inline fun SearchScreen(
     searchTerm: String,
@@ -23,53 +26,57 @@ inline fun SearchScreen(
     noinline onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val model = remember(searchTerm) { SearchScreenStateHolder.getOrCreateInstance(searchTerm) }
-    val selectedTab by model.selectedTab.collectAsState()
-//    val subredditsState by model.subredditListModel.items.collectAsState()
-//    val postsState by model.postListModel.items.collectAsState()
-//    val usersState by model.userListModel.items.collectAsState()
-//    val postLayout by model.postListModel.postLayout.collectAsState()
-    Column(
-        if (selectedTab == SearchTab.Posts) modifier else Modifier,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        ScrollableEnumTabRow(
-            selectedTab,
-            onTabClick = { model.selectTab(it) }
-        )
+    val stateHolder = remember(searchTerm) { SearchScreenStateHolder.getInstance(searchTerm) }
+    val selectedTab by stateHolder.selectedTab.collectAsState()
+    val subredditsState by stateHolder.subredditsStateHolder.items.collectAsState()
+    val postsState by stateHolder.postsStateHolder.items.collectAsState()
+    val usersState by stateHolder.usersStateHolder.items.collectAsState()
+    val appliedModifier = remember(selectedTab) { if (selectedTab == SearchTab.Posts) modifier else Modifier }
+    val columnsCount = remember(selectedTab) {
+        when (selectedTab) {
+            SearchTab.Subreddits -> 4
+            SearchTab.Posts -> 1
+            SearchTab.Users -> 4
+        }
+    }
 
-//        when (selectedTab) {
-//            SearchTab.Subreddits -> subredditsState.composed(onShowSnackbar) { subreddits ->
-//                LazyGrid {
-//                    items(subreddits) { subreddit ->
-//                        SearchSubredditItem(
-//                            subreddit,
-//                            onSubredditUpdate,
-//                            onClick = { onSubredditNameClick(it.name) },
-//                            onShowSnackbar
-//                        )
-//                    }
-//                }
-//            }
+    RainbowLazyVerticalGrid(appliedModifier, columns = GridCells.Fixed(columnsCount)) {
 
-//            SearchTab.Posts -> LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-//                posts(
-//                    postsState,
-//                    onNavigateMainScreen,
-//                    onNavigateDetailsScreen,
-//                    {},
-//                    onShowSnackbar,
-//                    {}
-//                )
-//            }
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            ScrollableEnumTabRow(selectedTab, stateHolder::selectTab)
+        }
 
-//            SearchTab.Users -> usersState.composed(onShowSnackbar) { users ->
-//                LazyGrid {
-//                    items(users) { user ->
-//                        UserItem(user, onClick = { onUserNameClick(it.name) }, onShowSnackbar)
-//                    }
-//                }
-//            }
-//        }
+        item(span = { GridItemSpan(maxLineSpan) }) { Spacer(Modifier.height(RainbowTheme.dpDimensions.medium)) }
+
+        when (selectedTab) {
+            SearchTab.Subreddits -> {
+                subreddits(
+                    subredditsState,
+                    onNavigateMainScreen,
+                    onShowSnackbar,
+                    stateHolder.subredditsStateHolder::setLastItem,
+                )
+            }
+
+            SearchTab.Posts -> {
+                posts(
+                    postsState,
+                    onNavigateMainScreen,
+                    onNavigateDetailsScreen,
+                    {},
+                    onShowSnackbar,
+                    stateHolder.postsStateHolder::setLastItem,
+                )
+            }
+
+            SearchTab.Users -> {
+                users(
+                    usersState,
+                    onNavigateMainScreen,
+                    onShowSnackbar,
+                    stateHolder.usersStateHolder::setLastItem,
+                )
+            }
+        }
     }
 }

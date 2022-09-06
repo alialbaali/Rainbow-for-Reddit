@@ -14,12 +14,23 @@ class LocalUserDataSourceImpl : LocalUserDataSource {
     private val mutableUsers = MutableStateFlow(emptyList<User>())
     override val users: Flow<List<User>> get() = mutableUsers.asStateFlow()
 
+    private val mutableSearchUsers = MutableStateFlow(emptyList<User>())
+    override val searchUsers get() = mutableSearchUsers.asStateFlow()
+
     override fun setCurrentUser(user: User) {
         mutableCurrentUser.value = user
     }
 
     override fun insertUser(user: User) {
         mutableUsers.value = mutableUsers.value + user
+    }
+
+    override fun insertSearchUser(user: User) {
+        mutableSearchUsers.value += user
+    }
+
+    override fun clearSearchUsers() {
+        mutableSearchUsers.value = emptyList()
     }
 
 }

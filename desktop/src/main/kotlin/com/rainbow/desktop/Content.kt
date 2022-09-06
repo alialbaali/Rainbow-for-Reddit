@@ -59,8 +59,7 @@ internal fun Content(
             Column(Modifier.fillMaxSize()) {
                 RainbowTopAppBar(
                     mainScreen,
-                    {},
-                    { },
+                    onNavigateMainScreen,
                     onBackClick,
                     onForwardClick,
                     isBackEnabled,

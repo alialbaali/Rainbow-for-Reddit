@@ -7,6 +7,8 @@ interface SubredditRepository {
 
     val profileSubreddits: Flow<List<Subreddit>>
 
+    val searchSubreddits: Flow<List<Subreddit>>
+
     suspend fun getProfileSubreddits(lastSubredditId: String?): Result<Unit>
 
     fun getSubreddit(subredditName: String): Flow<Result<Subreddit>>
@@ -31,7 +33,7 @@ interface SubredditRepository {
 
     suspend fun getWikiPage(subredditName: String, pageName: String): Result<WikiPage>
 
-    suspend fun searchSubreddits(subredditName: String, lastSubredditId: String?): Result<List<Subreddit>>
+    suspend fun searchSubreddits(subredditName: String, lastSubredditId: String?): Result<Unit>
 
     suspend fun getSubredditFlairs(subredditName: String): Result<List<Flair>>
 

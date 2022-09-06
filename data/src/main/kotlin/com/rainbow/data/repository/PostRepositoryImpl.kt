@@ -278,15 +278,17 @@ internal class PostRepositoryImpl(
         postSorting: SearchPostSorting,
         timeSorting: TimeSorting,
         lastPostId: String?,
-    ): Result<List<Post>> = runCatching {
+    ): Result<Unit> = runCatching {
         withContext(dispatcher) {
+            if (lastPostId == null) localPostDataSource.clearSearchPosts()
+
             remotePostDataSource.searchPosts(
                 searchTerm,
                 postSorting.lowercaseName,
                 timeSorting.lowercaseName,
                 DefaultLimit,
                 lastPostId
-            ).quickMap(postMapper)
+            ).quickMap(postMapper).forEach(localPostDataSource::insertSearchPost)
         }
     }
 
