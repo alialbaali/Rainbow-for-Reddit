@@ -109,47 +109,47 @@ private class RemotePostDataSourceImpl(private val client: HttpClient) : RemoteP
         TODO("Not yet implemented")
     }
 
-    override suspend fun upvotePost(postId: String): Result<Unit> {
-        return client.submitForm(Posts.Upvote) {
+    override suspend fun upvotePost(postId: String) {
+        return client.submitFormOrThrow(Posts.Upvote) {
             parameter(Keys.Id, postId)
             parameter(Keys.Direction, Values.Upvote)
         }
     }
 
-    override suspend fun unvotePost(postId: String): Result<Unit> {
-        return client.submitForm(Posts.Unvote) {
+    override suspend fun unvotePost(postId: String) {
+        return client.submitFormOrThrow(Posts.Unvote) {
             parameter(Keys.Id, postId)
             parameter(Keys.Direction, Values.Unvote)
         }
     }
 
-    override suspend fun downvotePost(postId: String): Result<Unit> {
-        return client.submitForm(Posts.Downvote) {
+    override suspend fun downvotePost(postId: String) {
+        return client.submitFormOrThrow(Posts.Downvote) {
             parameter(Keys.Id, postId)
             parameter(Keys.Direction, Values.Downvote)
         }
     }
 
-    override suspend fun savePost(postId: String): Result<Unit> {
-        return client.submitForm(Posts.Save) {
+    override suspend fun savePost(postId: String) {
+        return client.submitFormOrThrow(Posts.Save) {
             parameter(Keys.Id, postId)
         }
     }
 
-    override suspend fun unSavePost(postId: String): Result<Unit> {
-        return client.submitForm(Posts.UnSave) {
+    override suspend fun unSavePost(postId: String) {
+        return client.submitFormOrThrow(Posts.UnSave) {
             parameter(Keys.Id, postId)
         }
     }
 
-    override suspend fun hidePost(postId: String): Result<Unit> {
-        return client.submitForm(Posts.Hide) {
+    override suspend fun hidePost(postId: String) {
+        return client.submitFormOrThrow(Posts.Hide) {
             parameter(Keys.Id, postId)
         }
     }
 
-    override suspend fun unHidePost(postId: String): Result<Unit> {
-        return client.submitForm(Posts.UnHide) {
+    override suspend fun unHidePost(postId: String) {
+        return client.submitFormOrThrow(Posts.UnHide) {
             parameter(Keys.Id, postId)
         }
     }

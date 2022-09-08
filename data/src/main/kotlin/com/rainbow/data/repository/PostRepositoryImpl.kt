@@ -185,7 +185,7 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             ).quickMap(postMapper)
-                .mapWithSubredditImageUrl()
+//                .mapWithSubredditImageUrl()
                 .forEach(localPostDataSource::insertHomePost)
         }
     }
@@ -266,66 +266,66 @@ internal class PostRepositoryImpl(
         remotePostDataSource.deletePost(postId)
     }
 
-    override suspend fun upvotePost(postId: String): Result<Unit> = withContext(dispatcher) {
-        remotePostDataSource.upvotePost(postId)
-            .onSuccess { localPostDataSource.upvotePost(postId) }
+    override suspend fun upvotePost(postId: String): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            remotePostDataSource.upvotePost(postId)
+            localPostDataSource.updatePost(postId) { post ->
+                post.copy(vote = Vote.Up)
+            }
+        }
     }
 
-    override suspend fun unvotePost(postId: String): Result<Unit> = withContext(dispatcher) {
-        remotePostDataSource.unvotePost(postId)
-            .onSuccess { localPostDataSource.unvotePost(postId) }
+    override suspend fun unvotePost(postId: String): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            remotePostDataSource.unvotePost(postId)
+            localPostDataSource.updatePost(postId) { post ->
+                post.copy(vote = Vote.None)
+            }
+        }
     }
 
-    override suspend fun downvotePost(postId: String): Result<Unit> = withContext(dispatcher) {
-        remotePostDataSource.downvotePost(postId)
-            .onSuccess { localPostDataSource.downvotePost(postId) }
+    override suspend fun downvotePost(postId: String): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            remotePostDataSource.downvotePost(postId)
+            localPostDataSource.updatePost(postId) { post ->
+                post.copy(vote = Vote.Down)
+            }
+        }
     }
 
     override suspend fun hidePost(postId: String): Result<Unit> = runCatching {
         withContext(dispatcher) {
             remotePostDataSource.hidePost(postId)
-                .onSuccess {
-                    localPostDataSource.updatePost(postId) { post ->
-                        post.copy(isHidden = true)
-                    }
-                }
-                .getOrThrow()
+            localPostDataSource.updatePost(postId) { post ->
+                post.copy(isHidden = true)
+            }
         }
     }
 
     override suspend fun unHidePost(postId: String): Result<Unit> = runCatching {
         withContext(dispatcher) {
             remotePostDataSource.unHidePost(postId)
-                .onSuccess {
-                    localPostDataSource.updatePost(postId) { post ->
-                        post.copy(isHidden = false)
-                    }
-                }
-                .getOrThrow()
+            localPostDataSource.updatePost(postId) { post ->
+                post.copy(isHidden = false)
+            }
         }
     }
 
     override suspend fun savePost(postId: String): Result<Unit> = runCatching {
         withContext(dispatcher) {
             remotePostDataSource.savePost(postId)
-                .onSuccess {
-                    localPostDataSource.updatePost(postId) { post ->
-                        post.copy(isSaved = true)
-                    }
-                }
-                .getOrThrow()
+            localPostDataSource.updatePost(postId) { post ->
+                post.copy(isSaved = true)
+            }
         }
     }
 
     override suspend fun unSavePost(postId: String): Result<Unit> = runCatching {
         withContext(dispatcher) {
             remotePostDataSource.unSavePost(postId)
-                .onSuccess {
-                    localPostDataSource.updatePost(postId) { post ->
-                        post.copy(isSaved = false)
-                    }
-                }
-                .getOrThrow()
+            localPostDataSource.updatePost(postId) { post ->
+                post.copy(isSaved = false)
+            }
         }
     }
 

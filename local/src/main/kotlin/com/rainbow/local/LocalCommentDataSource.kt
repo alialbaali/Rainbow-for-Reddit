@@ -21,13 +21,7 @@ interface LocalCommentDataSource {
 
     fun insertUserComment(comment: Comment)
 
-    fun updatePostComment(comment: Comment)
-
-    fun upvoteComment(commentId: String)
-
-    fun downvoteComment(commentId: String)
-
-    fun unvoteComment(commentId: String)
+    fun updateComment(commentId: String, block: (Comment) -> Comment)
 
     fun clearHomeComments()
 

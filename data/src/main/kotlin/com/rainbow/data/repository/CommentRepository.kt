@@ -5,10 +5,7 @@ import com.rainbow.data.quickMap
 import com.rainbow.data.utils.DefaultLimit
 import com.rainbow.data.utils.SettingsKeys
 import com.rainbow.data.utils.lowercaseName
-import com.rainbow.domain.models.Comment
-import com.rainbow.domain.models.PostCommentSorting
-import com.rainbow.domain.models.TimeSorting
-import com.rainbow.domain.models.UserPostSorting
+import com.rainbow.domain.models.*
 import com.rainbow.domain.repository.CommentRepository
 import com.rainbow.local.LocalCommentDataSource
 import com.rainbow.remote.dto.RemoteComment
@@ -146,19 +143,49 @@ internal class CommentRepositoryImpl(
         TODO("Not yet implemented")
     }
 
-    override suspend fun upvoteComment(commentId: String): Result<Unit> = withContext(dispatcher) {
-        remoteCommentDataSource.upvoteComment(commentId)
-            .onSuccess { localCommentDataSource.upvoteComment(commentId) }
+    override suspend fun upvoteComment(commentId: String): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            remoteCommentDataSource.upvoteComment(commentId)
+            localCommentDataSource.updateComment(commentId) { comment ->
+                comment.copy(vote = Vote.Up)
+            }
+        }
     }
 
-    override suspend fun unvoteComment(commentId: String): Result<Unit> = withContext(dispatcher) {
-        remoteCommentDataSource.unvoteComment(commentId)
-            .onSuccess { localCommentDataSource.unvoteComment(commentId) }
+    override suspend fun unvoteComment(commentId: String): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            remoteCommentDataSource.unvoteComment(commentId)
+            localCommentDataSource.updateComment(commentId) { comment ->
+                comment.copy(vote = Vote.None)
+            }
+        }
     }
 
-    override suspend fun downvoteComment(commentId: String): Result<Unit> = withContext(dispatcher) {
-        remoteCommentDataSource.downvoteComment(commentId)
-            .onSuccess { localCommentDataSource.downvoteComment(commentId) }
+    override suspend fun downvoteComment(commentId: String): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            remoteCommentDataSource.downvoteComment(commentId)
+            localCommentDataSource.updateComment(commentId) { comment ->
+                comment.copy(vote = Vote.Down)
+            }
+        }
+    }
+
+    override suspend fun saveComment(commentId: String): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            remoteCommentDataSource.saveComment(commentId)
+            localCommentDataSource.updateComment(commentId) { comment ->
+                comment.copy(isSaved = true)
+            }
+        }
+    }
+
+    override suspend fun unSaveComment(commentId: String): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            remoteCommentDataSource.unSaveComment(commentId)
+            localCommentDataSource.updateComment(commentId) { comment ->
+                comment.copy(isSaved = false)
+            }
+        }
     }
 
     private fun List<Comment>.replaceRepliesViewMore(

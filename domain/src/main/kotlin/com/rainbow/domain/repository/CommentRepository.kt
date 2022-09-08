@@ -59,4 +59,8 @@ interface CommentRepository {
 
     suspend fun downvoteComment(commentId: String): Result<Unit>
 
+    suspend fun saveComment(commentId: String): Result<Unit>
+
+    suspend fun unSaveComment(commentId: String): Result<Unit>
+
 }

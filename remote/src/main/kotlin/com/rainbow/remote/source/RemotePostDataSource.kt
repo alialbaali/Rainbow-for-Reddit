@@ -57,19 +57,19 @@ interface RemotePostDataSource {
 
     suspend fun unFollowPost(postId: String): String
 
-    suspend fun upvotePost(postId: String): Result<Unit>
+    suspend fun upvotePost(postId: String)
 
-    suspend fun unvotePost(postId: String): Result<Unit>
+    suspend fun unvotePost(postId: String)
 
-    suspend fun downvotePost(postId: String): Result<Unit>
+    suspend fun downvotePost(postId: String)
 
-    suspend fun savePost(postId: String): Result<Unit>
+    suspend fun savePost(postId: String)
 
-    suspend fun unSavePost(postId: String): Result<Unit>
+    suspend fun unSavePost(postId: String)
 
-    suspend fun hidePost(postId: String): Result<Unit>
+    suspend fun hidePost(postId: String)
 
-    suspend fun unHidePost(postId: String): Result<Unit>
+    suspend fun unHidePost(postId: String)
 
     suspend fun submitTextPost(
         subredditName: String,

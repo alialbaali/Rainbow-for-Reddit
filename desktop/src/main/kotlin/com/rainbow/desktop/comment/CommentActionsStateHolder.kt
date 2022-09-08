@@ -19,4 +19,12 @@ object CommentActionsStateHolder : StateHolder() {
         Repos.Comment.unvoteComment(comment.id)
     }
 
+    fun saveComment(comment: Comment) = scope.launch {
+        Repos.Comment.saveComment(comment.id)
+    }
+
+    fun unSaveComment(comment: Comment) = scope.launch {
+        Repos.Comment.unSaveComment(comment.id)
+    }
+
 }

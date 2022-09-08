@@ -48,6 +48,26 @@ internal suspend inline fun <reified T> HttpClient.requestOrThrow(
     }
 }
 
+internal suspend inline fun <reified T> HttpClient.submitFormOrThrow(
+    endpoint: Endpoint,
+    block: HttpRequestBuilder .() -> Unit = {},
+): T {
+    val response = submitForm {
+        url(endpoint.path)
+        block()
+    }
+    return if (response.status.isSuccess()) {
+        response.body()
+    } else {
+        val error = try {
+            response.body()
+        } catch (exception: Throwable) {
+            Error(response.status.description, response.status.value)
+        }
+        error(error.message.toString())
+    }
+}
+
 internal suspend inline fun <reified T> HttpClient.get(
     endpoint: Endpoint,
     builder: HttpRequestBuilder.() -> Unit = {},

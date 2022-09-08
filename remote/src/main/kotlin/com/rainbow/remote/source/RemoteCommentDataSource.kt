@@ -44,14 +44,14 @@ interface RemoteCommentDataSource {
 
     suspend fun disableInboxReplies(commentId: String): Result<Unit>
 
-    suspend fun saveComment(commentId: String): Result<Unit>
+    suspend fun saveComment(commentId: String)
 
-    suspend fun unSaveComment(commentId: String): Result<Unit>
+    suspend fun unSaveComment(commentId: String)
 
-    suspend fun upvoteComment(commentId: String): Result<Unit>
+    suspend fun upvoteComment(commentId: String)
 
-    suspend fun unvoteComment(commentId: String): Result<Unit>
+    suspend fun unvoteComment(commentId: String)
 
-    suspend fun downvoteComment(commentId: String): Result<Unit>
+    suspend fun downvoteComment(commentId: String)
 
 }

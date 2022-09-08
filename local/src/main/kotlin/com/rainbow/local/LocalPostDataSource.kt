@@ -45,12 +45,6 @@ interface LocalPostDataSource {
 
     fun updatePost(postId: String, block: (Post) -> Post)
 
-    fun upvotePost(postId: String)
-
-    fun downvotePost(postId: String)
-
-    fun unvotePost(postId: String)
-
     fun clearPosts()
 
     fun clearHomePosts()

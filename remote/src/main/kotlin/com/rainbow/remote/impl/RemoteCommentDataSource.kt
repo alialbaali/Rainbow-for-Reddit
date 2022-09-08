@@ -99,34 +99,34 @@ private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommen
         TODO("Not yet implemented")
     }
 
-    override suspend fun saveComment(commentId: String): Result<Unit> {
-        return client.submitForm(Comments.Save) {
+    override suspend fun saveComment(commentId: String) {
+        return client.submitFormOrThrow(Comments.Save) {
             parameter(Keys.Id, commentId)
         }
     }
 
-    override suspend fun unSaveComment(commentId: String): Result<Unit> {
-        return client.submitForm(Comments.UnSave) {
+    override suspend fun unSaveComment(commentId: String) {
+        return client.submitFormOrThrow(Comments.UnSave) {
             parameter(Keys.Id, commentId)
         }
     }
 
-    override suspend fun upvoteComment(commentId: String): Result<Unit> {
-        return client.submitForm(Comments.Upvote) {
+    override suspend fun upvoteComment(commentId: String) {
+        return client.submitFormOrThrow(Comments.Upvote) {
             parameter(Keys.Id, commentId)
             parameter(Keys.Direction, Values.Upvote)
         }
     }
 
-    override suspend fun unvoteComment(commentId: String): Result<Unit> {
-        return client.submitForm(Comments.Unvote) {
+    override suspend fun unvoteComment(commentId: String) {
+        return client.submitFormOrThrow(Comments.Unvote) {
             parameter(Keys.Id, commentId)
             parameter(Keys.Direction, Values.Unvote)
         }
     }
 
-    override suspend fun downvoteComment(commentId: String): Result<Unit> {
-        return client.submitForm(Comments.Downvote) {
+    override suspend fun downvoteComment(commentId: String) {
+        return client.submitFormOrThrow(Comments.Downvote) {
             parameter(Keys.Id, commentId)
             parameter(Keys.Direction, Values.Downvote)
         }

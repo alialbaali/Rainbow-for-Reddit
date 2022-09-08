@@ -1,20 +1,24 @@
 package com.rainbow.desktop.comment
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.rounded.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.award.ItemAwards
 import com.rainbow.desktop.components.*
+import com.rainbow.desktop.post.PostActionsStateHolder
+import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.RainbowIcons
+import com.rainbow.desktop.utils.RainbowStrings
+import com.rainbow.desktop.utils.format
 import com.rainbow.domain.models.Comment
 
 @Composable
@@ -68,6 +72,7 @@ inline fun CommentInfo(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun CommentActions(
     comment: Comment,
@@ -89,23 +94,47 @@ fun CommentActions(
         )
 
         AnimatedVisibility(comment.replies.isNotEmpty() && !isRepliesVisible) {
-            Text("${comment.replies.count()} replies")
+            Row(
+                Modifier
+                    .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.medium)
+                    .padding(RainbowTheme.dpDimensions.medium),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium)
+            ) {
+                Icon(RainbowIcons.Forum, RainbowStrings.Comments)
+                Text(comment.replies.count().format(), style = MaterialTheme.typography.labelLarge)
+            }
         }
 
-        Column {
-            IconButton(onClick = { isMenuExpanded = true }) {
-                Icon(RainbowIcons.MoreVert, contentDescription = "More")
+        Row(
+            Modifier.background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.medium),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            RainbowIconToggleButton(
+                checked = comment.isSaved,
+                onCheckedChange = {
+                    if (comment.isSaved) {
+                        CommentActionsStateHolder.unSaveComment(comment)
+                    } else {
+                        CommentActionsStateHolder.saveComment(comment)
+                    }
+                },
+                checkedContentColor = RainbowTheme.colors.yellow,
+            ) {
+                AnimatedContent(comment.isSaved) { isSaved ->
+                    if (isSaved) {
+                        Icon(RainbowIcons.Star, RainbowStrings.Unsave)
+                    } else {
+                        Icon(RainbowIcons.StarBorder, RainbowStrings.Save)
+                    }
+                }
             }
 
-//            RainbowMenu(
-//                expanded = isMenuExpanded,
-//                onDismissRequest = { isMenuExpanded = false },
-//            ) {
-//                RainbowMenuItem("Share", RainbowIcons.Share, onclick = {})
-//                RainbowMenuItem("View User", RainbowIcons.Person, onclick = {})
-//                RainbowMenuItem("Reply", RainbowIcons.Send, onclick = {})
-//                RainbowMenuItem("Block User", RainbowIcons.Block, onclick = {})
-//            }
+            RainbowIconButton(
+                onClick = {},
+            ) {
+                Icon(RainbowIcons.MoreVert, RainbowStrings.MoreActions)
+            }
         }
     }
 }
