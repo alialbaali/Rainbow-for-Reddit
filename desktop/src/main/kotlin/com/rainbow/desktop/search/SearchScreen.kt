@@ -19,11 +19,11 @@ import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.user.users
 
 @Composable
-inline fun SearchScreen(
+ fun SearchScreen(
     searchTerm: String,
-    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
-    crossinline onNavigateDetailsScreen: (DetailsScreen) -> Unit,
-    noinline onShowSnackbar: (String) -> Unit,
+     onNavigateMainScreen: (MainScreen) -> Unit,
+     onNavigateDetailsScreen: (DetailsScreen) -> Unit,
+     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val stateHolder = remember(searchTerm) { SearchScreenStateHolder.getInstance(searchTerm) }

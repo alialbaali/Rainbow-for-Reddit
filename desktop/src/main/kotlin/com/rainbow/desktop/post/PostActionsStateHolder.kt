@@ -27,6 +27,14 @@ object PostActionsStateHolder : StateHolder() {
         Repos.Post.unHidePost(post.id)
     }
 
+    fun savePost(post: Post) = scope.launch {
+        Repos.Post.savePost(post.id)
+    }
+
+    fun unSavePost(post: Post) = scope.launch {
+        Repos.Post.unSavePost(post.id)
+    }
+
     fun readPost(post: Post) {
 
     }

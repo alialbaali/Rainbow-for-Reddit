@@ -18,23 +18,23 @@ internal object Mappers {
         }
     }
 
-    val PostMapper
-        get() = Mapper<RemotePost, Post> {
-            with(it) {
-                val previewUrl = preview?.images?.getOrNull(0)?.source?.url?.removeAmp()
-                val validUrl = url?.removeParameters()
-                val type = when {
-                    !selftext.isNullOrBlank() -> Post.Type.Text(selftext!!)
-                    !url.isNullOrBlank() && url!!.isImage -> Post.Type.Image(listOf(url!!))
-                    !validUrl.isNullOrBlank() && !previewUrl.isNullOrBlank() -> Post.Type.Link(validUrl, previewUrl)
-                    mediaMetadata != null -> {
-                        val urls = mediaMetadata!!.values.mapNotNull { it.source?.url?.removeAmp() }
-                        Post.Type.Image(urls)
-                    }
-                    isVideo == true && media?.redditVideo?.fallbackUrl != null -> Post.Type.Video(media?.redditVideo?.fallbackUrl!!)
-                    else -> Post.Type.None
+    val PostMapper = Mapper<RemotePost, Post> {
+        with(it) {
+            val previewUrl = preview?.images?.getOrNull(0)?.source?.url?.removeAmp()
+            val validUrl = url?.removeParameters()
+            val type = when {
+                !selftext.isNullOrBlank() -> Post.Type.Text(selftext!!)
+                !url.isNullOrBlank() && url!!.isImage -> Post.Type.Image(listOf(url!!))
+                !validUrl.isNullOrBlank() && !previewUrl.isNullOrBlank() -> Post.Type.Link(validUrl, previewUrl)
+                mediaMetadata != null -> {
+                    val urls = mediaMetadata!!.values.mapNotNull { it.source?.url?.removeAmp() }
+                    Post.Type.Image(urls)
                 }
-                //    private fun RainbowDatabase.savePostLinks(remotePost: RemotePost) {
+
+                isVideo == true && media?.redditVideo?.fallbackUrl != null -> Post.Type.Video(media?.redditVideo?.fallbackUrl!!)
+                else -> Post.Type.None
+            }
+            //    private fun RainbowDatabase.savePostLinks(remotePost: RemotePost) {
 //        val id = remotePost.name
 //        val url = remotePost.url
 //        if (id != null && localLinkQueries.selectById(id).executeAsOneOrNull() == null)
@@ -52,49 +52,49 @@ internal object Mappers {
 //            else if (remotePost.isVideo == true && remotePost.media?.redditVideo?.fallbackUrl != null)
 //                localLinkQueries.insert(LocalLink(id, remotePost.media?.redditVideo?.fallbackUrl!!))
 //    }
-                Post(
-                    id = name!!,
-                    userId = authorFullname ?: "",
-                    userName = author!!,
-                    subredditId = subredditId!!,
-                    subredditName = subreddit!!,
-                    title = title!!,
-                    type = type,
-                    votesCount = ups!!,
-                    upvotesRatio = upvoteRatio!!,
-                    isOC = isOriginalContent!!,
-                    isSpoiler = spoiler!!,
-                    commentsCount = numComments!!.toUInt(),
-                    isLocked = locked!!,
-                    isSaved = false,
-                    isPinned = pinned!!,
-                    creationDate = created!!.toLong().toLocalDateTime(),
-                    isMine = isSelf!!,
-                    isHidden = hidden!!,
-                    vote = likes.toVote(),
-                    isNSFW = over18!!,
-                    isEdited = false,
-                    flair = FlairMapper.map(
-                        RemoteFlair(
-                            id = linkFlairTemplateId,
-                            backgroundColor = linkFlairBackgroundColor,
-                            textColor = linkFlairTextColor,
-                            richtext = linkFlairRichtext,
-                        )
-                    ),
-                    userFlair = FlairMapper.map(
-                        RemoteFlair(
-                            id = authorFlairTemplateId,
-                            backgroundColor = authorFlairBackgroundColor,
-                            textColor = authorFlairTextColor,
-                            richtext = authorFlairRichtext,
-                        )
-                    ),
-                    url = permalink!!.toRedditUrl(),
-                    awards = allAwardings?.quickMap(AwardMapper) ?: emptyList()
-                )
-            }
+            Post(
+                id = name!!,
+                userId = authorFullname ?: "",
+                userName = author!!,
+                subredditId = subredditId!!,
+                subredditName = subreddit!!,
+                title = title!!,
+                type = type,
+                votesCount = ups!!,
+                upvotesRatio = upvoteRatio!!,
+                isOC = isOriginalContent!!,
+                isSpoiler = spoiler!!,
+                commentsCount = numComments!!.toUInt(),
+                isLocked = locked!!,
+                isSaved = false,
+                isPinned = pinned!!,
+                creationDate = created!!.toLong().toLocalDateTime(),
+                isMine = isSelf!!,
+                isHidden = hidden!!,
+                vote = likes.toVote(),
+                isNSFW = over18!!,
+                isEdited = false,
+                flair = FlairMapper.map(
+                    RemoteFlair(
+                        id = linkFlairTemplateId,
+                        backgroundColor = linkFlairBackgroundColor,
+                        textColor = linkFlairTextColor,
+                        richtext = linkFlairRichtext,
+                    )
+                ),
+                userFlair = FlairMapper.map(
+                    RemoteFlair(
+                        id = authorFlairTemplateId,
+                        backgroundColor = authorFlairBackgroundColor,
+                        textColor = authorFlairTextColor,
+                        richtext = authorFlairRichtext,
+                    )
+                ),
+                url = permalink!!.toRedditUrl(),
+                awards = allAwardings?.quickMap(AwardMapper) ?: emptyList()
+            )
         }
+    }
 
     val AwardMapper = Mapper<RemoteAward, Award> {
         with(it) {

@@ -18,10 +18,10 @@ import com.rainbow.desktop.utils.getOrDefault
 import com.rainbow.desktop.utils.getOrNull
 
 @Composable
-inline fun HomeScreen(
-    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
-    crossinline onNavigateDetailsScreen: (DetailsScreen) -> Unit,
-    noinline onShowSnackbar: (String) -> Unit,
+fun HomeScreen(
+    onNavigateMainScreen: (MainScreen) -> Unit,
+    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val stateHolder = remember { HomeScreenStateHolder.getInstance() }

@@ -83,6 +83,10 @@ interface PostRepository {
 
     suspend fun unHidePost(postId: String): Result<Unit>
 
+    suspend fun savePost(postId: String): Result<Unit>
+
+    suspend fun unSavePost(postId: String): Result<Unit>
+
     suspend fun searchPosts(
         searchTerm: String,
         postSorting: SearchPostSorting,

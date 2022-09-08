@@ -2,6 +2,7 @@ package com.rainbow.desktop.post
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -10,22 +11,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.settings.SettingsStateHolder
+import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.defaultPadding
 import com.rainbow.domain.models.MarkPostAsRead
 import com.rainbow.domain.models.Post
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-inline fun PostItem(
+fun PostItem(
     post: Post,
-    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
-    crossinline onNavigateDetailsScreen: (DetailsScreen) -> Unit,
-    crossinline onAwardsClick: () -> Unit,
-    crossinline onShowSnackbar: (String) -> Unit,
+    onNavigateMainScreen: (MainScreen) -> Unit,
+    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
+    onAwardsClick: () -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val markPostAsRead by SettingsStateHolder.markPostAsRead.collectAsState()
@@ -37,9 +38,14 @@ inline fun PostItem(
                 PostActionsStateHolder.readPost(post)
         },
         modifier = modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.medium
+        shape = MaterialTheme.shapes.medium,
     ) {
-        Column(Modifier.defaultPadding(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Column(
+            Modifier
+                .defaultPadding()
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.large)
+        ) {
             PostInfo(
                 post,
                 onUserNameClick = { userName -> onNavigateMainScreen(MainScreen.User(userName)) },
@@ -47,14 +53,13 @@ inline fun PostItem(
                 onAwardsClick,
             )
             PostFLairs(post)
-            PostTitle(post.title, post.isRead, MaterialTheme.typography.headlineLarge)
-            PostContent(post)
-            PostActions(
+            PostTitle(post.title, post.isRead)
+            PostContent(
                 post,
-                onClick = { post -> onNavigateDetailsScreen(DetailsScreen.Post(post.id)) },
-            ) {
-                PostActionsMenu(post, onShowSnackbar)
-            }
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+            PostActions(post)
         }
     }
 }

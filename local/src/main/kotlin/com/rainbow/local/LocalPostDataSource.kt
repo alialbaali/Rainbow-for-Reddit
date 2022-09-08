@@ -43,6 +43,8 @@ interface LocalPostDataSource {
 
     fun getPost(postId: String): Flow<Post?>
 
+    fun updatePost(postId: String, block: (Post) -> Post)
+
     fun upvotePost(postId: String)
 
     fun downvotePost(postId: String)

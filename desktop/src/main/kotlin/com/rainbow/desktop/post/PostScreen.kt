@@ -112,7 +112,6 @@ private fun Post(
         PostTitle(
             title = post.title,
             isRead = false,
-            style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
@@ -120,19 +119,14 @@ private fun Post(
 
         PostContent(
             post = post,
-            modifier = Modifier
-                .heightIn(max = 600.dp)
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         )
 
         PostActions(
             post,
-            {},
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
-        ) {
-
-        }
+        )
     }
 }

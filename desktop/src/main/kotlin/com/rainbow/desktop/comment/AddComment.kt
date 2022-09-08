@@ -1,7 +1,5 @@
 package com.rainbow.desktop.comment
 
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material.icons.rounded.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier

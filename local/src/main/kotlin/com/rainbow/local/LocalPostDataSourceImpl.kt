@@ -92,6 +92,17 @@ class LocalPostDataSourceImpl : LocalPostDataSource {
         }
     }
 
+    override fun updatePost(postId: String, block: (Post) -> Post) {
+        allPosts.forEach { state ->
+            state.value = state.value.map { post ->
+                if (post.id == postId)
+                    block(post)
+                else
+                    post
+            }
+        }
+    }
+
     override fun upvotePost(postId: String) {
         allPosts.forEach { state ->
             state.value = state.value.map { post ->

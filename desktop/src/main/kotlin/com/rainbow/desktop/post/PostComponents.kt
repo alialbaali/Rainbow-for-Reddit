@@ -1,21 +1,17 @@
 package com.rainbow.desktop.post
 
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.rounded.ArrowBackIos
-import androidx.compose.material.icons.rounded.ArrowForwardIos
-import androidx.compose.material.icons.rounded.KeyboardArrowDown
-import androidx.compose.material.icons.rounded.KeyboardArrowUp
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -23,14 +19,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.desktop.award.ItemAwards
 import com.rainbow.desktop.components.*
+import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.MarkPostAsRead
 import com.rainbow.domain.models.Post
@@ -47,51 +41,49 @@ fun Modifier.subredditIcon() = composed {
 }
 
 @Composable
-fun PostTitle(title: String, isRead: Boolean, style: TextStyle, modifier: Modifier = Modifier) {
-    IsPostReadProvider(isRead) {
-        Text(
-            text = title,
-            modifier = modifier,
-            style = style,
-        )
-    }
+fun PostTitle(title: String, isRead: Boolean, modifier: Modifier = Modifier) {
+    Text(
+        text = title,
+        modifier = modifier,
+        style = MaterialTheme.typography.titleLarge,
+    )
 }
 
 @Composable
-inline fun PostInfo(
+fun PostInfo(
     post: Post,
-    crossinline onUserNameClick: (String) -> Unit,
-    crossinline onSubredditNameClick: (String) -> Unit,
-    crossinline onAwardsClick: () -> Unit,
+    onUserNameClick: (String) -> Unit,
+    onSubredditNameClick: (String) -> Unit,
+    onAwardsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val resource = lazyPainterResource(post.subredditImageUrl ?: "")
-    Column {
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            KamelImage(
-                resource,
-                post.subredditName,
-                Modifier.subredditIcon(),
-                onFailure = {
-                    Box(Modifier.subredditIcon()) {
-                        Text(
-                            post.subredditName.first().toString().uppercase(),
-                            color = MaterialTheme.colorScheme.surface,
-                            modifier = Modifier.fillMaxSize(),
-                        )
-                    }
+    Row(modifier, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        KamelImage(
+            resource,
+            post.subredditName,
+            Modifier.subredditIcon(),
+            onFailure = {
+                Box(Modifier.subredditIcon(), contentAlignment = Alignment.Center) {
+                    Text(
+                        post.subredditName.first().toString().uppercase(),
+                        color = MaterialTheme.colorScheme.surface,
+                        modifier = Modifier.fillMaxSize(),
+                    )
                 }
-            )
-            Column(Modifier.fillMaxWidth()) {
-                SubredditName(post.subredditName, onSubredditNameClick)
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    UserName(post.userName, onUserNameClick)
+            }
+        )
+        Column(Modifier.fillMaxWidth()) {
+            SubredditName(post.subredditName, onSubredditNameClick)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                UserName(post.userName, onUserNameClick)
+                Dot()
+                CreationDate(post.creationDate)
+                if (post.isNSFW) {
                     Dot()
-                    CreationDate(post.creationDate)
-                    if (post.isNSFW) {
-                        Dot()
-                        Text(RainbowStrings.NSFW, fontWeight = FontWeight.Medium, fontSize = 14.sp, color = Color.Red)
-                    }
+                    Text(RainbowStrings.NSFW, fontWeight = FontWeight.Medium, fontSize = 14.sp, color = Color.Red)
+                }
+                if (post.awards.isNotEmpty()) {
                     Dot()
                     ItemAwards(post.awards, onAwardsClick)
                 }
@@ -102,11 +94,13 @@ inline fun PostInfo(
 
 @Composable
 fun PostFLairs(post: Post, modifier: Modifier = Modifier) {
-    Row(modifier, Arrangement.spacedBy(16.dp), Alignment.CenterVertically) {
-        if (post.userFlair.types.isNotEmpty())
-            FlairItem(post.userFlair)
-        if (post.flair.types.isNotEmpty())
-            FlairItem(post.flair)
+    if (post.userFlair.types.isNotEmpty() || post.flair.types.isNotEmpty()) {
+        Row(modifier, Arrangement.spacedBy(RainbowTheme.dpDimensions.large), Alignment.CenterVertically) {
+            if (post.userFlair.types.isNotEmpty())
+                FlairItem(post.userFlair)
+            if (post.flair.types.isNotEmpty())
+                FlairItem(post.flair)
+        }
     }
 }
 
@@ -125,102 +119,35 @@ fun PostContent(post: Post, modifier: Modifier = Modifier) {
 
 @Composable
 fun TextPost(text: Post.Type.Text, isRead: Boolean, modifier: Modifier = Modifier) {
-    var maxLines by remember { mutableStateOf(15) }
-    var shouldLimitLines by remember { mutableStateOf(false) }
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        IsPostReadProvider(isRead) {
-            Text(
-                buildAnnotatedString {
-                    append(text.body.trim())
-                },
-                modifier = Modifier.animateContentSize(),
-                maxLines = if (shouldLimitLines) maxLines else Int.MAX_VALUE,
-                style = MaterialTheme.typography.titleSmall,
-                overflow = TextOverflow.Ellipsis,
-                onTextLayout = { if (it.lineCount > 15) shouldLimitLines = true }
-            )
-        }
-        if (shouldLimitLines)
-            Box(
-                Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .defaultBackgroundShape(shape = CircleShape)
-                    .clickable { if (maxLines == Int.MAX_VALUE) maxLines = 15 else maxLines = Int.MAX_VALUE }
-                    .padding(horizontal = 16.dp, vertical = 4.dp)
-                    .wrapContentSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                val imageVector = if (maxLines == Int.MAX_VALUE)
-                    RainbowIcons.KeyboardArrowUp
-                else
-                    RainbowIcons.KeyboardArrowDown
-                Icon(imageVector, imageVector.name)
-            }
-    }
+    Text(text.body, maxLines = 5)
 }
 
 @Composable
 fun ImagePost(image: Post.Type.Image, isNSFW: Boolean, modifier: Modifier = Modifier) {
-    var isDialogVisible by remember { mutableStateOf(false) }
-    var imageUrl by remember(image) { mutableStateOf(image.urls.first()) }
-    var currentImageIndex by remember(image) { mutableStateOf(0) }
-    val painterResource = lazyPainterResource(imageUrl)
-    val imageShape = RoundedCornerShape(16.dp)
-
-    Box(
-        modifier
-            .clip(imageShape)
-            .animateContentSize()
-            .clickable { isDialogVisible = true },
-    ) {
-        if (image.urls.count() > 1)
-            IconButton(
-                onClick = {
-                    if (currentImageIndex > 0) {
-                        currentImageIndex -= 1
-                        imageUrl = image.urls[currentImageIndex]
-                    }
-                },
-                Modifier.align(Alignment.CenterStart),
-                enabled = currentImageIndex != 0
-            ) {
-                Icon(RainbowIcons.ArrowBackIos, RainbowIcons.ArrowBackIos.name)
-            }
+    val painterResource = lazyPainterResource(image.urls.first())
+    Box(modifier) {
         KamelImage(
             painterResource,
             contentDescription = null,
-            modifier = modifier
-                .align(Alignment.Center)
-                .background(MaterialTheme.colorScheme.surface),
-            contentScale = ContentScale.Fit,
-            onLoading = { RainbowProgressIndicator(modifier) },
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(MaterialTheme.shapes.medium)
+                .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium),
+            contentScale = ContentScale.FillWidth,
+            onLoading = { RainbowProgressIndicator(Modifier.fillMaxSize()) },
             animationSpec = tween(),
-            onFailure = {
-
-            }
         )
-        if (image.urls.count() > 1)
-            IconButton(
-                onClick = {
-                    if (currentImageIndex < image.urls.size - 1) {
-                        currentImageIndex += 1
-                        imageUrl = image.urls[currentImageIndex]
-                    }
-                },
-                Modifier.align(Alignment.CenterEnd),
-                enabled = currentImageIndex != image.urls.size - 1
-            ) {
-                Icon(RainbowIcons.ArrowForwardIos, RainbowIcons.ArrowForwardIos.name)
-            }
-        if (isNSFW)
-            NSFWBox()
-    }
 
-    ImageWindow(
-        painterResource,
-        isDialogVisible,
-        onCloseRequest = { isDialogVisible = false }
-    )
+        if (image.urls.size > 1) {
+            Text(
+                image.urls.size.toString(),
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.medium)
+                    .defaultPadding()
+                    .align(Alignment.BottomEnd)
+            )
+        }
+    }
 }
 
 @Composable
@@ -239,7 +166,7 @@ fun LinkPost(link: Post.Type.Link, modifier: Modifier = Modifier) {
             painterResource,
             contentDescription = link.url,
             modifier = modifier,
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.FillWidth,
             onLoading = { RainbowProgressIndicator(modifier) },
             animationSpec = tween(),
             onFailure = {
@@ -264,43 +191,87 @@ fun LinkPost(link: Post.Type.Link, modifier: Modifier = Modifier) {
 
 @Composable
 fun VideoPost(video: Post.Type.Video, modifier: Modifier = Modifier) {
-//    Video(video.url, modifier)
+    // TODO
 }
 
 @Composable
 fun GifPost(gif: Post.Type.Gif, modifier: Modifier = Modifier) {
-//    Gif(gif.url, gif.url, modifier)
+    // TODO
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
-inline fun PostActions(
-    post: Post,
-    crossinline onClick: (Post) -> Unit,
-    modifier: Modifier = Modifier,
-    menuContent: @Composable () -> Unit,
-) {
+fun PostActions(post: Post, modifier: Modifier = Modifier) {
     Row(
-        modifier,
-        verticalAlignment = Alignment.CenterVertically,
+        modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            VoteActions(
-                vote = post.vote,
-                votesCount = post.votesCount,
-                onUpvote = { PostActionsStateHolder.upvotePost(post) },
-                onDownvote = { PostActionsStateHolder.downvotePost(post) },
-                onUnvote = { PostActionsStateHolder.unvotePost(post) }
-            )
+        VoteActions(
+            vote = post.vote,
+            votesCount = post.votesCount,
+            onUpvote = { PostActionsStateHolder.upvotePost(post) },
+            onDownvote = { PostActionsStateHolder.downvotePost(post) },
+            onUnvote = { PostActionsStateHolder.unvotePost(post) }
+        )
 
-//            SelectionButton(
-//                post.commentsCount.toString(),
-//                RainbowIcons.QuestionAnswer,
-//                RainbowIcons.QuestionAnswer.name,
-//                onClick = { onClick(post) },
-//            )
+        Row(
+            Modifier
+                .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.medium)
+                .padding(RainbowTheme.dpDimensions.medium),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium)
+        ) {
+            Icon(RainbowIcons.Forum, RainbowStrings.Comments)
+            Text(post.commentsCount.toInt().format(), style = MaterialTheme.typography.labelLarge)
         }
-        menuContent()
+
+        Row(
+            Modifier.background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.medium),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            RainbowIconButton(
+                onClick = {
+                    if (post.isHidden) {
+                        PostActionsStateHolder.unHidePost(post)
+                    } else {
+                        PostActionsStateHolder.hidePost(post)
+                    }
+                },
+            ) {
+                if (post.isHidden) {
+                    Icon(RainbowIcons.Visibility, RainbowStrings.UnHide)
+                } else {
+                    Icon(RainbowIcons.VisibilityOff, RainbowStrings.Hide)
+                }
+            }
+
+            RainbowIconToggleButton(
+                checked = post.isSaved,
+                onCheckedChange = {
+                    if (post.isSaved) {
+                        PostActionsStateHolder.unSavePost(post)
+                    } else {
+                        PostActionsStateHolder.savePost(post)
+                    }
+                },
+                checkedContentColor = RainbowTheme.colors.yellow,
+            ) {
+                AnimatedContent(post.isSaved) { isSaved ->
+                    if (isSaved) {
+                        Icon(RainbowIcons.Star, RainbowStrings.Unsave)
+                    } else {
+                        Icon(RainbowIcons.StarBorder, RainbowStrings.Save)
+                    }
+                }
+            }
+
+            RainbowIconButton(
+                onClick = {},
+            ) {
+                Icon(RainbowIcons.MoreVert, RainbowStrings.MoreActions)
+            }
+        }
     }
 }
 

@@ -1,21 +1,21 @@
 package com.rainbow.desktop.components
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.rounded.ArrowDownward
+import androidx.compose.material.icons.rounded.ArrowUpward
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.rainbow.desktop.utils.defaultBackgroundShape
+import com.rainbow.desktop.ui.RainbowTheme
+import com.rainbow.desktop.utils.RainbowIcons
+import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.format
 import com.rainbow.domain.models.Vote
 
@@ -28,24 +28,7 @@ fun VoteActions(
     onUnvote: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
-    val borderColor by animateColorAsState(
-        when (vote) {
-            Vote.Up -> MaterialTheme.colorScheme.primary
-            Vote.Down -> MaterialTheme.colorScheme.secondary
-            Vote.None -> MaterialTheme.colorScheme.onBackground.copy(0.1F)
-        }
-    )
-
-    val contentColor by animateColorAsState(
-        when (vote) {
-            Vote.Up -> MaterialTheme.colorScheme.primary
-            Vote.Down -> MaterialTheme.colorScheme.secondary
-            Vote.None -> MaterialTheme.colorScheme.onBackground
-        }
-    )
-
-    val updatedVotesCount by animateIntAsState(
+    val animatedVotesCount by animateIntAsState(
         when (vote) {
             Vote.Up -> votesCount.inc()
             Vote.Down -> votesCount.dec()
@@ -54,29 +37,38 @@ fun VoteActions(
     )
 
     Row(
-        modifier
-            .defaultBackgroundShape(borderColor = borderColor, shape = CircleShape),
+        modifier.background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.medium),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.small)
     ) {
-        UpvoteButton(
-            onClick = {
+        RainbowIconToggleButton(
+            checked = vote == Vote.Up,
+            onCheckedChange = {
                 when (vote) {
                     Vote.Up -> onUnvote()
                     else -> onUpvote()
                 }
             },
-            tint = contentColor,
-        )
-        Text(updatedVotesCount.format(), fontSize = 14.sp, color = contentColor)
-        DownvoteButton(
-            onClick = {
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            checkedContentColor = MaterialTheme.colorScheme.primary,
+            hoverContentColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5F),
+        ) {
+            Icon(RainbowIcons.ArrowUpward, RainbowStrings.Upvote)
+        }
+        Text(animatedVotesCount.format(), style = MaterialTheme.typography.labelLarge)
+        RainbowIconToggleButton(
+            checked = vote == Vote.Down,
+            onCheckedChange = {
                 when (vote) {
                     Vote.Down -> onUnvote()
                     else -> onDownvote()
                 }
             },
-            tint = contentColor,
-        )
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            checkedContentColor = MaterialTheme.colorScheme.secondary,
+            hoverContentColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5F),
+        ) {
+            Icon(RainbowIcons.ArrowDownward, RainbowStrings.Downvote)
+        }
     }
 }

@@ -14,13 +14,13 @@ import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.getOrDefault
 import com.rainbow.domain.models.Post
 
-inline fun LazyListScope.posts(
+fun LazyListScope.posts(
     state: UIState<List<Post>>,
-    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
-    crossinline onNavigateDetailsScreen: (DetailsScreen) -> Unit,
-    crossinline onAwardsClick: () -> Unit,
-    noinline onShowSnackbar: (String) -> Unit,
-    crossinline onLoadMore: (Post) -> Unit,
+    onNavigateMainScreen: (MainScreen) -> Unit,
+    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
+    onAwardsClick: () -> Unit,
+    onShowSnackbar: (String) -> Unit,
+    onLoadMore: (Post) -> Unit,
 ) {
     val posts = state.getOrDefault(emptyList())
     itemsIndexed(posts) { index, post ->
@@ -41,13 +41,13 @@ inline fun LazyListScope.posts(
     }
 }
 
-inline fun LazyGridScope.posts(
+fun LazyGridScope.posts(
     state: UIState<List<Post>>,
-    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
-    crossinline onNavigateDetailsScreen: (DetailsScreen) -> Unit,
-    crossinline onAwardsClick: () -> Unit,
-    noinline onShowSnackbar: (String) -> Unit,
-    crossinline onLoadMore: (Post) -> Unit,
+    onNavigateMainScreen: (MainScreen) -> Unit,
+    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
+    onAwardsClick: () -> Unit,
+    onShowSnackbar: (String) -> Unit,
+    onLoadMore: (Post) -> Unit,
 ) {
     val posts = state.getOrDefault(emptyList())
     itemsIndexed(posts) { index, post ->

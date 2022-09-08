@@ -1,85 +1,106 @@
 package com.rainbow.desktop.post
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
+import com.rainbow.desktop.settings.SettingsStateHolder
+import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.defaultPadding
+import com.rainbow.domain.models.MarkPostAsRead
 import com.rainbow.domain.models.Post
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-inline fun CompactPostItem(
+fun CompactPostItem(
     post: Post,
-    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
-    crossinline onNavigateDetailsScreen: (DetailsScreen) -> Unit,
-    crossinline onAwardsClick: () -> Unit,
-    noinline onShowSnackbar: (String) -> Unit,
+    onNavigateMainScreen: (MainScreen) -> Unit,
+    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
+    onAwardsClick: () -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val markPostAsRead by SettingsStateHolder.markPostAsRead.collectAsState()
     val isTextPost = remember(post) { post.type is Post.Type.Text }
-    Column(
-        modifier
-            .padding(vertical = 8.dp)
-            .clickable { onNavigateDetailsScreen(DetailsScreen.Post(post.id)) }
-            .defaultPadding(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+//    MarkPostIsReadEffect(post, markPostAsRead)
+    Surface(
+        onClick = {
+            onNavigateDetailsScreen(DetailsScreen.Post(post.id))
+            if (markPostAsRead == MarkPostAsRead.OnClick)
+                PostActionsStateHolder.readPost(post)
+        },
+        modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
     ) {
-        PostInfo(
-            post = post,
-            onUserNameClick = { userName -> onNavigateMainScreen(MainScreen.User(userName)) },
-            onSubredditNameClick = { subredditName -> onNavigateMainScreen(MainScreen.Subreddit(subredditName)) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            onAwardsClick = onAwardsClick,
-        )
-        if (isTextPost) {
-            PostTitle(
-                title = post.title,
-                isRead = post.isRead,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                style = MaterialTheme.typography.headlineLarge
-            )
-            PostContent(
-                post = post,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-            )
-        } else {
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
+        Column(
+            Modifier
+                .defaultPadding()
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.large)
+        ) {
+            if (isTextPost) {
+                PostInfo(
+                    post,
+                    onUserNameClick = { userName -> onNavigateMainScreen(MainScreen.User(userName)) },
+                    onSubredditNameClick = { subredditName -> onNavigateMainScreen(MainScreen.Subreddit(subredditName)) },
+                    onAwardsClick,
+                )
+                PostFLairs(post)
                 PostTitle(
                     title = post.title,
                     isRead = post.isRead,
                     modifier = Modifier
-                        .weight(1F),
-                    style = MaterialTheme.typography.headlineLarge,
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
                 )
                 PostContent(
                     post = post,
                     modifier = Modifier
-                        .height(100.dp)
+                        .fillMaxWidth()
+                        .wrapContentHeight()
                 )
+            } else {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.large),
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1F),
+                        verticalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.large)
+                    ) {
+                        PostInfo(
+                            post,
+                            onUserNameClick = { userName -> onNavigateMainScreen(MainScreen.User(userName)) },
+                            onSubredditNameClick = { subredditName ->
+                                onNavigateMainScreen(
+                                    MainScreen.Subreddit(
+                                        subredditName
+                                    )
+                                )
+                            },
+                            onAwardsClick,
+                        )
+                        PostFLairs(post)
+                        PostTitle(
+                            title = post.title,
+                            isRead = post.isRead,
+                        )
+                    }
+                    PostContent(
+                        post = post,
+                        modifier = Modifier.size(100.dp)
+                    )
+                }
             }
-        }
-        PostActions(
-            post,
-            onClick = { post -> onNavigateDetailsScreen(DetailsScreen.Post(post.id)) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-        ) {
-
+            PostActions(post)
         }
     }
 }

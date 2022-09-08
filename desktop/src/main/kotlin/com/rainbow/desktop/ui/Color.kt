@@ -13,6 +13,7 @@ val lightColors = lightColorScheme(
     surface = Color(0xFFFFFFFF),
     background = Color(0xFFF5F5F5),
     surfaceVariant = Color.Black.copy(0.5F),
+    inverseSurface = Color(0xFF000000)
 )
 
 val darkColors = darkColorScheme(
@@ -30,4 +31,8 @@ val RainbowColors = listOf(
     Color(0xFFFFEB3B), // Yellow
     Color(0xFFFF9800), // Orange
     Color(0xFFF44336), // Red
+)
+
+data class Colors(
+    val yellow: Color = Color(0xFFFFBC02D),
 )

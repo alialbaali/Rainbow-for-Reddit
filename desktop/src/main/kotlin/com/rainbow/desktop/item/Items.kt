@@ -15,13 +15,13 @@ import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.Item
 import com.rainbow.domain.models.Post
 
-inline fun LazyListScope.items(
+fun LazyListScope.items(
     itemsState: UIState<List<Item>>,
-    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
-    crossinline onNavigateDetailsScreen: (DetailsScreen) -> Unit,
-    crossinline onAwardsClick: () -> Unit,
-    noinline onShowSnackbar: (String) -> Unit,
-    crossinline onLoadMore: (Item) -> Unit,
+    onNavigateMainScreen: (MainScreen) -> Unit,
+    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
+    onAwardsClick: () -> Unit,
+    onShowSnackbar: (String) -> Unit,
+    onLoadMore: (Item) -> Unit,
 ) {
     val items = itemsState.getOrDefault(emptyList())
     itemsIndexed(items) { index, item ->

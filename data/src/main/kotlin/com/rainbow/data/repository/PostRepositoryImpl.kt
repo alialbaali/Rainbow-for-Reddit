@@ -37,28 +37,44 @@ internal class PostRepositoryImpl(
         get() = localPostDataSource.posts.flowOn(dispatcher)
 
     override val homePosts: Flow<List<Post>>
-        get() = localPostDataSource.homePosts.flowOn(dispatcher)
+        get() = localPostDataSource.homePosts
+            .map { it.filterNot { post -> post.isHidden } }
+            .flowOn(dispatcher)
 
     override val profileSubmittedPosts: Flow<List<Post>>
-        get() = localPostDataSource.profileSubmittedPosts.flowOn(dispatcher)
+        get() = localPostDataSource.profileSubmittedPosts
+            .map { it.filterNot { post -> post.isHidden } }
+            .flowOn(dispatcher)
 
     override val profileUpvotedPosts: Flow<List<Post>>
-        get() = localPostDataSource.profileUpvotedPosts.flowOn(dispatcher)
+        get() = localPostDataSource.profileUpvotedPosts
+            .map { it.filterNot { post -> post.isHidden } }
+            .flowOn(dispatcher)
 
     override val profileDownvotedPosts: Flow<List<Post>>
-        get() = localPostDataSource.profileDownvotedPosts.flowOn(dispatcher)
+        get() = localPostDataSource.profileDownvotedPosts
+            .map { it.filterNot { post -> post.isHidden } }
+            .flowOn(dispatcher)
 
     override val profileHiddenPosts: Flow<List<Post>>
-        get() = localPostDataSource.profileHiddenPosts.flowOn(dispatcher)
+        get() = localPostDataSource.profileHiddenPosts
+            .map { it.filter { post -> post.isHidden } }
+            .flowOn(dispatcher)
 
     override val userSubmittedPosts: Flow<List<Post>>
-        get() = localPostDataSource.userSubmittedPosts.flowOn(dispatcher)
+        get() = localPostDataSource.userSubmittedPosts
+            .map { it.filterNot { post -> post.isHidden } }
+            .flowOn(dispatcher)
 
     override val subredditPosts: Flow<List<Post>>
-        get() = localPostDataSource.subredditPosts.flowOn(dispatcher)
+        get() = localPostDataSource.subredditPosts
+            .map { it.filterNot { post -> post.isHidden } }
+            .flowOn(dispatcher)
 
     override val searchPosts: Flow<List<Post>>
-        get() = localPostDataSource.searchPosts.flowOn(dispatcher)
+        get() = localPostDataSource.searchPosts
+            .map { it.filterNot { post -> post.isHidden } }
+            .flowOn(dispatcher)
 
     override suspend fun getProfileSubmittedPosts(
         postsSorting: UserPostSorting,
@@ -265,12 +281,52 @@ internal class PostRepositoryImpl(
             .onSuccess { localPostDataSource.downvotePost(postId) }
     }
 
-    override suspend fun hidePost(postId: String): Result<Unit> = withContext(dispatcher) {
-        remotePostDataSource.hidePost(postId)
+    override suspend fun hidePost(postId: String): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            remotePostDataSource.hidePost(postId)
+                .onSuccess {
+                    localPostDataSource.updatePost(postId) { post ->
+                        post.copy(isHidden = true)
+                    }
+                }
+                .getOrThrow()
+        }
     }
 
-    override suspend fun unHidePost(postId: String): Result<Unit> = withContext(dispatcher) {
-        remotePostDataSource.unHidePost(postId)
+    override suspend fun unHidePost(postId: String): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            remotePostDataSource.unHidePost(postId)
+                .onSuccess {
+                    localPostDataSource.updatePost(postId) { post ->
+                        post.copy(isHidden = false)
+                    }
+                }
+                .getOrThrow()
+        }
+    }
+
+    override suspend fun savePost(postId: String): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            remotePostDataSource.savePost(postId)
+                .onSuccess {
+                    localPostDataSource.updatePost(postId) { post ->
+                        post.copy(isSaved = true)
+                    }
+                }
+                .getOrThrow()
+        }
+    }
+
+    override suspend fun unSavePost(postId: String): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            remotePostDataSource.unSavePost(postId)
+                .onSuccess {
+                    localPostDataSource.updatePost(postId) { post ->
+                        post.copy(isSaved = false)
+                    }
+                }
+                .getOrThrow()
+        }
     }
 
     override suspend fun searchPosts(

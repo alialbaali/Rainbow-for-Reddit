@@ -24,6 +24,11 @@ fun RainbowTheme(content: @Composable () -> Unit) {
 
 object RainbowTheme {
 
+    val colors: Colors
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalColors.current
+
     val dpDimensions: DpDimensions
         @Composable
         @ReadOnlyComposable
@@ -32,6 +37,7 @@ object RainbowTheme {
 }
 
 private val LocalDpDimensions = staticCompositionLocalOf { DpDimensions() }
+private val LocalColors = staticCompositionLocalOf { Colors() }
 
 val MaterialTheme.dpDimensions: DpDimensions
     @Composable

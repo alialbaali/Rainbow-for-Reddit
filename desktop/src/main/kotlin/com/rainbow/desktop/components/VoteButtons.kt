@@ -1,9 +1,9 @@
 package com.rainbow.desktop.components
 
+import androidx.compose.material.icons.rounded.ArrowDownward
+import androidx.compose.material.icons.rounded.ArrowUpward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material.icons.rounded.KeyboardArrowDown
-import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -14,7 +14,7 @@ import com.rainbow.desktop.utils.RainbowIcons
 fun UpvoteButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    imageVector: ImageVector = RainbowIcons.KeyboardArrowUp,
+    imageVector: ImageVector = RainbowIcons.ArrowUpward,
     tint: Color = Color.Black,
     enabled: Boolean = true,
 ) = VoteButton(onClick, imageVector, modifier, enabled, tint)
@@ -23,7 +23,7 @@ fun UpvoteButton(
 fun DownvoteButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    imageVector: ImageVector = RainbowIcons.KeyboardArrowDown,
+    imageVector: ImageVector = RainbowIcons.ArrowDownward,
     tint: Color = Color.Black,
     enabled: Boolean = true,
 ) = VoteButton(onClick, imageVector, modifier, enabled, tint)
