@@ -10,6 +10,7 @@ data class Moderator(
 ) {
     enum class Permission {
         Wiki, Posts, Mail, Config,
-        Flair, Access, All,
+        Flair, Access, All, ChatOperator,
+        ChatConfig,
     }
 }

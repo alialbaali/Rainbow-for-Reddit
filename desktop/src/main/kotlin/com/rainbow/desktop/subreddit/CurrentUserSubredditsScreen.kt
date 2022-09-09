@@ -23,9 +23,9 @@ import com.rainbow.desktop.ui.dpDimensions
 import com.rainbow.desktop.utils.*
 
 @Composable
-inline fun CurrentUserSubredditsScreen(
-    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
-    noinline onShowSnackbar: (String) -> Unit,
+fun CurrentUserSubredditsScreen(
+    onNavigateMainScreen: (MainScreen) -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val stateHolder = remember { CurrentUserSubredditsScreenStateHolder.getInstance() }

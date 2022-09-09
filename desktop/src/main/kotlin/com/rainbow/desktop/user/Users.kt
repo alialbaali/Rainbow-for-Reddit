@@ -10,11 +10,11 @@ import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.getOrDefault
 import com.rainbow.domain.models.User
 
-inline fun LazyGridScope.users(
+fun LazyGridScope.users(
     state: UIState<List<User>>,
-    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
-    noinline onShowSnackbar: (String) -> Unit,
-    crossinline onLoadMore: (User) -> Unit,
+    onNavigateMainScreen: (MainScreen) -> Unit,
+    onShowSnackbar: (String) -> Unit,
+    onLoadMore: (User) -> Unit,
 ) {
     val users = state.getOrDefault(emptyList())
 

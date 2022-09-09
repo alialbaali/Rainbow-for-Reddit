@@ -18,9 +18,9 @@ import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.domain.models.Post
 
 @Composable
-inline fun PostActionsMenu(
+fun PostActionsMenu(
     post: Post,
-    crossinline onShowSnackbar: (String) -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }

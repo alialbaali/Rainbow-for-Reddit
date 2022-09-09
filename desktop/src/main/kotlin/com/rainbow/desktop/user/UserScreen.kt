@@ -9,6 +9,7 @@ import com.rainbow.desktop.components.ScrollableEnumTabRow
 import com.rainbow.desktop.item.items
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
+import com.rainbow.desktop.post.SortingItem
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.profile.Header
 import com.rainbow.desktop.utils.fold
@@ -27,8 +28,14 @@ fun UserScreen(
     val userState by stateHolder.user.collectAsState()
     val selectedTab by stateHolder.selectedTab.collectAsState()
     val items by stateHolder.itemsStateHolder.items.collectAsState()
+    val itemsSorting by stateHolder.itemsStateHolder.sorting.collectAsState()
+    val itemsTimeSorting by stateHolder.itemsStateHolder.timeSorting.collectAsState()
     val posts by stateHolder.postsStateHolder.items.collectAsState()
+    val postsSorting by stateHolder.postsStateHolder.sorting.collectAsState()
+    val postsTimeSorting by stateHolder.postsStateHolder.timeSorting.collectAsState()
     val comments by stateHolder.commentsStateHolder.items.collectAsState()
+    val commentsSorting by stateHolder.commentsStateHolder.sorting.collectAsState()
+    val commentsTimeSorting by stateHolder.commentsStateHolder.timeSorting.collectAsState()
 
     DisposableEffect(items.getOrDefault(emptyList()).isEmpty()) {
         val item = items.getOrNull()?.firstOrNull()
@@ -83,30 +90,63 @@ fun UserScreen(
         )
 
         when (selectedTab) {
-            UserTab.Overview -> items(
-                items,
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                onAwardsClick = {},
-                onShowSnackbar,
-                stateHolder.itemsStateHolder::setLastItem,
-            )
+            UserTab.Overview -> {
+                item {
+                    SortingItem(
+                        itemsSorting,
+                        itemsTimeSorting,
+                        stateHolder.itemsStateHolder::setSorting,
+                        stateHolder.itemsStateHolder::setTimeSorting,
+                    )
+                }
 
-            UserTab.Submitted -> posts(
-                posts,
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                onAwardsClick = {},
-                onShowSnackbar,
-                stateHolder.postsStateHolder::setLastItem,
-            )
+                items(
+                    items,
+                    onNavigateMainScreen,
+                    onNavigateDetailsScreen,
+                    onAwardsClick = {},
+                    onShowSnackbar,
+                    stateHolder.itemsStateHolder::setLastItem,
+                )
+            }
 
-            UserTab.Comments -> comments(
-                comments,
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                stateHolder.commentsStateHolder::setLastItem,
-            )
+            UserTab.Submitted -> {
+                item {
+                    SortingItem(
+                        postsSorting,
+                        postsTimeSorting,
+                        stateHolder.postsStateHolder::setSorting,
+                        stateHolder.postsStateHolder::setTimeSorting,
+                    )
+                }
+
+                posts(
+                    posts,
+                    onNavigateMainScreen,
+                    onNavigateDetailsScreen,
+                    onAwardsClick = {},
+                    onShowSnackbar,
+                    stateHolder.postsStateHolder::setLastItem,
+                )
+            }
+
+            UserTab.Comments -> {
+                item {
+                    SortingItem(
+                        commentsSorting,
+                        commentsTimeSorting,
+                        stateHolder.commentsStateHolder::setSorting,
+                        stateHolder.commentsStateHolder::setTimeSorting,
+                    )
+                }
+
+                comments(
+                    comments,
+                    onNavigateMainScreen,
+                    onNavigateDetailsScreen,
+                    stateHolder.commentsStateHolder::setLastItem,
+                )
+            }
         }
 
         if (userState.isLoading) {

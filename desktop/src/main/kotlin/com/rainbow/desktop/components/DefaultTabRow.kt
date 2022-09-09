@@ -15,7 +15,7 @@ inline fun <reified T : Enum<T>> ScrollableEnumTabRow(
     ScrollableTabRow(
         values.indexOf(selectedTab),
         containerColor = MaterialTheme.colorScheme.surface,
-        modifier = modifier.clip(MaterialTheme.shapes.medium),
+        modifier = modifier.clip(MaterialTheme.shapes.small),
         divider = {},
         contentColor = MaterialTheme.colorScheme.primary,
     ) {
@@ -41,7 +41,7 @@ inline fun <reified T : Enum<T>> EnumTabRow(
     TabRow(
         values.indexOf(selectedTab),
         containerColor = MaterialTheme.colorScheme.surface,
-        modifier = modifier.clip(MaterialTheme.shapes.medium),
+        modifier = modifier.clip(MaterialTheme.shapes.small),
         divider = {},
         contentColor = MaterialTheme.colorScheme.primary,
     ) {

@@ -22,9 +22,9 @@ import com.rainbow.desktop.utils.defaultPadding
 import com.rainbow.domain.models.Message
 
 @Composable
-inline fun MessageItem(
+fun MessageItem(
     message: Message,
-    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
+    onNavigateMainScreen: (MainScreen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(

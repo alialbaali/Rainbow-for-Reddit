@@ -11,11 +11,11 @@ import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.getOrDefault
 import com.rainbow.domain.models.Comment
 
-inline fun LazyListScope.comments(
+fun LazyListScope.comments(
     state: UIState<List<Comment>>,
-    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
-    crossinline onNavigateDetailsScreen: (DetailsScreen) -> Unit,
-    crossinline onLoadMore: (Comment) -> Unit,
+    onNavigateMainScreen: (MainScreen) -> Unit,
+    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
+    onLoadMore: (Comment) -> Unit,
 ) {
     val comments = state.getOrDefault(emptyList())
     itemsIndexed(comments) { index, comment ->

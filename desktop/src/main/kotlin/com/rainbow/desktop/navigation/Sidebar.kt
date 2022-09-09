@@ -3,9 +3,7 @@ package com.rainbow.desktop.navigation
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,7 +48,11 @@ fun Sidebar(
                         onClick = { onSidebarItemClick(item) },
                         icon = { Icon(item.icon, item.icon.name) },
                         label = { Text(item.title) },
-                        alwaysShowLabel = false
+                        alwaysShowLabel = false,
+                        colors = NavigationRailItemDefaults.colors(
+                            indicatorColor = MaterialTheme.colorScheme.primary,
+                            selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                        )
                     )
                 }
             }
@@ -77,5 +79,9 @@ private fun SidebarItem(
         label = { Text(item.title) },
         alwaysShowLabel = false,
         modifier = modifier,
+        colors = NavigationRailItemDefaults.colors(
+            indicatorColor = MaterialTheme.colorScheme.primary,
+            selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+        )
     )
 }

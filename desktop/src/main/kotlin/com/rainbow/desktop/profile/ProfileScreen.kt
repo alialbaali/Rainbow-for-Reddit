@@ -18,6 +18,7 @@ import com.rainbow.desktop.components.*
 import com.rainbow.desktop.item.items
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
+import com.rainbow.desktop.post.SortingItem
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.User
@@ -32,16 +33,30 @@ fun ProfileScreen(
     val stateHolder = remember { ProfileScreenStateHolder.getInstance() }
     val selectedTab by stateHolder.selectedTab.collectAsState(ProfileTab.Overview)
     val userState by stateHolder.currentUser.collectAsState()
-    val overViewItemsState by stateHolder.overviewItemsStateHolder.items.collectAsState()
+    val overviewItemsState by stateHolder.overviewItemsStateHolder.items.collectAsState()
+    val overviewItemsSorting by stateHolder.overviewItemsStateHolder.sorting.collectAsState()
+    val overviewItemsTimeSorting by stateHolder.overviewItemsStateHolder.timeSorting.collectAsState()
     val savedItemsState by stateHolder.savedItemsStateHolder.items.collectAsState()
+    val savedItemsSorting by stateHolder.savedItemsStateHolder.sorting.collectAsState()
+    val savedItemsTimeSorting by stateHolder.savedItemsStateHolder.timeSorting.collectAsState()
     val submittedPostsState by stateHolder.submittedPostsStateHolder.items.collectAsState()
+    val submittedPostsSorting by stateHolder.submittedPostsStateHolder.sorting.collectAsState()
+    val submittedPostsTimeSorting by stateHolder.submittedPostsStateHolder.timeSorting.collectAsState()
     val upvotedPostsState by stateHolder.upvotedPostsStateHolder.items.collectAsState()
+    val upvotedPostsSorting by stateHolder.upvotedPostsStateHolder.sorting.collectAsState()
+    val upvotedPostsTimeSorting by stateHolder.upvotedPostsStateHolder.timeSorting.collectAsState()
     val downvotedPostsState by stateHolder.downvotedPostsStateHolder.items.collectAsState()
+    val downvotedPostsSorting by stateHolder.downvotedPostsStateHolder.sorting.collectAsState()
+    val downvotedPostsTimeSorting by stateHolder.downvotedPostsStateHolder.timeSorting.collectAsState()
     val hiddenPostsState by stateHolder.hiddenPostsStateHolder.items.collectAsState()
+    val hiddenPostsSorting by stateHolder.hiddenPostsStateHolder.sorting.collectAsState()
+    val hiddenPostsTimeSorting by stateHolder.hiddenPostsStateHolder.timeSorting.collectAsState()
     val commentsState by stateHolder.commentsStateHolder.items.collectAsState()
+    val commentsSorting by stateHolder.commentsStateHolder.sorting.collectAsState()
+    val commentsTimeSorting by stateHolder.commentsStateHolder.timeSorting.collectAsState()
 
-    DisposableEffect(overViewItemsState.getOrDefault(emptyList()).isEmpty()) {
-        val item = overViewItemsState.getOrNull()?.firstOrNull()
+    DisposableEffect(overviewItemsState.getOrDefault(emptyList()).isEmpty()) {
+        val item = overviewItemsState.getOrNull()?.firstOrNull()
         if (item != null) {
             onNavigateDetailsScreen(DetailsScreen.Post(item.postId))
         }
@@ -133,66 +148,143 @@ fun ProfileScreen(
         )
 
         when (selectedTab) {
-            ProfileTab.Overview -> items(
-                overViewItemsState,
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                onAwardsClick = {},
-                onShowSnackbar,
-                stateHolder.overviewItemsStateHolder::setLastItem,
-            )
+            ProfileTab.Overview -> {
+                item {
+                    SortingItem(
+                        overviewItemsSorting,
+                        overviewItemsTimeSorting,
+                        stateHolder.overviewItemsStateHolder::setSorting,
+                        stateHolder.overviewItemsStateHolder::setTimeSorting,
+                    )
+                }
 
-            ProfileTab.Saved -> items(
-                savedItemsState,
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                onAwardsClick = {},
-                onShowSnackbar,
-                stateHolder.savedItemsStateHolder::setLastItem,
-            )
+                items(
+                    overviewItemsState,
+                    onNavigateMainScreen,
+                    onNavigateDetailsScreen,
+                    onAwardsClick = {},
+                    onShowSnackbar,
+                    stateHolder.overviewItemsStateHolder::setLastItem,
+                )
+            }
 
-            ProfileTab.Comments -> comments(
-                commentsState,
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                stateHolder.commentsStateHolder::setLastItem,
-            )
+            ProfileTab.Saved -> {
+                item {
+                    SortingItem(
+                        savedItemsSorting,
+                        savedItemsTimeSorting,
+                        stateHolder.savedItemsStateHolder::setSorting,
+                        stateHolder.savedItemsStateHolder::setTimeSorting,
+                    )
+                }
 
-            ProfileTab.Submitted -> posts(
-                submittedPostsState,
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                {},
-                onShowSnackbar,
-                stateHolder.submittedPostsStateHolder::setLastItem,
-            )
+                items(
+                    savedItemsState,
+                    onNavigateMainScreen,
+                    onNavigateDetailsScreen,
+                    onAwardsClick = {},
+                    onShowSnackbar,
+                    stateHolder.savedItemsStateHolder::setLastItem,
+                )
+            }
 
-            ProfileTab.Hidden -> posts(
-                hiddenPostsState,
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                {},
-                onShowSnackbar,
-                stateHolder.hiddenPostsStateHolder::setLastItem,
-            )
+            ProfileTab.Comments -> {
+                item {
+                    SortingItem(
+                        commentsSorting,
+                        commentsTimeSorting,
+                        stateHolder.commentsStateHolder::setSorting,
+                        stateHolder.commentsStateHolder::setTimeSorting,
+                    )
+                }
 
-            ProfileTab.Upvoted -> posts(
-                upvotedPostsState,
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                {},
-                onShowSnackbar,
-                stateHolder.upvotedPostsStateHolder::setLastItem,
-            )
+                comments(
+                    commentsState,
+                    onNavigateMainScreen,
+                    onNavigateDetailsScreen,
+                    stateHolder.commentsStateHolder::setLastItem,
+                )
+            }
 
-            ProfileTab.Downvoted -> posts(
-                downvotedPostsState,
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                {},
-                onShowSnackbar,
-                stateHolder.downvotedPostsStateHolder::setLastItem,
-            )
+            ProfileTab.Submitted -> {
+                item {
+                    SortingItem(
+                        submittedPostsSorting,
+                        submittedPostsTimeSorting,
+                        stateHolder.submittedPostsStateHolder::setSorting,
+                        stateHolder.submittedPostsStateHolder::setTimeSorting,
+                    )
+                }
+
+                posts(
+                    submittedPostsState,
+                    onNavigateMainScreen,
+                    onNavigateDetailsScreen,
+                    {},
+                    onShowSnackbar,
+                    stateHolder.submittedPostsStateHolder::setLastItem,
+                )
+            }
+
+            ProfileTab.Hidden -> {
+                item {
+                    SortingItem(
+                        hiddenPostsSorting,
+                        hiddenPostsTimeSorting,
+                        stateHolder.hiddenPostsStateHolder::setSorting,
+                        stateHolder.hiddenPostsStateHolder::setTimeSorting,
+                    )
+                }
+
+                posts(
+                    hiddenPostsState,
+                    onNavigateMainScreen,
+                    onNavigateDetailsScreen,
+                    {},
+                    onShowSnackbar,
+                    stateHolder.hiddenPostsStateHolder::setLastItem,
+                )
+            }
+
+            ProfileTab.Upvoted -> {
+                item {
+                    SortingItem(
+                        upvotedPostsSorting,
+                        upvotedPostsTimeSorting,
+                        stateHolder.upvotedPostsStateHolder::setSorting,
+                        stateHolder.upvotedPostsStateHolder::setTimeSorting,
+                    )
+                }
+
+                posts(
+                    upvotedPostsState,
+                    onNavigateMainScreen,
+                    onNavigateDetailsScreen,
+                    {},
+                    onShowSnackbar,
+                    stateHolder.upvotedPostsStateHolder::setLastItem,
+                )
+            }
+
+            ProfileTab.Downvoted -> {
+                item {
+                    SortingItem(
+                        downvotedPostsSorting,
+                        downvotedPostsTimeSorting,
+                        stateHolder.downvotedPostsStateHolder::setSorting,
+                        stateHolder.downvotedPostsStateHolder::setTimeSorting,
+                    )
+                }
+
+                posts(
+                    downvotedPostsState,
+                    onNavigateMainScreen,
+                    onNavigateDetailsScreen,
+                    {},
+                    onShowSnackbar,
+                    stateHolder.downvotedPostsStateHolder::setLastItem,
+                )
+            }
         }
     }
 }

@@ -2,21 +2,18 @@ package com.rainbow.desktop.subreddit
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.PlaylistAdd
 import androidx.compose.material.icons.rounded.PlaylistAddCheck
-import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material.icons.rounded.StarBorder
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import com.rainbow.desktop.ui.RainbowTheme
+import com.rainbow.desktop.components.RainbowButton
+import com.rainbow.desktop.components.RainbowIconToggleButton
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.domain.models.Subreddit
@@ -26,11 +23,12 @@ fun SubredditItemName(subredditName: String, modifier: Modifier = Modifier) {
     Text(
         text = subredditName,
         modifier = modifier,
-        style = MaterialTheme.typography.titleLarge
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.onSurface,
     )
 }
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SubredditFavoriteIconButton(
     subreddit: Subreddit,
@@ -38,7 +36,7 @@ fun SubredditFavoriteIconButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    OutlinedIconToggleButton(
+    RainbowIconToggleButton(
         checked = subreddit.isFavorite,
         onCheckedChange = { isFavorite ->
             if (isFavorite) {
@@ -51,15 +49,11 @@ fun SubredditFavoriteIconButton(
         },
         modifier = modifier,
         enabled = enabled,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-        colors = IconButtonDefaults.iconToggleButtonColors(checkedContentColor = Color.Transparent),
-        shape = MaterialTheme.shapes.medium
     ) {
         AnimatedContent(subreddit.isFavorite) { isFavorite ->
             Icon(
-                imageVector = if (isFavorite) RainbowIcons.Star else RainbowIcons.StarBorder,
+                imageVector = if (isFavorite) RainbowIcons.Favorite else RainbowIcons.FavoriteBorder,
                 contentDescription = if (isFavorite) RainbowStrings.UnFavorite else RainbowStrings.Favorite,
-                tint = MaterialTheme.colorScheme.primary,
             )
         }
     }
@@ -72,7 +66,7 @@ fun SubscribeButton(
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Button(
+    RainbowButton(
         onClick = {
             if (subreddit.isSubscribed) {
                 SubredditActionsStateHolder.unSubscribeSubreddit(subreddit)
@@ -83,8 +77,8 @@ fun SubscribeButton(
             }
         },
         modifier = modifier,
-        shape = MaterialTheme.shapes.medium,
-        contentPadding = PaddingValues(RainbowTheme.dpDimensions.medium)
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
     ) {
         AnimatedContent(subreddit.isSubscribed) { isSubscribed ->
             Icon(
@@ -92,7 +86,6 @@ fun SubscribeButton(
                 if (isSubscribed) RainbowStrings.Subscribed else RainbowStrings.Subscribe,
             )
         }
-        Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
         AnimatedContent(subreddit.isSubscribed) { isSubscribed ->
             Text(
                 if (isSubscribed) RainbowStrings.Subscribed else RainbowStrings.Subscribe,

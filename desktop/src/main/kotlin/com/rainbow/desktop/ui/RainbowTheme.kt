@@ -19,7 +19,7 @@ fun RainbowTheme(content: @Composable () -> Unit) {
             lightColors
     }
 
-    MaterialTheme(colors, typography = typography, content = content)
+    MaterialTheme(colors, shapes, typography, content)
 }
 
 object RainbowTheme {

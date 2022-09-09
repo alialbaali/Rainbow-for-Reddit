@@ -11,10 +11,10 @@ import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 
 @Composable
-inline fun MessagesScreen(
-    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
-    crossinline onNavigateDetailsScreen: (DetailsScreen) -> Unit,
-    noinline onShowSnackbar: (String) -> Unit,
+fun MessagesScreen(
+    onNavigateMainScreen: (MainScreen) -> Unit,
+    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val stateHolder = remember { MessagesScreenStateHolder.getInstance() }

@@ -11,11 +11,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.rainbow.desktop.utils.defaultPadding
+import com.rainbow.desktop.ui.RainbowTheme
 
 @Composable
 fun RainbowTextField(
@@ -30,27 +28,26 @@ fun RainbowTextField(
     val isPlaceholderVisible by remember(value) { mutableStateOf(value.isBlank()) }
     val interactionSource = remember { MutableInteractionSource() }
     val minTextWidth = 280.dp
-    val textStartPadding = 16.dp
+    val textStartPaddding = RainbowTheme.dpDimensions.medium
     var trailingIconWidth by remember { mutableStateOf(Dp.Unspecified) }
-    val textStyle = TextStyle(fontSize = 16.sp)
     BasicTextField(
         value,
         onValueChange,
         modifier
             .defaultMinSize(minTextWidth)
-            .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.medium)
-            .defaultPadding(start = textStartPadding)
+            .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.small)
+            .padding(start = textStartPaddding)
             .then(
                 if (trailingIcon != null)
                     Modifier
                 else
-                    Modifier.padding(vertical = 16.dp)
+                    Modifier.padding(vertical = RainbowTheme.dpDimensions.medium)
             ),
         singleLine = singleLine,
         maxLines = maxLines,
         interactionSource = interactionSource,
         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-        textStyle = textStyle
+        textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
     ) { innerTextField ->
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -58,17 +55,24 @@ fun RainbowTextField(
         ) {
             Box(contentAlignment = Alignment.CenterStart) {
                 Box(
-                    Modifier.widthIn(max = minTextWidth - trailingIconWidth - textStartPadding)
-                        .padding(end = 16.dp)
+                    Modifier
+                        .widthIn(max = minTextWidth - trailingIconWidth - textStartPaddding)
+                        .padding(end = RainbowTheme.dpDimensions.medium)
                 ) {
                     innerTextField()
                 }
-                if (isPlaceholderVisible)
-                    Text(placeholderText, style = textStyle)
+                if (isPlaceholderVisible) {
+                    Text(
+                        placeholderText,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
             }
             Box(Modifier.onSizeChanged { trailingIconWidth = it.width.dp }) {
-                if (trailingIcon != null)
+                if (trailingIcon != null) {
                     trailingIcon()
+                }
             }
         }
     }

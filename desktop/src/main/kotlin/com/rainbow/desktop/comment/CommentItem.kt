@@ -16,10 +16,10 @@ import com.rainbow.domain.models.Comment
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-inline fun CommentItem(
+fun CommentItem(
     comment: Comment,
-    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
-    crossinline onNavigateDetailsScreen: (DetailsScreen) -> Unit,
+    onNavigateMainScreen: (MainScreen) -> Unit,
+    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(

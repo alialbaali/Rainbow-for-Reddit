@@ -12,11 +12,11 @@ import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.getOrDefault
 import com.rainbow.domain.models.Message
 
-inline fun LazyListScope.messages(
+fun LazyListScope.messages(
     messagesState: UIState<List<Message>>,
-    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
-    crossinline onNavigateDetailsScreen: (DetailsScreen) -> Unit,
-    crossinline onLoadMore: (Message) -> Unit,
+    onNavigateMainScreen: (MainScreen) -> Unit,
+    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
+    onLoadMore: (Message) -> Unit,
 ) {
     val messages = messagesState.getOrDefault(emptyList())
     itemsIndexed(messages) { index, message ->

@@ -227,7 +227,20 @@ internal object Mappers {
             Moderator(
                 id!!,
                 name!!,
-                modPermissions?.map { Moderator.Permission.valueOf(it.replaceFirstChar { it.uppercase() }) }!!,
+                modPermissions?.map {
+                    when (it) {
+                        "all" -> Moderator.Permission.All
+                        "wiki" -> Moderator.Permission.Wiki
+                        "mail" -> Moderator.Permission.Mail
+                        "config" -> Moderator.Permission.Config
+                        "flair" -> Moderator.Permission.Flair
+                        "access" -> Moderator.Permission.Access
+                        "chat_operator" -> Moderator.Permission.ChatOperator
+                        "posts" -> Moderator.Permission.Posts
+                        "chat_config" -> Moderator.Permission.ChatConfig
+                        else -> error("Permission isn't supported: $it")
+                    }
+                } ?: emptyList(),
                 date!!.toLong().toLocalDateTime()
             )
         }

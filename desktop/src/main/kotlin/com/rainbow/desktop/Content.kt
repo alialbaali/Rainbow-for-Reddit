@@ -68,9 +68,9 @@ internal fun Content(
                 )
                 Row(
                     Modifier
-                        .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.extraLarge)
+                        .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.medium)
                         .fillMaxSize()
-                        .padding(horizontal = MaterialTheme.dpDimensions.extraLarge),
+                        .padding(horizontal = MaterialTheme.dpDimensions.medium),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     MainScreenContent(

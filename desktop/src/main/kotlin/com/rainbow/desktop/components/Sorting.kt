@@ -9,9 +9,9 @@ import com.rainbow.domain.models.PostSorting
 
 @Suppress("UNCHECKED_CAST")
 @Composable
-inline fun <T : PostSorting> PostSortingItem(
+fun <T : PostSorting> PostSortingItem(
     currentSorting: T,
-    crossinline onSortingUpdate: (T) -> Unit,
+    onSortingUpdate: (T) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val values = remember(currentSorting) { PostSorting.valuesOf(currentSorting) }

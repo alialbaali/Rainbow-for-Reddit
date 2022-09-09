@@ -3,6 +3,7 @@ package com.rainbow.desktop.search
 import androidx.compose.foundation.layout.Column
 //import androidx.compose.material3.DropdownMenu
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -37,14 +38,17 @@ fun SearchTextField(
             RainbowStrings.Search,
             trailingIcon = {
                 RainbowIconButton(
-                    RainbowIcons.Search,
-                    RainbowIcons.Search.name,
                     onClick = {
                         searchTerm.takeIf { it.isNotBlank() }?.let {
                             onNavigateMainScreen(MainScreen.Search(it))
                         }
-                    }
-                )
+                    },
+                ) {
+                    Icon(
+                        RainbowIcons.Search,
+                        RainbowIcons.Search.name,
+                    )
+                }
             },
             modifier = Modifier
                 .onSizeChanged { width = it.width }

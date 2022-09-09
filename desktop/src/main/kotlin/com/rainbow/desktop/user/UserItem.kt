@@ -1,15 +1,17 @@
 package com.rainbow.desktop.user
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.HeaderItem
-import com.rainbow.desktop.utils.defaultSurfaceShape
 import com.rainbow.domain.models.User
 
 @Composable
@@ -20,8 +22,10 @@ fun UserItem(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier.defaultSurfaceShape()
-            .clickable { onClick(user) },
+        modifier
+            .clip(MaterialTheme.shapes.medium)
+            .clickable { onClick(user) }
+            .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {

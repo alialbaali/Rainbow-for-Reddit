@@ -1,19 +1,14 @@
 package com.rainbow.desktop.home
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.comment.comments
-import com.rainbow.desktop.components.DropdownMenuHolder
 import com.rainbow.desktop.components.EnumTabRow
 import com.rainbow.desktop.components.RainbowLazyColumn
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
+import com.rainbow.desktop.post.SortingItem
 import com.rainbow.desktop.post.posts
-import com.rainbow.desktop.ui.dpDimensions
 import com.rainbow.desktop.utils.getOrDefault
 import com.rainbow.desktop.utils.getOrNull
 
@@ -59,22 +54,12 @@ fun HomeScreen(
 
         if (selectedTab == HomeTab.Posts) {
             item {
-                Row(
-                    Modifier.fillParentMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dpDimensions.medium),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    DropdownMenuHolder(
-                        value = postSorting,
-                        onValueUpdate = stateHolder.postsStateHolder::setSorting,
-                    )
-
-                    DropdownMenuHolder(
-                        value = timeSorting,
-                        onValueUpdate = stateHolder.postsStateHolder::setTimeSorting,
-                        enabled = postSorting.isTimeSorting,
-                    )
-                }
+                SortingItem(
+                    postSorting,
+                    timeSorting,
+                    stateHolder.postsStateHolder::setSorting,
+                    stateHolder.postsStateHolder::setTimeSorting,
+                )
             }
         }
 

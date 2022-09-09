@@ -1,7 +1,6 @@
 package com.rainbow.desktop.subreddit
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import com.rainbow.desktop.components.*
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
+import com.rainbow.desktop.post.SortingItem
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.*
@@ -38,6 +38,8 @@ fun SubredditScreen(
     val selectedTab by stateHolder.selectedTab.collectAsState()
     val rulesState by stateHolder.rules.collectAsState()
     val wikiState by stateHolder.wiki.collectAsState()
+    val postSorting by stateHolder.postsStateHolder.sorting.collectAsState()
+    val timeSorting by stateHolder.postsStateHolder.timeSorting.collectAsState()
 
     DisposableEffect(postsState.getOrDefault(emptyList()).isEmpty()) {
         val post = postsState.getOrNull()?.firstOrNull()
@@ -70,6 +72,17 @@ fun SubredditScreen(
                     )
                 }
 
+                if (selectedTab == SubredditTab.Posts) {
+                    item {
+                        SortingItem(
+                            postSorting,
+                            timeSorting,
+                            stateHolder.postsStateHolder::setSorting,
+                            stateHolder.postsStateHolder::setTimeSorting,
+                        )
+                    }
+                }
+
                 when (selectedTab) {
                     SubredditTab.Posts -> posts(
                         postsState,
@@ -99,7 +112,7 @@ private fun LazyListScope.wiki(wikiState: UIState<WikiPage>, onShowSnackbar: (St
         wikiState.composed(onShowSnackbar) { wikiPage ->
             Column(
                 Modifier
-                    .defaultSurfaceShape()
+                    .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
                     .defaultPadding()
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -115,7 +128,8 @@ private fun LazyListScope.description(subreddit: Subreddit) {
     item {
         MarkdownText(
             subreddit.longDescription,
-            Modifier.defaultSurfaceShape()
+            Modifier
+                .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
                 .defaultPadding()
                 .fillMaxWidth()
         )
@@ -151,8 +165,9 @@ private fun Header(
             ) {
                 Text(
                     text = subreddit.shortDescription,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.titleMedium,
                     overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -177,12 +192,9 @@ private fun Header(
 @Composable
 private fun SelectFlairButton(subredditName: String, onShowSnackbar: (String) -> Unit, modifier: Modifier = Modifier) {
     var isDialogVisible by remember { mutableStateOf(false) }
-    OutlinedButton(
+    RainbowButton(
         onClick = { isDialogVisible = true },
         modifier = modifier,
-        shape = MaterialTheme.shapes.medium,
-        contentPadding = PaddingValues(RainbowTheme.dpDimensions.medium),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
     ) {
         Text(RainbowStrings.Flair)
     }
@@ -291,7 +303,7 @@ private fun LazyListScope.moderators(
         moderatorsState.composed(onShowSnackbar) { moderators ->
             Column(
                 Modifier
-                    .defaultSurfaceShape()
+                    .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
                     .defaultPadding()
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -309,9 +321,9 @@ private fun LazyListScope.rules(rulesState: UIState<List<Rule>>, onShowSnackbar:
         rulesState.composed(onShowSnackbar) { rules ->
             Column(
                 Modifier
-                    .defaultSurfaceShape()
-                    .fillMaxWidth()
-                    .defaultPadding(),
+                    .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
+                    .defaultPadding()
+                    .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 rules.forEach {
@@ -350,7 +362,7 @@ private fun ModeratorItem(moderator: Moderator, onModeratorClick: (String) -> Un
                     fontWeight = FontWeight.Medium,
                     fontSize = 14.sp,
                     modifier = Modifier
-                        .defaultSurfaceShape()
+                        .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
                         .padding(8.dp)
                 )
             }

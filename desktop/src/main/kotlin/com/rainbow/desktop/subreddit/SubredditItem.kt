@@ -2,10 +2,14 @@ package com.rainbow.desktop.subreddit
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.OpenInBrowser
 import androidx.compose.material.icons.rounded.PlaylistRemove
 import androidx.compose.material.icons.rounded.PostAdd
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,14 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
-import com.rainbow.desktop.components.HeaderItem
-import com.rainbow.desktop.components.MenuIconButton
-import com.rainbow.desktop.components.RainbowMenu
-import com.rainbow.desktop.components.RainbowMenuItem
+import com.rainbow.desktop.components.*
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.defaultPadding
 import com.rainbow.domain.models.Subreddit
+import com.rainbow.domain.models.fullUrl
 
 @Composable
 fun SubredditItem(
@@ -42,7 +44,9 @@ fun SubredditItem(
         SubredditItemActions(
             subreddit,
             onShowSnackbar,
-            Modifier.defaultPadding()
+            Modifier
+                .defaultPadding()
+                .align(Alignment.End)
         )
     }
 }
@@ -55,21 +59,18 @@ private fun SubredditItemActions(
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
     val uriHandler = LocalUriHandler.current
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
+    OptionsSurface(modifier) {
         SubredditFavoriteIconButton(subreddit, onShowSnackbar)
         Column {
-            MenuIconButton(onClick = { isMenuExpanded = true })
+            RainbowIconButton(onClick = { isMenuExpanded = true }) {
+                Icon(RainbowIcons.MoreVert, RainbowStrings.Menu)
+            }
             RainbowMenu(isMenuExpanded, onDismissRequest = { isMenuExpanded = false }) {
                 RainbowMenuItem(
                     RainbowStrings.OpenInBrowser,
                     RainbowIcons.OpenInBrowser,
                     onClick = {
-                        uriHandler.openUri("subreddit.fullUrl")
+                        uriHandler.openUri(subreddit.fullUrl)
                         isMenuExpanded = false
                     }
                 )

@@ -10,11 +10,11 @@ import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.getOrDefault
 import com.rainbow.domain.models.Subreddit
 
-inline fun LazyGridScope.subreddits(
+fun LazyGridScope.subreddits(
     state: UIState<List<Subreddit>>,
-    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
-    noinline onShowSnackbar: (String) -> Unit,
-    crossinline onLoadMore: (Subreddit) -> Unit,
+    onNavigateMainScreen: (MainScreen) -> Unit,
+    onShowSnackbar: (String) -> Unit,
+    onLoadMore: (Subreddit) -> Unit,
 ) {
     val subreddits = state.getOrDefault(emptyList())
 

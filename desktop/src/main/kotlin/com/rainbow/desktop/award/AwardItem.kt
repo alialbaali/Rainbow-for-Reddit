@@ -28,8 +28,5 @@ fun AwardImage(award: Award, modifier: Modifier = Modifier) {
         resource = painterResource,
         contentDescription = award.name,
         modifier = modifier,
-        onFailure = {
-            throw it
-        }
     )
 }

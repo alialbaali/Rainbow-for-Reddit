@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,18 +21,24 @@ import com.rainbow.domain.models.Award
 fun ItemAwards(awards: List<Award>, onClick: () -> Unit, modifier: Modifier = Modifier) {
     LazyRow(
         modifier = modifier
-            .clip(CircleShape)
-            .clickable { onClick() }
-            .background(MaterialTheme.colorScheme.background, CircleShape)
-            .padding(horizontal = RainbowTheme.dpDimensions.medium),
+            .clip(MaterialTheme.shapes.small)
+            .clickable(onClick = onClick)
+            .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.small)
+            .padding(horizontal = RainbowTheme.dpDimensions.small),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium),
+        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.small),
     ) {
-        item { Text(awards.sumOf { it.count }.toString()) }
+        item {
+            Text(
+                awards.sumOf { it.count }.toString(),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+        }
         items(awards) { award ->
             AwardImage(
                 award,
-                modifier = Modifier.size(20.dp),
+                modifier = Modifier.size(24.dp),
             )
         }
     }

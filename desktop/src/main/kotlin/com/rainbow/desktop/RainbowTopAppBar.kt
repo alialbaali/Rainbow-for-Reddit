@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.rainbow.desktop.components.OptionsSurface
 import com.rainbow.desktop.components.RainbowIconButton
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.navigation.title
@@ -37,43 +39,42 @@ fun RainbowTopAppBar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Row(Modifier.weight(1F), horizontalArrangement = Arrangement.SpaceBetween) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
+        Row(
+            Modifier.weight(1F),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            OptionsSurface {
                 RainbowIconButton(
-                    RainbowIcons.ArrowBack,
-                    RainbowStrings.NavigateBack,
-                    onBackClick,
+                    onClick = onBackClick,
                     enabled = isBackEnabled,
-                )
+                ) {
+                    Icon(RainbowIcons.ArrowBack, RainbowStrings.NavigateBack)
+                }
 
                 RainbowIconButton(
-                    RainbowIcons.ArrowForward,
-                    RainbowStrings.NavigateForward,
-                    onForwardClick,
+                    onClick = onForwardClick,
                     enabled = isForwardEnabled,
-                )
+                ) {
+                    Icon(RainbowIcons.ArrowForward, RainbowStrings.NavigateForward)
+                }
 
-                RainbowIconButton(
-                    RainbowIcons.Refresh,
-                    RainbowStrings.Refresh,
-                    onRefresh,
-                )
-
-                Text(
-                    when (mainScreen) {
-                        is MainScreen.SidebarItem -> mainScreen.title
-                        is MainScreen.Subreddit -> mainScreen.subredditName
-                        is MainScreen.User -> mainScreen.userName
-                        is MainScreen.Search -> mainScreen.searchTerm
-                    },
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                )
+                RainbowIconButton(onClick = onRefresh) {
+                    Icon(RainbowIcons.Refresh, RainbowStrings.Refresh)
+                }
             }
 
+            Text(
+                when (mainScreen) {
+                    is MainScreen.SidebarItem -> mainScreen.title
+                    is MainScreen.Subreddit -> mainScreen.subredditName
+                    is MainScreen.User -> mainScreen.userName
+                    is MainScreen.Search -> mainScreen.searchTerm
+                },
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
         }
         SearchTextField(
             onNavigateMainScreen,

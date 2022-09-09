@@ -13,23 +13,26 @@ import com.rainbow.desktop.components.RainbowLazyVerticalGrid
 import com.rainbow.desktop.components.ScrollableEnumTabRow
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
+import com.rainbow.desktop.post.SortingItem
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.subreddit.subreddits
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.user.users
 
 @Composable
- fun SearchScreen(
+fun SearchScreen(
     searchTerm: String,
-     onNavigateMainScreen: (MainScreen) -> Unit,
-     onNavigateDetailsScreen: (DetailsScreen) -> Unit,
-     onShowSnackbar: (String) -> Unit,
+    onNavigateMainScreen: (MainScreen) -> Unit,
+    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val stateHolder = remember(searchTerm) { SearchScreenStateHolder.getInstance(searchTerm) }
     val selectedTab by stateHolder.selectedTab.collectAsState()
     val subredditsState by stateHolder.subredditsStateHolder.items.collectAsState()
     val postsState by stateHolder.postsStateHolder.items.collectAsState()
+    val postsSorting by stateHolder.postsStateHolder.sorting.collectAsState()
+    val postsTimeSorting by stateHolder.postsStateHolder.timeSorting.collectAsState()
     val usersState by stateHolder.usersStateHolder.items.collectAsState()
     val appliedModifier = remember(selectedTab) { if (selectedTab == SearchTab.Posts) modifier else Modifier }
     val columnsCount = remember(selectedTab) {
@@ -59,6 +62,15 @@ import com.rainbow.desktop.user.users
             }
 
             SearchTab.Posts -> {
+                item {
+                    SortingItem(
+                        postsSorting,
+                        postsTimeSorting,
+                        stateHolder.postsStateHolder::setSorting,
+                        stateHolder.postsStateHolder::setTimeSorting,
+                    )
+                }
+
                 posts(
                     postsState,
                     onNavigateMainScreen,

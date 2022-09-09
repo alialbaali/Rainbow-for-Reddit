@@ -65,6 +65,7 @@ fun ScreenHeaderItem(
             shape = imageShape
         }
         .border(ImageBorderSize, MaterialTheme.colorScheme.surface, imageShape)
+        .background(MaterialTheme.colorScheme.surface, imageShape)
 
     Box(
         modifier
@@ -99,8 +100,8 @@ fun ScreenHeaderItem(
 
         Text(
             text,
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.background,
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomStart)

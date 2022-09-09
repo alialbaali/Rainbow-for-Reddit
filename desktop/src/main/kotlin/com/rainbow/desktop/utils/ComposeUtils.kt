@@ -17,12 +17,13 @@ import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.state.StateHolder
 import com.rainbow.domain.models.*
+import kotlinx.coroutines.cancel
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-val RainbowIcons = Icons.Rounded
+typealias RainbowIcons = Icons.Rounded
 
 val ImageBorderSize = 6.dp
 
@@ -183,8 +184,9 @@ val Sorting.icon
         }
     }
 
-inline fun <reified T : StateHolder> rememberStateHolder(crossinline factory: () -> T): T {
-    val stateHolder = factory()
+@Composable
+inline fun <reified T : StateHolder> rememberStateHolder(crossinline factory: @DisallowComposableCalls () -> T): T {
+    val stateHolder = remember { factory() }
     object : RememberObserver {
         override fun onAbandoned() {
 //            stateHolder.scope.cancel()

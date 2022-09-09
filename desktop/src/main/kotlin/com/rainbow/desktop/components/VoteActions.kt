@@ -37,7 +37,7 @@ fun VoteActions(
     )
 
     Row(
-        modifier.background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.medium),
+        modifier.background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.small),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.small)
     ) {
@@ -52,10 +52,17 @@ fun VoteActions(
             contentColor = MaterialTheme.colorScheme.onSurface,
             checkedContentColor = MaterialTheme.colorScheme.primary,
             hoverContentColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5F),
+            containerColor = MaterialTheme.colorScheme.background,
+            checkedContainerColor = MaterialTheme.colorScheme.background,
+            hoverContainerColor = MaterialTheme.colorScheme.background,
         ) {
             Icon(RainbowIcons.ArrowUpward, RainbowStrings.Upvote)
         }
-        Text(animatedVotesCount.format(), style = MaterialTheme.typography.labelLarge)
+        Text(
+            animatedVotesCount.format(),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+        )
         RainbowIconToggleButton(
             checked = vote == Vote.Down,
             onCheckedChange = {
@@ -67,6 +74,9 @@ fun VoteActions(
             contentColor = MaterialTheme.colorScheme.onSurface,
             checkedContentColor = MaterialTheme.colorScheme.secondary,
             hoverContentColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5F),
+            containerColor = MaterialTheme.colorScheme.background,
+            checkedContainerColor = MaterialTheme.colorScheme.background,
+            hoverContainerColor = MaterialTheme.colorScheme.background,
         ) {
             Icon(RainbowIcons.ArrowDownward, RainbowStrings.Downvote)
         }

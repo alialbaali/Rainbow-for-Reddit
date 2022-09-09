@@ -4,8 +4,14 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.rounded.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.rounded.Forum
+import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.StarBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -14,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.award.ItemAwards
 import com.rainbow.desktop.components.*
-import com.rainbow.desktop.post.PostActionsStateHolder
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
@@ -22,11 +27,11 @@ import com.rainbow.desktop.utils.format
 import com.rainbow.domain.models.Comment
 
 @Composable
-inline fun PostCommentInfo(
+fun PostCommentInfo(
     comment: Comment,
     postUserName: String,
-    crossinline onUserNameClick: (String) -> Unit,
-    crossinline onSubredditNameClick: (String) -> Unit,
+    onUserNameClick: (String) -> Unit,
+    onSubredditNameClick: (String) -> Unit,
     isSubredditNameEnabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -46,10 +51,10 @@ inline fun PostCommentInfo(
 }
 
 @Composable
-inline fun CommentInfo(
+fun CommentInfo(
     comment: Comment,
-    crossinline onUserNameClick: (String) -> Unit,
-    crossinline onSubredditNameClick: (String) -> Unit,
+    onUserNameClick: (String) -> Unit,
+    onSubredditNameClick: (String) -> Unit,
     isSubredditNameEnabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -97,12 +102,20 @@ fun CommentActions(
             Row(
                 Modifier
                     .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.medium)
-                    .padding(RainbowTheme.dpDimensions.medium),
+                    .padding(RainbowTheme.dpDimensions.small),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium)
             ) {
-                Icon(RainbowIcons.Forum, RainbowStrings.Comments)
-                Text(comment.replies.count().format(), style = MaterialTheme.typography.labelLarge)
+                Icon(
+                    RainbowIcons.Forum,
+                    RainbowStrings.Comments,
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+                Text(
+                    comment.replies.count().format(),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
             }
         }
 
@@ -120,6 +133,10 @@ fun CommentActions(
                     }
                 },
                 checkedContentColor = RainbowTheme.colors.yellow,
+                containerColor = MaterialTheme.colorScheme.background,
+                checkedContainerColor = MaterialTheme.colorScheme.background,
+                hoverContainerColor = MaterialTheme.colorScheme.background,
+                hoverContentColor = RainbowTheme.colors.yellow.copy(0.5F)
             ) {
                 AnimatedContent(comment.isSaved) { isSaved ->
                     if (isSaved) {

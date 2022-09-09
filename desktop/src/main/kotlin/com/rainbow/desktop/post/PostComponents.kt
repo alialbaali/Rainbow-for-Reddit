@@ -46,6 +46,7 @@ fun PostTitle(title: String, isRead: Boolean, modifier: Modifier = Modifier) {
         text = title,
         modifier = modifier,
         style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.onSurface,
     )
 }
 
@@ -119,7 +120,12 @@ fun PostContent(post: Post, modifier: Modifier = Modifier) {
 
 @Composable
 fun TextPost(text: Post.Type.Text, isRead: Boolean, modifier: Modifier = Modifier) {
-    Text(text.body, maxLines = 5)
+    Text(
+        text.body,
+        maxLines = 5,
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onSurface,
+    )
 }
 
 @Composable
@@ -217,17 +223,25 @@ fun PostActions(post: Post, modifier: Modifier = Modifier) {
 
         Row(
             Modifier
-                .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.medium)
-                .padding(RainbowTheme.dpDimensions.medium),
+                .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.small)
+                .padding(vertical = RainbowTheme.dpDimensions.small, horizontal = RainbowTheme.dpDimensions.medium),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium)
         ) {
-            Icon(RainbowIcons.Forum, RainbowStrings.Comments)
-            Text(post.commentsCount.toInt().format(), style = MaterialTheme.typography.labelLarge)
+            Icon(
+                RainbowIcons.Forum,
+                RainbowStrings.Comments,
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+            Text(
+                post.commentsCount.toInt().format(),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
         }
 
         Row(
-            Modifier.background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.medium),
+            Modifier.background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.small),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             RainbowIconButton(
@@ -238,6 +252,8 @@ fun PostActions(post: Post, modifier: Modifier = Modifier) {
                         PostActionsStateHolder.hidePost(post)
                     }
                 },
+                containerColor = MaterialTheme.colorScheme.background,
+                hoverContainerColor = MaterialTheme.colorScheme.background,
             ) {
                 if (post.isHidden) {
                     Icon(RainbowIcons.Visibility, RainbowStrings.UnHide)
@@ -256,6 +272,10 @@ fun PostActions(post: Post, modifier: Modifier = Modifier) {
                     }
                 },
                 checkedContentColor = RainbowTheme.colors.yellow,
+                containerColor = MaterialTheme.colorScheme.background,
+                checkedContainerColor = MaterialTheme.colorScheme.background,
+                hoverContainerColor = MaterialTheme.colorScheme.background,
+                hoverContentColor = RainbowTheme.colors.yellow.copy(0.5F)
             ) {
                 AnimatedContent(post.isSaved) { isSaved ->
                     if (isSaved) {

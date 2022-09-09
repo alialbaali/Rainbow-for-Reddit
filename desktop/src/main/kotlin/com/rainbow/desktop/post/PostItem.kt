@@ -44,7 +44,7 @@ fun PostItem(
             Modifier
                 .defaultPadding()
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.large)
+            verticalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium)
         ) {
             PostInfo(
                 post,

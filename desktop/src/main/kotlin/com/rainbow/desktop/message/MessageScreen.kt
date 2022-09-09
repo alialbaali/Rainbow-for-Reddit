@@ -17,9 +17,9 @@ import com.rainbow.desktop.ui.dpDimensions
 import com.rainbow.desktop.utils.getOrNull
 
 @Composable
-inline fun MessageScreen(
+fun MessageScreen(
     messageId: String,
-    crossinline onNavigateMainScreen: (MainScreen) -> Unit,
+    onNavigateMainScreen: (MainScreen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 

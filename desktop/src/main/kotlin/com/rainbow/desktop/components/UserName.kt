@@ -8,26 +8,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
-inline fun UserName(userName: String, crossinline onClick: (String) -> Unit, modifier: Modifier = Modifier) {
+fun UserName(userName: String, onClick: (String) -> Unit, modifier: Modifier = Modifier) {
     Text(
         text = userName,
         modifier = modifier.clickable { onClick(userName) },
         color = MaterialTheme.colorScheme.surfaceVariant,
-        fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
+        style = MaterialTheme.typography.labelLarge,
     )
 }
 
 @Composable
-inline fun CommentUserName(
+fun CommentUserName(
     userName: String,
     postUserName: String,
-    crossinline onClick: (String) -> Unit,
+    onClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isOP = userName == postUserName
@@ -37,13 +34,12 @@ inline fun CommentUserName(
             .then(
                 if (isOP)
                     Modifier.background(MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
-                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                        .padding(horizontal = 4.dp)
                 else
                     Modifier
             )
             .clickable { onClick(userName) },
-        color = if (isOP) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.primary,
-        fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
+        color = if (isOP) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+        style = MaterialTheme.typography.labelLarge,
     )
 }
