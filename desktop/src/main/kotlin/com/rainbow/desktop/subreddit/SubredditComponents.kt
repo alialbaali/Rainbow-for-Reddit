@@ -49,6 +49,9 @@ fun SubredditFavoriteIconButton(
         },
         modifier = modifier,
         enabled = enabled,
+        checkedContentColor = MaterialTheme.colorScheme.primary,
+        checkedContainerColor = MaterialTheme.colorScheme.background,
+        hoverContentColor = MaterialTheme.colorScheme.primary.copy(0.5F),
     ) {
         AnimatedContent(subreddit.isFavorite) { isFavorite ->
             Icon(
