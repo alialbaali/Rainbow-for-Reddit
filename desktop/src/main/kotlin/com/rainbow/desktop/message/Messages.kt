@@ -3,7 +3,9 @@ package com.rainbow.desktop.message
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
@@ -23,9 +25,9 @@ fun LazyListScope.messages(
         MessageItem(
             message,
             onNavigateMainScreen,
-            Modifier.clickable {
-                onNavigateDetailsScreen(DetailsScreen.Message(message.id))
-            }
+            Modifier
+                .clip(MaterialTheme.shapes.medium)
+                .clickable { onNavigateDetailsScreen(DetailsScreen.Message(message.id)) }
         )
         PagingEffect(messages, index, onLoadMore)
     }
