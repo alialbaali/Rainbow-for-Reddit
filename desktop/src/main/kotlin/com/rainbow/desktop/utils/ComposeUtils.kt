@@ -2,6 +2,7 @@ package com.rainbow.desktop.utils
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -16,14 +17,17 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.state.StateHolder
+import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.domain.models.*
-import kotlinx.coroutines.cancel
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 typealias RainbowIcons = Icons.Rounded
+
+@Composable
+fun LazyListContentPadding() = PaddingValues(vertical = RainbowTheme.dpDimensions.medium)
 
 val ImageBorderSize = 6.dp
 

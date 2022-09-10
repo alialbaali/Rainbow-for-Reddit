@@ -1,7 +1,5 @@
 package com.rainbow.desktop.search
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.runtime.Composable
@@ -16,7 +14,6 @@ import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.SortingItem
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.subreddit.subreddits
-import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.user.users
 
 @Composable
@@ -48,8 +45,6 @@ fun SearchScreen(
         item(span = { GridItemSpan(maxLineSpan) }) {
             ScrollableEnumTabRow(selectedTab, stateHolder::selectTab)
         }
-
-        item(span = { GridItemSpan(maxLineSpan) }) { Spacer(Modifier.height(RainbowTheme.dpDimensions.medium)) }
 
         when (selectedTab) {
             SearchTab.Subreddits -> {
