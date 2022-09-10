@@ -100,8 +100,8 @@ fun ScreenHeaderItem(
 
         Text(
             text,
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.displayMedium,
+            color = Color.White,
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomStart)
