@@ -133,9 +133,7 @@ fun CommentActions(
                     }
                 },
                 checkedContentColor = RainbowTheme.colors.yellow,
-                containerColor = MaterialTheme.colorScheme.background,
                 checkedContainerColor = MaterialTheme.colorScheme.background,
-                hoverContainerColor = MaterialTheme.colorScheme.background,
                 hoverContentColor = RainbowTheme.colors.yellow.copy(0.5F)
             ) {
                 AnimatedContent(comment.isSaved) { isSaved ->

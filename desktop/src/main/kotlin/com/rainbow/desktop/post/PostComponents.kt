@@ -35,8 +35,8 @@ private val SubredditIconSize = 48.dp
 
 fun Modifier.subredditIcon() = composed {
     Modifier
-        .clip(MaterialTheme.shapes.medium)
-        .background(MaterialTheme.colorScheme.onSurface, MaterialTheme.shapes.medium)
+        .clip(MaterialTheme.shapes.small)
+        .background(MaterialTheme.colorScheme.onSurface, MaterialTheme.shapes.small)
         .size(SubredditIconSize)
 }
 
@@ -272,9 +272,7 @@ fun PostActions(post: Post, modifier: Modifier = Modifier) {
                     }
                 },
                 checkedContentColor = RainbowTheme.colors.yellow,
-                containerColor = MaterialTheme.colorScheme.background,
                 checkedContainerColor = MaterialTheme.colorScheme.background,
-                hoverContainerColor = MaterialTheme.colorScheme.background,
                 hoverContentColor = RainbowTheme.colors.yellow.copy(0.5F)
             ) {
                 AnimatedContent(post.isSaved) { isSaved ->
