@@ -2,6 +2,7 @@ package com.rainbow.desktop.components
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 
@@ -11,9 +12,10 @@ inline fun <reified T : Enum<T>> ScrollableEnumTabRow(
     crossinline onTabClick: (T) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val values = enumValues<T>()
+    val values = remember { enumValues<T>() }
+    val selectedTabIndex = remember(values, selectedTab) { values.indexOf(selectedTab) }
     ScrollableTabRow(
-        values.indexOf(selectedTab),
+        selectedTabIndex,
         containerColor = MaterialTheme.colorScheme.surface,
         modifier = modifier.clip(MaterialTheme.shapes.small),
         divider = {},
@@ -37,9 +39,10 @@ inline fun <reified T : Enum<T>> EnumTabRow(
     crossinline onTabClick: (T) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val values = enumValues<T>()
+    val values = remember { enumValues<T>() }
+    val selectedTabIndex = remember(values, selectedTab) { values.indexOf(selectedTab) }
     TabRow(
-        values.indexOf(selectedTab),
+        selectedTabIndex,
         containerColor = MaterialTheme.colorScheme.surface,
         modifier = modifier.clip(MaterialTheme.shapes.small),
         divider = {},
