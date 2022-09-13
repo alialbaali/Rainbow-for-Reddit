@@ -21,7 +21,7 @@ import com.rainbow.desktop.post.PostScreen
 import com.rainbow.desktop.profile.ProfileScreen
 import com.rainbow.desktop.search.SearchScreen
 import com.rainbow.desktop.settings.SettingsScreen
-import com.rainbow.desktop.subreddit.CurrentUserSubredditsScreen
+import com.rainbow.desktop.subreddit.SubredditsScreen
 import com.rainbow.desktop.subreddit.SubredditScreen
 import com.rainbow.desktop.ui.dpDimensions
 import com.rainbow.desktop.user.UserScreen
@@ -122,7 +122,7 @@ private fun MainScreenContent(
                 modifier,
             )
 
-            MainScreen.SidebarItem.Subreddits -> CurrentUserSubredditsScreen(
+            MainScreen.SidebarItem.Subreddits -> SubredditsScreen(
                 onNavigateMainScreen,
                 onShowSnackbar,
             )

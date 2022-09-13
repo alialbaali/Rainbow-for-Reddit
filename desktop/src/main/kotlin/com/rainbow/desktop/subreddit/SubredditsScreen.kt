@@ -23,13 +23,13 @@ import com.rainbow.desktop.ui.dpDimensions
 import com.rainbow.desktop.utils.*
 
 @Composable
-fun CurrentUserSubredditsScreen(
+fun SubredditsScreen(
     onNavigateMainScreen: (MainScreen) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val stateHolder = remember { CurrentUserSubredditsScreenStateHolder.getInstance() }
-    val subredditsState by stateHolder.items.collectAsState()
+    val stateHolder = remember { SubredditsScreenStateHolder.getInstance() }
+    val subredditsState by stateHolder.subredditsStateHolder.items.collectAsState()
     val searchTerm by stateHolder.searchTerm.collectAsState()
     val subreddits = remember(subredditsState) { subredditsState.getOrDefault(emptyList()) }
     LazyVerticalGrid(
@@ -60,7 +60,7 @@ fun CurrentUserSubredditsScreen(
                 onClick = { onNavigateMainScreen(MainScreen.Subreddit(subreddit.name)) },
                 onShowSnackbar
             )
-            PagingEffect(subreddits, index, stateHolder::setLastItem)
+            PagingEffect(subreddits, index, stateHolder.subredditsStateHolder::setLastItem)
         }
 
         subredditsState
