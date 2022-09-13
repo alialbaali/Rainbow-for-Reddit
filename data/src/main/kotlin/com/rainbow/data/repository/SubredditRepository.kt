@@ -43,6 +43,8 @@ internal class SubredditRepositoryImpl(
 
     override suspend fun getProfileSubreddits(lastSubredditId: String?): Result<Unit> = runCatching {
         withContext(dispatcher) {
+            if (lastSubredditId == null) localSubredditDataSource.clearProfileSubreddits()
+
             remoteSubredditDataSource.getProfileSubreddits(DefaultLimit, lastSubredditId)
                 .quickMap(subredditMapper)
                 .forEach(localSubredditDataSource::insertProfileSubreddit)
