@@ -28,7 +28,7 @@ fun SubredditsScreen(
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val stateHolder = remember { SubredditsScreenStateHolder.getInstance() }
+    val stateHolder = remember { SubredditsScreenStateHolder.Instance }
     val subredditsState by stateHolder.subredditsStateHolder.items.collectAsState()
     val searchTerm by stateHolder.searchTerm.collectAsState()
     val subreddits = remember(subredditsState) { subredditsState.getOrDefault(emptyList()) }

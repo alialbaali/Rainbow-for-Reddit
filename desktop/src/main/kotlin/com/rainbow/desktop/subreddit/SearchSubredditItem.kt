@@ -1,11 +1,10 @@
 package com.rainbow.desktop.subreddit
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,7 +19,6 @@ import com.rainbow.desktop.components.HeaderItem
 import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.Subreddit
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchSubredditItem(
     subreddit: Subreddit,

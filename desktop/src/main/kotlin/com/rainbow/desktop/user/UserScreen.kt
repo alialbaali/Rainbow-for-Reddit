@@ -24,7 +24,7 @@ fun UserScreen(
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val stateHolder = remember(userName) { UserScreenStateHolder.getOrCreateInstance(userName) }
+    val stateHolder = remember(userName) { UserScreenStateHolder.getInstance(userName) }
     val userState by stateHolder.user.collectAsState()
     val selectedTab by stateHolder.selectedTab.collectAsState()
     val items by stateHolder.itemsStateHolder.items.collectAsState()

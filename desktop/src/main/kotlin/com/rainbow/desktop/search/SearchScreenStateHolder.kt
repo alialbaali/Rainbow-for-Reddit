@@ -50,10 +50,14 @@ class SearchScreenStateHolder private constructor(
 
     companion object {
         private val stateHolders = mutableSetOf<SearchScreenStateHolder>()
+        var CurrentInstance : SearchScreenStateHolder? = null
+            private set
 
         fun getInstance(searchTerm: String): SearchScreenStateHolder {
-            return stateHolders.find { it.searchTerm == searchTerm }
+            val stateHolder =  stateHolders.find { it.searchTerm == searchTerm }
                 ?: SearchScreenStateHolder(searchTerm).also { stateHolders += it }
+            CurrentInstance = stateHolder
+            return stateHolder
         }
     }
 

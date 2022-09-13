@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class HomeScreenStateHolder  constructor(
+class HomeScreenStateHolder private constructor(
     private val postRepository: PostRepository = Repos.Post,
     private val commentRepository: CommentRepository = Repos.Comment,
 ) : StateHolder() {
@@ -56,13 +56,7 @@ class HomeScreenStateHolder  constructor(
     }
 
     companion object {
-        private var stateHolder: HomeScreenStateHolder? = null
-
-        fun getInstance(): HomeScreenStateHolder {
-            return stateHolder ?: HomeScreenStateHolder().also {
-                stateHolder = it
-            }
-        }
+        val Instance = HomeScreenStateHolder()
     }
 
 }

@@ -60,10 +60,14 @@ class SubredditScreenStateHolder private constructor(
 
     companion object {
         private val stateHolders = mutableSetOf<SubredditScreenStateHolder>()
+        var CurrentInstance: SubredditScreenStateHolder? = null
+            private set
 
         fun getInstance(subredditName: String): SubredditScreenStateHolder {
-            return stateHolders.find { it.subredditName == subredditName }
+            val stateHolder = stateHolders.find { it.subredditName == subredditName }
                 ?: SubredditScreenStateHolder(subredditName).also { stateHolders += it }
+            CurrentInstance = stateHolder
+            return stateHolder
         }
     }
 
@@ -71,15 +75,18 @@ class SubredditScreenStateHolder private constructor(
         mutableSelectedTab.value = tab
     }
 
-    private fun loadRules() = scope.launch {
+    fun loadRules() = scope.launch {
+        mutableRules.value = UIState.Loading()
         mutableRules.value = subredditRepository.getSubredditRules(subredditName).toUIState(emptyList())
     }
 
-    private fun loadWiki() = scope.launch {
+    fun loadWiki() = scope.launch {
+        mutableWiki.value = UIState.Loading()
         mutableWiki.value = subredditRepository.getWikiIndex(subredditName).toUIState(null)
     }
 
-    private fun loadModerators() = scope.launch {
+    fun loadModerators() = scope.launch {
+        mutableModerators.value = UIState.Loading()
         mutableModerators.value = subredditRepository.getSubredditModerators(subredditName).toUIState()
     }
 }

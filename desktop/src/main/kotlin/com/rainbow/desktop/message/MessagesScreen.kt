@@ -17,7 +17,7 @@ fun MessagesScreen(
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val stateHolder = remember { MessagesScreenStateHolder.getInstance() }
+    val stateHolder = remember { MessagesScreenStateHolder.Instance }
     val selectedTab by stateHolder.selectedTab.collectAsState()
     val inboxMessages by stateHolder.inboxMessages.items.collectAsState()
     val unreadMessages by stateHolder.unreadMessages.items.collectAsState()

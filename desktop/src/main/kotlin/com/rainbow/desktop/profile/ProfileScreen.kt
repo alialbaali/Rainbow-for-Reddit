@@ -30,7 +30,7 @@ fun ProfileScreen(
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val stateHolder = remember { ProfileScreenStateHolder.getInstance() }
+    val stateHolder = remember { ProfileScreenStateHolder.Instance }
     val selectedTab by stateHolder.selectedTab.collectAsState(ProfileTab.Overview)
     val userState by stateHolder.currentUser.collectAsState()
     val overviewItemsState by stateHolder.overviewItemsStateHolder.items.collectAsState()

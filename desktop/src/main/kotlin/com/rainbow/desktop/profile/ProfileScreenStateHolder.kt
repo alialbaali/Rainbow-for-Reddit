@@ -126,11 +126,7 @@ class ProfileScreenStateHolder private constructor(
     }
 
     companion object {
-        private var stateHolder: ProfileScreenStateHolder? = null
-
-        fun getInstance(): ProfileScreenStateHolder {
-            return stateHolder ?: ProfileScreenStateHolder().also { stateHolder = it }
-        }
+        val Instance = ProfileScreenStateHolder()
     }
 
     private fun loadUser() = scope.launch {

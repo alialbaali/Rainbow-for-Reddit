@@ -39,13 +39,7 @@ class SubredditsScreenStateHolder private constructor(
     }
 
     companion object {
-        private var stateHolder: SubredditsScreenStateHolder? = null
-
-        fun getInstance(): SubredditsScreenStateHolder {
-            return stateHolder ?: SubredditsScreenStateHolder().also {
-                stateHolder = it
-            }
-        }
+        val Instance = SubredditsScreenStateHolder()
     }
 
     fun setSearchTerm(searchTerm: String) {

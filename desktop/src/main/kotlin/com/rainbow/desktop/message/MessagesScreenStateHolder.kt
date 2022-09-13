@@ -75,11 +75,7 @@ class MessagesScreenStateHolder(
     }
 
     companion object {
-        private var stateHolder: MessagesScreenStateHolder? = null
-
-        fun getInstance(): MessagesScreenStateHolder {
-            return stateHolder ?: MessagesScreenStateHolder().also { stateHolder = it }
-        }
+        val Instance = MessagesScreenStateHolder()
     }
 
     fun selectTab(tab: MessageTab) {

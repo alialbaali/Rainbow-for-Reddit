@@ -14,8 +14,6 @@ import com.rainbow.domain.repository.PostRepository
 import com.rainbow.domain.repository.UserRepository
 import kotlinx.coroutines.flow.*
 
-private val userScreenModels = mutableSetOf<UserScreenStateHolder>()
-
 class UserScreenStateHolder private constructor(
     private val userName: String,
     private val userRepository: UserRepository = Repos.User,
@@ -76,9 +74,15 @@ class UserScreenStateHolder private constructor(
     }
 
     companion object {
-        fun getOrCreateInstance(userName: String): UserScreenStateHolder {
-            return userScreenModels.find { it.userName == userName }
-                ?: UserScreenStateHolder(userName).also { userScreenModels += it }
+        private val stateHolders = mutableSetOf<UserScreenStateHolder>()
+        var CurrentInstance: UserScreenStateHolder? = null
+            private set
+
+        fun getInstance(userName: String): UserScreenStateHolder {
+            val stateHolder = stateHolders.find { it.userName == userName }
+                ?: UserScreenStateHolder(userName).also(stateHolders::add)
+            CurrentInstance = stateHolder
+            return stateHolder
         }
     }
 
