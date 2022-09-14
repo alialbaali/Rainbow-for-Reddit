@@ -6,6 +6,7 @@ import com.rainbow.desktop.item.ItemsStateHolder
 import com.rainbow.desktop.post.PostsStateHolder
 import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.utils.UIState
+import com.rainbow.desktop.utils.getOrNull
 import com.rainbow.domain.models.*
 import com.rainbow.domain.repository.CommentRepository
 import com.rainbow.domain.repository.ItemRepository
@@ -106,6 +107,9 @@ class ProfileScreenStateHolder private constructor(
         ): Result<Unit> = commentRepository.getProfileComments(sorting, timeSorting, lastItem?.id)
     }
 
+    private val mutableSelectedItemIds = MutableStateFlow(emptyMap<ProfileTab, String>())
+    val selectedItemIds get() = mutableSelectedItemIds.asStateFlow()
+
     init {
         loadUser()
 
@@ -119,10 +123,65 @@ class ProfileScreenStateHolder private constructor(
                     ProfileTab.Upvoted -> if (upvotedPostsStateHolder.items.value.isEmpty) upvotedPostsStateHolder.loadItems()
                     ProfileTab.Downvoted -> if (downvotedPostsStateHolder.items.value.isEmpty) downvotedPostsStateHolder.loadItems()
                     ProfileTab.Comments -> if (commentsStateHolder.items.value.isEmpty) commentsStateHolder.loadItems()
-                    else -> {}
                 }
             }
             .launchIn(scope)
+
+        scope.launch {
+            overviewItemsStateHolder.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { item -> selectItemId(ProfileTab.Overview, item.postId) }
+        }
+
+        scope.launch {
+            submittedPostsStateHolder.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { post -> selectItemId(ProfileTab.Submitted, post.id) }
+        }
+
+        scope.launch {
+            savedItemsStateHolder.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { item -> selectItemId(ProfileTab.Saved, item.postId) }
+        }
+
+        scope.launch {
+            hiddenPostsStateHolder.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { post -> selectItemId(ProfileTab.Hidden, post.id) }
+        }
+
+        scope.launch {
+            upvotedPostsStateHolder.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { post -> selectItemId(ProfileTab.Upvoted, post.id) }
+        }
+
+        scope.launch {
+            downvotedPostsStateHolder.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { post -> selectItemId(ProfileTab.Downvoted, post.id) }
+        }
+
+        scope.launch {
+            commentsStateHolder.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { comment -> selectItemId(ProfileTab.Downvoted, comment.postId) }
+        }
     }
 
     companion object {
@@ -135,5 +194,9 @@ class ProfileScreenStateHolder private constructor(
 
     fun selectTab(tab: ProfileTab) {
         mutableSelectedTab.value = tab
+    }
+
+    fun selectItemId(tab: ProfileTab, id: String) {
+        mutableSelectedItemIds.value += tab to id
     }
 }

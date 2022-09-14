@@ -20,7 +20,9 @@ import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.SortingItem
 import com.rainbow.desktop.post.posts
-import com.rainbow.desktop.utils.*
+import com.rainbow.desktop.utils.RainbowStrings
+import com.rainbow.desktop.utils.defaultPadding
+import com.rainbow.desktop.utils.fold
 import com.rainbow.domain.models.User
 
 @Composable
@@ -54,76 +56,7 @@ fun ProfileScreen(
     val commentsState by stateHolder.commentsStateHolder.items.collectAsState()
     val commentsSorting by stateHolder.commentsStateHolder.sorting.collectAsState()
     val commentsTimeSorting by stateHolder.commentsStateHolder.timeSorting.collectAsState()
-
-    DisposableEffect(overviewItemsState.getOrDefault(emptyList()).isEmpty()) {
-        val item = overviewItemsState.getOrNull()?.firstOrNull()
-        if (item != null) {
-            onNavigateDetailsScreen(DetailsScreen.Post(item.postId))
-        }
-        onDispose {
-            onNavigateDetailsScreen(DetailsScreen.None)
-        }
-    }
-
-    DisposableEffect(savedItemsState.getOrDefault(emptyList()).isEmpty()) {
-        val item = savedItemsState.getOrNull()?.firstOrNull()
-        if (item != null) {
-            onNavigateDetailsScreen(DetailsScreen.Post(item.postId))
-        }
-        onDispose {
-            onNavigateDetailsScreen(DetailsScreen.None)
-        }
-    }
-
-    DisposableEffect(submittedPostsState.getOrDefault(emptyList()).isEmpty()) {
-        val post = submittedPostsState.getOrNull()?.firstOrNull()
-        if (post != null) {
-            onNavigateDetailsScreen(DetailsScreen.Post(post.id))
-        }
-        onDispose {
-            onNavigateDetailsScreen(DetailsScreen.None)
-        }
-    }
-
-    DisposableEffect(upvotedPostsState.getOrDefault(emptyList()).isEmpty()) {
-        val post = upvotedPostsState.getOrNull()?.firstOrNull()
-        if (post != null) {
-            onNavigateDetailsScreen(DetailsScreen.Post(post.id))
-        }
-        onDispose {
-            onNavigateDetailsScreen(DetailsScreen.None)
-        }
-    }
-
-    DisposableEffect(downvotedPostsState.getOrDefault(emptyList()).isEmpty()) {
-        val post = downvotedPostsState.getOrNull()?.firstOrNull()
-        if (post != null) {
-            onNavigateDetailsScreen(DetailsScreen.Post(post.id))
-        }
-        onDispose {
-            onNavigateDetailsScreen(DetailsScreen.None)
-        }
-    }
-
-    DisposableEffect(hiddenPostsState.getOrDefault(emptyList()).isEmpty()) {
-        val post = hiddenPostsState.getOrNull()?.firstOrNull()
-        if (post != null) {
-            onNavigateDetailsScreen(DetailsScreen.Post(post.id))
-        }
-        onDispose {
-            onNavigateDetailsScreen(DetailsScreen.None)
-        }
-    }
-
-    DisposableEffect(commentsState.getOrDefault(emptyList()).isEmpty()) {
-        val comment = commentsState.getOrNull()?.firstOrNull()
-        if (comment != null) {
-            onNavigateDetailsScreen(DetailsScreen.Post(comment.postId))
-        }
-        onDispose {
-            onNavigateDetailsScreen(DetailsScreen.None)
-        }
-    }
+    val selectedItemIds by stateHolder.selectedItemIds.collectAsState()
 
     RainbowLazyColumn(modifier) {
         userState.fold(
@@ -161,7 +94,12 @@ fun ProfileScreen(
                 items(
                     overviewItemsState,
                     onNavigateMainScreen,
-                    onNavigateDetailsScreen,
+                    onNavigateDetailsScreen = { detailsScreen ->
+                        if (detailsScreen is DetailsScreen.Post) {
+                            stateHolder.selectItemId(ProfileTab.Overview, detailsScreen.postId)
+                        }
+                        onNavigateDetailsScreen(detailsScreen)
+                    },
                     onAwardsClick = {},
                     onShowSnackbar,
                     stateHolder.overviewItemsStateHolder::setLastItem,
@@ -181,7 +119,12 @@ fun ProfileScreen(
                 items(
                     savedItemsState,
                     onNavigateMainScreen,
-                    onNavigateDetailsScreen,
+                    onNavigateDetailsScreen = { detailsScreen ->
+                        if (detailsScreen is DetailsScreen.Post) {
+                            stateHolder.selectItemId(ProfileTab.Saved, detailsScreen.postId)
+                        }
+                        onNavigateDetailsScreen(detailsScreen)
+                    },
                     onAwardsClick = {},
                     onShowSnackbar,
                     stateHolder.savedItemsStateHolder::setLastItem,
@@ -201,7 +144,12 @@ fun ProfileScreen(
                 comments(
                     commentsState,
                     onNavigateMainScreen,
-                    onNavigateDetailsScreen,
+                    onNavigateDetailsScreen = { detailsScreen ->
+                        if (detailsScreen is DetailsScreen.Post) {
+                            stateHolder.selectItemId(ProfileTab.Comments, detailsScreen.postId)
+                        }
+                        onNavigateDetailsScreen(detailsScreen)
+                    },
                     stateHolder.commentsStateHolder::setLastItem,
                 )
             }
@@ -219,7 +167,12 @@ fun ProfileScreen(
                 posts(
                     submittedPostsState,
                     onNavigateMainScreen,
-                    onNavigateDetailsScreen,
+                    onNavigateDetailsScreen = { detailsScreen ->
+                        if (detailsScreen is DetailsScreen.Post) {
+                            stateHolder.selectItemId(ProfileTab.Submitted, detailsScreen.postId)
+                        }
+                        onNavigateDetailsScreen(detailsScreen)
+                    },
                     {},
                     onShowSnackbar,
                     stateHolder.submittedPostsStateHolder::setLastItem,
@@ -239,7 +192,12 @@ fun ProfileScreen(
                 posts(
                     hiddenPostsState,
                     onNavigateMainScreen,
-                    onNavigateDetailsScreen,
+                    onNavigateDetailsScreen = { detailsScreen ->
+                        if (detailsScreen is DetailsScreen.Post) {
+                            stateHolder.selectItemId(ProfileTab.Hidden, detailsScreen.postId)
+                        }
+                        onNavigateDetailsScreen(detailsScreen)
+                    },
                     {},
                     onShowSnackbar,
                     stateHolder.hiddenPostsStateHolder::setLastItem,
@@ -259,7 +217,12 @@ fun ProfileScreen(
                 posts(
                     upvotedPostsState,
                     onNavigateMainScreen,
-                    onNavigateDetailsScreen,
+                    onNavigateDetailsScreen = { detailsScreen ->
+                        if (detailsScreen is DetailsScreen.Post) {
+                            stateHolder.selectItemId(ProfileTab.Upvoted, detailsScreen.postId)
+                        }
+                        onNavigateDetailsScreen(detailsScreen)
+                    },
                     {},
                     onShowSnackbar,
                     stateHolder.upvotedPostsStateHolder::setLastItem,
@@ -279,12 +242,26 @@ fun ProfileScreen(
                 posts(
                     downvotedPostsState,
                     onNavigateMainScreen,
-                    onNavigateDetailsScreen,
+                    onNavigateDetailsScreen = { detailsScreen ->
+                        if (detailsScreen is DetailsScreen.Post) {
+                            stateHolder.selectItemId(ProfileTab.Downvoted, detailsScreen.postId)
+                        }
+                        onNavigateDetailsScreen(detailsScreen)
+                    },
                     {},
                     onShowSnackbar,
                     stateHolder.downvotedPostsStateHolder::setLastItem,
                 )
             }
+        }
+    }
+
+    DisposableEffect(selectedTab, selectedItemIds) {
+        selectedItemIds[selectedTab]?.let { postId ->
+            onNavigateDetailsScreen(DetailsScreen.Post(postId))
+        }
+        onDispose {
+            onNavigateDetailsScreen(DetailsScreen.None)
         }
     }
 }
