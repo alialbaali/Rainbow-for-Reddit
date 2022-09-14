@@ -19,13 +19,11 @@ object Repos {
     @OptIn(
         ExperimentalSettingsImplementation::class,
         ExperimentalSettingsApi::class,
-        ExperimentalCoroutinesApi::class,
     )
     private val settings = Settings()
         .let { it as ObservableSettings }
 
     @OptIn(
-        ExperimentalSettingsImplementation::class,
         ExperimentalSettingsApi::class,
         ExperimentalCoroutinesApi::class,
     )
@@ -43,14 +41,14 @@ object Repos {
         Mappers.UserMapper,
     )
 
+    @OptIn(ExperimentalSettingsApi::class)
     object Post : PostRepository by PostRepositoryImpl(
+        Subreddit,
         RemotePostDataSource(),
-        RemoteSubredditDataSourceImpl(),
         LocalPostDataSourceImpl(),
         flowSettings,
         DefaultDispatcher,
         Mappers.PostMapper,
-        Mappers.SubredditMapper,
     )
 
     @OptIn(ExperimentalSettingsApi::class)
@@ -85,6 +83,7 @@ object Repos {
         Mappers.MessageMapper
     )
 
+    @OptIn(ExperimentalSettingsApi::class)
     object Item : ItemRepository by ItemRepositoryImpl(
         RemoteItemDataSourceImpl(),
         LocalItemDataSourceImpl(),

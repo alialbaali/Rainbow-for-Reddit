@@ -8,29 +8,24 @@ import com.rainbow.data.utils.lowercaseName
 import com.rainbow.domain.models.*
 import com.rainbow.domain.models.Post.Type
 import com.rainbow.domain.repository.PostRepository
+import com.rainbow.domain.repository.SubredditRepository
 import com.rainbow.local.LocalPostDataSource
 import com.rainbow.remote.dto.RemotePost
-import com.rainbow.remote.dto.RemoteSubreddit
 import com.rainbow.remote.source.RemotePostDataSource
-import com.rainbow.remote.source.RemoteSubredditDataSource
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalSettingsApi::class)
 internal class PostRepositoryImpl(
+    private val subredditRepository: SubredditRepository,
     private val remotePostDataSource: RemotePostDataSource,
-    private val remoteSubredditDataSource: RemoteSubredditDataSource,
     private val localPostDataSource: LocalPostDataSource,
     private val settings: FlowSettings,
     private val dispatcher: CoroutineDispatcher,
     private val postMapper: Mapper<RemotePost, Post>,
-    private val subredditMapper: Mapper<RemoteSubreddit, Subreddit>,
 ) : PostRepository {
 
     override val posts: Flow<List<Post>>
@@ -348,9 +343,9 @@ internal class PostRepositoryImpl(
         }
     }
 
-    private suspend fun List<Post>.mapWithSubredditImageUrl() = map {
-        val subredditImageUrl = remoteSubredditDataSource.getSubreddit(it.subredditName)
-            .let(subredditMapper::map).imageUrl
-        it.copy(subredditImageUrl = subredditImageUrl)
+    private suspend fun List<Post>.mapWithSubredditImageUrl() = map { post ->
+        val subredditImageUrl = subredditRepository.getSubreddit(post.subredditName)
+            .firstOrNull()?.getOrNull()?.imageUrl
+        post.copy(subredditImageUrl = subredditImageUrl)
     }
 }
