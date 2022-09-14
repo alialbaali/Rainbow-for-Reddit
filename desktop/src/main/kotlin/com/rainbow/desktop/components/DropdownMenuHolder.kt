@@ -60,8 +60,8 @@ inline fun <reified T : Enum<T>> DropdownMenuHolder(
                         .fillMaxWidth()
                         .wrapContentHeight()
                 ) {
-                    (value as? Sorting)?.icon?.let { icon ->
-                        Icon(icon, value.name)
+                    if (value is Sorting) {
+                        Icon(value.icon, value.name)
                     }
                     Spacer(Modifier.width(16.dp))
                     Text(text = value.name, Modifier.fillMaxWidth())
