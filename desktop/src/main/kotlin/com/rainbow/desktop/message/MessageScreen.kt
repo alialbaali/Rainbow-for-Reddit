@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.ui.dpDimensions
+import com.rainbow.desktop.utils.DefaultContentPadding
 import com.rainbow.desktop.utils.getOrNull
 
 @Composable
@@ -31,7 +32,7 @@ fun MessageScreen(
         modifier
             .verticalScroll(rememberScrollState())
             .fillMaxHeight()
-            .padding(vertical = MaterialTheme.dpDimensions.medium),
+            .padding(DefaultContentPadding()),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         if (message != null) {

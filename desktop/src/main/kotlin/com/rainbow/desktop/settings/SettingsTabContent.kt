@@ -3,14 +3,25 @@ package com.rainbow.desktop.settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.rainbow.desktop.utils.defaultPadding
-import com.rainbow.desktop.utils.defaultSurfaceShape
+import com.rainbow.desktop.ui.RainbowTheme
 
 @Composable
 fun SettingsTabContent(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
-) = Column(modifier.defaultSurfaceShape().defaultPadding(), Arrangement.spacedBy(16.dp), content = content)
+) {
+    Surface(
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        Column(
+            modifier = modifier.padding(RainbowTheme.dpDimensions.medium),
+            verticalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium),
+            content = content,
+        )
+    }
+}

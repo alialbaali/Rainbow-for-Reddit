@@ -79,7 +79,7 @@ internal fun Content(
                 ) {
                     val mainScreenModifier = remember(mainScreen) {
                         when (mainScreen) {
-                            MainScreen.SidebarItem.Subreddits -> Modifier.fillMaxSize()
+                            MainScreen.SidebarItem.Subreddits, MainScreen.SidebarItem.Settings -> Modifier.fillMaxSize()
                             else -> Modifier.weight(1F)
                         }
                     }

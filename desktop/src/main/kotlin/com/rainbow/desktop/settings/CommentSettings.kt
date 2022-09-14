@@ -1,5 +1,6 @@
 package com.rainbow.desktop.settings
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -20,7 +21,11 @@ fun CommentSettings(modifier: Modifier = Modifier) {
 private fun CommentSortingOption(modifier: Modifier = Modifier) {
     val commentSorting by SettingsStateHolder.postCommentSorting.collectAsState()
     SettingsOption(RainbowStrings.DefaultCommentSorting, modifier) {
-        DropdownMenuHolder(commentSorting, SettingsStateHolder::setPostCommentSorting)
+        DropdownMenuHolder(
+            commentSorting,
+            SettingsStateHolder::setPostCommentSorting,
+            containerColor = MaterialTheme.colorScheme.background
+        )
     }
 }
 

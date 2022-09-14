@@ -27,7 +27,7 @@ import kotlinx.datetime.toLocalDateTime
 typealias RainbowIcons = Icons.Rounded
 
 @Composable
-fun LazyListContentPadding() = PaddingValues(vertical = RainbowTheme.dpDimensions.medium)
+fun DefaultContentPadding() = PaddingValues(vertical = RainbowTheme.dpDimensions.medium)
 
 val ImageBorderSize = 6.dp
 

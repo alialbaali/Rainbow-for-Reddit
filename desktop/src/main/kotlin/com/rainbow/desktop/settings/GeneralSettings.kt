@@ -1,17 +1,22 @@
 package com.rainbow.desktop.settings
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.rainbow.desktop.components.LogoutButton
+import com.rainbow.desktop.components.DropdownMenuHolder
+import com.rainbow.desktop.components.RainbowButton
+import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.defaultPadding
-import com.rainbow.desktop.components.DropdownMenuHolder
 
 @Composable
 fun GeneralSettings(modifier: Modifier = Modifier) {
@@ -38,16 +43,27 @@ private fun TextSelectionOption(modifier: Modifier = Modifier) {
 private fun ThemeOption(modifier: Modifier = Modifier) {
     val theme by SettingsStateHolder.theme.collectAsState()
     SettingsOption(RainbowStrings.Theme, modifier) {
-        DropdownMenuHolder(theme, SettingsStateHolder::setTheme)
+        DropdownMenuHolder(
+            theme,
+            SettingsStateHolder::setTheme,
+            containerColor = MaterialTheme.colorScheme.background
+        )
     }
 }
 
 @Composable
 private fun LogoutButtonWithDialog(modifier: Modifier = Modifier) {
     var isDialogShown by remember { mutableStateOf(false) }
-    LogoutButton(onClick = { isDialogShown = true })
-    if (isDialogShown)
+    RainbowButton(
+        onClick = { isDialogShown = true },
+        containerColor = MaterialTheme.colorScheme.error,
+        contentColor = MaterialTheme.colorScheme.onError,
+    ) {
+        Text(RainbowStrings.Logout, style = MaterialTheme.typography.titleMedium)
+    }
+    if (isDialogShown) {
         LogoutDialog(onCloseRequest = { isDialogShown = false })
+    }
 }
 
 @Composable
@@ -63,7 +79,7 @@ private fun LogoutDialog(
         Column(
             modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
+                .background(MaterialTheme.colorScheme.surface),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
 
@@ -71,27 +87,24 @@ private fun LogoutDialog(
                 RainbowStrings.LogoutConfirmation,
                 Modifier.defaultPadding(),
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.headlineLarge,
+                style = MaterialTheme.typography.titleLarge,
             )
 
             Row(
                 Modifier
                     .defaultPadding()
-                    .align(Alignment.End)
+                    .align(Alignment.End),
+                horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium)
             ) {
-                Button(
-                    onClick = { SettingsStateHolder.logoutUser() },
-                    modifier = Modifier
-                        .padding(end = 8.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                RainbowButton(
+                    onClick = SettingsStateHolder::logoutUser,
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError,
                 ) {
                     Text(RainbowStrings.Logout)
                 }
-
-                OutlinedButton(
-                    onClick = onCloseRequest,
-                    modifier = Modifier
-                        .padding(start = 8.dp),
+                RainbowButton(
+                    onCloseRequest,
                 ) {
                     Text(RainbowStrings.Cancel)
                 }
