@@ -10,14 +10,9 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import java.util.*
 
-fun RemoteUserDataSource(
-    rainbowClient: HttpClient = com.rainbow.remote.client.rainbowClient,
-    redditClient: HttpClient = com.rainbow.remote.client.redditClient,
-): RemoteUserDataSource = RemoteUserDataSourceImpl(rainbowClient, redditClient)
-
-private class RemoteUserDataSourceImpl(
-    private val rainbowClient: HttpClient,
-    private val redditClient: HttpClient,
+class RemoteUserDataSourceImpl(
+    private val rainbowClient: HttpClient = com.rainbow.remote.client.rainbowClient,
+    private val redditClient: HttpClient = com.rainbow.remote.client.redditClient,
 ) : RemoteUserDataSource {
 
     override suspend fun loginUser(uuid: UUID): Result<Unit> {

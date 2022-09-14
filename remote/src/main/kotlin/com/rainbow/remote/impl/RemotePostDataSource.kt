@@ -8,9 +8,7 @@ import com.rainbow.remote.source.RemotePostDataSource
 import io.ktor.client.*
 import io.ktor.client.request.*
 
-fun RemotePostDataSource(client: HttpClient = redditClient): RemotePostDataSource = RemotePostDataSourceImpl(client)
-
-private class RemotePostDataSourceImpl(private val client: HttpClient) : RemotePostDataSource {
+class RemotePostDataSourceImpl(private val client: HttpClient = redditClient) : RemotePostDataSource {
 
     override suspend fun getHomePosts(
         postsSorting: String,

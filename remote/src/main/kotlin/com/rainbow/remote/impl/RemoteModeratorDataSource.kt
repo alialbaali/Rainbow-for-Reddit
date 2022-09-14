@@ -8,10 +8,7 @@ import com.rainbow.remote.impl.Endpoint.Moderators
 import com.rainbow.remote.source.RemoteModeratorDataSource
 import io.ktor.client.*
 
-fun RemoteModeratorDataSource(client: HttpClient = redditClient): RemoteModeratorDataSource =
-    RemoteModeratorDataSourceImpl(client)
-
-private class RemoteModeratorDataSourceImpl(private val client: HttpClient) : RemoteModeratorDataSource {
+class RemoteModeratorDataSourceImpl(private val client: HttpClient = redditClient) : RemoteModeratorDataSource {
     override suspend fun getSubredditModerators(subredditName: String): Result<List<RemoteModerator>> {
         return client.get<UserListing<RemoteModerator>>(Moderators.Get(subredditName))
             .mapCatching { it.children }

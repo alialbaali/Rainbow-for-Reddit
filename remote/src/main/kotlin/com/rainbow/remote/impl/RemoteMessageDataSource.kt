@@ -11,10 +11,7 @@ import com.rainbow.remote.toList
 import io.ktor.client.*
 import io.ktor.client.request.*
 
-fun RemoteMessageDataSource(client: HttpClient = redditClient): RemoteMessageDataSource =
-    RemoteMessageDataSourceImpl(client)
-
-private class RemoteMessageDataSourceImpl(private val client: HttpClient) : RemoteMessageDataSource {
+class RemoteMessageDataSourceImpl(private val client: HttpClient = redditClient) : RemoteMessageDataSource {
 
     override suspend fun getInbox(limit: Int, after: String?): List<RemoteMessage> {
         return client.getOrThrow<Listing<RemoteMessage>>(Messages.Inbox) {

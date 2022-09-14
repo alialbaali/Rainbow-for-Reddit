@@ -8,10 +8,7 @@ import com.rainbow.remote.source.RemoteTrophyDataSource
 import io.ktor.client.*
 import kotlinx.serialization.Serializable
 
-fun RemoteTrophyDataSource(client: HttpClient = redditClient): RemoteTrophyDataSource =
-    RemoteTrophyDataSourceImpl(client)
-
-private class RemoteTrophyDataSourceImpl(private val client: HttpClient) : RemoteTrophyDataSource {
+class RemoteTrophyDataSourceImpl(private val client: HttpClient = redditClient) : RemoteTrophyDataSource {
 
     override suspend fun getUserTrophies(userName: String): Result<List<RemoteTrophy>> {
         return client.get<TrophyResponse>(Endpoint.Trophies.User(userName))

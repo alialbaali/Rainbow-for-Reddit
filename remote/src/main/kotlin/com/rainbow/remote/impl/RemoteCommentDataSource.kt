@@ -8,12 +8,9 @@ import com.rainbow.remote.source.RemoteCommentDataSource
 import io.ktor.client.*
 import io.ktor.client.request.*
 
-fun RemoteCommentDataSource(client: HttpClient = redditClient): RemoteCommentDataSource =
-    RemoteCommentDataSourceImpl(client)
-
 private typealias CommentsList = List<Item<Listing<RemoteComment>>>
 
-private class RemoteCommentDataSourceImpl(val client: HttpClient) : RemoteCommentDataSource {
+class RemoteCommentDataSourceImpl(private val client: HttpClient = redditClient) : RemoteCommentDataSource {
 
     override suspend fun getHomeComments(limit: Int, after: String?): List<RemoteComment> {
         return client.getOrThrow<Listing<RemoteComment>>(Comments.Home) {

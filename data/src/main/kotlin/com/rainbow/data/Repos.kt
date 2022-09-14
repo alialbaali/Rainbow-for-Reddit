@@ -34,7 +34,7 @@ object Repos {
 
     @OptIn(ExperimentalSettingsApi::class)
     object User : UserRepository by UserRepositoryImpl(
-        RemoteUserDataSource(),
+        RemoteUserDataSourceImpl(),
         LocalUserDataSourceImpl(),
         flowSettings,
         DefaultDispatcher,
@@ -44,7 +44,7 @@ object Repos {
     @OptIn(ExperimentalSettingsApi::class)
     object Post : PostRepository by PostRepositoryImpl(
         Subreddit,
-        RemotePostDataSource(),
+        RemotePostDataSourceImpl(),
         LocalPostDataSourceImpl(),
         flowSettings,
         DefaultDispatcher,
@@ -54,10 +54,10 @@ object Repos {
     @OptIn(ExperimentalSettingsApi::class)
     object Subreddit : SubredditRepository by SubredditRepositoryImpl(
         RemoteSubredditDataSourceImpl(),
-        RemoteModeratorDataSource(),
+        RemoteModeratorDataSourceImpl(),
         RemoteWikiDataSourceImpl(),
-        RemoteSubredditFlairDataSource(),
-        RemoteRuleDataSource(),
+        RemoteSubredditFlairDataSourceImpl(),
+        RemoteRuleDataSourceImpl(),
         LocalSubredditDataSourceImpl(),
         flowSettings,
         DefaultDispatcher,
@@ -69,7 +69,7 @@ object Repos {
 
     @OptIn(ExperimentalSettingsApi::class)
     object Comment : CommentRepository by CommentRepositoryImpl(
-        RemoteCommentDataSource(),
+        RemoteCommentDataSourceImpl(),
         LocalCommentDataSourceImpl(),
         flowSettings,
         DefaultDispatcher,
@@ -77,7 +77,7 @@ object Repos {
     )
 
     object Message : MessageRepository by MessageRepositoryImpl(
-        RemoteMessageDataSource(),
+        RemoteMessageDataSourceImpl(),
         LocalMessageDataSourceImpl(),
         DefaultDispatcher,
         Mappers.MessageMapper

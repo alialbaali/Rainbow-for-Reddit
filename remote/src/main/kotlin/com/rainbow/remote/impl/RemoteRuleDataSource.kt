@@ -8,9 +8,7 @@ import com.rainbow.remote.plainRequest
 import com.rainbow.remote.source.RemoteRuleDataSource
 import io.ktor.client.*
 
-fun RemoteRuleDataSource(client: HttpClient = redditClient): RemoteRuleDataSource = RemoteRuleDataSourceImpl(client)
-
-private class RemoteRuleDataSourceImpl(private val client: HttpClient) : RemoteRuleDataSource {
+class RemoteRuleDataSourceImpl(private val client: HttpClient = redditClient) : RemoteRuleDataSource {
     @Suppress("UNCHECKED_CAST")
     override suspend fun getSubredditRules(subredditName: String): Result<List<RemoteRule>> {
         return client.plainRequest<RulesResponse>(Rules.Get(subredditName))
