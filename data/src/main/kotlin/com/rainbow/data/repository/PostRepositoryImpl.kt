@@ -180,7 +180,7 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             ).quickMap(postMapper)
-//                .mapWithSubredditImageUrl()
+                .mapWithSubredditImageUrl()
                 .forEach(localPostDataSource::insertHomePost)
         }
     }
