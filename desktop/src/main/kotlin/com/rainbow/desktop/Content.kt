@@ -77,9 +77,10 @@ internal fun Content(
                         .padding(horizontal = MaterialTheme.dpDimensions.medium),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    val mainScreenModifier = remember(mainScreen) {
-                        when (mainScreen) {
-                            MainScreen.SidebarItem.Subreddits, MainScreen.SidebarItem.Settings -> Modifier.fillMaxSize()
+                    val mainScreenModifier = remember(mainScreen, detailsScreen) {
+                        when {
+                            mainScreen is MainScreen.SidebarItem.Subreddits || mainScreen is MainScreen.SidebarItem.Settings -> Modifier.fillMaxSize()
+                            mainScreen is MainScreen.Search && detailsScreen !is DetailsScreen.Post -> Modifier.fillMaxSize()
                             else -> Modifier.weight(1F)
                         }
                     }
