@@ -5,15 +5,13 @@ import com.rainbow.desktop.post.PostsStateHolder
 import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.subreddit.SubredditsStateHolder
 import com.rainbow.desktop.user.UsersStateHolder
+import com.rainbow.desktop.utils.getOrNull
 import com.rainbow.domain.models.*
 import com.rainbow.domain.repository.PostRepository
 import com.rainbow.domain.repository.SubredditRepository
 import com.rainbow.domain.repository.UserRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 class SearchScreenStateHolder private constructor(
     private val searchTerm: String,
@@ -48,13 +46,16 @@ class SearchScreenStateHolder private constructor(
         }
     }
 
+    private val mutableSelectedItemId = MutableStateFlow<String?>(null)
+    val selectedItemId get() = mutableSelectedItemId.asStateFlow()
+
     companion object {
         private val stateHolders = mutableSetOf<SearchScreenStateHolder>()
-        var CurrentInstance : SearchScreenStateHolder? = null
+        var CurrentInstance: SearchScreenStateHolder? = null
             private set
 
         fun getInstance(searchTerm: String): SearchScreenStateHolder {
-            val stateHolder =  stateHolders.find { it.searchTerm == searchTerm }
+            val stateHolder = stateHolders.find { it.searchTerm == searchTerm }
                 ?: SearchScreenStateHolder(searchTerm).also { stateHolders += it }
             CurrentInstance = stateHolder
             return stateHolder
@@ -71,9 +72,21 @@ class SearchScreenStateHolder private constructor(
                 }
             }
             .launchIn(scope)
+
+        scope.launch {
+            postsStateHolder.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { post -> selectItemId(post.id) }
+        }
     }
 
     fun selectTab(tab: SearchTab) {
         mutableSelectedTab.value = tab
+    }
+
+    fun selectItemId(id: String) {
+        mutableSelectedItemId.value = id
     }
 }

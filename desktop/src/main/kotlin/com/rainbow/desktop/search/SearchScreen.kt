@@ -2,10 +2,7 @@ package com.rainbow.desktop.search
 
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.components.RainbowLazyVerticalGrid
 import com.rainbow.desktop.components.ScrollableEnumTabRow
@@ -31,6 +28,7 @@ fun SearchScreen(
     val postsSorting by stateHolder.postsStateHolder.sorting.collectAsState()
     val postsTimeSorting by stateHolder.postsStateHolder.timeSorting.collectAsState()
     val usersState by stateHolder.usersStateHolder.items.collectAsState()
+    val selectedItemId by stateHolder.selectedItemId.collectAsState()
     val appliedModifier = remember(selectedTab) { if (selectedTab == SearchTab.Posts) modifier else Modifier }
     val columnsCount = remember(selectedTab) {
         when (selectedTab) {
@@ -69,7 +67,12 @@ fun SearchScreen(
                 posts(
                     postsState,
                     onNavigateMainScreen,
-                    onNavigateDetailsScreen,
+                    onNavigateDetailsScreen = { detailsScreen ->
+                        if (detailsScreen is DetailsScreen.Post) {
+                            stateHolder.selectItemId(detailsScreen.postId)
+                        }
+                        onNavigateDetailsScreen(detailsScreen)
+                    },
                     {},
                     onShowSnackbar,
                     stateHolder.postsStateHolder::setLastItem,
@@ -84,6 +87,19 @@ fun SearchScreen(
                     stateHolder.usersStateHolder::setLastItem,
                 )
             }
+        }
+    }
+
+    DisposableEffect(selectedTab, selectedItemId) {
+        if (selectedTab == SearchTab.Posts) {
+            selectedItemId?.let { postId ->
+                onNavigateDetailsScreen(DetailsScreen.Post(postId))
+            }
+        } else {
+            onNavigateDetailsScreen(DetailsScreen.None)
+        }
+        onDispose {
+            onNavigateDetailsScreen(DetailsScreen.None)
         }
     }
 }
