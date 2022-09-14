@@ -1,5 +1,6 @@
 package com.rainbow.desktop
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
@@ -7,6 +8,8 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.SaveableStateHolder
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -21,8 +24,8 @@ import com.rainbow.desktop.post.PostScreen
 import com.rainbow.desktop.profile.ProfileScreen
 import com.rainbow.desktop.search.SearchScreen
 import com.rainbow.desktop.settings.SettingsScreen
-import com.rainbow.desktop.subreddit.SubredditsScreen
 import com.rainbow.desktop.subreddit.SubredditScreen
+import com.rainbow.desktop.subreddit.SubredditsScreen
 import com.rainbow.desktop.ui.dpDimensions
 import com.rainbow.desktop.user.UserScreen
 
@@ -41,6 +44,7 @@ internal fun Content(
 ) {
     var snackbarMessage by remember { mutableStateOf<String?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
+    val saveableStateHolder = rememberSaveableStateHolder()
     LaunchedEffect(snackbarMessage) {
         snackbarMessage?.let {
             snackbarHostState.showSnackbar(it)
@@ -73,15 +77,23 @@ internal fun Content(
                         .padding(horizontal = MaterialTheme.dpDimensions.medium),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
+                    val mainScreenModifier = remember(mainScreen) {
+                        when (mainScreen) {
+                            MainScreen.SidebarItem.Subreddits -> Modifier.fillMaxSize()
+                            else -> Modifier.weight(1F)
+                        }
+                    }
                     MainScreenContent(
                         mainScreen,
+                        saveableStateHolder,
                         onNavigateMainScreen,
                         onNavigateDetailsScreen,
                         onShowSnackbar = { snackbarMessage = it },
-                        Modifier.weight(1F),
+                        mainScreenModifier,
                     )
                     DetailsScreenContent(
                         detailsScreen,
+                        saveableStateHolder,
                         onNavigateMainScreen,
                         onShowSnackbar = { snackbarMessage = it },
                         Modifier.weight(1F),
@@ -101,97 +113,110 @@ internal fun Content(
 @Composable
 private fun MainScreenContent(
     mainScreen: MainScreen,
+    saveableStateHolder: SaveableStateHolder,
     onNavigateMainScreen: (MainScreen) -> Unit,
     onNavigateDetailsScreen: (DetailsScreen) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    when (mainScreen) {
-        is MainScreen.SidebarItem -> when (mainScreen) {
-            MainScreen.SidebarItem.Profile -> ProfileScreen(
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                onShowSnackbar,
-                modifier,
-            )
+    Crossfade(mainScreen, modifier) { animatedMainScreen ->
+        saveableStateHolder.SaveableStateProvider(animatedMainScreen) {
+            when (animatedMainScreen) {
+                is MainScreen.SidebarItem -> when (animatedMainScreen) {
+                    MainScreen.SidebarItem.Profile -> ProfileScreen(
+                        onNavigateMainScreen,
+                        onNavigateDetailsScreen,
+                        onShowSnackbar,
+                        Modifier.fillMaxSize(),
+                    )
 
-            MainScreen.SidebarItem.Home -> HomeScreen(
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                onShowSnackbar,
-                modifier,
-            )
+                    MainScreen.SidebarItem.Home -> HomeScreen(
+                        onNavigateMainScreen,
+                        onNavigateDetailsScreen,
+                        onShowSnackbar,
+                        Modifier.fillMaxSize(),
+                    )
 
-            MainScreen.SidebarItem.Subreddits -> SubredditsScreen(
-                onNavigateMainScreen,
-                onShowSnackbar,
-            )
+                    MainScreen.SidebarItem.Subreddits -> SubredditsScreen(
+                        onNavigateMainScreen,
+                        onShowSnackbar,
+                        Modifier.fillMaxSize(),
+                    )
 
-            MainScreen.SidebarItem.Messages -> MessagesScreen(
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                onShowSnackbar,
-                modifier,
-            )
+                    MainScreen.SidebarItem.Messages -> MessagesScreen(
+                        onNavigateMainScreen,
+                        onNavigateDetailsScreen,
+                        onShowSnackbar,
+                        Modifier.fillMaxSize(),
+                    )
 
-            MainScreen.SidebarItem.Settings -> SettingsScreen(Modifier.fillMaxWidth(0.5F))
+                    MainScreen.SidebarItem.Settings -> SettingsScreen(
+                        Modifier.fillMaxSize()
+                    )
+                }
+
+                is MainScreen.Subreddit -> SubredditScreen(
+                    animatedMainScreen.subredditName,
+                    onNavigateMainScreen,
+                    onNavigateDetailsScreen,
+                    onShowSnackbar,
+                    Modifier.fillMaxSize(),
+                )
+
+                is MainScreen.User -> UserScreen(
+                    animatedMainScreen.userName,
+                    onNavigateMainScreen,
+                    onNavigateDetailsScreen,
+                    onShowSnackbar,
+                    Modifier.fillMaxSize(),
+                )
+
+                is MainScreen.Search -> SearchScreen(
+                    animatedMainScreen.searchTerm,
+                    onNavigateMainScreen,
+                    onNavigateDetailsScreen,
+                    onShowSnackbar,
+                    Modifier.fillMaxSize(),
+                )
+            }
         }
-
-        is MainScreen.Subreddit -> SubredditScreen(
-            mainScreen.subredditName,
-            onNavigateMainScreen,
-            onNavigateDetailsScreen,
-            onShowSnackbar,
-            modifier,
-        )
-
-        is MainScreen.User -> UserScreen(
-            mainScreen.userName,
-            onNavigateMainScreen,
-            onNavigateDetailsScreen,
-            onShowSnackbar,
-            modifier,
-        )
-
-        is MainScreen.Search -> SearchScreen(
-            mainScreen.searchTerm,
-            onNavigateMainScreen,
-            onNavigateDetailsScreen,
-            onShowSnackbar,
-            modifier,
-        )
     }
 }
 
 @Composable
 private fun DetailsScreenContent(
     detailsScreen: DetailsScreen,
+    saveableStateHolder: SaveableStateHolder,
     onNavigateMainScreen: (MainScreen) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    when (detailsScreen) {
-        is DetailsScreen.None -> {
-            Box(modifier) {
-                RainbowProgressIndicator()
+    Crossfade(detailsScreen, modifier) { animatedDetailsScreen ->
+        saveableStateHolder.SaveableStateProvider(animatedDetailsScreen) {
+            when (animatedDetailsScreen) {
+                is DetailsScreen.None -> {
+                    Box(Modifier.fillMaxSize()) {
+                        RainbowProgressIndicator()
+                    }
+                }
+
+                is DetailsScreen.Post -> {
+                    PostScreen(
+                        animatedDetailsScreen.postId,
+                        onNavigateMainScreen,
+                        onShowSnackbar,
+                        Modifier.fillMaxSize(),
+                    )
+                }
+
+                is DetailsScreen.Message -> {
+                    MessageScreen(
+                        animatedDetailsScreen.messageId,
+                        onNavigateMainScreen,
+                        Modifier.fillMaxSize(),
+                    )
+                }
             }
-        }
-
-        is DetailsScreen.Post -> {
-            PostScreen(
-                detailsScreen.postId,
-                onNavigateMainScreen,
-                onShowSnackbar,
-                modifier,
-            )
-        }
-
-        is DetailsScreen.Message -> {
-            MessageScreen(
-                detailsScreen.messageId,
-                onNavigateMainScreen,
-                modifier,
-            )
         }
     }
 }
