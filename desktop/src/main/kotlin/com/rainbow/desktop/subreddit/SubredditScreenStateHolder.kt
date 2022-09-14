@@ -4,6 +4,7 @@ import com.rainbow.data.Repos
 import com.rainbow.desktop.post.PostsStateHolder
 import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.utils.UIState
+import com.rainbow.desktop.utils.getOrNull
 import com.rainbow.desktop.utils.toUIState
 import com.rainbow.domain.models.*
 import com.rainbow.domain.repository.PostRepository
@@ -44,6 +45,9 @@ class SubredditScreenStateHolder private constructor(
         ): Result<Unit> = postRepository.getSubredditPosts(subredditName, sorting, timeSorting, lastItem?.id)
     }
 
+    private val mutableSelectedItemId = MutableStateFlow<String?>(null)
+    val selectedItemId get() = mutableSelectedItemId.asStateFlow()
+
     init {
         selectedTab
             .onEach {
@@ -56,6 +60,14 @@ class SubredditScreenStateHolder private constructor(
                 }
             }
             .launchIn(scope)
+
+        scope.launch {
+            postsStateHolder.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { post -> selectItemId(post.id) }
+        }
     }
 
     companion object {
@@ -88,5 +100,9 @@ class SubredditScreenStateHolder private constructor(
     fun loadModerators() = scope.launch {
         mutableModerators.value = UIState.Loading()
         mutableModerators.value = subredditRepository.getSubredditModerators(subredditName).toUIState()
+    }
+
+    fun selectItemId(id: String) {
+        mutableSelectedItemId.value = id
     }
 }

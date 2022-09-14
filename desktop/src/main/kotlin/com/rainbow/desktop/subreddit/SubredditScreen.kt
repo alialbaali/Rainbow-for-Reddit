@@ -40,16 +40,7 @@ fun SubredditScreen(
     val wikiState by stateHolder.wiki.collectAsState()
     val postSorting by stateHolder.postsStateHolder.sorting.collectAsState()
     val timeSorting by stateHolder.postsStateHolder.timeSorting.collectAsState()
-
-    DisposableEffect(postsState.getOrDefault(emptyList()).isEmpty()) {
-        val post = postsState.getOrNull()?.firstOrNull()
-        if (post != null) {
-            onNavigateDetailsScreen(DetailsScreen.Post(post.id))
-        }
-        onDispose {
-            onNavigateDetailsScreen(DetailsScreen.None)
-        }
-    }
+    val selectedItemId by stateHolder.selectedItemId.collectAsState()
 
     RainbowLazyColumn(modifier) {
         subredditState.fold(
@@ -87,7 +78,12 @@ fun SubredditScreen(
                     SubredditTab.Posts -> posts(
                         postsState,
                         onNavigateMainScreen,
-                        onNavigateDetailsScreen,
+                        onNavigateDetailsScreen = { detailsScreen ->
+                            if (detailsScreen is DetailsScreen.Post) {
+                                stateHolder.selectItemId(detailsScreen.postId)
+                            }
+                            onNavigateDetailsScreen(detailsScreen)
+                        },
                         {},
                         onShowSnackbar,
                         stateHolder.postsStateHolder::setLastItem,
@@ -104,6 +100,19 @@ fun SubredditScreen(
                 }
             }
         )
+    }
+
+    DisposableEffect(selectedTab, selectedItemId) {
+        if (selectedTab == SubredditTab.Posts) {
+            selectedItemId?.let { postId ->
+                onNavigateDetailsScreen(DetailsScreen.Post(postId))
+            }
+        } else {
+            onNavigateDetailsScreen(DetailsScreen.None)
+        }
+        onDispose {
+            onNavigateDetailsScreen(DetailsScreen.None)
+        }
     }
 }
 
