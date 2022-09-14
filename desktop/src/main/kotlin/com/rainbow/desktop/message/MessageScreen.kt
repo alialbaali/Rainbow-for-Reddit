@@ -31,7 +31,7 @@ fun MessageScreen(
         modifier
             .verticalScroll(rememberScrollState())
             .fillMaxHeight()
-            .padding(vertical = MaterialTheme.dpDimensions.extraLarge),
+            .padding(vertical = MaterialTheme.dpDimensions.medium),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         if (message != null) {
