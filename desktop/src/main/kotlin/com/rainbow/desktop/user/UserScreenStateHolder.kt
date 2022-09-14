@@ -6,6 +6,7 @@ import com.rainbow.desktop.item.ItemsStateHolder
 import com.rainbow.desktop.post.PostsStateHolder
 import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.utils.UIState
+import com.rainbow.desktop.utils.getOrNull
 import com.rainbow.desktop.utils.toUIState
 import com.rainbow.domain.models.*
 import com.rainbow.domain.repository.CommentRepository
@@ -13,6 +14,7 @@ import com.rainbow.domain.repository.ItemRepository
 import com.rainbow.domain.repository.PostRepository
 import com.rainbow.domain.repository.UserRepository
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 class UserScreenStateHolder private constructor(
     private val userName: String,
@@ -61,6 +63,9 @@ class UserScreenStateHolder private constructor(
         ): Result<Unit> = commentRepository.getUserComments(userName, sorting, timeSorting, lastItem?.id)
     }
 
+    private val mutableSelectedItemIds = MutableStateFlow(emptyMap<UserTab, String>())
+    val selectedItemIds get() = mutableSelectedItemIds.asStateFlow()
+
     init {
         selectedTab
             .onEach {
@@ -71,6 +76,30 @@ class UserScreenStateHolder private constructor(
                 }
             }
             .launchIn(scope)
+
+        scope.launch {
+            itemsStateHolder.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { item -> selectItemId(UserTab.Overview, item.postId) }
+        }
+
+        scope.launch {
+            postsStateHolder.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { post -> selectItemId(UserTab.Submitted, post.id) }
+        }
+
+        scope.launch {
+            commentsStateHolder.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { comment -> selectItemId(UserTab.Comments, comment.postId) }
+        }
     }
 
     companion object {
@@ -88,5 +117,9 @@ class UserScreenStateHolder private constructor(
 
     fun selectTab(tab: UserTab) {
         mutableSelectedTab.value = tab
+    }
+
+    fun selectItemId(tab: UserTab, id: String) {
+        mutableSelectedItemIds.value += tab to id
     }
 }

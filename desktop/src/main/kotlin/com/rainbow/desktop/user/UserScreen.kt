@@ -13,8 +13,6 @@ import com.rainbow.desktop.post.SortingItem
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.profile.Header
 import com.rainbow.desktop.utils.fold
-import com.rainbow.desktop.utils.getOrDefault
-import com.rainbow.desktop.utils.getOrNull
 
 @Composable
 fun UserScreen(
@@ -36,36 +34,7 @@ fun UserScreen(
     val comments by stateHolder.commentsStateHolder.items.collectAsState()
     val commentsSorting by stateHolder.commentsStateHolder.sorting.collectAsState()
     val commentsTimeSorting by stateHolder.commentsStateHolder.timeSorting.collectAsState()
-
-    DisposableEffect(items.getOrDefault(emptyList()).isEmpty()) {
-        val item = items.getOrNull()?.firstOrNull()
-        if (item != null) {
-            onNavigateDetailsScreen(DetailsScreen.Post(item.postId))
-        }
-        onDispose {
-            onNavigateDetailsScreen(DetailsScreen.None)
-        }
-    }
-
-    DisposableEffect(posts.getOrDefault(emptyList()).isEmpty()) {
-        val post = posts.getOrNull()?.firstOrNull()
-        if (post != null) {
-            onNavigateDetailsScreen(DetailsScreen.Post(post.id))
-        }
-        onDispose {
-            onNavigateDetailsScreen(DetailsScreen.None)
-        }
-    }
-
-    DisposableEffect(comments.getOrDefault(emptyList()).isEmpty()) {
-        val comment = comments.getOrNull()?.firstOrNull()
-        if (comment != null) {
-            onNavigateDetailsScreen(DetailsScreen.Post(comment.postId))
-        }
-        onDispose {
-            onNavigateDetailsScreen(DetailsScreen.None)
-        }
-    }
+    val selectedItemIds by stateHolder.selectedItemIds.collectAsState()
 
     RainbowLazyColumn(modifier) {
         userState.fold(
@@ -103,7 +72,12 @@ fun UserScreen(
                 items(
                     items,
                     onNavigateMainScreen,
-                    onNavigateDetailsScreen,
+                    onNavigateDetailsScreen = { detailsScreen ->
+                        if (detailsScreen is DetailsScreen.Post) {
+                            stateHolder.selectItemId(UserTab.Overview, detailsScreen.postId)
+                        }
+                        onNavigateDetailsScreen(detailsScreen)
+                    },
                     onAwardsClick = {},
                     onShowSnackbar,
                     stateHolder.itemsStateHolder::setLastItem,
@@ -123,7 +97,12 @@ fun UserScreen(
                 posts(
                     posts,
                     onNavigateMainScreen,
-                    onNavigateDetailsScreen,
+                    onNavigateDetailsScreen = { detailsScreen ->
+                        if (detailsScreen is DetailsScreen.Post) {
+                            stateHolder.selectItemId(UserTab.Submitted, detailsScreen.postId)
+                        }
+                        onNavigateDetailsScreen(detailsScreen)
+                    },
                     onAwardsClick = {},
                     onShowSnackbar,
                     stateHolder.postsStateHolder::setLastItem,
@@ -143,7 +122,12 @@ fun UserScreen(
                 comments(
                     comments,
                     onNavigateMainScreen,
-                    onNavigateDetailsScreen,
+                    onNavigateDetailsScreen = { detailsScreen ->
+                        if (detailsScreen is DetailsScreen.Post) {
+                            stateHolder.selectItemId(UserTab.Comments, detailsScreen.postId)
+                        }
+                        onNavigateDetailsScreen(detailsScreen)
+                    },
                     stateHolder.commentsStateHolder::setLastItem,
                 )
             }
@@ -151,6 +135,15 @@ fun UserScreen(
 
         if (userState.isLoading) {
             item { RainbowProgressIndicator() }
+        }
+    }
+
+    DisposableEffect(selectedTab, selectedItemIds) {
+        selectedItemIds[selectedTab]?.let { postId ->
+            onNavigateDetailsScreen(DetailsScreen.Post(postId))
+        }
+        onDispose {
+            onNavigateDetailsScreen(DetailsScreen.None)
         }
     }
 }
