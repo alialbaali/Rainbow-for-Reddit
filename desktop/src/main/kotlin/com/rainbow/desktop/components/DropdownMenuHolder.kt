@@ -1,16 +1,17 @@
 package com.rainbow.desktop.components
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.icons.rounded.ExpandMore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpOffset
@@ -44,27 +45,34 @@ inline fun <reified T : Enum<T>> DropdownMenuHolder(
             Icon(RainbowIcons.ExpandMore, contentDescription = value.name, Modifier.rotate(iconRotation))
         }
 
+        val containerColor = MaterialTheme.colorScheme.background
+
         DropdownMenu(
             isMenuVisible,
             onDismissRequest = { isMenuVisible = false },
-            modifier = Modifier.clip(MaterialTheme.shapes.medium),
+            modifier = Modifier.background(containerColor),
             offset = DpOffset(0.dp, 16.dp)
         ) {
             values.forEach { value ->
-                DropdownMenuItem(
-                    onClick = {
-                        onValueUpdate(value)
-                        isMenuVisible = false
-                    },
-                    Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                ) {
-                    if (value is Sorting) {
-                        Icon(value.icon, value.name)
+                Surface(color = containerColor) {
+                    DropdownMenuItem(
+                        onClick = {
+                            onValueUpdate(value)
+                            isMenuVisible = false
+                        },
+                        Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                    ) {
+                        if (value is Sorting) {
+                            Icon(value.icon, value.name)
+                        }
+                        Spacer(Modifier.width(16.dp))
+                        Text(
+                            text = value.name,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
                     }
-                    Spacer(Modifier.width(16.dp))
-                    Text(text = value.name, Modifier.fillMaxWidth())
                 }
             }
         }
