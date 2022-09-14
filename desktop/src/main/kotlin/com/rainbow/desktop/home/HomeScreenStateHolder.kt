@@ -4,16 +4,15 @@ import com.rainbow.data.Repos
 import com.rainbow.desktop.post.PostsStateHolder
 import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.utils.UIState
+import com.rainbow.desktop.utils.getOrNull
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.HomePostSorting
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.TimeSorting
 import com.rainbow.domain.repository.CommentRepository
 import com.rainbow.domain.repository.PostRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 class HomeScreenStateHolder private constructor(
     private val postRepository: PostRepository = Repos.Post,
@@ -40,6 +39,9 @@ class HomeScreenStateHolder private constructor(
         }
     }
 
+    private val mutableSelectedItemIds = MutableStateFlow(emptyMap<HomeTab, String>())
+    val selectedItemIds get() = mutableSelectedItemIds.asStateFlow()
+
     init {
         selectedTab
             .onEach {
@@ -49,6 +51,22 @@ class HomeScreenStateHolder private constructor(
                 }
             }
             .launchIn(scope)
+
+        scope.launch {
+            postsStateHolder.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { post -> selectItemId(HomeTab.Posts, post.id) }
+        }
+
+        scope.launch {
+            commentsStateHolder.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { comment -> selectItemId(HomeTab.Comments, comment.postId) }
+        }
     }
 
     fun selectTab(tab: HomeTab) {
@@ -57,6 +75,10 @@ class HomeScreenStateHolder private constructor(
 
     companion object {
         val Instance = HomeScreenStateHolder()
+    }
+
+    fun selectItemId(tab: HomeTab, id: String) {
+        mutableSelectedItemIds.value += tab to id
     }
 
 }

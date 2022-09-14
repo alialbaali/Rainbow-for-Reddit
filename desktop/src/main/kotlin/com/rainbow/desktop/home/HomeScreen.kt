@@ -1,5 +1,6 @@
 package com.rainbow.desktop.home
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.comment.comments
@@ -9,9 +10,8 @@ import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.SortingItem
 import com.rainbow.desktop.post.posts
-import com.rainbow.desktop.utils.getOrDefault
-import com.rainbow.desktop.utils.getOrNull
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     onNavigateMainScreen: (MainScreen) -> Unit,
@@ -25,50 +25,35 @@ fun HomeScreen(
     val timeSorting by stateHolder.postsStateHolder.timeSorting.collectAsState()
     val comments by stateHolder.commentsStateHolder.items.collectAsState()
     val selectedTab by stateHolder.selectedTab.collectAsState()
-    DisposableEffect(posts.getOrDefault(emptyList()).isEmpty()) {
-        val post = posts.getOrNull()?.firstOrNull()
-        if (post != null) {
-            onNavigateDetailsScreen(DetailsScreen.Post(post.id))
-        }
-        onDispose {
-            onNavigateDetailsScreen(DetailsScreen.None)
-        }
-    }
-    DisposableEffect(comments.isLoading) {
-        val comment = comments.getOrNull()?.firstOrNull()
-        if (comment != null) {
-            onNavigateDetailsScreen(DetailsScreen.Post(comment.postId))
-        }
-        onDispose {
-            onNavigateDetailsScreen(DetailsScreen.None)
-        }
-    }
+    val selectedItemIds by stateHolder.selectedItemIds.collectAsState()
     RainbowLazyColumn(modifier) {
-
-        item {
+        stickyHeader {
             EnumTabRow(
                 selectedTab,
                 onTabClick = { stateHolder.selectTab(it) }
             )
         }
 
-        if (selectedTab == HomeTab.Posts) {
-            item {
-                SortingItem(
-                    postSorting,
-                    timeSorting,
-                    stateHolder.postsStateHolder::setSorting,
-                    stateHolder.postsStateHolder::setTimeSorting,
-                )
-            }
-        }
-
         when (selectedTab) {
             HomeTab.Posts -> {
+                item {
+                    SortingItem(
+                        postSorting,
+                        timeSorting,
+                        stateHolder.postsStateHolder::setSorting,
+                        stateHolder.postsStateHolder::setTimeSorting,
+                    )
+                }
+
                 posts(
                     posts,
                     onNavigateMainScreen,
-                    onNavigateDetailsScreen,
+                    onNavigateDetailsScreen = { detailsScreen ->
+                        if (detailsScreen is DetailsScreen.Post) {
+                            stateHolder.selectItemId(HomeTab.Posts, detailsScreen.postId)
+                        }
+                        onNavigateDetailsScreen(detailsScreen)
+                    },
                     {},
                     onShowSnackbar,
                     stateHolder.postsStateHolder::setLastItem,
@@ -79,10 +64,24 @@ fun HomeScreen(
                 comments(
                     comments,
                     onNavigateMainScreen,
-                    onNavigateDetailsScreen,
+                    onNavigateDetailsScreen = { detailsScreen ->
+                        if (detailsScreen is DetailsScreen.Post) {
+                            stateHolder.selectItemId(HomeTab.Comments, detailsScreen.postId)
+                        }
+                        onNavigateDetailsScreen(detailsScreen)
+                    },
                     stateHolder.commentsStateHolder::setLastItem,
                 )
             }
+        }
+    }
+
+    DisposableEffect(selectedTab, selectedItemIds) {
+        selectedItemIds[selectedTab]?.let { postId ->
+            onNavigateDetailsScreen(DetailsScreen.Post(postId))
+        }
+        onDispose {
+            onNavigateDetailsScreen(DetailsScreen.None)
         }
     }
 }
