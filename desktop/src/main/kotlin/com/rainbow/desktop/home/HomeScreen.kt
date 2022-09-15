@@ -81,7 +81,7 @@ fun HomeScreen(
             onNavigateDetailsScreen(DetailsScreen.Post(postId))
         }
         onDispose {
-            onNavigateDetailsScreen(DetailsScreen.None)
+//            onNavigateDetailsScreen(DetailsScreen.None)
         }
     }
 }
