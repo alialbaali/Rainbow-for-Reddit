@@ -1,7 +1,7 @@
 package com.rainbow.desktop.comment
 
-import com.rainbow.desktop.state.StateHolder
 import com.rainbow.data.Repos
+import com.rainbow.desktop.state.StateHolder
 import com.rainbow.domain.models.Comment
 import kotlinx.coroutines.launch
 

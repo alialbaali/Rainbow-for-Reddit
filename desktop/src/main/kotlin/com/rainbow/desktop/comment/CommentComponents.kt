@@ -61,15 +61,15 @@ fun CommentInfo(
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
         UserName(comment.userName, onUserNameClick)
         Dot()
+        if (comment.flair.types.isNotEmpty()) {
+            Dot()
+            FlairItem(comment.flair, FlairType.User)
+        }
         if (isSubredditNameEnabled) {
             SubredditName(comment.subredditName, onSubredditNameClick)
             Dot()
         }
         CreationDate(comment.creationDate)
-        if (comment.flair.types.isNotEmpty()) {
-            Dot()
-            FlairItem(comment.flair)
-        }
         if (comment.awards.isNotEmpty()) {
             Dot()
             ItemAwards(comment.awards, {})

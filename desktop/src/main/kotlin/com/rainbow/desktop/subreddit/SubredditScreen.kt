@@ -249,7 +249,7 @@ private fun FlairButton(
                     handler.hideMenu()
                 },
             ) {
-                FlairItem(flair.first)
+                FlairItem(flair.first, FlairType.User)
             }
         }
 

@@ -10,6 +10,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.rainbow.desktop.components.FlairItem
+import com.rainbow.desktop.components.FlairType
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.settings.SettingsStateHolder
@@ -53,7 +55,7 @@ fun CompactPostItem(
                     onSubredditNameClick = { subredditName -> onNavigateMainScreen(MainScreen.Subreddit(subredditName)) },
                     onAwardsClick,
                 )
-                PostFLairs(post)
+                if (post.flair.types.isNotEmpty()) FlairItem(post.flair, FlairType.Post)
                 PostTitle(
                     title = post.title,
                     isRead = post.isRead,
@@ -88,7 +90,7 @@ fun CompactPostItem(
                             },
                             onAwardsClick,
                         )
-                        PostFLairs(post)
+                        if (post.flair.types.isNotEmpty()) FlairItem(post.flair, FlairType.Post)
                         PostTitle(
                             title = post.title,
                             isRead = post.isRead,

@@ -79,6 +79,10 @@ fun PostInfo(
             SubredditName(post.subredditName, onSubredditNameClick)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 UserName(post.userName, onUserNameClick)
+                if (post.userFlair.types.isNotEmpty()) {
+                    Dot()
+                    FlairItem(post.userFlair, FlairType.User)
+                }
                 Dot()
                 CreationDate(post.creationDate)
                 if (post.isNSFW) {
@@ -90,18 +94,6 @@ fun PostInfo(
                     ItemAwards(post.awards, onAwardsClick)
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun PostFLairs(post: Post, modifier: Modifier = Modifier) {
-    if (post.userFlair.types.isNotEmpty() || post.flair.types.isNotEmpty()) {
-        Row(modifier, Arrangement.spacedBy(RainbowTheme.dpDimensions.large), Alignment.CenterVertically) {
-            if (post.userFlair.types.isNotEmpty())
-                FlairItem(post.userFlair)
-            if (post.flair.types.isNotEmpty())
-                FlairItem(post.flair)
         }
     }
 }

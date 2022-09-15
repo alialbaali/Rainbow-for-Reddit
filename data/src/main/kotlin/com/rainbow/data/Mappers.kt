@@ -80,6 +80,7 @@ internal object Mappers {
                         backgroundColor = linkFlairBackgroundColor,
                         textColor = linkFlairTextColor,
                         richtext = linkFlairRichtext,
+                        text = linkFlairText,
                     )
                 ),
                 userFlair = FlairMapper.map(
@@ -88,6 +89,7 @@ internal object Mappers {
                         backgroundColor = authorFlairBackgroundColor,
                         textColor = authorFlairTextColor,
                         richtext = authorFlairRichtext,
+                        text = authorFlairText,
                     )
                 ),
                 url = permalink!!.toRedditUrl(),
@@ -156,6 +158,7 @@ internal object Mappers {
                             backgroundColor = authorFlairBackgroundColor,
                             textColor = authorFlairTextColor,
                             richtext = authorFlairRichtext,
+                            text = authorFlairText,
                         )
                     ),
                     awards = allAwardings?.quickMap(AwardMapper) ?: emptyList()
@@ -281,7 +284,7 @@ internal object Mappers {
                         Flair.Type.Image(it.url!!)
                     else
                         null
-                } ?: emptyList()
+                } ?: if (text.isNullOrBlank()) emptyList() else listOf(Flair.Type.Text(text.orEmpty()))
             val backgroundColor = backgroundColor.takeIf { !it.isNullOrBlank() } ?: "#FFF5F5F5"
             val textColor = when (textColor) {
                 "light" -> Flair.TextColor.Light
