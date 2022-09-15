@@ -4,13 +4,13 @@ import com.rainbow.remote.dto.RemoteFlair
 
 interface RemoteSubredditFlairDataSource {
 
-    suspend fun getCurrentSubredditFlair(subredditName: String): Result<RemoteFlair>
+    suspend fun getCurrentSubredditFlair(subredditName: String): RemoteFlair
 
-    suspend fun getSubredditFlairs(subredditName: String): Result<List<RemoteFlair>>
+    suspend fun getSubredditFlairs(subredditName: String): List<RemoteFlair>
 
-    suspend fun selectSubredditFlair(subredditName: String, userName: String, flairId: String): Result<Unit>
+    suspend fun selectSubredditFlair(subredditName: String, userName: String, flairId: String)
 
-    suspend fun unSelectSubredditFlair(subredditName: String, userName: String): Result<Unit>
+    suspend fun unSelectSubredditFlair(subredditName: String, userName: String)
 
     suspend fun enableSubredditFlair(subredditName: String): Result<Unit>
 

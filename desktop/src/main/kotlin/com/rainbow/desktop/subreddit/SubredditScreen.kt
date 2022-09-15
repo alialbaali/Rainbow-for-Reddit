@@ -1,17 +1,21 @@
 package com.rainbow.desktop.subreddit
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.Label
 import androidx.compose.material.icons.rounded.Link
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +48,7 @@ fun SubredditScreen(
     val postSorting by stateHolder.postsStateHolder.sorting.collectAsState()
     val timeSorting by stateHolder.postsStateHolder.timeSorting.collectAsState()
     val selectedItemId by stateHolder.selectedItemId.collectAsState()
+    val flairsState by stateHolder.flairs.collectAsState()
 
     RainbowLazyColumn(modifier) {
         subredditState.fold(
@@ -56,7 +61,14 @@ fun SubredditScreen(
             },
             onSuccess = { subreddit ->
                 item {
-                    Header(subreddit, onShowSnackbar, Modifier.padding(bottom = 8.dp))
+                    Header(
+                        subreddit,
+                        flairsState,
+                        stateHolder::selectFlair,
+                        stateHolder::clearFlair,
+                        stateHolder::loadFlairs,
+                        onShowSnackbar,
+                    )
                 }
 
                 item {
@@ -151,6 +163,10 @@ private fun LazyListScope.about(subreddit: Subreddit) {
 @Composable
 private fun Header(
     subreddit: Subreddit,
+    flairsState: UIState<List<Pair<Flair, Boolean>>>,
+    onFlairClick: (Flair) -> Unit,
+    onClearFlairClick: () -> Unit,
+    onLoadFlairs: () -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -181,7 +197,7 @@ private fun Header(
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    SelectFlairButton(subreddit.name, onShowSnackbar)
+                    FlairButton(flairsState, onFlairClick, onClearFlairClick, onLoadFlairs)
                     Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
                     CopyLinkIconButton(subreddit.fullUrl, onShowSnackbar)
                     Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
@@ -194,6 +210,51 @@ private fun Header(
                     SubscribeButton(subreddit, onShowSnackbar)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun FlairButton(
+    flairsState: UIState<List<Pair<Flair, Boolean>>>,
+    onFlairClick: (Flair) -> Unit,
+    onNoneClick: () -> Unit,
+    onLoadFlairs: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val flairs = remember(flairsState) { flairsState.getOrDefault(emptyList()) }
+    val isNoneSelected = remember(flairs) { flairs.none { it.second } }
+    RainbowDropdownMenuHolder(
+        onLoadFlairs,
+        text = { Text(RainbowStrings.Flair) },
+        icon = { Icon(RainbowIcons.Label, RainbowStrings.Flair) },
+        modifier,
+    ) { handler ->
+        if (!flairsState.isLoading) {
+            RainbowDropdownMenuItem(
+                isNoneSelected,
+                onClick = {
+                    onNoneClick()
+                    handler.hideMenu()
+                },
+            ) {
+                Text(RainbowStrings.None, style = MaterialTheme.typography.labelLarge)
+            }
+        }
+        flairs.forEach { flair ->
+            RainbowDropdownMenuItem(
+                flair.second,
+                onClick = {
+                    onFlairClick(flair.first)
+                    handler.hideMenu()
+                },
+            ) {
+                FlairItem(flair.first)
+            }
+        }
+
+        if (flairsState.isLoading) {
+            RainbowProgressIndicator()
         }
     }
 }
@@ -218,104 +279,49 @@ private fun CopyLinkIconButton(
 }
 
 @Composable
-private fun SelectFlairButton(subredditName: String, onShowSnackbar: (String) -> Unit, modifier: Modifier = Modifier) {
-    var isDialogVisible by remember { mutableStateOf(false) }
-    RainbowIconButton(
-        onClick = { isDialogVisible = true },
-        modifier = modifier,
-    ) {
-        Icon(RainbowIcons.Label, RainbowStrings.Flair)
-    }
-    AnimatedVisibility(isDialogVisible) {
-        SelectFlairDialog(subredditName, onCloseRequest = { isDialogVisible = false }, onShowSnackbar)
-    }
-}
-
-@Composable
-private fun SelectFlairDialog(
-    subredditName: String,
-    onCloseRequest: () -> Unit,
-    onShowSnackbar: (String) -> Unit,
-    modifier: Modifier = Modifier,
+private fun SelectableFlairItem(
+    flair: Pair<Flair, Boolean>,
+    onClick: (Flair) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-//    Dialog(onCloseRequest) {
-//        state.composed(onShowSnackbar, modifier) { flairs ->
-//            val scrollState = rememberLazyListState()
-//            var boxPadding by remember { mutableStateOf(0) }
-//            Box(modifier.fillMaxSize()) {
-//                LazyColumn(
-//                    Modifier.padding(bottom = boxPadding.dp),
-//                    state = scrollState,
-//                    verticalArrangement = Arrangement.spacedBy(16.dp),
-//                    contentPadding = PaddingValues(16.dp)
-//                ) {
-//                    items(flairs) { flair ->
-//                        SelectFlairItem(
-//                            flair,
-//                            onClick = { state = state.map { it.map { it.first to (it.first == flair.first) } } })
-//                    }
-//                }
-//
-////                VerticalScrollbar(
-////                    rememberScrollbarAdapter(scrollState),
-////                    modifier = Modifier
-////                        .fillMaxHeight()
-////                        .align(Alignment.CenterEnd)
-////                )
-//
-//                SelectFlairActions(
-//                    onApply = {
-//                        flairs.firstOrNull { it.second }?.let {
-//                            scope.launch {
-//                                Repos.Subreddit.selectFlair(subredditName, it.first.id)
-//                            }
-//                        }
-//                        onCloseRequest()
-//                    },
-//                    onClear = {
-//                        state = state.map { it.map { it.first to false } }
-//                        scope.launch {
-//                            Repos.Subreddit.unselectFlair(subredditName)
-//                        }
-//                        onCloseRequest()
-//                    },
-//                    Modifier
-//                        .align(Alignment.BottomEnd)
-//                        .onSizeChanged { boxPadding = it.height }
-//                )
-//            }
-//        }
-
-//    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SelectFlairItem(flair: Pair<Flair, Boolean>, onClick: (Flair) -> Unit, modifier: Modifier = Modifier) {
     Row(
         modifier
             .fillMaxWidth()
-            .clip(MaterialTheme.shapes.medium)
-            .clickable { onClick(flair.first) },
+            .clip(MaterialTheme.shapes.small)
+            .clickable { onClick(flair.first) }
+            .padding(horizontal = RainbowTheme.dpDimensions.medium)
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(RainbowTheme.dpDimensions.medium),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        RadioButton(flair.second, onClick = null)
-        FlairItem(flair.first)
+        Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
+        if (flair.second) {
+            Icon(RainbowIcons.Done, RainbowStrings.Select)
+        }
     }
 }
 
 @Composable
-private fun SelectFlairActions(onApply: () -> Unit, onClear: () -> Unit, modifier: Modifier = Modifier) {
+private fun FlairsActions(onApply: () -> Unit, onClear: () -> Unit, modifier: Modifier = Modifier) {
     Row(
         modifier
-            .background(MaterialTheme.colorScheme.background)
-            .wrapContentSize(Alignment.BottomEnd),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+            .fillMaxWidth()
+            .shadow(1.dp)
+            .defaultPadding(),
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        OutlinedButton(onClick = onClear) {
+        RainbowButton(onClear) {
             Text(RainbowStrings.Clear)
         }
-        Button(onApply) {
+
+        Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
+
+        RainbowButton(
+            onApply,
+            containerColor = MaterialTheme.colorScheme.primary
+        ) {
             Text(RainbowStrings.Apply)
         }
     }

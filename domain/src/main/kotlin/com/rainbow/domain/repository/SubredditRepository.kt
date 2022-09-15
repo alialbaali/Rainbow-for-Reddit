@@ -9,6 +9,10 @@ interface SubredditRepository {
 
     val searchSubreddits: Flow<List<Subreddit>>
 
+    val flairs: Flow<List<Flair>>
+
+    val currentFlair: Flow<Flair?>
+
     suspend fun getProfileSubreddits(lastSubredditId: String?): Result<Unit>
 
     fun getSubreddit(subredditName: String): Flow<Result<Subreddit>>
@@ -35,9 +39,9 @@ interface SubredditRepository {
 
     suspend fun searchSubreddits(subredditName: String, lastSubredditId: String?): Result<Unit>
 
-    suspend fun getSubredditFlairs(subredditName: String): Result<List<Flair>>
+    suspend fun getSubredditFlairs(subredditName: String): Result<Unit>
 
-    suspend fun getCurrentSubredditFlair(subredditName: String): Result<Flair>
+    suspend fun getCurrentSubredditFlair(subredditName: String): Result<Unit>
 
     suspend fun selectFlair(subredditName: String, flairId: String): Result<Unit>
 

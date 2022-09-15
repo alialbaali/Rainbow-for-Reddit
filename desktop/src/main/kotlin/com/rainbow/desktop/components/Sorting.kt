@@ -15,13 +15,13 @@ fun <T : PostSorting> PostSortingItem(
     modifier: Modifier = Modifier,
 ) {
     val values = remember(currentSorting) { PostSorting.valuesOf(currentSorting) }
-    RainbowMenu(modifier) {
-        values.forEach { sorting ->
-            RainbowMenuItem(
-                text = sorting.name,
-                imageVector = RainbowIcons.Star,
-                onClick = { onSortingUpdate(sorting as T) },
-            )
-        }
-    }
+//    RainbowMenu(modifier) {
+//        values.forEach { sorting ->
+//            RainbowMenuItem(
+//                text = sorting.name,
+//                imageVector = RainbowIcons.Star,
+//                onClick = { onSortingUpdate(sorting as T) },
+//            )
+//        }
+//    }
 }

@@ -4,17 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.domain.models.Flair
 import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
@@ -23,8 +20,8 @@ import io.kamel.image.lazyPainterResource
 fun FlairItem(flair: Flair, modifier: Modifier = Modifier) {
     Row(
         modifier
-            .background(Color(flair.backgroundColor), CircleShape)
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .background(Color(flair.backgroundColor), MaterialTheme.shapes.extraSmall)
+            .padding(horizontal = RainbowTheme.dpDimensions.small, vertical = RainbowTheme.dpDimensions.extraSmall),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         flair.types.forEach { type ->
@@ -47,12 +44,10 @@ private fun TextFlairType(type: Flair.Type.Text, textColor: Flair.TextColor, mod
     Text(
         type.text,
         modifier,
-        fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
         color = when (textColor) {
             Flair.TextColor.Light -> MaterialTheme.colorScheme.background
             Flair.TextColor.Dark -> MaterialTheme.colorScheme.onBackground
         },
-        textAlign = TextAlign.Center
+        style = MaterialTheme.typography.labelLarge
     )
 }

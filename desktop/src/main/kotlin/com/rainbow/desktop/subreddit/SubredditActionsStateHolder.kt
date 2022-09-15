@@ -23,4 +23,12 @@ object SubredditActionsStateHolder : StateHolder() {
         Repos.Subreddit.unFavoriteSubreddit(subreddit.name)
     }
 
+    fun selectFlair(subreddit: Subreddit, flairId: String) = scope.launch {
+        Repos.Subreddit.selectFlair(subreddit.name, flairId)
+    }
+
+    fun unSelectFlair(subreddit: Subreddit) = scope.launch {
+        Repos.Subreddit.unselectFlair(subreddit.name)
+    }
+
 }

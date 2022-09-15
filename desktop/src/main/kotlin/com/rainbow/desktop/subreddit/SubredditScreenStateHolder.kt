@@ -12,7 +12,7 @@ import com.rainbow.domain.repository.SubredditRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class SubredditScreenStateHolder private constructor(
+class SubredditScreenStateHolder constructor(
     private val subredditName: String,
     private val postRepository: PostRepository = Repos.Post,
     private val subredditRepository: SubredditRepository = Repos.Subreddit,
@@ -33,6 +33,9 @@ class SubredditScreenStateHolder private constructor(
 
     private val mutableRules = MutableStateFlow<UIState<List<Rule>>>(UIState.Empty)
     val rules get() = mutableRules.asStateFlow()
+
+    private val mutableFlairs = MutableStateFlow<UIState<List<Pair<Flair, Boolean>>>>(UIState.Empty)
+    val flairs get() = mutableFlairs.asStateFlow()
 
     val postsStateHolder = object : PostsStateHolder<SubredditPostSorting>(
         SubredditPostSorting.Default,
@@ -100,6 +103,41 @@ class SubredditScreenStateHolder private constructor(
     fun loadModerators() = scope.launch {
         mutableModerators.value = UIState.Loading()
         mutableModerators.value = subredditRepository.getSubredditModerators(subredditName).toUIState()
+    }
+
+    fun loadFlairs() = scope.launch {
+        if (flairs.value.isEmpty) {
+            mutableFlairs.value = UIState.Loading()
+            launch {
+                subredditRepository.getCurrentSubredditFlair(subredditName)
+                    .onFailure { mutableFlairs.value = UIState.Failure(exception = it) }
+            }
+            subredditRepository.getSubredditFlairs(subredditName)
+                .fold(
+                    onSuccess = {
+                        subredditRepository.flairs
+                            .combine(subredditRepository.currentFlair) { flairs, currentFlair ->
+                                val selectableFlairs = flairs.map { flair ->
+                                    val isSelected = flair.id == currentFlair?.id
+                                    flair to isSelected
+                                }.sortedByDescending { it.second }
+                                mutableFlairs.value = UIState.Success(selectableFlairs)
+                            }
+                            .launchIn(scope)
+                    },
+                    onFailure = {
+                        mutableFlairs.value = UIState.Failure(exception = it)
+                    }
+                )
+        }
+    }
+
+    fun selectFlair(flair: Flair) = scope.launch {
+        subredditRepository.selectFlair(subredditName, flair.id)
+    }
+
+    fun clearFlair() = scope.launch {
+        subredditRepository.unselectFlair(subredditName)
     }
 
     fun selectItemId(id: String) {

@@ -61,12 +61,14 @@ object Repos {
         RemoteSubredditFlairDataSourceImpl(),
         RemoteRuleDataSourceImpl(),
         LocalSubredditDataSourceImpl(),
+        LocalSubredditFlairDataSourceImpl(),
         flowSettings,
         DefaultDispatcher,
         Mappers.SubredditMapper,
         Mappers.ModeratorMapper,
         Mappers.WikiPageMapper,
         Mappers.RuleMapper,
+        Mappers.FlairMapper,
     )
 
     @OptIn(ExperimentalSettingsApi::class)

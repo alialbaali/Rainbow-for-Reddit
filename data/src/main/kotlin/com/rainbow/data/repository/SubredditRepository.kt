@@ -1,25 +1,20 @@
 package com.rainbow.data.repository
 
 import com.rainbow.data.Mapper
-import com.rainbow.data.Mappers
 import com.rainbow.data.quickMap
 import com.rainbow.data.utils.DefaultLimit
 import com.rainbow.data.utils.SettingsKeys
 import com.rainbow.domain.models.*
+import com.rainbow.domain.models.Rule
 import com.rainbow.domain.repository.SubredditRepository
 import com.rainbow.local.LocalSubredditDataSource
-import com.rainbow.remote.dto.RemoteModerator
-import com.rainbow.remote.dto.RemoteRule
-import com.rainbow.remote.dto.RemoteSubreddit
-import com.rainbow.remote.dto.RemoteWikiPage
+import com.rainbow.local.LocalSubredditFlairDataSource
+import com.rainbow.remote.dto.*
 import com.rainbow.remote.source.*
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalSettingsApi::class)
@@ -30,16 +25,20 @@ internal class SubredditRepositoryImpl(
     private val remoteSubredditFlairDataSource: RemoteSubredditFlairDataSource,
     private val remoteRuleDataSource: RemoteRuleDataSource,
     private val localSubredditDataSource: LocalSubredditDataSource,
+    private val localSubredditFlairDataSource: LocalSubredditFlairDataSource,
     private val settings: FlowSettings,
     private val dispatcher: CoroutineDispatcher,
     private val subredditMapper: Mapper<RemoteSubreddit, Subreddit>,
     private val moderatorMapper: Mapper<RemoteModerator, Moderator>,
     private val wikiPageMapper: Mapper<RemoteWikiPage, WikiPage>,
     private val ruleMapper: Mapper<RemoteRule, Rule>,
+    private val flairMapper: Mapper<RemoteFlair, Flair>,
 ) : SubredditRepository {
 
     override val profileSubreddits: Flow<List<Subreddit>> = localSubredditDataSource.profileSubreddits
     override val searchSubreddits: Flow<List<Subreddit>> = localSubredditDataSource.searchSubreddits
+    override val flairs: Flow<List<Flair>> = localSubredditFlairDataSource.flairs
+    override val currentFlair: Flow<Flair?> = localSubredditFlairDataSource.currentFlair
 
     override suspend fun getProfileSubreddits(lastSubredditId: String?): Result<Unit> = runCatching {
         withContext(dispatcher) {
@@ -125,23 +124,34 @@ internal class SubredditRepositoryImpl(
             }
         }
 
-    override suspend fun getSubredditFlairs(subredditName: String): Result<List<Flair>> = withContext(dispatcher) {
-        remoteSubredditFlairDataSource.getSubredditFlairs(subredditName)
-            .map { it.quickMap(Mappers.FlairMapper) }
+    override suspend fun getSubredditFlairs(subredditName: String): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            localSubredditFlairDataSource.clearFlairs()
+            remoteSubredditFlairDataSource.getSubredditFlairs(subredditName)
+                .quickMap(flairMapper).forEach(localSubredditFlairDataSource::insertFlair)
+        }
     }
 
-    override suspend fun getCurrentSubredditFlair(subredditName: String): Result<Flair> = withContext(dispatcher) {
-        remoteSubredditFlairDataSource.getCurrentSubredditFlair(subredditName)
-            .map { Mappers.FlairMapper.map(it) }
+    override suspend fun getCurrentSubredditFlair(subredditName: String): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            remoteSubredditFlairDataSource.getCurrentSubredditFlair(subredditName)
+                .let(flairMapper::map).also(localSubredditFlairDataSource::setCurrentFlair)
+        }
     }
 
-    override suspend fun selectFlair(subredditName: String, flairId: String): Result<Unit> = withContext(dispatcher) {
-        val userName = settings.getString(SettingsKeys.UserName)
-        remoteSubredditFlairDataSource.selectSubredditFlair(subredditName, userName, flairId)
+    override suspend fun selectFlair(subredditName: String, flairId: String): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            val userName = settings.getString(SettingsKeys.UserName)
+            remoteSubredditFlairDataSource.selectSubredditFlair(subredditName, userName, flairId)
+            flairs.first().firstOrNull { it.id == flairId }.also(localSubredditFlairDataSource::setCurrentFlair)
+        }
     }
 
-    override suspend fun unselectFlair(subredditName: String): Result<Unit> = withContext(dispatcher) {
-        val userName = settings.getString(SettingsKeys.UserName)
-        remoteSubredditFlairDataSource.unSelectSubredditFlair(subredditName, userName)
+    override suspend fun unselectFlair(subredditName: String): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            val userName = settings.getString(SettingsKeys.UserName)
+            remoteSubredditFlairDataSource.unSelectSubredditFlair(subredditName, userName)
+            localSubredditFlairDataSource.setCurrentFlair(null)
+        }
     }
 }

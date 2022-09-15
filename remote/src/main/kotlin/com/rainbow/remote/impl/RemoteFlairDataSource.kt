@@ -5,9 +5,10 @@ import com.rainbow.remote.client.redditClient
 import com.rainbow.remote.dto.CurrentFlair
 import com.rainbow.remote.dto.RemoteFlair
 import com.rainbow.remote.impl.Endpoint.Flairs
-import com.rainbow.remote.plainRequest
+import com.rainbow.remote.requestOrThrow
 import com.rainbow.remote.source.RemoteSubredditFlairDataSource
 import com.rainbow.remote.submitForm
+import com.rainbow.remote.submitFormOrThrow
 import io.ktor.client.*
 import io.ktor.client.request.*
 
@@ -15,24 +16,24 @@ class RemoteSubredditFlairDataSourceImpl(
     private val client: HttpClient = redditClient
 ) : RemoteSubredditFlairDataSource {
 
-    override suspend fun getCurrentSubredditFlair(subredditName: String): Result<RemoteFlair> {
-        return client.submitForm<FlairSelectorResponse>(Flairs.GetCurrentSubredditFlair(subredditName))
-            .mapCatching { it.current.toFlair() }
+    override suspend fun getCurrentSubredditFlair(subredditName: String): RemoteFlair {
+        return client.submitFormOrThrow<FlairSelectorResponse>(Flairs.GetCurrentSubredditFlair(subredditName))
+            .current.toFlair()
     }
 
-    override suspend fun getSubredditFlairs(subredditName: String): Result<List<RemoteFlair>> {
-        return client.plainRequest(Flairs.GetSubredditFlairs(subredditName))
+    override suspend fun getSubredditFlairs(subredditName: String): List<RemoteFlair> {
+        return client.requestOrThrow(Flairs.GetSubredditFlairs(subredditName))
     }
 
-    override suspend fun selectSubredditFlair(subredditName: String, userName: String, flairId: String): Result<Unit> {
-        return client.submitForm(Flairs.SelectSubredditFlair(subredditName)) {
+    override suspend fun selectSubredditFlair(subredditName: String, userName: String, flairId: String) {
+        return client.submitFormOrThrow(Flairs.SelectSubredditFlair(subredditName)) {
             parameter(Keys.FlairId, flairId)
             parameter(Keys.Name, userName)
         }
     }
 
-    override suspend fun unSelectSubredditFlair(subredditName: String, userName: String): Result<Unit> {
-        return client.submitForm(Flairs.UnSelectSubredditFlair(subredditName)) {
+    override suspend fun unSelectSubredditFlair(subredditName: String, userName: String) {
+        return client.submitFormOrThrow(Flairs.UnSelectSubredditFlair(subredditName)) {
             parameter(Keys.Name, userName)
         }
     }
