@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.rainbow.desktop.components.HeaderItem
+import com.rainbow.desktop.components.ItemHeader
 import com.rainbow.domain.models.User
 
 @Composable
@@ -29,7 +29,7 @@ fun UserItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        HeaderItem(user.bannerImageUrl.toString(), user.imageUrl.toString(), user.name)
+        ItemHeader(user.bannerImageUrl.toString(), user.imageUrl.toString(), user.name)
         UserItemName(user.name, Modifier.padding(horizontal = 16.dp))
         user.description?.let {
             UserItemDescription(it)

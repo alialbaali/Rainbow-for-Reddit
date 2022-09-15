@@ -9,63 +9,73 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.desktop.utils.ImageBorderSize
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.defaultPadding
-import com.rainbow.domain.models.User
 import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
 
+private val BannerImageHeight = 200.dp
+private val ProfileImageSize = 200.dp
+private val BannerImageGradientHeight = BannerImageHeight / 2.dp
+private val ImageModifier = Modifier
+    .padding(start = 16.dp)
+    .size(ProfileImageSize)
+    .offset(y = 100.dp)
+    .composed {
+        Modifier
+            .clip(MaterialTheme.shapes.medium)
+            .border(ImageBorderSize, MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
+            .background(MaterialTheme.colorScheme.inverseSurface, MaterialTheme.shapes.medium)
+    }
+private val ScreenHeaderHeight = BannerImageHeight + (ProfileImageSize / 2)
+private val ContentHeight = 100.dp
+val ScreenHeaderContentMinHeight = ScreenHeaderHeight + ContentHeight
+
+private fun BannerImageModifier(brush: Brush) = Modifier
+    .fillMaxWidth()
+    .height(BannerImageHeight)
+    .drawWithContent {
+        drawContent()
+        drawRect(
+            brush,
+            topLeft = Offset(0F, BannerImageGradientHeight)
+        )
+    }
 
 @Composable
-fun ScreenHeaderItem(
+fun ScreenHeader(
     bannerImageUrl: String,
     imageUrl: String,
-    text: String,
+    title: String,
     modifier: Modifier = Modifier,
     imageShape: Shape = CircleShape,
 ) {
     val bannerImageResource = lazyPainterResource(bannerImageUrl, filterQuality = FilterQuality.High)
     val profileImageResource = lazyPainterResource(imageUrl, filterQuality = FilterQuality.High)
-    val bannerImageHeight = 200.dp
-    val profileImageSize = 200.dp
-    val bannerImageGradientHeight = bannerImageHeight / 2.dp
-    val bannerImageGradient = Brush.verticalGradient(
-        0.1F to Color.Transparent,
-        1.0F to Color.Black,
-        startY = bannerImageGradientHeight
-    )
-
-    val BannerImageModifier = Modifier
-        .fillMaxWidth()
-        .height(bannerImageHeight)
-        .drawWithContent {
-            drawContent()
-            drawRect(
-                bannerImageGradient,
-                topLeft = Offset(0F, bannerImageGradientHeight)
-            )
-        }
-
-    val ImageModifier = Modifier
-        .padding(start = 16.dp)
-        .size(profileImageSize)
-        .offset(y = 100.dp)
-        .graphicsLayer {
-            clip = true
-            shape = imageShape
-        }
-        .border(ImageBorderSize, MaterialTheme.colorScheme.surface, imageShape)
-        .background(MaterialTheme.colorScheme.surface, imageShape)
+    val bannerImageGradient = remember(BannerImageGradientHeight) {
+        Brush.verticalGradient(
+            0.1F to Color.Transparent,
+            1.0F to Color.Black,
+            startY = BannerImageGradientHeight
+        )
+    }
 
     Box(
         modifier
@@ -74,15 +84,15 @@ fun ScreenHeaderItem(
     ) {
         KamelImage(
             resource = bannerImageResource,
-            contentDescription = text,
-            modifier = BannerImageModifier,
+            contentDescription = title,
+            modifier = BannerImageModifier(bannerImageGradient),
             contentScale = ContentScale.Crop,
-            onLoading = { RainbowProgressIndicator(BannerImageModifier) },
+            onLoading = { RainbowProgressIndicator(BannerImageModifier(bannerImageGradient)) },
             onFailure = {
                 Image(
                     ColorPainter(MaterialTheme.colorScheme.primary),
-                    text,
-                    BannerImageModifier,
+                    title,
+                    BannerImageModifier(bannerImageGradient),
                 )
             },
             animationSpec = tween(),
@@ -90,16 +100,16 @@ fun ScreenHeaderItem(
 
         KamelImage(
             profileImageResource,
-            contentDescription = text,
+            contentDescription = title,
             modifier = ImageModifier,
             contentScale = ContentScale.Fit,
             onLoading = { RainbowProgressIndicator(ImageModifier) },
-            onFailure = { TextBox(text, 180.sp, ImageModifier.background(MaterialTheme.colorScheme.secondary)) },
+            onFailure = { TextBox(title, 150.sp, ImageModifier) },
             animationSpec = tween(),
         )
 
         Text(
-            text,
+            title,
             style = MaterialTheme.typography.displayMedium,
             color = Color.White,
             modifier = Modifier
@@ -111,11 +121,12 @@ fun ScreenHeaderItem(
 }
 
 @Composable
-fun HeaderDescription(user: User, modifier: Modifier = Modifier) {
+fun ScreenHeaderDescription(description: String?, modifier: Modifier = Modifier) {
     Text(
-        text = user.description ?: RainbowStrings.EmptyDescription,
-        color = MaterialTheme.colorScheme.onBackground,
+        text = description ?: RainbowStrings.EmptyDescription,
+        color = MaterialTheme.colorScheme.onSurface,
         modifier = modifier,
-        style = MaterialTheme.typography.headlineLarge,
+        style = MaterialTheme.typography.titleLarge,
+        overflow = TextOverflow.Ellipsis,
     )
 }

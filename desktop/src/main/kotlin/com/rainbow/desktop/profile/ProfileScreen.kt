@@ -275,9 +275,9 @@ fun Header(user: User, modifier: Modifier = Modifier) {
         shape = MaterialTheme.shapes.medium
     ) {
         Column {
-            ScreenHeaderItem(user.bannerImageUrl.toString(), user.imageUrl.toString(), user.name)
-            HeaderDescription(
-                user,
+            ScreenHeader(user.bannerImageUrl.toString(), user.imageUrl.toString(), user.name)
+            ScreenHeaderDescription(
+                user.description,
                 Modifier
                     .fillMaxWidth()
                     .defaultPadding(start = 232.dp)

@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.desktop.components.*
@@ -153,12 +152,12 @@ private fun Header(
 ) {
     Surface(
         modifier
-            .heightIn(min = 350.dp)
+            .heightIn(min = ScreenHeaderContentMinHeight)
             .fillMaxWidth(),
         shape = MaterialTheme.shapes.medium
     ) {
-        Column {
-            ScreenHeaderItem(
+        Column(Modifier.height(IntrinsicSize.Max)) {
+            ScreenHeader(
                 subreddit.bannerImageUrl.toString(),
                 subreddit.imageUrl.toString(),
                 subreddit.name,
@@ -167,17 +166,11 @@ private fun Header(
 
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
+                    .fillMaxSize()
                     .defaultPadding(start = 232.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text(
-                    text = subreddit.shortDescription,
-                    style = MaterialTheme.typography.titleMedium,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
+                ScreenHeaderDescription(subreddit.shortDescription)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End,

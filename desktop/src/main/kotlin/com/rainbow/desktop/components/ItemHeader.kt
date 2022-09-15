@@ -34,7 +34,7 @@ private val BoxScope.ImageModifier
 
 
 @Composable
-fun HeaderItem(bannerImageUrl: String, imageUrl: String, text: String, modifier: Modifier = Modifier) {
+fun ItemHeader(bannerImageUrl: String, imageUrl: String, text: String, modifier: Modifier = Modifier) {
 
     val bannerPainterResource = lazyPainterResource(bannerImageUrl)
     val painterResource = lazyPainterResource(imageUrl)

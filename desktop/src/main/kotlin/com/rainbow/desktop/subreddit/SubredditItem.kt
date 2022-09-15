@@ -39,7 +39,7 @@ fun SubredditItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        HeaderItem(subreddit.bannerImageUrl.toString(), subreddit.imageUrl.toString(), subreddit.name)
+        ItemHeader(subreddit.bannerImageUrl.toString(), subreddit.imageUrl.toString(), subreddit.name)
         SubredditItemName(subreddit.name, Modifier.padding(horizontal = 16.dp))
         SubredditItemActions(
             subreddit,

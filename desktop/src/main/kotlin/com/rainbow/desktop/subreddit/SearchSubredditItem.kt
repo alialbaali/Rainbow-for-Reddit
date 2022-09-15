@@ -15,7 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rainbow.desktop.components.HeaderItem
+import com.rainbow.desktop.components.ItemHeader
 import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.Subreddit
 
@@ -34,7 +34,7 @@ fun SearchSubredditItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        HeaderItem(subreddit.bannerImageUrl.toString(), subreddit.imageUrl.toString(), subreddit.name)
+        ItemHeader(subreddit.bannerImageUrl.toString(), subreddit.imageUrl.toString(), subreddit.name)
         SubredditItemName(subreddit.name, Modifier.padding(horizontal = 16.dp))
         SubredditItemDescription(subreddit.shortDescription, Modifier.padding(horizontal = 16.dp))
         SubredditInfoItems(subreddit, Modifier.padding(horizontal = 16.dp))

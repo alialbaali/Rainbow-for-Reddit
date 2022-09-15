@@ -66,8 +66,9 @@ fun PostInfo(
             Modifier.subredditIcon(),
             onFailure = {
                 Box(Modifier.subredditIcon(), contentAlignment = Alignment.Center) {
-                    Text(
+                    TextBox(
                         post.subredditName.first().toString().uppercase(),
+                        fontSize = 30.sp,
                         color = MaterialTheme.colorScheme.surface,
                         modifier = Modifier.fillMaxSize(),
                     )
