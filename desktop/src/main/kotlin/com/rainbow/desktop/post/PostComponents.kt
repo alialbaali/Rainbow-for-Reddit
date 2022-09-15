@@ -81,7 +81,7 @@ fun PostInfo(
                 UserName(post.userName, onUserNameClick)
                 if (post.userFlair.types.isNotEmpty()) {
                     Dot()
-                    FlairItem(post.userFlair, FlairType.User)
+                    FlairItem(post.userFlair, FlairStyle.Compact)
                 }
                 Dot()
                 CreationDate(post.creationDate)

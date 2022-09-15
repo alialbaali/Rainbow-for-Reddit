@@ -39,6 +39,7 @@ internal class SubredditRepositoryImpl(
     override val searchSubreddits: Flow<List<Subreddit>> = localSubredditDataSource.searchSubreddits
     override val flairs: Flow<List<Flair>> = localSubredditFlairDataSource.flairs
     override val currentFlair: Flow<Flair?> = localSubredditFlairDataSource.currentFlair
+    override val isFlairsEnabled: Flow<Boolean> = localSubredditFlairDataSource.isFlairsEnabled
 
     override suspend fun getProfileSubreddits(lastSubredditId: String?): Result<Unit> = runCatching {
         withContext(dispatcher) {
@@ -153,5 +154,15 @@ internal class SubredditRepositoryImpl(
             remoteSubredditFlairDataSource.unSelectSubredditFlair(subredditName, userName)
             localSubredditFlairDataSource.setCurrentFlair(null)
         }
+    }
+
+    override suspend fun enableFlairs(subredditName: String): Result<Unit> = runCatching {
+        remoteSubredditFlairDataSource.enableSubredditFlair(subredditName)
+        localSubredditFlairDataSource.enableFlairs()
+    }
+
+    override suspend fun disableFlairs(subredditName: String): Result<Unit> = runCatching {
+        remoteSubredditFlairDataSource.disableSubredditFlair(subredditName)
+        localSubredditFlairDataSource.disableFlairs()
     }
 }

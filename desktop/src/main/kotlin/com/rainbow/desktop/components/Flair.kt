@@ -17,28 +17,28 @@ import com.rainbow.domain.models.Flair
 import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
 
-enum class FlairType {
-    User,
-    Post,
+enum class FlairStyle {
+    Compact,
+    Default,
 }
 
 @Composable
 fun FlairItem(
     flair: Flair,
-    type: FlairType,
+    style: FlairStyle,
     modifier: Modifier = Modifier,
 ) {
-    val horizontalPadding = when (type) {
-        FlairType.User -> RainbowTheme.dpDimensions.extraSmall
-        FlairType.Post -> RainbowTheme.dpDimensions.small
+    val horizontalPadding = when (style) {
+        FlairStyle.Compact -> RainbowTheme.dpDimensions.extraSmall
+        FlairStyle.Default -> RainbowTheme.dpDimensions.small
     }
-    val verticalPadding = when (type) {
-        FlairType.User -> 2.dp
-        FlairType.Post -> RainbowTheme.dpDimensions.extraSmall
+    val verticalPadding = when (style) {
+        FlairStyle.Compact -> 2.dp
+        FlairStyle.Default -> RainbowTheme.dpDimensions.extraSmall
     }
-    val textStyle = when (type) {
-        FlairType.User -> MaterialTheme.typography.labelMedium
-        FlairType.Post -> MaterialTheme.typography.labelLarge
+    val textStyle = when (style) {
+        FlairStyle.Compact -> MaterialTheme.typography.labelMedium
+        FlairStyle.Default -> MaterialTheme.typography.labelLarge
     }
     Row(
         modifier

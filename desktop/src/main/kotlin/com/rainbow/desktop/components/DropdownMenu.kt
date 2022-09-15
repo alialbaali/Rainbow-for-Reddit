@@ -89,6 +89,7 @@ fun RainbowDropdownMenuItem(
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     content: @Composable RowScope.() -> Unit
 ) {
     Row(
@@ -97,7 +98,7 @@ fun RainbowDropdownMenuItem(
             .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = RainbowTheme.dpDimensions.medium)
             .clip(MaterialTheme.shapes.small)
-            .selectable(selected, onClick = onClick)
+            .selectable(selected, enabled, onClick = onClick)
             .background(if (selected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surface)
             .padding(RainbowTheme.dpDimensions.medium),
         horizontalArrangement = Arrangement.SpaceBetween,

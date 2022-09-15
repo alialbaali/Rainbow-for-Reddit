@@ -63,7 +63,7 @@ fun CommentInfo(
         Dot()
         if (comment.flair.types.isNotEmpty()) {
             Dot()
-            FlairItem(comment.flair, FlairType.User)
+            FlairItem(comment.flair, FlairStyle.Compact)
         }
         if (isSubredditNameEnabled) {
             SubredditName(comment.subredditName, onSubredditNameClick)

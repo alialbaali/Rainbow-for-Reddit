@@ -49,6 +49,7 @@ fun SubredditScreen(
     val timeSorting by stateHolder.postsStateHolder.timeSorting.collectAsState()
     val selectedItemId by stateHolder.selectedItemId.collectAsState()
     val flairsState by stateHolder.flairs.collectAsState()
+    val isFlairsEnabled by stateHolder.isFlairsEnabled.collectAsState()
 
     RainbowLazyColumn(modifier) {
         subredditState.fold(
@@ -63,7 +64,11 @@ fun SubredditScreen(
                 item {
                     Header(
                         subreddit,
+                        isFlairsEnabled,
                         flairsState,
+                        onFlairsEnabled = { isEnabled ->
+                            if (isEnabled) stateHolder.enableFlairs() else stateHolder.disableFlairs()
+                        },
                         stateHolder::selectFlair,
                         stateHolder::clearFlair,
                         stateHolder::loadFlairs,
@@ -163,7 +168,9 @@ private fun LazyListScope.about(subreddit: Subreddit) {
 @Composable
 private fun Header(
     subreddit: Subreddit,
+    isFlairsEnabled: Boolean,
     flairsState: UIState<List<Pair<Flair, Boolean>>>,
+    onFlairsEnabled: (Boolean) -> Unit,
     onFlairClick: (Flair) -> Unit,
     onClearFlairClick: () -> Unit,
     onLoadFlairs: () -> Unit,
@@ -197,7 +204,14 @@ private fun Header(
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    FlairButton(flairsState, onFlairClick, onClearFlairClick, onLoadFlairs)
+                    FlairButton(
+                        isFlairsEnabled,
+                        flairsState,
+                        onFlairsEnabled,
+                        onFlairClick,
+                        onClearFlairClick,
+                        onLoadFlairs
+                    )
                     Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
                     CopyLinkIconButton(subreddit.fullUrl, onShowSnackbar)
                     Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
@@ -216,7 +230,9 @@ private fun Header(
 
 @Composable
 private fun FlairButton(
+    isFlairsEnabled: Boolean,
     flairsState: UIState<List<Pair<Flair, Boolean>>>,
+    onFlairsEnabled: (Boolean) -> Unit,
     onFlairClick: (Flair) -> Unit,
     onNoneClick: () -> Unit,
     onLoadFlairs: () -> Unit,
@@ -231,6 +247,10 @@ private fun FlairButton(
         modifier,
     ) { handler ->
         if (!flairsState.isLoading) {
+//            SettingsOption(RainbowStrings.Flairs, Modifier.padding(horizontal = RainbowTheme.dpDimensions.medium)) {
+//                Switch(isFlairsEnabled, onFlairsEnabled)
+//            }
+
             RainbowDropdownMenuItem(
                 isNoneSelected,
                 onClick = {
@@ -241,6 +261,7 @@ private fun FlairButton(
                 Text(RainbowStrings.None, style = MaterialTheme.typography.labelLarge)
             }
         }
+
         flairs.forEach { flair ->
             RainbowDropdownMenuItem(
                 flair.second,
@@ -248,8 +269,9 @@ private fun FlairButton(
                     onFlairClick(flair.first)
                     handler.hideMenu()
                 },
+                enabled = isFlairsEnabled,
             ) {
-                FlairItem(flair.first, FlairType.User)
+                FlairItem(flair.first, FlairStyle.Default)
             }
         }
 

@@ -12,8 +12,8 @@ interface RemoteSubredditFlairDataSource {
 
     suspend fun unSelectSubredditFlair(subredditName: String, userName: String)
 
-    suspend fun enableSubredditFlair(subredditName: String): Result<Unit>
+    suspend fun enableSubredditFlair(subredditName: String)
 
-    suspend fun disableSubredditFlair(subredditName: String): Result<Unit>
+    suspend fun disableSubredditFlair(subredditName: String)
 
 }

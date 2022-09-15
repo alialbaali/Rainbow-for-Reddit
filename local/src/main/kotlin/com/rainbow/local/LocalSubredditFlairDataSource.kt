@@ -9,9 +9,15 @@ interface LocalSubredditFlairDataSource {
 
     val currentFlair: Flow<Flair?>
 
+    val isFlairsEnabled: Flow<Boolean>
+
     fun insertFlair(flair: Flair)
 
     fun setCurrentFlair(flair: Flair?)
+
+    fun enableFlairs()
+
+    fun disableFlairs()
 
     fun clearFlairs()
 

@@ -133,7 +133,7 @@ private fun Post(
             onAwardsClick = {}
         )
 
-        if (post.flair.types.isNotEmpty()) FlairItem(post.flair, FlairType.Post)
+        if (post.flair.types.isNotEmpty()) FlairItem(post.flair, FlairStyle.Default)
 
         PostTitle(
             title = post.title,

@@ -37,6 +37,8 @@ class SubredditScreenStateHolder constructor(
     private val mutableFlairs = MutableStateFlow<UIState<List<Pair<Flair, Boolean>>>>(UIState.Empty)
     val flairs get() = mutableFlairs.asStateFlow()
 
+    val isFlairsEnabled = subredditRepository.isFlairsEnabled.stateIn(scope, SharingStarted.Eagerly, false)
+
     val postsStateHolder = object : PostsStateHolder<SubredditPostSorting>(
         SubredditPostSorting.Default,
         postRepository.subredditPosts,
@@ -138,6 +140,14 @@ class SubredditScreenStateHolder constructor(
 
     fun clearFlair() = scope.launch {
         subredditRepository.unselectFlair(subredditName)
+    }
+
+    fun enableFlairs() = scope.launch{
+        subredditRepository.enableFlairs(subredditName)
+    }
+
+    fun disableFlairs() = scope.launch{
+        subredditRepository.disableFlairs(subredditName)
     }
 
     fun selectItemId(id: String) {

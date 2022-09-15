@@ -7,7 +7,6 @@ import com.rainbow.remote.dto.RemoteFlair
 import com.rainbow.remote.impl.Endpoint.Flairs
 import com.rainbow.remote.requestOrThrow
 import com.rainbow.remote.source.RemoteSubredditFlairDataSource
-import com.rainbow.remote.submitForm
 import com.rainbow.remote.submitFormOrThrow
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -38,14 +37,14 @@ class RemoteSubredditFlairDataSourceImpl(
         }
     }
 
-    override suspend fun enableSubredditFlair(subredditName: String): Result<Unit> {
-        return client.submitForm(Flairs.EnableSubredditFlair(subredditName)) {
+    override suspend fun enableSubredditFlair(subredditName: String) {
+        return client.submitFormOrThrow(Flairs.EnableSubredditFlair(subredditName)) {
             parameter(Keys.isFlairEnabled, true)
         }
     }
 
-    override suspend fun disableSubredditFlair(subredditName: String): Result<Unit> {
-        return client.submitForm(Flairs.DisableSubredditFlair(subredditName)) {
+    override suspend fun disableSubredditFlair(subredditName: String) {
+        return client.submitFormOrThrow(Flairs.DisableSubredditFlair(subredditName)) {
             parameter(Keys.isFlairEnabled, false)
         }
     }

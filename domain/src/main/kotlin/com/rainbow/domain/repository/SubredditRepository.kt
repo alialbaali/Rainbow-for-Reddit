@@ -13,6 +13,8 @@ interface SubredditRepository {
 
     val currentFlair: Flow<Flair?>
 
+    val isFlairsEnabled: Flow<Boolean>
+
     suspend fun getProfileSubreddits(lastSubredditId: String?): Result<Unit>
 
     fun getSubreddit(subredditName: String): Flow<Result<Subreddit>>
@@ -46,5 +48,9 @@ interface SubredditRepository {
     suspend fun selectFlair(subredditName: String, flairId: String): Result<Unit>
 
     suspend fun unselectFlair(subredditName: String): Result<Unit>
+
+    suspend fun enableFlairs(subredditName: String): Result<Unit>
+
+    suspend fun disableFlairs(subredditName: String): Result<Unit>
 
 }
