@@ -66,7 +66,7 @@ internal object Mappers {
                 isSpoiler = spoiler!!,
                 commentsCount = numComments!!.toUInt(),
                 isLocked = locked!!,
-                isSaved = false,
+                isSaved = saved ?: false,
                 isPinned = pinned!!,
                 creationDate = created!!.toLong().toLocalDateTime(),
                 isMine = isSelf!!,

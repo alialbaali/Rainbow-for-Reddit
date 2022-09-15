@@ -160,8 +160,8 @@ data class RemotePost(
 //    val removedByCategory: Any? = null, // null
 //    @SerialName("report_reasons")
 //    val reportReasons: Any? = null, // null
-//    @SerialName("saved")
-//    val saved: Boolean? = null, // false
+    @SerialName("saved")
+    val saved: Boolean? = null, // false
     @SerialName("score")
     val score: Int? = null, // 61791
 //    @SerialName("secure_media")
