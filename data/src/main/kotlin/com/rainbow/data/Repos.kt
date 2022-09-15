@@ -15,6 +15,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 object Repos {
 
     private val DefaultDispatcher = Dispatchers.IO
+    private val LocalItemDataSource = LocalItemDataSourceImpl()
 
     @OptIn(
         ExperimentalSettingsImplementation::class,
@@ -46,6 +47,7 @@ object Repos {
         Subreddit,
         RemotePostDataSourceImpl(),
         LocalPostDataSourceImpl(),
+        LocalItemDataSource,
         flowSettings,
         DefaultDispatcher,
         Mappers.PostMapper,
@@ -71,6 +73,7 @@ object Repos {
     object Comment : CommentRepository by CommentRepositoryImpl(
         RemoteCommentDataSourceImpl(),
         LocalCommentDataSourceImpl(),
+        LocalItemDataSource,
         flowSettings,
         DefaultDispatcher,
         Mappers.CommentMapper,
@@ -86,7 +89,7 @@ object Repos {
     @OptIn(ExperimentalSettingsApi::class)
     object Item : ItemRepository by ItemRepositoryImpl(
         RemoteItemDataSourceImpl(),
-        LocalItemDataSourceImpl(),
+        LocalItemDataSource,
         flowSettings,
         DefaultDispatcher,
         Mappers.ItemMapper,

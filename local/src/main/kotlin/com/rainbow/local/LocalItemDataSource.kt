@@ -17,6 +17,8 @@ interface LocalItemDataSource {
 
     fun insertUserOverviewItem(item: Item)
 
+    fun <T: Item> updateItem(itemId: String, block: (T) -> T)
+
     fun clearProfileOverviewItems()
 
     fun clearProfileSavedItems()

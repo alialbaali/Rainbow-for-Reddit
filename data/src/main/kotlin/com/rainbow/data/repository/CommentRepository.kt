@@ -8,6 +8,7 @@ import com.rainbow.data.utils.lowercaseName
 import com.rainbow.domain.models.*
 import com.rainbow.domain.repository.CommentRepository
 import com.rainbow.local.LocalCommentDataSource
+import com.rainbow.local.LocalItemDataSource
 import com.rainbow.remote.dto.RemoteComment
 import com.rainbow.remote.source.RemoteCommentDataSource
 import com.russhwolf.settings.ExperimentalSettingsApi
@@ -21,6 +22,7 @@ import kotlinx.coroutines.withContext
 internal class CommentRepositoryImpl(
     private val remoteCommentDataSource: RemoteCommentDataSource,
     private val localCommentDataSource: LocalCommentDataSource,
+    private val localItemDataSource: LocalItemDataSource,
     private val settings: FlowSettings,
     private val dispatcher: CoroutineDispatcher,
     private val mapper: Mapper<RemoteComment, Comment>,
@@ -149,6 +151,9 @@ internal class CommentRepositoryImpl(
             localCommentDataSource.updateComment(commentId) { comment ->
                 comment.copy(vote = Vote.Up)
             }
+            localItemDataSource.updateItem<Comment>(commentId) { comment ->
+                comment.copy(vote = Vote.Up)
+            }
         }
     }
 
@@ -156,6 +161,9 @@ internal class CommentRepositoryImpl(
         withContext(dispatcher) {
             remoteCommentDataSource.unvoteComment(commentId)
             localCommentDataSource.updateComment(commentId) { comment ->
+                comment.copy(vote = Vote.None)
+            }
+            localItemDataSource.updateItem<Comment>(commentId) { comment ->
                 comment.copy(vote = Vote.None)
             }
         }
@@ -167,6 +175,9 @@ internal class CommentRepositoryImpl(
             localCommentDataSource.updateComment(commentId) { comment ->
                 comment.copy(vote = Vote.Down)
             }
+            localItemDataSource.updateItem<Comment>(commentId) { comment ->
+                comment.copy(vote = Vote.Down)
+            }
         }
     }
 
@@ -176,6 +187,9 @@ internal class CommentRepositoryImpl(
             localCommentDataSource.updateComment(commentId) { comment ->
                 comment.copy(isSaved = true)
             }
+            localItemDataSource.updateItem<Comment>(commentId) { comment ->
+                comment.copy(isSaved = true)
+            }
         }
     }
 
@@ -183,6 +197,9 @@ internal class CommentRepositoryImpl(
         withContext(dispatcher) {
             remoteCommentDataSource.unSaveComment(commentId)
             localCommentDataSource.updateComment(commentId) { comment ->
+                comment.copy(isSaved = false)
+            }
+            localItemDataSource.updateItem<Comment>(commentId) { comment ->
                 comment.copy(isSaved = false)
             }
         }

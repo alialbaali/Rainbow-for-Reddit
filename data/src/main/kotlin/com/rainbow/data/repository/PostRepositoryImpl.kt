@@ -9,6 +9,7 @@ import com.rainbow.domain.models.*
 import com.rainbow.domain.models.Post.Type
 import com.rainbow.domain.repository.PostRepository
 import com.rainbow.domain.repository.SubredditRepository
+import com.rainbow.local.LocalItemDataSource
 import com.rainbow.local.LocalPostDataSource
 import com.rainbow.remote.dto.RemotePost
 import com.rainbow.remote.source.RemotePostDataSource
@@ -23,6 +24,7 @@ internal class PostRepositoryImpl(
     private val subredditRepository: SubredditRepository,
     private val remotePostDataSource: RemotePostDataSource,
     private val localPostDataSource: LocalPostDataSource,
+    private val localItemDataSource: LocalItemDataSource,
     private val settings: FlowSettings,
     private val dispatcher: CoroutineDispatcher,
     private val postMapper: Mapper<RemotePost, Post>,
@@ -267,6 +269,9 @@ internal class PostRepositoryImpl(
             localPostDataSource.updatePost(postId) { post ->
                 post.copy(vote = Vote.Up)
             }
+            localItemDataSource.updateItem<Post>(postId) { post ->
+                post.copy(vote = Vote.Up)
+            }
         }
     }
 
@@ -274,6 +279,9 @@ internal class PostRepositoryImpl(
         withContext(dispatcher) {
             remotePostDataSource.unvotePost(postId)
             localPostDataSource.updatePost(postId) { post ->
+                post.copy(vote = Vote.None)
+            }
+            localItemDataSource.updateItem<Post>(postId) { post ->
                 post.copy(vote = Vote.None)
             }
         }
@@ -285,6 +293,9 @@ internal class PostRepositoryImpl(
             localPostDataSource.updatePost(postId) { post ->
                 post.copy(vote = Vote.Down)
             }
+            localItemDataSource.updateItem<Post>(postId) { post ->
+                post.copy(vote = Vote.Down)
+            }
         }
     }
 
@@ -292,6 +303,9 @@ internal class PostRepositoryImpl(
         withContext(dispatcher) {
             remotePostDataSource.hidePost(postId)
             localPostDataSource.updatePost(postId) { post ->
+                post.copy(isHidden = true)
+            }
+            localItemDataSource.updateItem<Post>(postId) { post ->
                 post.copy(isHidden = true)
             }
         }
@@ -303,6 +317,9 @@ internal class PostRepositoryImpl(
             localPostDataSource.updatePost(postId) { post ->
                 post.copy(isHidden = false)
             }
+            localItemDataSource.updateItem<Post>(postId) { post ->
+                post.copy(isHidden = false)
+            }
         }
     }
 
@@ -312,6 +329,9 @@ internal class PostRepositoryImpl(
             localPostDataSource.updatePost(postId) { post ->
                 post.copy(isSaved = true)
             }
+            localItemDataSource.updateItem<Post>(postId) { post ->
+                post.copy(isSaved = true)
+            }
         }
     }
 
@@ -319,6 +339,9 @@ internal class PostRepositoryImpl(
         withContext(dispatcher) {
             remotePostDataSource.unSavePost(postId)
             localPostDataSource.updatePost(postId) { post ->
+                post.copy(isSaved = false)
+            }
+            localItemDataSource.updateItem<Post>(postId) { post ->
                 post.copy(isSaved = false)
             }
         }
