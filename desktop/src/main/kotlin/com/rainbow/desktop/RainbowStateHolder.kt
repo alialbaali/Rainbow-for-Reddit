@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.*
 @OptIn(FlowPreview::class)
 object RainbowStateHolder : StateHolder() {
 
-    private val mutableMainScreen = MutableStateFlow<MainScreen>(MainScreen.Subreddit("me_irl"))
+    private val mutableMainScreen = MutableStateFlow<MainScreen>(MainScreen.SidebarItem.Home)
     val mainScreen get() = mutableMainScreen.asStateFlow()
     val sidebarItem
         get() = mainScreen.map {
@@ -139,7 +139,7 @@ object RainbowStateHolder : StateHolder() {
                         with(stateHolder) {
                             when (selectedTab.value) {
                                 SubredditTab.Posts -> postsStateHolder.loadItems()
-                                SubredditTab.Description -> {}
+                                SubredditTab.About -> {}
                                 SubredditTab.Wiki -> loadWiki()
                                 SubredditTab.Rules -> loadRules()
                                 SubredditTab.Moderators -> loadModerators()

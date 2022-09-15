@@ -56,7 +56,7 @@ class SubredditScreenStateHolder private constructor(
                     SubredditTab.Wiki -> if (wiki.value.isEmpty) loadWiki()
                     SubredditTab.Rules -> if (rules.value.isEmpty) loadRules()
                     SubredditTab.Moderators -> if (moderators.value.isEmpty) loadModerators()
-                    SubredditTab.Description -> {}
+                    SubredditTab.About -> {}
                 }
             }
             .launchIn(scope)

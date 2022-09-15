@@ -48,6 +48,7 @@ object RainbowStrings {
     const val Search = "Search"
     const val OpenInBrowser = "Open in browser"
     const val CopyLink = "Copy link"
+    const val Link = "Link"
     const val Hide = "Hide"
     const val UnHide = "UnHide"
     const val LinkIsCopied = "Link has been copied to clipboard."

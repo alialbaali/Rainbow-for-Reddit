@@ -126,7 +126,7 @@ fun ScreenHeaderDescription(description: String?, modifier: Modifier = Modifier)
         text = description ?: RainbowStrings.EmptyDescription,
         color = MaterialTheme.colorScheme.onSurface,
         modifier = modifier,
-        style = MaterialTheme.typography.titleLarge,
+        style = MaterialTheme.typography.titleMedium,
         overflow = TextOverflow.Ellipsis,
     )
 }

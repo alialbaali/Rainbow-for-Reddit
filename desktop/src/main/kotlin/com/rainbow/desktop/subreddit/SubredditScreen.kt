@@ -5,11 +5,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material.icons.rounded.Label
+import androidx.compose.material.icons.rounded.Link
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -88,7 +92,7 @@ fun SubredditScreen(
                         stateHolder.postsStateHolder::setLastItem,
                     )
 
-                    SubredditTab.Description -> description(subreddit)
+                    SubredditTab.About -> about(subreddit)
                     SubredditTab.Wiki -> wiki(wikiState, onShowSnackbar)
                     SubredditTab.Rules -> rules(rulesState, onShowSnackbar)
                     SubredditTab.Moderators -> moderators(
@@ -132,7 +136,7 @@ private fun LazyListScope.wiki(wikiState: UIState<WikiPage>, onShowSnackbar: (St
     }
 }
 
-private fun LazyListScope.description(subreddit: Subreddit) {
+private fun LazyListScope.about(subreddit: Subreddit) {
     item {
         MarkdownText(
             subreddit.longDescription,
@@ -171,12 +175,15 @@ private fun Header(
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
                 ScreenHeaderDescription(subreddit.shortDescription)
+                Spacer(Modifier.height(RainbowTheme.dpDimensions.medium))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     SelectFlairButton(subreddit.name, onShowSnackbar)
+                    Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
+                    CopyLinkIconButton(subreddit.fullUrl, onShowSnackbar)
                     Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
                     SubredditFavoriteIconButton(
                         subreddit,
@@ -192,13 +199,32 @@ private fun Header(
 }
 
 @Composable
+private fun CopyLinkIconButton(
+    link: String,
+    onLinkCopied: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val clipboardManager = LocalClipboardManager.current
+    RainbowIconButton(
+        onClick = {
+            val annotatedString = AnnotatedString(link)
+            clipboardManager.setText(annotatedString)
+            onLinkCopied(RainbowStrings.LinkIsCopied)
+        },
+        modifier = modifier
+    ) {
+        Icon(RainbowIcons.Link, RainbowStrings.Link)
+    }
+}
+
+@Composable
 private fun SelectFlairButton(subredditName: String, onShowSnackbar: (String) -> Unit, modifier: Modifier = Modifier) {
     var isDialogVisible by remember { mutableStateOf(false) }
-    RainbowButton(
+    RainbowIconButton(
         onClick = { isDialogVisible = true },
         modifier = modifier,
     ) {
-        Text(RainbowStrings.Flair)
+        Icon(RainbowIcons.Label, RainbowStrings.Flair)
     }
     AnimatedVisibility(isDialogVisible) {
         SelectFlairDialog(subredditName, onCloseRequest = { isDialogVisible = false }, onShowSnackbar)
