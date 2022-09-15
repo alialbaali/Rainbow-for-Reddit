@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.rainbow.desktop.components.DropdownMenuHolder
+import com.rainbow.desktop.components.ItemSorting
 import com.rainbow.desktop.utils.RainbowStrings
 
 @Composable
@@ -21,7 +21,7 @@ fun CommentSettings(modifier: Modifier = Modifier) {
 private fun CommentSortingOption(modifier: Modifier = Modifier) {
     val commentSorting by SettingsStateHolder.postCommentSorting.collectAsState()
     SettingsOption(RainbowStrings.DefaultCommentSorting, modifier) {
-        DropdownMenuHolder(
+        ItemSorting(
             commentSorting,
             SettingsStateHolder::setPostCommentSorting,
             containerColor = MaterialTheme.colorScheme.background

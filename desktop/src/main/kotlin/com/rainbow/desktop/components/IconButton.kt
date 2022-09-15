@@ -4,7 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Icon
+import androidx.compose.material3.Icon
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.ripple.rememberRipple

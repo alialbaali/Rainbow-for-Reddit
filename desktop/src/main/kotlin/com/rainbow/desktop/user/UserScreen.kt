@@ -9,7 +9,7 @@ import com.rainbow.desktop.components.ScrollableEnumTabRow
 import com.rainbow.desktop.item.items
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
-import com.rainbow.desktop.post.SortingItem
+import com.rainbow.desktop.components.PostSorting
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.profile.Header
 import com.rainbow.desktop.utils.fold
@@ -61,7 +61,7 @@ fun UserScreen(
         when (selectedTab) {
             UserTab.Overview -> {
                 item {
-                    SortingItem(
+                    PostSorting(
                         itemsSorting,
                         itemsTimeSorting,
                         stateHolder.itemsStateHolder::setSorting,
@@ -86,7 +86,7 @@ fun UserScreen(
 
             UserTab.Submitted -> {
                 item {
-                    SortingItem(
+                    PostSorting(
                         postsSorting,
                         postsTimeSorting,
                         stateHolder.postsStateHolder::setSorting,
@@ -111,7 +111,7 @@ fun UserScreen(
 
             UserTab.Comments -> {
                 item {
-                    SortingItem(
+                    PostSorting(
                         commentsSorting,
                         commentsTimeSorting,
                         stateHolder.commentsStateHolder::setSorting,

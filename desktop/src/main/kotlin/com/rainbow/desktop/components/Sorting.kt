@@ -1,27 +1,84 @@
 package com.rainbow.desktop.components
 
-import androidx.compose.material.icons.rounded.Star
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.rainbow.desktop.utils.RainbowIcons
+import androidx.compose.ui.graphics.Color
+import com.rainbow.desktop.ui.dpDimensions
+import com.rainbow.desktop.utils.icon
+import com.rainbow.domain.models.ItemSorting
 import com.rainbow.domain.models.PostSorting
+import com.rainbow.domain.models.TimeSorting
 
-@Suppress("UNCHECKED_CAST")
 @Composable
-fun <T : PostSorting> PostSortingItem(
-    currentSorting: T,
-    onSortingUpdate: (T) -> Unit,
+inline fun <reified T> PostSorting(
+    postSorting: T,
+    timeSorting: TimeSorting,
+    crossinline onSortingUpdate: (T) -> Unit,
+    noinline onTimeSortingUpdate: (TimeSorting) -> Unit,
     modifier: Modifier = Modifier,
+    containerColor: Color = MaterialTheme.colorScheme.surface,
+) where T : Enum<T>, T : PostSorting {
+    Row(
+        modifier,
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dpDimensions.medium),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        ItemSorting(
+            postSorting,
+            onSortingUpdate,
+            containerColor = containerColor
+        )
+        TimeSorting(
+            timeSorting,
+            onTimeSortingUpdate,
+            enabled = postSorting.isTimeSorting,
+            containerColor = containerColor
+        )
+    }
+}
+
+@Composable
+inline fun <reified T> ItemSorting(
+    itemSorting: T,
+    crossinline onSortingUpdate: (T) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    containerColor: Color = MaterialTheme.colorScheme.surface,
+) where T : Enum<T>, T : ItemSorting {
+    EnumDropdownMenuHolder(
+        value = itemSorting,
+        onValueUpdate = onSortingUpdate,
+        icon = { Icon(itemSorting.icon, itemSorting.name) },
+        modifier = modifier,
+        enabled = enabled,
+        containerColor = containerColor,
+    ) {
+        Icon(it.icon, it.name)
+        Text(text = it.name)
+    }
+}
+
+@Composable
+fun TimeSorting(
+    timeSorting: TimeSorting,
+    onTimeSortingUpdate: (TimeSorting) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    containerColor: Color = MaterialTheme.colorScheme.surface,
 ) {
-    val values = remember(currentSorting) { PostSorting.valuesOf(currentSorting) }
-//    RainbowMenu(modifier) {
-//        values.forEach { sorting ->
-//            RainbowMenuItem(
-//                text = sorting.name,
-//                imageVector = RainbowIcons.Star,
-//                onClick = { onSortingUpdate(sorting as T) },
-//            )
-//        }
-//    }
+    EnumDropdownMenuHolder(
+        value = timeSorting,
+        onValueUpdate = onTimeSortingUpdate,
+        modifier = modifier,
+        enabled = enabled,
+        containerColor = containerColor,
+    ) {
+        Text(text = it.name)
+    }
 }

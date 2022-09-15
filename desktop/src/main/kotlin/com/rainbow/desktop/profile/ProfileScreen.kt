@@ -18,7 +18,7 @@ import com.rainbow.desktop.components.*
 import com.rainbow.desktop.item.items
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
-import com.rainbow.desktop.post.SortingItem
+import com.rainbow.desktop.components.PostSorting
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.defaultPadding
@@ -83,7 +83,7 @@ fun ProfileScreen(
         when (selectedTab) {
             ProfileTab.Overview -> {
                 item {
-                    SortingItem(
+                    PostSorting(
                         overviewItemsSorting,
                         overviewItemsTimeSorting,
                         stateHolder.overviewItemsStateHolder::setSorting,
@@ -108,7 +108,7 @@ fun ProfileScreen(
 
             ProfileTab.Saved -> {
                 item {
-                    SortingItem(
+                    PostSorting(
                         savedItemsSorting,
                         savedItemsTimeSorting,
                         stateHolder.savedItemsStateHolder::setSorting,
@@ -133,7 +133,7 @@ fun ProfileScreen(
 
             ProfileTab.Comments -> {
                 item {
-                    SortingItem(
+                    PostSorting(
                         commentsSorting,
                         commentsTimeSorting,
                         stateHolder.commentsStateHolder::setSorting,
@@ -156,7 +156,7 @@ fun ProfileScreen(
 
             ProfileTab.Submitted -> {
                 item {
-                    SortingItem(
+                    PostSorting(
                         submittedPostsSorting,
                         submittedPostsTimeSorting,
                         stateHolder.submittedPostsStateHolder::setSorting,
@@ -181,7 +181,7 @@ fun ProfileScreen(
 
             ProfileTab.Hidden -> {
                 item {
-                    SortingItem(
+                    PostSorting(
                         hiddenPostsSorting,
                         hiddenPostsTimeSorting,
                         stateHolder.hiddenPostsStateHolder::setSorting,
@@ -206,7 +206,7 @@ fun ProfileScreen(
 
             ProfileTab.Upvoted -> {
                 item {
-                    SortingItem(
+                    PostSorting(
                         upvotedPostsSorting,
                         upvotedPostsTimeSorting,
                         stateHolder.upvotedPostsStateHolder::setSorting,
@@ -231,7 +231,7 @@ fun ProfileScreen(
 
             ProfileTab.Downvoted -> {
                 item {
-                    SortingItem(
+                    PostSorting(
                         downvotedPostsSorting,
                         downvotedPostsTimeSorting,
                         stateHolder.downvotedPostsStateHolder::setSorting,

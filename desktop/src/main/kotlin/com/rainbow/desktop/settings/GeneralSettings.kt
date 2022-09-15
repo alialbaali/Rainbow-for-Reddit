@@ -12,7 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
-import com.rainbow.desktop.components.DropdownMenuHolder
+import com.rainbow.desktop.components.EnumDropdownMenuHolder
 import com.rainbow.desktop.components.RainbowButton
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.RainbowStrings
@@ -43,10 +43,10 @@ private fun TextSelectionOption(modifier: Modifier = Modifier) {
 private fun ThemeOption(modifier: Modifier = Modifier) {
     val theme by SettingsStateHolder.theme.collectAsState()
     SettingsOption(RainbowStrings.Theme, modifier) {
-        DropdownMenuHolder(
+        EnumDropdownMenuHolder(
             theme,
             SettingsStateHolder::setTheme,
-            containerColor = MaterialTheme.colorScheme.background
+            containerColor = MaterialTheme.colorScheme.background,
         )
     }
 }

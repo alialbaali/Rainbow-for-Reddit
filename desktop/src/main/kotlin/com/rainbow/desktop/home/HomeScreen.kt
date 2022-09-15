@@ -8,7 +8,7 @@ import com.rainbow.desktop.components.EnumTabRow
 import com.rainbow.desktop.components.RainbowLazyColumn
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
-import com.rainbow.desktop.post.SortingItem
+import com.rainbow.desktop.components.PostSorting
 import com.rainbow.desktop.post.posts
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -37,7 +37,7 @@ fun HomeScreen(
         when (selectedTab) {
             HomeTab.Posts -> {
                 item {
-                    SortingItem(
+                    PostSorting(
                         postSorting,
                         timeSorting,
                         stateHolder.postsStateHolder::setSorting,

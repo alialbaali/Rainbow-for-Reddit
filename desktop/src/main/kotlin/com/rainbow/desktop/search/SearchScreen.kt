@@ -8,7 +8,7 @@ import com.rainbow.desktop.components.RainbowLazyVerticalGrid
 import com.rainbow.desktop.components.ScrollableEnumTabRow
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
-import com.rainbow.desktop.post.SortingItem
+import com.rainbow.desktop.components.PostSorting
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.subreddit.subreddits
 import com.rainbow.desktop.user.users
@@ -56,7 +56,7 @@ fun SearchScreen(
 
             SearchTab.Posts -> {
                 item {
-                    SortingItem(
+                    PostSorting(
                         postsSorting,
                         postsTimeSorting,
                         stateHolder.postsStateHolder::setSorting,

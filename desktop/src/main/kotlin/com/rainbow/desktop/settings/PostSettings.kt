@@ -10,7 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.utils.RainbowStrings
-import com.rainbow.desktop.components.DropdownMenuHolder
+import com.rainbow.desktop.components.EnumDropdownMenuHolder
 
 @Composable
 fun PostSettings(modifier: Modifier = Modifier) {
@@ -26,7 +26,7 @@ fun PostSettings(modifier: Modifier = Modifier) {
 private fun PostLayoutOption(modifier: Modifier = Modifier) {
     val postLayout by SettingsStateHolder.postLayout.collectAsState()
     SettingsOption(RainbowStrings.PostLayout, modifier) {
-        DropdownMenuHolder(
+        EnumDropdownMenuHolder(
             postLayout,
             SettingsStateHolder::setPostLayout,
             containerColor = MaterialTheme.colorScheme.background,
@@ -50,7 +50,7 @@ private fun PostFullHeightOption(modifier: Modifier = Modifier) {
 private fun MarkPostAsReadOption(modifier: Modifier = Modifier) {
     val markPostAsRead by SettingsStateHolder.markPostAsRead.collectAsState()
     SettingsOption(RainbowStrings.MarkPostAsRead, modifier) {
-        DropdownMenuHolder(
+        EnumDropdownMenuHolder(
             markPostAsRead,
             SettingsStateHolder::setMarkPostAsRead,
             containerColor = MaterialTheme.colorScheme.background
@@ -103,7 +103,7 @@ private inline fun <reified T : Enum<T>> PostSortingOption(
     modifier: Modifier = Modifier,
 ) {
     SettingsOption(name, modifier) {
-        DropdownMenuHolder(
+        EnumDropdownMenuHolder(
             value,
             onValueUpdate,
             containerColor = MaterialTheme.colorScheme.background,

@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.sp
 import com.rainbow.desktop.components.*
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
-import com.rainbow.desktop.post.SortingItem
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.*
@@ -85,7 +84,7 @@ fun SubredditScreen(
 
                 if (selectedTab == SubredditTab.Posts) {
                     item {
-                        SortingItem(
+                        PostSorting(
                             postSorting,
                             timeSorting,
                             stateHolder.postsStateHolder::setSorting,
@@ -241,10 +240,10 @@ private fun FlairButton(
     val flairs = remember(flairsState) { flairsState.getOrDefault(emptyList()) }
     val isNoneSelected = remember(flairs) { flairs.none { it.second } }
     RainbowDropdownMenuHolder(
-        onLoadFlairs,
+        onClick = onLoadFlairs,
         text = { Text(RainbowStrings.Flair) },
         icon = { Icon(RainbowIcons.Label, RainbowStrings.Flair) },
-        modifier,
+        modifier = modifier,
     ) { handler ->
         if (!flairsState.isLoading) {
 //            SettingsOption(RainbowStrings.Flairs, Modifier.padding(horizontal = RainbowTheme.dpDimensions.medium)) {
@@ -269,7 +268,7 @@ private fun FlairButton(
                     onFlairClick(flair.first)
                     handler.hideMenu()
                 },
-                enabled = isFlairsEnabled,
+//                enabled = isFlairsEnabled,
             ) {
                 FlairItem(flair.first, FlairStyle.Default)
             }

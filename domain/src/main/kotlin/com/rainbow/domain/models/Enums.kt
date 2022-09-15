@@ -1,14 +1,5 @@
 package com.rainbow.domain.models
 
-enum class TimeSorting {
-    Hour, Day, Week,
-    Month, Year, All;
-
-    companion object {
-        val Default = Week
-    }
-}
-
 enum class Theme {
     Dark, Light, System,
 }
@@ -29,101 +20,6 @@ enum class Vote {
     Up, Down, None,
 }
 
-typealias ProfilePostSorting = UserPostSorting
-
-enum class UserPostSorting : PostSorting {
-    Hot, New, Top, Controversial;
-
-    override val isTimeSorting: Boolean
-        get() = this == Top || this == Controversial
-
-    companion object {
-        val Default = Hot
-    }
-}
-
-enum class SubredditPostSorting : PostSorting {
-    Hot, Top, Controversial, Rising;
-
-    override val isTimeSorting: Boolean
-        get() = this == Top || this == Controversial
-
-    companion object {
-        val Default = Hot
-    }
-}
-
-enum class HomePostSorting : PostSorting {
-    Best, New, Controversial,
-    Top, Hot, Rising;
-
-
-    override val isTimeSorting: Boolean
-        get() = this == Top || this == Controversial
-
-    companion object {
-        val Default = Hot
-    }
-}
-
-enum class SearchPostSorting : PostSorting {
-    Relevance, New, Top, Hot, CommentsCount;
-
-    override val isTimeSorting: Boolean
-        get() = true
-
-    companion object {
-        val Default = Hot
-    }
-}
-
-sealed interface Sorting {
-    val name: String
-
-    companion object
-}
-
-sealed interface PostSorting : Sorting {
-    val isTimeSorting: Boolean
-
-    companion object {
-        fun valuesOf(postSorting: PostSorting): List<PostSorting> {
-            return when (postSorting) {
-                is HomePostSorting -> listOf(
-                    HomePostSorting.Best,
-                    HomePostSorting.New,
-                    HomePostSorting.Controversial,
-                    HomePostSorting.Top,
-                    HomePostSorting.Hot,
-                    HomePostSorting.Rising
-                )
-
-                is UserPostSorting -> listOf(
-                    UserPostSorting.Hot,
-                    UserPostSorting.New,
-                    UserPostSorting.Top,
-                    UserPostSorting.Controversial
-                )
-
-                is SubredditPostSorting -> listOf(
-                    SubredditPostSorting.Hot,
-                    SubredditPostSorting.Top,
-                    SubredditPostSorting.Controversial,
-                    SubredditPostSorting.Rising
-                )
-
-                is SearchPostSorting -> listOf(
-                    SearchPostSorting.Relevance,
-                    SearchPostSorting.New,
-                    SearchPostSorting.Top,
-                    SearchPostSorting.Hot,
-                    SearchPostSorting.CommentsCount
-                )
-            }
-        }
-    }
-}
-
 enum class MessagesSorting {
     Inbox, Unread, Sent;
 
@@ -137,15 +33,6 @@ enum class UserSort {
 }
 
 typealias ProfileSort = UserSort
-
-
-enum class PostCommentSorting : Sorting {
-    Confidence, Top, Best, New, Old, Controversial, QA;
-
-    companion object {
-        val Default = Top
-    }
-}
 
 enum class MoreChildren {
     confidence, top, new, controversial, old, random, qa, live

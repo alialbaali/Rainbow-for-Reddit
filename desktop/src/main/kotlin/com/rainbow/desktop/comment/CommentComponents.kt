@@ -37,11 +37,15 @@ fun PostCommentInfo(
 ) {
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
         CommentUserName(comment.userName, postUserName, onUserNameClick)
-        Dot()
-        if (isSubredditNameEnabled) {
-            SubredditName(comment.subredditName, onSubredditNameClick)
+        if (comment.flair.types.isNotEmpty()) {
             Dot()
+            FlairItem(comment.flair, FlairStyle.Compact)
         }
+        if (isSubredditNameEnabled) {
+            Dot()
+            SubredditName(comment.subredditName, onSubredditNameClick)
+        }
+        Dot()
         CreationDate(comment.creationDate)
         if (comment.awards.isNotEmpty()) {
             Dot()

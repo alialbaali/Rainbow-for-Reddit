@@ -229,13 +229,11 @@ private fun LazyItemScope.CommentActions(
                 }
             }
 
-            OptionsSurface {
-                DropdownMenuHolder(
-                    sorting,
-                    setCommentSorting,
-                    containerColor = MaterialTheme.colorScheme.background
-                )
-            }
+            ItemSorting(
+                sorting,
+                setCommentSorting,
+                containerColor = MaterialTheme.colorScheme.background
+            )
         }
     }
 }
