@@ -43,12 +43,7 @@ class LocalCommentDataSourceImpl : LocalCommentDataSource {
 
     override fun updateComment(commentId: String, block: (Comment) -> Comment) {
         allComments.forEach { state ->
-            state.value = state.value.map { comment ->
-                if (comment.id == commentId)
-                    block(comment)
-                else
-                    comment
-            }
+            state.value = state.value.mapRecursively(commentId, block)
         }
     }
 
@@ -70,6 +65,16 @@ class LocalCommentDataSourceImpl : LocalCommentDataSource {
 
     override fun clearThreadComments(parentId: String) {
         mutablePostComments.value = postComments.value.filterNot { it.isContinueThread && it.id == parentId }
+    }
+
+    private fun List<Comment>.mapRecursively(commentId: String, block: (Comment) -> Comment): List<Comment> {
+        return map { comment ->
+            if (comment.id == commentId) {
+                block(comment)
+            } else {
+                comment.copy(replies = comment.replies.mapRecursively(commentId, block))
+            }
+        }
     }
 
 }
