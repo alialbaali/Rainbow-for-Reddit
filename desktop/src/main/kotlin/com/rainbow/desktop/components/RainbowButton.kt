@@ -12,6 +12,7 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -31,7 +32,7 @@ fun RainbowButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     containerColor: Color = MaterialTheme.colorScheme.background,
-    contentColor: Color = MaterialTheme.colorScheme.onBackground,
+    contentColor: Color = contentColorFor(containerColor),
     disabledContainerColor: Color = containerColor.copy(0.5F),
     disabledContentColor: Color = contentColor.copy(0.5F),
     hoverContainerColor: Color = containerColor.copy(0.5F),
@@ -95,7 +96,7 @@ fun RainbowIconButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     containerColor: Color = MaterialTheme.colorScheme.background,
-    contentColor: Color = MaterialTheme.colorScheme.onBackground,
+    contentColor: Color = contentColorFor(containerColor),
     disabledContainerColor: Color = containerColor.copy(0.5F),
     disabledContentColor: Color = contentColor.copy(0.5F),
     hoverContainerColor: Color = containerColor.copy(0.5F),
@@ -154,11 +155,11 @@ fun RainbowIconToggleButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     containerColor: Color = MaterialTheme.colorScheme.background,
-    contentColor: Color = MaterialTheme.colorScheme.onBackground,
+    contentColor: Color = contentColorFor(containerColor),
     disabledContainerColor: Color = containerColor.copy(0.5F),
     disabledContentColor: Color = contentColor.copy(0.5F),
     checkedContainerColor: Color = MaterialTheme.colorScheme.primary,
-    checkedContentColor: Color = MaterialTheme.colorScheme.onPrimary,
+    checkedContentColor: Color = contentColorFor(containerColor),
     hoverContainerColor: Color = containerColor.copy(0.5F),
     hoverContentColor: Color = contentColor,
     shape: Shape = MaterialTheme.shapes.small,
