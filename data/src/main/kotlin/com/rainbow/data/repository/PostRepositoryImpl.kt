@@ -16,6 +16,8 @@ import com.rainbow.remote.source.RemotePostDataSource
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
@@ -366,9 +368,16 @@ internal class PostRepositoryImpl(
         }
     }
 
-    private suspend fun List<Post>.mapWithSubredditImageUrl() = map { post ->
-        val subredditImageUrl = subredditRepository.getSubreddit(post.subredditName)
-            .firstOrNull()?.getOrNull()?.imageUrl
-        post.copy(subredditImageUrl = subredditImageUrl)
+    private suspend fun List<Post>.mapWithSubredditImageUrl() = coroutineScope {
+        val result = map { post ->
+            post.id to async {
+                subredditRepository.getSubreddit(post.subredditName)
+                    .firstOrNull()?.getOrNull()?.imageUrl
+            }
+        }
+        map { post ->
+            val subredditImageUrl = result.first { it.first == post.id }.second
+            post.copy(subredditImageUrl = subredditImageUrl.await())
+        }
     }
 }
