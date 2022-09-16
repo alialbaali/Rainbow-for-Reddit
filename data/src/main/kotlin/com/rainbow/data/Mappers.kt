@@ -194,6 +194,17 @@ internal object Mappers {
 //                colorOf(bannerBackgroundColor?.removeHashtagPrefix() ?: DefaultColor),
 //                colorOf(keyColor?.removeHashtagPrefix() ?: DefaultColor)
 //            )
+            val validCommunityImage = communityIcon.takeIf { url -> !url.isNullOrBlank() }
+                ?.removeParameters()
+            val validIconImage = iconImg.takeIf { url -> !url.isNullOrBlank() }
+                ?.removeParameters()
+            val validBannerBackgroundImage = bannerBackgroundImage.takeIf { url -> !url.isNullOrBlank() }
+                ?.removeParameters()
+            val validBannerImage = bannerImg.takeIf { url -> !url.isNullOrBlank() }
+                ?.removeParameters()
+            val validBannerMobileImage = mobileBannerImage.takeIf { url -> !url.isNullOrBlank() }
+                ?.removeParameters()
+
             Subreddit(
                 id = name ?: "",
                 name = displayName ?: "",
@@ -202,8 +213,8 @@ internal object Mappers {
                 longDescription = description.takeIf { !it.isNullOrBlank() } ?: "",
                 subscribersCount = subscribers ?: 0,
                 activeSubscribersCount = activeUserCount ?: 0,
-                imageUrl = communityIcon?.removeParameters() ?: iconImg?.removeParameters(),
-                bannerImageUrl = bannerBackgroundImage?.removeParameters() ?: mobileBannerImage?.removeParameters(),
+                imageUrl = validCommunityImage ?: validIconImage,
+                bannerImageUrl = validBannerBackgroundImage ?: validBannerImage ?: validBannerMobileImage,
                 isNSFW = over18 ?: false,
                 isFavorite = userHasFavorited ?: false,
                 isSubscribed = userIsSubscriber ?: false,
