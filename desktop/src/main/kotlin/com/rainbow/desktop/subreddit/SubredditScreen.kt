@@ -37,7 +37,7 @@ fun SubredditScreen(
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val stateHolder = remember { SubredditScreenStateHolder.getInstance(subredditName) }
+    val stateHolder = remember(subredditName) { SubredditScreenStateHolder.getInstance(subredditName) }
     val postsState by stateHolder.postsStateHolder.items.collectAsState()
     val moderatorsState by stateHolder.moderators.collectAsState()
     val subredditState by stateHolder.subreddit.collectAsState()

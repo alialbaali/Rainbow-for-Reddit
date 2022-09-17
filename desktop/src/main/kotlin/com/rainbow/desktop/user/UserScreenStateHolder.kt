@@ -110,8 +110,21 @@ class UserScreenStateHolder private constructor(
         fun getInstance(userName: String): UserScreenStateHolder {
             val stateHolder = stateHolders.find { it.userName == userName }
                 ?: UserScreenStateHolder(userName).also(stateHolders::add)
-            CurrentInstance = stateHolder
+            stateHolder.reloadContentIfNeeded()
             return stateHolder
+        }
+
+        private fun UserScreenStateHolder.reloadContentIfNeeded() {
+            if (CurrentInstance?.userName != this.userName) {
+                val selectedTab = selectedTab.value
+                val reloadItems = !itemsStateHolder.items.value.isEmpty || selectedTab == UserTab.Overview
+                val reloadPosts = !postsStateHolder.items.value.isEmpty || selectedTab == UserTab.Submitted
+                val reloadComments = !commentsStateHolder.items.value.isEmpty || selectedTab == UserTab.Comments
+                if (reloadItems) this.itemsStateHolder.loadItems()
+                if (reloadPosts) this.postsStateHolder.loadItems()
+                if (reloadComments) this.commentsStateHolder.loadItems()
+                CurrentInstance = this
+            }
         }
     }
 

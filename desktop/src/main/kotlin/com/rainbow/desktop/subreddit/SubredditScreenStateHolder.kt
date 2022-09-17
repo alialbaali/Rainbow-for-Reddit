@@ -83,8 +83,16 @@ class SubredditScreenStateHolder constructor(
         fun getInstance(subredditName: String): SubredditScreenStateHolder {
             val stateHolder = stateHolders.find { it.subredditName == subredditName }
                 ?: SubredditScreenStateHolder(subredditName).also { stateHolders += it }
-            CurrentInstance = stateHolder
+            stateHolder.reloadContentIfNeeded()
             return stateHolder
+        }
+
+        private fun SubredditScreenStateHolder.reloadContentIfNeeded() {
+            if (CurrentInstance?.subredditName != this.subredditName) {
+                val reloadPosts = !postsStateHolder.items.value.isEmpty
+                if (reloadPosts) this.postsStateHolder.loadItems()
+                CurrentInstance = this
+            }
         }
     }
 
@@ -142,11 +150,11 @@ class SubredditScreenStateHolder constructor(
         subredditRepository.unselectFlair(subredditName)
     }
 
-    fun enableFlairs() = scope.launch{
+    fun enableFlairs() = scope.launch {
         subredditRepository.enableFlairs(subredditName)
     }
 
-    fun disableFlairs() = scope.launch{
+    fun disableFlairs() = scope.launch {
         subredditRepository.disableFlairs(subredditName)
     }
 

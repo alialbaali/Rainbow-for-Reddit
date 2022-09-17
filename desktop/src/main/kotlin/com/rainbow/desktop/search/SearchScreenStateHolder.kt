@@ -57,8 +57,21 @@ class SearchScreenStateHolder private constructor(
         fun getInstance(searchTerm: String): SearchScreenStateHolder {
             val stateHolder = stateHolders.find { it.searchTerm == searchTerm }
                 ?: SearchScreenStateHolder(searchTerm).also { stateHolders += it }
-            CurrentInstance = stateHolder
+            stateHolder.reloadContentIfNeeded()
             return stateHolder
+        }
+
+        private fun SearchScreenStateHolder.reloadContentIfNeeded() {
+            if (CurrentInstance?.searchTerm != this.searchTerm) {
+                val selectedTab = selectedTab.value
+                val reloadSubreddits = !subredditsStateHolder.items.value.isEmpty || selectedTab == SearchTab.Subreddits
+                val reloadPosts = !postsStateHolder.items.value.isEmpty || selectedTab == SearchTab.Posts
+                val reloadUsers = !usersStateHolder.items.value.isEmpty || selectedTab == SearchTab.Users
+                if (reloadSubreddits) this.subredditsStateHolder.loadItems()
+                if (reloadPosts) this.postsStateHolder.loadItems()
+                if (reloadUsers) this.usersStateHolder.loadItems()
+                CurrentInstance = this
+            }
         }
     }
 
