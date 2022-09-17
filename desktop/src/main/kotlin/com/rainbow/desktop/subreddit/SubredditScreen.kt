@@ -244,6 +244,7 @@ private fun FlairButton(
         text = { Text(RainbowStrings.Flair) },
         icon = { Icon(RainbowIcons.Label, RainbowStrings.Flair) },
         modifier = modifier,
+        iconOnly = true,
     ) { handler ->
         if (!flairsState.isLoading) {
 //            SettingsOption(RainbowStrings.Flairs, Modifier.padding(horizontal = RainbowTheme.dpDimensions.medium)) {
