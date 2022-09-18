@@ -5,8 +5,9 @@ import kotlinx.datetime.LocalDateTime
 data class Moderator(
     val id: String,
     val name: String,
+    val flair: Flair,
     val permissions: List<Permission>,
-    val modSince: LocalDateTime,
+    val since: LocalDateTime,
 ) {
     enum class Permission {
         Wiki, Posts, Mail, Config,

@@ -241,6 +241,7 @@ internal object Mappers {
             Moderator(
                 id!!,
                 name!!,
+                FlairMapper.map(RemoteFlair(text = authorFlairText)),
                 modPermissions?.map {
                     when (it) {
                         "all" -> Moderator.Permission.All

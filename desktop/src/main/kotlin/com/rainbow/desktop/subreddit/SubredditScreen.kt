@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.Label
 import androidx.compose.material.icons.rounded.Link
@@ -18,9 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.rainbow.desktop.components.*
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
@@ -28,6 +27,8 @@ import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.*
+import kotlinx.datetime.toJavaLocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun SubredditScreen(
@@ -143,10 +144,10 @@ private fun LazyListScope.wiki(wikiState: UIState<WikiPage>, onShowSnackbar: (St
                     .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
                     .defaultPadding()
                     .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium)
             ) {
-                Text(wikiPage.content)
-                Text("Revisioned by ${wikiPage.revisionBy.name} on ${wikiPage.revisionDate}")
+                MarkdownText(wikiPage.content)
+                Text("Revised by ${wikiPage.revisionBy.name} on ${wikiPage.revisionDate}")
             }
         }
     }
@@ -355,74 +356,115 @@ private fun LazyListScope.moderators(
     onModeratorClick: (String) -> Unit,
     onShowSnackbar: (String) -> Unit,
 ) {
-    item {
-        moderatorsState.composed(onShowSnackbar) { moderators ->
-            Column(
-                Modifier
-                    .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
-                    .defaultPadding()
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                moderators.forEach {
-                    ModeratorItem(it, onModeratorClick, Modifier.fillMaxWidth())
-                }
-            }
-        }
+    val moderators = moderatorsState.getOrDefault(emptyList())
+
+    items(moderators) { moderator ->
+        ModeratorItem(moderator, onModeratorClick, Modifier.fillMaxWidth())
+    }
+
+    if (moderatorsState.isLoading) {
+        item { RainbowProgressIndicator() }
     }
 }
 
 private fun LazyListScope.rules(rulesState: UIState<List<Rule>>, onShowSnackbar: (String) -> Unit) {
-    item {
-        rulesState.composed(onShowSnackbar) { rules ->
-            Column(
-                Modifier
-                    .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
-                    .defaultPadding()
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                rules.forEach {
-                    RuleItem(it, Modifier.fillMaxWidth())
-                }
-            }
-        }
+    val rules = rulesState.getOrDefault(emptyList())
+
+    items(rules) { rule ->
+        RuleItem(rule, Modifier.fillMaxWidth())
+    }
+
+    if (rulesState.isLoading) {
+        item { RainbowProgressIndicator() }
     }
 }
 
 @Composable
 private fun RuleItem(rule: Rule, modifier: Modifier = Modifier) {
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("${rule.priority}. ${rule.title}", fontWeight = FontWeight.Medium, fontSize = 18.sp)
-        Text(rule.description)
+    Column(
+        modifier
+            .clip(MaterialTheme.shapes.medium)
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(RainbowTheme.dpDimensions.medium),
+        verticalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.small),
+    ) {
+        Text(
+            text = "${rule.priority}. ${rule.title}",
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        Text(
+            rule.description,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 
 @Composable
 private fun ModeratorItem(moderator: Moderator, onModeratorClick: (String) -> Unit, modifier: Modifier = Modifier) {
-    Row(
+    val formatter = remember { DateTimeFormatter.ofPattern("yyyy-MM-dd") }
+    val permissions = remember(moderator) { moderator.permissions.joinToString { it.name } }
+    val modSince = remember(moderator) {
+        moderator.since
+            .toJavaLocalDateTime()
+            .let(formatter::format)
+    }
+
+    Column(
         modifier
-            .clip(MaterialTheme.shapes.large)
-            .clickable { onModeratorClick(moderator.name) },
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
+            .clip(MaterialTheme.shapes.medium)
+            .clickable { onModeratorClick(moderator.name) }
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(RainbowTheme.dpDimensions.medium),
+        verticalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.small),
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.small),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(moderator.name, fontWeight = FontWeight.Medium, fontSize = 18.sp)
-            moderator.permissions.forEach { permission ->
-                Text(
-                    text = permission.name,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
-                        .padding(8.dp)
-                )
+            Text(
+                text = moderator.name,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            if (moderator.flair.types.isNotEmpty()) {
+                FlairItem(moderator.flair, FlairStyle.Default)
             }
         }
-//        Text(moderator.modSince.toJavaLocalDateTime().format(DateTimeFormatter.ISO_DATE_TIME))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = RainbowStrings.Permissions.plus(": "),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Text(
+                text = permissions,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = RainbowStrings.Since.plus(": "),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Text(
+                text = modSince,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
