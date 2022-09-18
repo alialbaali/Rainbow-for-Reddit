@@ -150,6 +150,7 @@ fun ProfileScreen(
                         }
                         onNavigateDetailsScreen(detailsScreen)
                     },
+                    onShowSnackbar,
                     stateHolder.commentsStateHolder::setLastItem,
                 )
             }

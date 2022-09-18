@@ -23,6 +23,7 @@ fun ReplyItem(
     onClick: () -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(onClick) {
@@ -47,7 +48,7 @@ fun ReplyItem(
                     isSubredditNameEnabled = false
                 )
                 Text(reply.body, color = MaterialTheme.colorScheme.onBackground)
-                CommentActions(reply, isRepliesVisible)
+                CommentOptions(reply, isRepliesVisible, onShowSnackbar)
             }
         }
     }

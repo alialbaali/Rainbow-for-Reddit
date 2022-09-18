@@ -70,6 +70,7 @@ fun HomeScreen(
                         }
                         onNavigateDetailsScreen(detailsScreen)
                     },
+                    onShowSnackbar,
                     stateHolder.commentsStateHolder::setLastItem,
                 )
             }

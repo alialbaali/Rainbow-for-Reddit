@@ -102,7 +102,7 @@ fun CompactPostItem(
                     )
                 }
             }
-            PostActions(post)
+            PostOptions(post, onShowSnackbar)
         }
     }
 }

@@ -83,12 +83,12 @@ fun CommentInfo(
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun CommentActions(
+fun CommentOptions(
     comment: Comment,
     isRepliesVisible: Boolean,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var isMenuExpanded by remember { mutableStateOf(false) }
     Row(
         modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -149,10 +149,11 @@ fun CommentActions(
                 }
             }
 
-            RainbowIconButton(
-                onClick = {},
-            ) {
-                Icon(RainbowIcons.MoreVert, RainbowStrings.MoreActions)
+            RainbowDropdownMenuHolder(
+                icon = { Icon(RainbowIcons.MoreVert, RainbowStrings.PostOptions) }
+            ) { handler ->
+                OpenInBrowserDropdownMenuItem(comment.url, handler)
+                CopyLinkDropdownMenuItem(comment.url, handler, onShowSnackbar)
             }
         }
     }

@@ -24,6 +24,7 @@ fun PostCommentItem(
     onClick: () -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -48,7 +49,7 @@ fun PostCommentItem(
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            CommentActions(comment, isRepliesVisible)
+            CommentOptions(comment, isRepliesVisible, onShowSnackbar)
         }
     }
 }

@@ -104,6 +104,7 @@ fun PostScreen(
                 onSubredditNameClick = { subredditName -> onNavigateMainScreen(MainScreen.Subreddit(subredditName)) },
                 onViewMoreClick = stateHolder::loadViewMoreComments,
                 onContinueThreadClick = stateHolder::setThreadParentId,
+                onShowSnackbar,
             )
         }
 
@@ -148,8 +149,9 @@ private fun Post(
             modifier = Modifier.fillMaxWidth()
         )
 
-        PostActions(
+        PostOptions(
             post,
+            onShowSnackbar,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),

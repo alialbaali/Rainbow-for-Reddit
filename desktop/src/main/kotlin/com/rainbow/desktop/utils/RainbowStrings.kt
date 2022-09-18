@@ -87,6 +87,7 @@ object RainbowStrings {
     const val PostMenu = "Post menu"
     const val Subreddits = "Subreddits"
     const val MoreActions = "More actions"
+    const val PostOptions = "Post options"
     const val Save = "Save"
     const val Unsave = "Unsave"
     const val Comments = "Comments"

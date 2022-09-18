@@ -128,6 +128,7 @@ fun UserScreen(
                         }
                         onNavigateDetailsScreen(detailsScreen)
                     },
+                    onShowSnackbar,
                     stateHolder.commentsStateHolder::setLastItem,
                 )
             }

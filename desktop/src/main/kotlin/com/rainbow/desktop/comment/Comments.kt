@@ -15,6 +15,7 @@ fun LazyListScope.comments(
     state: UIState<List<Comment>>,
     onNavigateMainScreen: (MainScreen) -> Unit,
     onNavigateDetailsScreen: (DetailsScreen) -> Unit,
+    onShowSnackbar: (String) -> Unit,
     onLoadMore: (Comment) -> Unit,
 ) {
     val comments = state.getOrDefault(emptyList())
@@ -23,7 +24,8 @@ fun LazyListScope.comments(
             comment,
             onNavigateMainScreen,
             onNavigateDetailsScreen,
-            modifier = Modifier.fillParentMaxWidth()
+            onShowSnackbar,
+            modifier = Modifier.fillParentMaxWidth(),
         )
         PagingEffect(comments, index, onLoadMore)
     }

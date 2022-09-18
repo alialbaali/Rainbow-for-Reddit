@@ -161,7 +161,8 @@ internal object Mappers {
                             text = authorFlairText,
                         )
                     ),
-                    awards = allAwardings?.quickMap(AwardMapper) ?: emptyList()
+                    awards = allAwardings?.quickMap(AwardMapper) ?: emptyList(),
+                    url = permalink?.toRedditUrl().orEmpty()
                 )
             }
         }

@@ -30,6 +30,7 @@ fun LazyListScope.items(
                 item,
                 onNavigateMainScreen,
                 onNavigateDetailsScreen,
+                onShowSnackbar,
                 Modifier.fillParentMaxWidth()
             )
 

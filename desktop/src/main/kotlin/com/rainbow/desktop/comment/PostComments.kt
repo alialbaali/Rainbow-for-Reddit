@@ -24,6 +24,7 @@ fun LazyListScope.postComments(
     onSubredditNameClick: (String) -> Unit,
     onViewMoreClick: (String, List<String>) -> Unit,
     onContinueThreadClick: (String) -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val comments = commentsState.getOrDefault(emptyList())
@@ -43,6 +44,7 @@ fun LazyListScope.postComments(
                     },
                     onUserNameClick,
                     onSubredditNameClick,
+                    onShowSnackbar,
                     modifier.clip(comment.replies.isEmpty(), isRepliesVisible),
                 )
 
@@ -72,7 +74,8 @@ fun LazyListScope.postComments(
             hasMoreCommentsAfterIndex = { parentId ->
                 val parentIndex = comments.indexOfFirst { it.id == parentId }
                 comments.getOrNull(parentIndex + 1) != null
-            }
+            },
+            onShowSnackbar,
         )
         item { Spacer(Modifier.height(16.dp)) }
     }
@@ -94,6 +97,7 @@ fun LazyListScope.replies(
     onRequestMoreComments: (String, List<String>) -> Unit,
     onRequestThreadComments: (String) -> Unit,
     hasMoreCommentsAfterIndex: (String) -> Boolean,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
     depth: Int = 1,
 ) {
@@ -115,6 +119,7 @@ fun LazyListScope.replies(
                         onClick = { setIsRepliesVisible(reply, !isRepliesVisible(reply)) },
                         onUserNameClick,
                         onSubredditNameClick,
+                        onShowSnackbar,
                         if (isLastItem)
                             Modifier.clip(
                                 MaterialTheme.shapes.medium.copy(
@@ -170,6 +175,7 @@ fun LazyListScope.replies(
                 val parentIndex = replies.indexOfFirst { it.id == parentId }
                 replies.getOrNull(parentIndex + 1) != null && hasMoreCommentsAfterIndex(parentId)
             },
+            onShowSnackbar,
             modifier,
             depth = depth + 1,
         )

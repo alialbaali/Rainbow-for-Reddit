@@ -200,7 +200,11 @@ fun GifPost(gif: Post.Type.Gif, modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun PostActions(post: Post, modifier: Modifier = Modifier) {
+fun PostOptions(
+    post: Post,
+    onShowSnackbar: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Row(
         modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -277,10 +281,11 @@ fun PostActions(post: Post, modifier: Modifier = Modifier) {
                 }
             }
 
-            RainbowIconButton(
-                onClick = {},
-            ) {
-                Icon(RainbowIcons.MoreVert, RainbowStrings.MoreActions)
+            RainbowDropdownMenuHolder(
+                icon = { Icon(RainbowIcons.MoreVert, RainbowStrings.PostOptions) }
+            ) { handler ->
+                OpenInBrowserDropdownMenuItem(post.url, handler)
+                CopyLinkDropdownMenuItem(post.url, handler, onShowSnackbar)
             }
         }
     }

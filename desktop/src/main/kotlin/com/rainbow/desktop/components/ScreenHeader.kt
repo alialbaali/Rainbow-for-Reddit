@@ -34,16 +34,17 @@ import io.kamel.image.lazyPainterResource
 private val BannerImageHeight = 200.dp
 private val ProfileImageSize = 200.dp
 private val BannerImageGradientHeight = BannerImageHeight / 2.dp
-private val ImageModifier = Modifier
+private fun ImageModifier(shape: Shape) = Modifier
     .padding(start = 16.dp)
     .size(ProfileImageSize)
     .offset(y = 100.dp)
     .composed {
         Modifier
-            .clip(MaterialTheme.shapes.medium)
-            .border(ImageBorderSize, MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.inverseSurface, MaterialTheme.shapes.medium)
+            .clip(shape)
+            .border(ImageBorderSize, MaterialTheme.colorScheme.surface, shape)
+            .background(MaterialTheme.colorScheme.inverseSurface, shape)
     }
+
 private val ScreenHeaderHeight = BannerImageHeight + (ProfileImageSize / 2)
 private val ContentHeight = 100.dp
 val ScreenHeaderContentMinHeight = ScreenHeaderHeight + ContentHeight
@@ -101,10 +102,10 @@ fun ScreenHeader(
         KamelImage(
             profileImageResource,
             contentDescription = title,
-            modifier = ImageModifier,
+            modifier = ImageModifier(imageShape),
             contentScale = ContentScale.Fit,
-            onLoading = { RainbowProgressIndicator(ImageModifier) },
-            onFailure = { TextBox(title, 150.sp, ImageModifier) },
+            onLoading = { RainbowProgressIndicator(ImageModifier(imageShape)) },
+            onFailure = { TextBox(title, 150.sp, ImageModifier(imageShape)) },
             animationSpec = tween(),
         )
 

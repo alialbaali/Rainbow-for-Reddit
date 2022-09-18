@@ -61,7 +61,7 @@ fun PostItem(
                 modifier = Modifier
                     .fillMaxWidth()
             )
-            PostActions(post)
+            PostOptions(post, onShowSnackbar)
         }
     }
 }

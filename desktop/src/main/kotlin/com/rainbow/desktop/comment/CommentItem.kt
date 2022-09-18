@@ -20,6 +20,7 @@ fun CommentItem(
     comment: Comment,
     onNavigateMainScreen: (MainScreen) -> Unit,
     onNavigateDetailsScreen: (DetailsScreen) -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -38,7 +39,7 @@ fun CommentItem(
                 isSubredditNameEnabled = true
             )
             Text(comment.body, color = MaterialTheme.colorScheme.onBackground)
-            CommentActions(comment, false)
+            CommentOptions(comment, false, onShowSnackbar)
         }
     }
 }
