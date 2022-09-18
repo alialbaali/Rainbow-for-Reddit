@@ -1,9 +1,6 @@
 package com.rainbow.desktop.message
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.components.RainbowLazyColumn
 import com.rainbow.desktop.components.ScrollableEnumTabRow
@@ -26,6 +23,8 @@ fun MessagesScreen(
     val mentions by stateHolder.mentions.items.collectAsState()
     val postMessages by stateHolder.postMessages.items.collectAsState()
     val commentMessages by stateHolder.commentMessages.items.collectAsState()
+    val selectedItemIds by stateHolder.selectedItemIds.collectAsState()
+
     RainbowLazyColumn(modifier) {
         item {
             ScrollableEnumTabRow(
@@ -83,6 +82,15 @@ fun MessagesScreen(
                 onNavigateDetailsScreen,
                 stateHolder.commentMessages::setLastItem,
             )
+        }
+    }
+
+    DisposableEffect(selectedTab, selectedItemIds) {
+        selectedItemIds[selectedTab]?.let { postId ->
+            onNavigateDetailsScreen(DetailsScreen.Message(postId))
+        }
+        onDispose {
+//            onNavigateDetailsScreen(DetailsScreen.None)
         }
     }
 }

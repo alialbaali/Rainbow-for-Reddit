@@ -2,12 +2,11 @@ package com.rainbow.desktop.message
 
 import com.rainbow.data.Repos
 import com.rainbow.desktop.state.StateHolder
+import com.rainbow.desktop.utils.getOrNull
 import com.rainbow.domain.models.Message
 import com.rainbow.domain.repository.MessageRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 class MessagesScreenStateHolder(
     private val messageRepository: MessageRepository = Repos.Message,
@@ -58,6 +57,9 @@ class MessagesScreenStateHolder(
         }
     }
 
+    private val mutableSelectedItemIds = MutableStateFlow(emptyMap<MessageTab, String>())
+    val selectedItemIds get() = mutableSelectedItemIds.asStateFlow()
+
     init {
         selectedTab
             .onEach {
@@ -72,6 +74,62 @@ class MessagesScreenStateHolder(
                 }
             }
             .launchIn(scope)
+
+        scope.launch {
+            inboxMessages.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { message -> selectItemId(MessageTab.Inbox, message.id) }
+        }
+
+        scope.launch {
+            unreadMessages.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { message -> selectItemId(MessageTab.Unread, message.id) }
+        }
+
+        scope.launch {
+            sentMessages.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { message -> selectItemId(MessageTab.Sent, message.id) }
+        }
+
+        scope.launch {
+            messages.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { message -> selectItemId(MessageTab.Messages, message.id) }
+        }
+
+        scope.launch {
+            mentions.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { message -> selectItemId(MessageTab.Mentions, message.id) }
+        }
+
+        scope.launch {
+            postMessages.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { message -> selectItemId(MessageTab.PostMessages, message.id) }
+        }
+
+        scope.launch {
+            commentMessages.items
+                .firstOrNull { it.isSuccess }
+                ?.getOrNull()
+                ?.firstOrNull()
+                ?.let { message -> selectItemId(MessageTab.CommentMessages, message.id) }
+        }
     }
 
     companion object {
@@ -80,5 +138,9 @@ class MessagesScreenStateHolder(
 
     fun selectTab(tab: MessageTab) {
         mutableSelectedTab.value = tab
+    }
+
+    fun selectItemId(tab: MessageTab, id: String) {
+        mutableSelectedItemIds.value += tab to id
     }
 }
