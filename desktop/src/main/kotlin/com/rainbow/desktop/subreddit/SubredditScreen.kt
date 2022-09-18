@@ -5,9 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.rounded.Done
-import androidx.compose.material.icons.rounded.Label
-import androidx.compose.material.icons.rounded.Link
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -18,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.*
@@ -213,8 +212,6 @@ private fun Header(
                         onLoadFlairs
                     )
                     Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
-                    CopyLinkIconButton(subreddit.fullUrl, onShowSnackbar)
-                    Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
                     SubredditFavoriteIconButton(
                         subreddit,
                         onShowSnackbar,
@@ -222,8 +219,45 @@ private fun Header(
                     )
                     Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
                     SubscribeButton(subreddit, onShowSnackbar)
+                    Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
+                    Menu(subreddit, onShowSnackbar)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun Menu(
+    subreddit: Subreddit,
+    onLinkCopied: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val urlHandler = LocalUriHandler.current
+    val clipboardManager = LocalClipboardManager.current
+    RainbowDropdownMenuHolder(
+        icon = { Icon(RainbowIcons.MoreVert, RainbowStrings.SubredditOptions) },
+    ) { handler ->
+        RainbowDropdownMenuItem(
+            onClick = {
+                urlHandler.openUri(subreddit.fullUrl)
+                handler.hideMenu()
+            }
+        ) {
+            Icon(RainbowIcons.OpenInBrowser, RainbowStrings.OpenInBrowser)
+            Text(RainbowStrings.OpenInBrowser)
+        }
+
+        RainbowDropdownMenuItem(
+            onClick = {
+                val annotatedString = AnnotatedString(subreddit.fullUrl)
+                clipboardManager.setText(annotatedString)
+                onLinkCopied(RainbowStrings.LinkIsCopied)
+                handler.hideMenu()
+            }
+        ) {
+            Icon(RainbowIcons.Link, RainbowStrings.CopyLink)
+            Text(RainbowStrings.CopyLink)
         }
     }
 }
@@ -242,10 +276,8 @@ private fun FlairButton(
     val isNoneSelected = remember(flairs) { flairs.none { it.second } }
     RainbowDropdownMenuHolder(
         onClick = onLoadFlairs,
-        text = { Text(RainbowStrings.Flair) },
         icon = { Icon(RainbowIcons.Label, RainbowStrings.Flair) },
         modifier = modifier,
-        iconOnly = true,
     ) { handler ->
         if (!flairsState.isLoading) {
 //            SettingsOption(RainbowStrings.Flairs, Modifier.padding(horizontal = RainbowTheme.dpDimensions.medium)) {
@@ -270,7 +302,7 @@ private fun FlairButton(
                     onFlairClick(flair.first)
                     handler.hideMenu()
                 },
-//                enabled = isFlairsEnabled,
+                //                enabled = isFlairsEnabled,
             ) {
                 FlairItem(flair.first, FlairStyle.Default)
             }
@@ -279,25 +311,6 @@ private fun FlairButton(
         if (flairsState.isLoading) {
             RainbowProgressIndicator()
         }
-    }
-}
-
-@Composable
-private fun CopyLinkIconButton(
-    link: String,
-    onLinkCopied: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val clipboardManager = LocalClipboardManager.current
-    RainbowIconButton(
-        onClick = {
-            val annotatedString = AnnotatedString(link)
-            clipboardManager.setText(annotatedString)
-            onLinkCopied(RainbowStrings.LinkIsCopied)
-        },
-        modifier = modifier
-    ) {
-        Icon(RainbowIcons.Link, RainbowStrings.Link)
     }
 }
 
