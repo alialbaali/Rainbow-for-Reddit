@@ -6,16 +6,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material.icons.rounded.OpenInBrowser
 import androidx.compose.material.icons.rounded.PlaylistRemove
-import androidx.compose.material.icons.rounded.PostAdd
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.*
 import com.rainbow.desktop.utils.RainbowIcons
@@ -41,7 +39,7 @@ fun SubredditItem(
     ) {
         ItemHeader(subreddit.bannerImageUrl.toString(), subreddit.imageUrl.toString(), subreddit.name)
         SubredditItemName(subreddit.name, Modifier.padding(horizontal = 16.dp))
-        SubredditItemActions(
+        SubredditItemOptions(
             subreddit,
             onShowSnackbar,
             Modifier
@@ -52,46 +50,39 @@ fun SubredditItem(
 }
 
 @Composable
-private fun SubredditItemActions(
+private fun SubredditItemOptions(
     subreddit: Subreddit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var isMenuExpanded by remember { mutableStateOf(false) }
-    val uriHandler = LocalUriHandler.current
     OptionsSurface(modifier) {
         SubredditFavoriteIconButton(subreddit, onShowSnackbar)
-        Column {
-            RainbowIconButton(onClick = { isMenuExpanded = true }) {
-                Icon(RainbowIcons.MoreVert, RainbowStrings.Menu)
-            }
-            RainbowMenu(isMenuExpanded, onDismissRequest = { isMenuExpanded = false }) {
-                RainbowMenuItem(
-                    RainbowStrings.OpenInBrowser,
-                    RainbowIcons.OpenInBrowser,
-                    onClick = {
-                        uriHandler.openUri(subreddit.fullUrl)
-                        isMenuExpanded = false
-                    }
-                )
-                RainbowMenuItem(
-                    RainbowStrings.UnSubscribe,
-                    RainbowIcons.PlaylistRemove,
-                    onClick = {
-                        SubredditActionsStateHolder.unSubscribeSubreddit(subreddit)
-                        isMenuExpanded = false
-                        onShowSnackbar(RainbowStrings.UnsubscribeMessage(subreddit.name))
-                    }
-                )
-                RainbowMenuItem(
-                    RainbowStrings.CreatePost,
-                    RainbowIcons.PostAdd,
-                    onClick = {
-                        onShowSnackbar(RainbowStrings.Todo)
-                        isMenuExpanded = false
-                    },
-                )
-            }
+        RainbowDropdownMenuHolder(
+            icon = { Icon(RainbowIcons.MoreVert, RainbowStrings.SubredditOptions) },
+        ) { handler ->
+            OpenInBrowserDropdownMenuItem(subreddit.fullUrl, handler)
+            CopyLinkDropdownMenuItem(subreddit.fullUrl, handler, onShowSnackbar)
+            UnsubscribeDropdownMenuItem(subreddit, handler, onShowSnackbar)
         }
+    }
+}
+
+@Composable
+private fun UnsubscribeDropdownMenuItem(
+    subreddit: Subreddit,
+    handler: DropdownMenuHandler,
+    onShowSnackbar: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    RainbowDropdownMenuItem(
+        onClick = {
+            SubredditActionsStateHolder.unSubscribeSubreddit(subreddit)
+            handler.hideMenu()
+            onShowSnackbar(RainbowStrings.UnsubscribeMessage(subreddit.name))
+        },
+        modifier
+    ) {
+        Icon(RainbowIcons.PlaylistRemove, RainbowStrings.UnSubscribe)
+        Text(RainbowStrings.UnSubscribe)
     }
 }

@@ -38,7 +38,7 @@ fun SearchSubredditItem(
         SubredditItemName(subreddit.name, Modifier.padding(horizontal = 16.dp))
         SubredditItemDescription(subreddit.shortDescription, Modifier.padding(horizontal = 16.dp))
         SubredditInfoItems(subreddit, Modifier.padding(horizontal = 16.dp))
-        SubredditItemActions(
+        SubredditItemOptions(
             subreddit,
             onShowSnackbar,
             Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
@@ -57,7 +57,7 @@ private fun SubredditItemDescription(subredditDescription: String, modifier: Mod
 }
 
 @Composable
-private fun SubredditItemActions(
+private fun SubredditItemOptions(
     subreddit: Subreddit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,

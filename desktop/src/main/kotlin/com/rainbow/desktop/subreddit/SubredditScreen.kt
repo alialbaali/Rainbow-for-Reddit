@@ -5,7 +5,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.rounded.*
+import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material.icons.rounded.Label
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -15,9 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.*
 import com.rainbow.desktop.navigation.DetailsScreen
@@ -230,35 +229,14 @@ private fun Header(
 @Composable
 private fun Menu(
     subreddit: Subreddit,
-    onLinkCopied: (String) -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val urlHandler = LocalUriHandler.current
-    val clipboardManager = LocalClipboardManager.current
     RainbowDropdownMenuHolder(
         icon = { Icon(RainbowIcons.MoreVert, RainbowStrings.SubredditOptions) },
     ) { handler ->
-        RainbowDropdownMenuItem(
-            onClick = {
-                urlHandler.openUri(subreddit.fullUrl)
-                handler.hideMenu()
-            }
-        ) {
-            Icon(RainbowIcons.OpenInBrowser, RainbowStrings.OpenInBrowser)
-            Text(RainbowStrings.OpenInBrowser)
-        }
-
-        RainbowDropdownMenuItem(
-            onClick = {
-                val annotatedString = AnnotatedString(subreddit.fullUrl)
-                clipboardManager.setText(annotatedString)
-                onLinkCopied(RainbowStrings.LinkIsCopied)
-                handler.hideMenu()
-            }
-        ) {
-            Icon(RainbowIcons.Link, RainbowStrings.CopyLink)
-            Text(RainbowStrings.CopyLink)
-        }
+        OpenInBrowserDropdownMenuItem(subreddit.fullUrl, handler)
+        CopyLinkDropdownMenuItem(subreddit.fullUrl, handler, onShowSnackbar)
     }
 }
 
