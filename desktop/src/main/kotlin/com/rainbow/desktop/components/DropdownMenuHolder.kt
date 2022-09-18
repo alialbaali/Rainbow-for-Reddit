@@ -2,6 +2,7 @@ package com.rainbow.desktop.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.DropdownMenu
@@ -13,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpOffset
@@ -23,7 +23,6 @@ import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
 
 private val DropdownMenuMaxHeight = 300.dp
-private val DropdownMenuMinHeight = 200.dp
 private val DropDownMenuMinWidth = 200.dp
 private val DropdownMenuOffset = DpOffset(0.dp, 16.dp)
 
@@ -61,18 +60,15 @@ inline fun <reified T : Enum<T>> EnumDropdownMenuHolder(
 
 @Composable
 fun RainbowDropdownMenuHolder(
-    text: @Composable () -> Unit,
+    icon: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    iconOnly: Boolean = false,
     containerColor: Color = MaterialTheme.colorScheme.background,
-    icon: (@Composable () -> Unit)? = null,
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.(DropdownMenuHandler) -> Unit,
 ) {
     var isVisible by remember { mutableStateOf(false) }
-    val iconRotation by animateFloatAsState(if (isVisible) 180F else 0F)
-    val scope = remember {
+    val handler = remember {
         object : DropdownMenuHandler {
             override fun hideMenu() {
                 isVisible = false
@@ -80,48 +76,87 @@ fun RainbowDropdownMenuHolder(
         }
     }
     Column(modifier) {
-        if (iconOnly) {
-            RainbowIconButton(
-                onClick = {
-                    isVisible = !isVisible
-                    onClick?.invoke()
-                },
-            ) {
-                if (icon != null) icon()
-            }
-        } else {
-            RainbowButton(
-                onClick = {
-                    isVisible = !isVisible
-                    onClick?.invoke()
-                },
-                modifier = modifier,
-                enabled = enabled,
-                containerColor = containerColor,
-            ) {
-                if (icon != null) icon()
-                text()
-                Icon(RainbowIcons.ExpandMore, RainbowStrings.Show, Modifier.rotate(iconRotation))
-            }
-        }
+        RainbowIconButton(
+            onClick = {
+                isVisible = !isVisible
+                onClick?.invoke()
+            },
+            containerColor = containerColor,
+            content = icon,
+        )
 
-        DropdownMenu(
-            isVisible,
+        RainbowDropdownMenu(
+            isVisible = isVisible,
             onDismissRequest = { isVisible = false },
-            modifier = Modifier
-                .width(IntrinsicSize.Max)
-                .sizeIn(
-                    minWidth = DropDownMenuMinWidth,
-                    minHeight = DropdownMenuMinHeight,
-                    maxHeight = DropdownMenuMaxHeight,
-                )
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(vertical = RainbowTheme.dpDimensions.small),
-            offset = DropdownMenuOffset,
-        ) {
-            content(scope)
+            handler,
+            content = content,
+        )
+    }
+}
+
+@Composable
+fun RainbowDropdownMenuHolder(
+    text: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    containerColor: Color = MaterialTheme.colorScheme.background,
+    icon: (@Composable () -> Unit)? = null,
+    onClick: (() -> Unit)? = null,
+    content: @Composable ColumnScope.(DropdownMenuHandler) -> Unit,
+) {
+    var isVisible by remember { mutableStateOf(false) }
+    val iconRotation by animateFloatAsState(if (isVisible) 180F else 0F)
+    val handler = remember {
+        object : DropdownMenuHandler {
+            override fun hideMenu() {
+                isVisible = false
+            }
         }
     }
+    Column(modifier) {
+        RainbowButton(
+            onClick = {
+                isVisible = !isVisible
+                onClick?.invoke()
+            },
+            modifier = modifier,
+            enabled = enabled,
+            containerColor = containerColor,
+        ) {
+            if (icon != null) icon()
+            text()
+            Icon(RainbowIcons.ExpandMore, RainbowStrings.Show, Modifier.rotate(iconRotation))
+        }
+
+        RainbowDropdownMenu(
+            isVisible = isVisible,
+            onDismissRequest = { isVisible = false },
+            handler,
+            content = content,
+        )
+    }
+}
+
+@Composable
+fun RainbowDropdownMenuItem(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    content: @Composable RowScope.() -> Unit
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+//            .background(MaterialTheme.colorScheme.surface)
+//            .padding(horizontal = RainbowTheme.dpDimensions.medium)
+//            .clip(MaterialTheme.shapes.small)
+            .clickable(onClick = onClick, enabled = enabled)
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(RainbowTheme.dpDimensions.medium),
+        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium),
+        verticalAlignment = Alignment.CenterVertically,
+        content = content,
+    )
 }
 
 @Composable
@@ -135,9 +170,9 @@ fun RainbowDropdownMenuItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(horizontal = RainbowTheme.dpDimensions.medium)
-            .clip(MaterialTheme.shapes.small)
+//            .background(MaterialTheme.colorScheme.surface)
+//            .padding(horizontal = RainbowTheme.dpDimensions.medium)
+//            .clip(MaterialTheme.shapes.small)
             .selectable(selected, enabled, onClick = onClick)
             .background(if (selected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surface)
             .padding(RainbowTheme.dpDimensions.medium),
@@ -154,4 +189,26 @@ fun RainbowDropdownMenuItem(
 
 interface DropdownMenuHandler {
     fun hideMenu()
+}
+
+@Composable
+fun RainbowDropdownMenu(
+    isVisible: Boolean,
+    onDismissRequest: () -> Unit,
+    handler: DropdownMenuHandler,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.(DropdownMenuHandler) -> Unit,
+) {
+    // TODO: Remove vertical padding when it's possible.
+    DropdownMenu(
+        isVisible,
+        onDismissRequest = onDismissRequest,
+        modifier = Modifier
+            .width(IntrinsicSize.Max)
+            .sizeIn(minWidth = DropDownMenuMinWidth, maxHeight = DropdownMenuMaxHeight)
+            .background(MaterialTheme.colorScheme.surface),
+        offset = DropdownMenuOffset,
+    ) {
+        content(handler)
+    }
 }
