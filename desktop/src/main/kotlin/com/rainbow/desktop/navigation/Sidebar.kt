@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.utils.RainbowStrings
@@ -43,16 +44,10 @@ fun Sidebar(
                     MainScreen.SidebarItem.Subreddits,
                     MainScreen.SidebarItem.Messages,
                 ).forEach { item ->
-                    NavigationRailItem(
-                        selected = item == sidebarItem,
-                        onClick = { onSidebarItemClick(item) },
-                        icon = { Icon(item.icon, item.icon.name) },
-                        label = { Text(item.title) },
-                        alwaysShowLabel = false,
-                        colors = NavigationRailItemDefaults.colors(
-                            indicatorColor = MaterialTheme.colorScheme.primary,
-                            selectedIconColor = MaterialTheme.colorScheme.onPrimary,
-                        )
+                    SidebarItem(
+                        item = item,
+                        currentSidebarItem = sidebarItem,
+                        onSidebarItemClick,
                     )
                 }
             }
@@ -78,7 +73,7 @@ private fun SidebarItem(
         icon = { Icon(item.icon, item.icon.name) },
         label = { Text(item.title) },
         alwaysShowLabel = false,
-        modifier = modifier,
+        modifier = modifier.clip(MaterialTheme.shapes.small),
         colors = NavigationRailItemDefaults.colors(
             indicatorColor = MaterialTheme.colorScheme.primary,
             selectedIconColor = MaterialTheme.colorScheme.onPrimary,
