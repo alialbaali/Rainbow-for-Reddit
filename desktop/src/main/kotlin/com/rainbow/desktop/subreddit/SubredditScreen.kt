@@ -136,7 +136,8 @@ fun SubredditScreen(
 
 private fun LazyListScope.wiki(wikiState: UIState<WikiPage>, onShowSnackbar: (String) -> Unit) {
     item {
-        wikiState.composed(onShowSnackbar) { wikiPage ->
+        val wikiPage = remember(wikiState) { wikiState.getOrNull() }
+        if (wikiPage != null) {
             Column(
                 Modifier
                     .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)

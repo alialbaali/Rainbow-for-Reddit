@@ -21,7 +21,7 @@ fun Sidebar(
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
 
         Box(Modifier.defaultPadding()) {
-            Image(painterResource("Icon.svg"), RainbowStrings.Rainbow, Modifier.size(48.dp))
+            Image(painterResource("icons/Rainbow.svg"), RainbowStrings.Rainbow, Modifier.size(48.dp))
         }
 
         Column(

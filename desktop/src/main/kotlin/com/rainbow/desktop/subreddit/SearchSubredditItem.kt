@@ -28,9 +28,7 @@ fun SearchSubredditItem(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier
-            .defaultSurfaceShape()
-            .clickable { onClick(subreddit) },
+        modifier.clickable { onClick(subreddit) },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {

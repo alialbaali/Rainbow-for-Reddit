@@ -28,7 +28,7 @@ fun ReplyItem(
     Surface(onClick) {
         Row(
             modifier
-                .height(IntrinsicSize.Min)
+//                .height(IntrinsicSize.Min)
                 .padding(horizontal = 16.dp)
         ) {
             repeat(depth) {

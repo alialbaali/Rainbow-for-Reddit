@@ -7,20 +7,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.components.RainbowTextField
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.ui.dpDimensions
-import com.rainbow.desktop.utils.*
+import com.rainbow.desktop.utils.RainbowStrings
+import com.rainbow.desktop.utils.getOrDefault
 
 @Composable
 fun SubredditsScreen(
@@ -54,23 +53,11 @@ fun SubredditsScreen(
             }
         }
 
-        itemsIndexed(subreddits) { index, subreddit ->
-            SubredditItem(
-                subreddit,
-                onClick = { onNavigateMainScreen(MainScreen.Subreddit(subreddit.name)) },
-                onShowSnackbar
-            )
-            PagingEffect(subreddits, index, stateHolder.subredditsStateHolder::setLastItem)
-        }
-
-        subredditsState
-            .onLoading {
-                item(span = { GridItemSpan(4) }) {
-                    RainbowProgressIndicator()
-                }
-            }
-            .onFailure {
-                onShowSnackbar(it.message.toString())
-            }
+        subreddits(
+            subredditsState,
+            onNavigateMainScreen,
+            onShowSnackbar,
+            stateHolder.subredditsStateHolder::setLastItem
+        )
     }
 }

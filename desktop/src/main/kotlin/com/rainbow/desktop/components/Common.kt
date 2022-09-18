@@ -1,16 +1,31 @@
 package com.rainbow.desktop.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.rounded.Link
 import androidx.compose.material.icons.rounded.OpenInBrowser
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import com.halilibo.richtext.markdown.Markdown
+import com.halilibo.richtext.ui.RichText
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
+import com.rainbow.desktop.utils.displayTime
+import kotlinx.datetime.LocalDateTime
 
 @Composable
 fun OpenInBrowserDropdownMenuItem(
@@ -49,5 +64,102 @@ fun CopyLinkDropdownMenuItem(
     ) {
         Icon(RainbowIcons.Link, RainbowStrings.CopyLink)
         Text(RainbowStrings.CopyLink)
+    }
+}
+
+@Composable
+fun SubredditName(
+    subredditName: String,
+    onClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = subredditName,
+        modifier.clickable { onClick(subredditName) },
+        color = MaterialTheme.colorScheme.onSurface,
+        style = MaterialTheme.typography.labelLarge,
+    )
+}
+
+@Composable
+fun UserName(
+    userName: String,
+    onClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = userName,
+        modifier = modifier.clickable { onClick(userName) },
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        style = MaterialTheme.typography.labelLarge,
+    )
+}
+
+
+@Composable
+fun CommentUserName(
+    userName: String,
+    postUserName: String,
+    onClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val isOP = remember(userName, postUserName) { userName == postUserName }
+    val color = if (isOP) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+    val backgroundModifier = if (isOP) {
+        Modifier
+            .background(MaterialTheme.colorScheme.primary, MaterialTheme.shapes.extraSmall)
+            .padding(horizontal = 4.dp)
+    } else {
+        Modifier
+    }
+    Text(
+        text = userName,
+        modifier = modifier
+            .then(backgroundModifier)
+            .clickable { onClick(userName) },
+        color = color,
+        style = MaterialTheme.typography.labelLarge,
+    )
+}
+
+@Composable
+fun CreationDate(date: LocalDateTime, modifier: Modifier = Modifier) {
+    Text(
+        date.displayTime,
+        modifier,
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        style = MaterialTheme.typography.labelLarge,
+    )
+}
+
+@Composable
+fun MarkdownText(text: String, modifier: Modifier = Modifier) {
+    RichText(modifier) {
+        Markdown(text)
+    }
+}
+
+@Composable
+fun NSFWBox(modifier: Modifier = Modifier) {
+    Box(
+        modifier
+            .fillMaxSize()
+            .background(Color.Red)
+    )
+}
+
+@Composable
+fun TextBox(
+    text: String,
+    fontSize: TextUnit,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.inverseOnSurface,
+) {
+    Box(modifier, Alignment.Center) {
+        Text(
+            text.first().toString().uppercase(),
+            color = color,
+            fontSize = fontSize,
+        )
     }
 }

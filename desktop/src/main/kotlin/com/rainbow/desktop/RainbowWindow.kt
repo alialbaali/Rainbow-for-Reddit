@@ -13,7 +13,6 @@ import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ApplicationScope.RainbowWindow(
     title: String,
@@ -31,7 +30,7 @@ fun ApplicationScope.RainbowWindow(
             false
         }
     },
-    icon = painterResource("Icon.svg"),
+    icon = painterResource("icons/Rainbow.svg"),
     content = { content() }
 )
 

@@ -32,7 +32,16 @@ compose.desktop {
         mainClass = "com.rainbow.desktop.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "jvm"
+            macOS {
+                iconFile.set(project.file("src/main/resources/icons/Rainbow.icns"))
+            }
+            windows {
+                iconFile.set(project.file("src/main/resources/icons/Rainbow.ico"))
+            }
+            linux {
+                iconFile.set(project.file("src/main/resources/icons/Rainbow.png"))
+            }
+            packageName = "Rainbow"
             packageVersion = "1.0.0"
         }
     }

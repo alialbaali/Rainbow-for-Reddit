@@ -1,21 +1,13 @@
 package com.rainbow.desktop.utils
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.domain.models.*
@@ -24,12 +16,12 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
+val ImageBorderSize = 6.dp
 typealias RainbowIcons = Icons.Rounded
 
 @Composable
 fun DefaultContentPadding() = PaddingValues(vertical = RainbowTheme.dpDimensions.medium)
 
-val ImageBorderSize = 6.dp
 
 @NonRestartableComposable
 @Composable
@@ -64,30 +56,6 @@ fun OneTimeEffect(
     }
 }
 
-@Composable
-fun Modifier.defaultBackgroundShape(
-    borderWidth: Dp = 1.dp,
-    borderColor: Color = MaterialTheme.colorScheme.onBackground.copy(0.1F),
-    shape: Shape = RoundedCornerShape(16.dp),
-) = this.then(
-    Modifier
-        .border(borderWidth, borderColor, shape)
-        .background(MaterialTheme.colorScheme.background, shape)
-        .clip(shape)
-)
-
-@Composable
-fun Modifier.defaultSurfaceShape(
-    borderWidth: Dp = 1.dp,
-    borderColor: Color = MaterialTheme.colorScheme.onBackground.copy(0.1F),
-    shape: Shape = RoundedCornerShape(16.dp),
-) = this.then(
-    Modifier
-        .border(borderWidth, borderColor, shape)
-        .background(MaterialTheme.colorScheme.surface, shape)
-        .clip(shape)
-)
-
 fun Modifier.defaultPadding(
     start: Dp = 16.dp,
     top: Dp = 16.dp,
@@ -113,22 +81,6 @@ val LocalDateTime.displayTime: String
             else -> dayDiff.toString().plus("d")
         }
     }
-
-@Composable
-inline fun <T> UIState<T>.composed(
-    noinline onShowSnackbar: ((String) -> Unit)?,
-    modifier: Modifier = Modifier,
-    onLoading: @Composable () -> Unit = { RainbowProgressIndicator(modifier) },
-    onFailure: @Composable (Throwable) -> Unit = { if (onShowSnackbar != null) onShowSnackbar(it.message.toString()) },
-    onSuccess: @Composable (T) -> Unit,
-) {
-    when (this) {
-        is UIState.Loading -> onLoading()
-        is UIState.Success -> onSuccess(data)
-        is UIState.Failure -> onFailure(exception)
-        UIState.Empty -> {}
-    }
-}
 
 fun LocalDateTime.Companion.now() = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 

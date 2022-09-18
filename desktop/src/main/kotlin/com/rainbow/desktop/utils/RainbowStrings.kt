@@ -92,6 +92,7 @@ object RainbowStrings {
     const val Comments = "Comments"
     const val Permissions = "Permissions"
     const val Since = "Since"
+    const val SubredditOptions = "Subreddit options"
 
     fun SubredditsCount(count: Int) = "$count Subreddits"
     fun UnsubscribeMessage(subredditName: String) = "You have unsubscribed from $subredditName."
