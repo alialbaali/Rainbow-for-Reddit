@@ -10,3 +10,6 @@ data class DpDimensions(
     val large: Dp = 24.dp,
     val extraLarge: Dp = 32.dp,
 )
+
+val DpDimensions.headerImageBorder
+    get() = small

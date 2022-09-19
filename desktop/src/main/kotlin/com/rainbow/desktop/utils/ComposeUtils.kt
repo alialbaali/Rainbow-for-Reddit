@@ -16,12 +16,10 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-val ImageBorderSize = 6.dp
 typealias RainbowIcons = Icons.Rounded
 
 @Composable
 fun DefaultContentPadding() = PaddingValues(vertical = RainbowTheme.dpDimensions.medium)
-
 
 @NonRestartableComposable
 @Composable

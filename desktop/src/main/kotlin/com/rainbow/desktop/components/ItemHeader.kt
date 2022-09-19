@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,7 +13,8 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rainbow.desktop.utils.ImageBorderSize
+import com.rainbow.desktop.ui.RainbowTheme
+import com.rainbow.desktop.ui.headerImageBorder
 import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
 
@@ -26,9 +26,13 @@ private val BoxScope.ImageModifier
     @Composable
     get() = Modifier
         .padding(top = 50.dp)
-        .border(ImageBorderSize, MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
+        .border(
+            RainbowTheme.dpDimensions.headerImageBorder,
+            MaterialTheme.colorScheme.surface,
+            MaterialTheme.shapes.medium,
+        )
         .size(100.dp)
-        .clip(RoundedCornerShape(16.dp))
+        .clip(MaterialTheme.shapes.medium)
         .background(MaterialTheme.colorScheme.onSurface)
         .align(Alignment.BottomCenter)
 

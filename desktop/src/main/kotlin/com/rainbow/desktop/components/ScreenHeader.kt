@@ -25,7 +25,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rainbow.desktop.utils.ImageBorderSize
+import com.rainbow.desktop.ui.RainbowTheme
+import com.rainbow.desktop.ui.headerImageBorder
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.defaultPadding
 import io.kamel.image.KamelImage
@@ -41,7 +42,7 @@ private fun ImageModifier(shape: Shape) = Modifier
     .composed {
         Modifier
             .clip(shape)
-            .border(ImageBorderSize, MaterialTheme.colorScheme.surface, shape)
+            .border(RainbowTheme.dpDimensions.headerImageBorder, MaterialTheme.colorScheme.surface, shape)
             .background(MaterialTheme.colorScheme.inverseSurface, shape)
     }
 
