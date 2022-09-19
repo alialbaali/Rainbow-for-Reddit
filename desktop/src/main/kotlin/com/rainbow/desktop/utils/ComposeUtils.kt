@@ -19,7 +19,7 @@ import kotlinx.datetime.toLocalDateTime
 typealias RainbowIcons = Icons.Rounded
 
 @Composable
-fun DefaultContentPadding() = PaddingValues(vertical = RainbowTheme.dpDimensions.medium)
+fun DefaultContentPadding() = PaddingValues(vertical = RainbowTheme.dimensions.medium)
 
 @NonRestartableComposable
 @Composable

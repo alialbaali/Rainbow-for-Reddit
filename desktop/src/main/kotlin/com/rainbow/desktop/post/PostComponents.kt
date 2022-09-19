@@ -221,9 +221,9 @@ fun PostOptions(
         Row(
             Modifier
                 .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.small)
-                .padding(vertical = RainbowTheme.dpDimensions.small, horizontal = RainbowTheme.dpDimensions.medium),
+                .padding(vertical = RainbowTheme.dimensions.small, horizontal = RainbowTheme.dimensions.medium),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium)
+            horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
         ) {
             Icon(
                 RainbowIcons.Forum,

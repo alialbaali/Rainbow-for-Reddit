@@ -28,7 +28,7 @@ fun RainbowTextField(
     val isPlaceholderVisible by remember(value) { mutableStateOf(value.isBlank()) }
     val interactionSource = remember { MutableInteractionSource() }
     val minTextWidth = 280.dp
-    val textStartPaddding = RainbowTheme.dpDimensions.medium
+    val textStartPaddding = RainbowTheme.dimensions.medium
     var trailingIconWidth by remember { mutableStateOf(Dp.Unspecified) }
     BasicTextField(
         value,
@@ -41,7 +41,7 @@ fun RainbowTextField(
                 if (trailingIcon != null)
                     Modifier
                 else
-                    Modifier.padding(vertical = RainbowTheme.dpDimensions.medium)
+                    Modifier.padding(vertical = RainbowTheme.dimensions.medium)
             ),
         singleLine = singleLine,
         maxLines = maxLines,
@@ -57,7 +57,7 @@ fun RainbowTextField(
                 Box(
                     Modifier
                         .widthIn(max = minTextWidth - trailingIconWidth - textStartPaddding)
-                        .padding(end = RainbowTheme.dpDimensions.medium)
+                        .padding(end = RainbowTheme.dimensions.medium)
                 ) {
                     innerTextField()
                 }

@@ -24,7 +24,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
     Box(modifier.padding(DefaultContentPadding())) {
         Row(
             modifier = Modifier.matchParentSize(),
-            horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium)
+            horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
         ) {
             SettingsTabs(selectedTab, SettingsStateHolder::selectTab)
             Crossfade(selectedTab) { animatedSelectedTab ->
@@ -50,8 +50,8 @@ private fun SettingsTabs(
         shape = MaterialTheme.shapes.medium,
     ) {
         Column(
-            modifier = Modifier.padding(RainbowTheme.dpDimensions.medium),
-            verticalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium),
+            modifier = Modifier.padding(RainbowTheme.dimensions.medium),
+            verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium),
         ) {
             SettingsTab.values().forEach { tab ->
                 val containerColor by animateColorAsState(
@@ -84,9 +84,9 @@ private fun SettingsTabs(
 @Composable
 private fun SettingsTabItem(tab: SettingsTab, modifier: Modifier = Modifier) {
     Row(
-        modifier.padding(RainbowTheme.dpDimensions.medium),
+        modifier.padding(RainbowTheme.dimensions.medium),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium),
+        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium),
     ) {
         Icon(tab.icon, tab.name)
         Text(tab.name, style = MaterialTheme.typography.titleMedium)

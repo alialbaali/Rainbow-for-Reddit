@@ -35,7 +35,7 @@ fun PostCommentItem(
             Modifier
                 .fillMaxSize()
                 .defaultPadding(),
-            verticalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium)
+            verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
         ) {
             PostCommentInfo(
                 comment,

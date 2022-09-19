@@ -106,9 +106,9 @@ fun CommentOptions(
             Row(
                 Modifier
                     .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.medium)
-                    .padding(RainbowTheme.dpDimensions.small),
+                    .padding(RainbowTheme.dimensions.small),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium)
+                horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
             ) {
                 Icon(
                     RainbowIcons.Forum,

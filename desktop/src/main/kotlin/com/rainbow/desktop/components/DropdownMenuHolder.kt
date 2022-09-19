@@ -152,8 +152,8 @@ fun RainbowDropdownMenuItem(
 //            .clip(MaterialTheme.shapes.small)
             .clickable(onClick = onClick, enabled = enabled)
             .background(MaterialTheme.colorScheme.surface)
-            .padding(RainbowTheme.dpDimensions.medium),
-        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium),
+            .padding(RainbowTheme.dimensions.medium),
+        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium),
         verticalAlignment = Alignment.CenterVertically,
         content = content,
     )
@@ -175,8 +175,8 @@ fun RainbowDropdownMenuItem(
 //            .clip(MaterialTheme.shapes.small)
             .selectable(selected, enabled, onClick = onClick)
             .background(if (selected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surface)
-            .padding(RainbowTheme.dpDimensions.medium),
-        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium),
+            .padding(RainbowTheme.dimensions.medium),
+        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         content()

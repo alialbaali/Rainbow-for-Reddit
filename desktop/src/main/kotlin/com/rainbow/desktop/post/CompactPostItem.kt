@@ -46,7 +46,7 @@ fun CompactPostItem(
             Modifier
                 .defaultPadding()
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.large)
+            verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.large)
         ) {
             if (isTextPost) {
                 PostInfo(
@@ -72,11 +72,11 @@ fun CompactPostItem(
             } else {
                 Row(
                     Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.large),
+                    horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.large),
                 ) {
                     Column(
                         modifier = Modifier.weight(1F),
-                        verticalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.large)
+                        verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.large)
                     ) {
                         PostInfo(
                             post,

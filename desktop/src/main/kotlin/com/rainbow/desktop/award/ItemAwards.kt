@@ -24,9 +24,9 @@ fun ItemAwards(awards: List<Award>, onClick: () -> Unit, modifier: Modifier = Mo
             .clip(MaterialTheme.shapes.small)
             .clickable(onClick = onClick)
             .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.small)
-            .padding(horizontal = RainbowTheme.dpDimensions.small),
+            .padding(horizontal = RainbowTheme.dimensions.small),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.small),
+        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.small),
     ) {
         item {
             Text(

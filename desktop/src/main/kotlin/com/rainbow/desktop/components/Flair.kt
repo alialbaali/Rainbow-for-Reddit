@@ -29,12 +29,12 @@ fun FlairItem(
     modifier: Modifier = Modifier,
 ) {
     val horizontalPadding = when (style) {
-        FlairStyle.Compact -> RainbowTheme.dpDimensions.extraSmall
-        FlairStyle.Default -> RainbowTheme.dpDimensions.small
+        FlairStyle.Compact -> RainbowTheme.dimensions.extraSmall
+        FlairStyle.Default -> RainbowTheme.dimensions.small
     }
     val verticalPadding = when (style) {
         FlairStyle.Compact -> 2.dp
-        FlairStyle.Default -> RainbowTheme.dpDimensions.extraSmall
+        FlairStyle.Default -> RainbowTheme.dimensions.extraSmall
     }
     val textStyle = when (style) {
         FlairStyle.Compact -> MaterialTheme.typography.labelMedium

@@ -139,7 +139,7 @@ private fun LazyListScope.wiki(wikiState: UIState<WikiPage>, onShowSnackbar: (St
                     .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
                     .defaultPadding()
                     .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium)
+                verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
             ) {
                 MarkdownText(wikiPage.content)
                 Text("Revised by ${wikiPage.revisionBy.name} on ${wikiPage.revisionDate}")
@@ -193,7 +193,7 @@ private fun Header(
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
                 ScreenHeaderDescription(subreddit.shortDescription)
-                Spacer(Modifier.height(RainbowTheme.dpDimensions.medium))
+                Spacer(Modifier.height(RainbowTheme.dimensions.medium))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End,
@@ -207,15 +207,15 @@ private fun Header(
                         onClearFlairClick,
                         onLoadFlairs
                     )
-                    Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
+                    Spacer(Modifier.width(RainbowTheme.dimensions.medium))
                     SubredditFavoriteIconButton(
                         subreddit,
                         onShowSnackbar,
                         enabled = subreddit.isSubscribed
                     )
-                    Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
+                    Spacer(Modifier.width(RainbowTheme.dimensions.medium))
                     SubscribeButton(subreddit, onShowSnackbar)
-                    Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
+                    Spacer(Modifier.width(RainbowTheme.dimensions.medium))
                     Menu(subreddit, onShowSnackbar)
                 }
             }
@@ -300,13 +300,13 @@ private fun SelectableFlairItem(
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.small)
             .clickable { onClick(flair.first) }
-            .padding(horizontal = RainbowTheme.dpDimensions.medium)
+            .padding(horizontal = RainbowTheme.dimensions.medium)
             .background(MaterialTheme.colorScheme.surface)
-            .padding(RainbowTheme.dpDimensions.medium),
+            .padding(RainbowTheme.dimensions.medium),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
+        Spacer(Modifier.width(RainbowTheme.dimensions.medium))
         if (flair.second) {
             Icon(RainbowIcons.Done, RainbowStrings.Select)
         }
@@ -327,7 +327,7 @@ private fun FlairsActions(onApply: () -> Unit, onClear: () -> Unit, modifier: Mo
             Text(RainbowStrings.Clear)
         }
 
-        Spacer(Modifier.width(RainbowTheme.dpDimensions.medium))
+        Spacer(Modifier.width(RainbowTheme.dimensions.medium))
 
         RainbowButton(
             onApply,
@@ -373,8 +373,8 @@ private fun RuleItem(rule: Rule, modifier: Modifier = Modifier) {
         modifier
             .clip(MaterialTheme.shapes.medium)
             .background(MaterialTheme.colorScheme.surface)
-            .padding(RainbowTheme.dpDimensions.medium),
-        verticalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.small),
+            .padding(RainbowTheme.dimensions.medium),
+        verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.small),
     ) {
         Text(
             text = "${rule.priority}. ${rule.title}",
@@ -404,11 +404,11 @@ private fun ModeratorItem(moderator: Moderator, onModeratorClick: (String) -> Un
             .clip(MaterialTheme.shapes.medium)
             .clickable { onModeratorClick(moderator.name) }
             .background(MaterialTheme.colorScheme.surface)
-            .padding(RainbowTheme.dpDimensions.medium),
-        verticalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.small),
+            .padding(RainbowTheme.dimensions.medium),
+        verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.small),
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.small),
+            horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.small),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(

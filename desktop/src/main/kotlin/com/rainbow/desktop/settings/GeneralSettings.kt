@@ -94,7 +94,7 @@ private fun LogoutDialog(
                 Modifier
                     .defaultPadding()
                     .align(Alignment.End),
-                horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium)
+                horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
             ) {
                 RainbowButton(
                     onClick = SettingsStateHolder::logoutUser,

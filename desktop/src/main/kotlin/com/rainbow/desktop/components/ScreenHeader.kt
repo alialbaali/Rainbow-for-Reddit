@@ -42,7 +42,7 @@ private fun ImageModifier(shape: Shape) = Modifier
     .composed {
         Modifier
             .clip(shape)
-            .border(RainbowTheme.dpDimensions.headerImageBorder, MaterialTheme.colorScheme.surface, shape)
+            .border(RainbowTheme.dimensions.headerImageBorder, MaterialTheme.colorScheme.surface, shape)
             .background(MaterialTheme.colorScheme.inverseSurface, shape)
     }
 

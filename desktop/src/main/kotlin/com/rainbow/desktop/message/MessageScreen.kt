@@ -6,14 +6,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.navigation.MainScreen
-import com.rainbow.desktop.ui.dpDimensions
 import com.rainbow.desktop.utils.DefaultContentPadding
 import com.rainbow.desktop.utils.getOrNull
 

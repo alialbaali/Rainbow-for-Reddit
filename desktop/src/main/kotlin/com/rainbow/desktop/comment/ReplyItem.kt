@@ -38,7 +38,7 @@ fun ReplyItem(
             Column(
                 Modifier
                     .padding(vertical = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium)
+                verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
             ) {
                 PostCommentInfo(
                     reply,

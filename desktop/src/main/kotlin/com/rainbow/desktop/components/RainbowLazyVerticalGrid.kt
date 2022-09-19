@@ -7,7 +7,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.rainbow.desktop.ui.dpDimensions
+import com.rainbow.desktop.ui.dimensions
 import com.rainbow.desktop.utils.DefaultContentPadding
 
 private const val ColumnsCount = 4
@@ -16,8 +16,8 @@ private const val ColumnsCount = 4
 fun RainbowLazyVerticalGrid(
     modifier: Modifier = Modifier,
     columns: GridCells = GridCells.Fixed(ColumnsCount),
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(MaterialTheme.dpDimensions.medium),
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(MaterialTheme.dpDimensions.medium),
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(MaterialTheme.dimensions.medium),
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(MaterialTheme.dimensions.medium),
     content: LazyGridScope.() -> Unit,
 ) {
     LazyVerticalGrid(

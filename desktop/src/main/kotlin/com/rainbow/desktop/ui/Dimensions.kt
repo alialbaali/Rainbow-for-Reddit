@@ -3,7 +3,7 @@ package com.rainbow.desktop.ui
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-data class DpDimensions(
+data class Dimensions(
     val extraSmall: Dp = 4.dp,
     val small: Dp = 8.dp,
     val medium: Dp = 16.dp,
@@ -11,5 +11,5 @@ data class DpDimensions(
     val extraLarge: Dp = 32.dp,
 )
 
-val DpDimensions.headerImageBorder
+val Dimensions.headerImageBorder
     get() = small

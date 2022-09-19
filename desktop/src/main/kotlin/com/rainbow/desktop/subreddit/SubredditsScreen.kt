@@ -17,7 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.components.RainbowTextField
 import com.rainbow.desktop.navigation.MainScreen
-import com.rainbow.desktop.ui.dpDimensions
+import com.rainbow.desktop.ui.dimensions
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.getOrDefault
 
@@ -33,9 +33,9 @@ fun SubredditsScreen(
     val subreddits = remember(subredditsState) { subredditsState.getOrDefault(emptyList()) }
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.dpDimensions.medium),
-        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dpDimensions.medium),
-        contentPadding = PaddingValues(MaterialTheme.dpDimensions.medium)
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimensions.medium),
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimensions.medium),
+        contentPadding = PaddingValues(MaterialTheme.dimensions.medium)
     ) {
         item(span = { GridItemSpan(4) }) {
             Row(

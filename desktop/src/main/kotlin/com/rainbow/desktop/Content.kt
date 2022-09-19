@@ -26,7 +26,7 @@ import com.rainbow.desktop.search.SearchScreen
 import com.rainbow.desktop.settings.SettingsScreen
 import com.rainbow.desktop.subreddit.SubredditScreen
 import com.rainbow.desktop.subreddit.SubredditsScreen
-import com.rainbow.desktop.ui.dpDimensions
+import com.rainbow.desktop.ui.dimensions
 import com.rainbow.desktop.user.UserScreen
 
 @Composable
@@ -74,7 +74,7 @@ internal fun Content(
                     Modifier
                         .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.medium)
                         .fillMaxSize()
-                        .padding(horizontal = MaterialTheme.dpDimensions.medium),
+                        .padding(horizontal = MaterialTheme.dimensions.medium),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     val mainScreenModifier = remember(mainScreen, detailsScreen) {

@@ -25,7 +25,7 @@ import com.rainbow.desktop.comment.postComments
 import com.rainbow.desktop.components.*
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.ui.RainbowTheme
-import com.rainbow.desktop.ui.dpDimensions
+import com.rainbow.desktop.ui.dimensions
 import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.PostCommentSorting
@@ -52,7 +52,7 @@ fun PostScreen(
         if (firstVisibleItemIndex >= 1) {
             0.dp
         } else {
-            MaterialTheme.dpDimensions.medium
+            MaterialTheme.dimensions.medium
         }
     )
 
@@ -123,7 +123,7 @@ private fun Post(
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium)) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)) {
         PostInfo(
             post = post,
             onUserNameClick,
@@ -180,7 +180,7 @@ private fun LazyItemScope.CommentActions(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(RainbowTheme.dpDimensions.medium),
+                .padding(RainbowTheme.dimensions.medium),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {

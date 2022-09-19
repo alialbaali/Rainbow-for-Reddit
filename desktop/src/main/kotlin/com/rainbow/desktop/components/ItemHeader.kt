@@ -27,7 +27,7 @@ private val BoxScope.ImageModifier
     get() = Modifier
         .padding(top = 50.dp)
         .border(
-            RainbowTheme.dpDimensions.headerImageBorder,
+            RainbowTheme.dimensions.headerImageBorder,
             MaterialTheme.colorScheme.surface,
             MaterialTheme.shapes.medium,
         )

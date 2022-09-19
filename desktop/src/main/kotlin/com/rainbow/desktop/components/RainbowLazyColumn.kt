@@ -15,7 +15,7 @@ import com.rainbow.desktop.utils.DefaultContentPadding
 @Composable
 fun RainbowLazyColumn(
     modifier: Modifier = Modifier,
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium),
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(RainbowTheme.dimensions.medium),
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     scrollingState: LazyListState = rememberLazyListState(),
     content: LazyListScope.() -> Unit,

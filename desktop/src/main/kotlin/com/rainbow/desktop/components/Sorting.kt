@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.rainbow.desktop.ui.dpDimensions
+import com.rainbow.desktop.ui.dimensions
 import com.rainbow.desktop.utils.icon
 import com.rainbow.domain.models.ItemSorting
 import com.rainbow.domain.models.PostSorting
@@ -26,7 +26,7 @@ inline fun <reified T> PostSorting(
 ) where T : Enum<T>, T : PostSorting {
     Row(
         modifier,
-        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dpDimensions.medium),
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimensions.medium),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ItemSorting(

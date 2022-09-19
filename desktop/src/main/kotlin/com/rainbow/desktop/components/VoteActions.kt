@@ -39,7 +39,7 @@ fun VoteActions(
     Row(
         modifier.background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.small),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.small)
+        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.small)
     ) {
         RainbowIconToggleButton(
             checked = vote == Vote.Up,

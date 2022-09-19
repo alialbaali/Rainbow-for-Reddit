@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.semantics.Role
 import com.rainbow.desktop.ui.RainbowTheme
-import com.rainbow.desktop.ui.dpDimensions
+import com.rainbow.desktop.ui.dimensions
 
 @Composable
 fun RainbowButton(
@@ -77,9 +77,9 @@ fun RainbowButton(
                 role = Role.Button,
                 onClick = onClick,
             )
-            .padding(vertical = RainbowTheme.dpDimensions.small, horizontal = MaterialTheme.dpDimensions.medium),
+            .padding(vertical = RainbowTheme.dimensions.small, horizontal = MaterialTheme.dimensions.medium),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium)
+        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
     ) {
         CompositionLocalProvider(
             LocalContentColor provides appliedContentColor,
@@ -141,7 +141,7 @@ fun RainbowIconButton(
                 role = Role.Button,
                 onClick = onClick,
             )
-            .padding(RainbowTheme.dpDimensions.small),
+            .padding(RainbowTheme.dimensions.small),
         contentAlignment = Alignment.Center
     ) {
         CompositionLocalProvider(LocalContentColor provides appliedContentColor, content = content)
@@ -205,7 +205,7 @@ fun RainbowIconToggleButton(
                 role = Role.Checkbox,
                 onValueChange = onCheckedChange,
             )
-            .padding(RainbowTheme.dpDimensions.small),
+            .padding(RainbowTheme.dimensions.small),
         contentAlignment = Alignment.Center
     ) {
         CompositionLocalProvider(LocalContentColor provides appliedContentColor, content = content)

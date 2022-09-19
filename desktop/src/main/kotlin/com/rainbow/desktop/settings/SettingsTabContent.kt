@@ -19,8 +19,8 @@ fun SettingsTabContent(
         shape = MaterialTheme.shapes.medium,
     ) {
         Column(
-            modifier = modifier.padding(RainbowTheme.dpDimensions.medium),
-            verticalArrangement = Arrangement.spacedBy(RainbowTheme.dpDimensions.medium),
+            modifier = modifier.padding(RainbowTheme.dimensions.medium),
+            verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium),
             content = content,
         )
     }
