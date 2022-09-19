@@ -143,8 +143,6 @@ fun UserScreen(
         selectedItemIds[selectedTab]?.let { postId ->
             onNavigateDetailsScreen(DetailsScreen.Post(postId))
         }
-        onDispose {
-//            onNavigateDetailsScreen(DetailsScreen.None)
-        }
+        onDispose {}
     }
 }

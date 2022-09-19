@@ -96,10 +96,8 @@ fun SearchScreen(
                 onNavigateDetailsScreen(DetailsScreen.Post(postId))
             }
         } else {
-//            onNavigateDetailsScreen(DetailsScreen.None)
+            onNavigateDetailsScreen(DetailsScreen.None)
         }
-        onDispose {
-//            onNavigateDetailsScreen(DetailsScreen.None)
-        }
+        onDispose {}
     }
 }

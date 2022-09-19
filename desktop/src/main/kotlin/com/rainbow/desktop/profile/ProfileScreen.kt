@@ -18,7 +18,6 @@ import com.rainbow.desktop.components.*
 import com.rainbow.desktop.item.items
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
-import com.rainbow.desktop.components.PostSorting
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.defaultPadding
@@ -261,9 +260,7 @@ fun ProfileScreen(
         selectedItemIds[selectedTab]?.let { postId ->
             onNavigateDetailsScreen(DetailsScreen.Post(postId))
         }
-        onDispose {
-//            onNavigateDetailsScreen(DetailsScreen.None)
-        }
+        onDispose {}
     }
 }
 

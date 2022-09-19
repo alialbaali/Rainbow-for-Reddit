@@ -125,12 +125,8 @@ fun SubredditScreen(
             selectedItemId?.let { postId ->
                 onNavigateDetailsScreen(DetailsScreen.Post(postId))
             }
-        } else {
-//            onNavigateDetailsScreen(DetailsScreen.None)
         }
-        onDispose {
-//            onNavigateDetailsScreen(DetailsScreen.None)
-        }
+        onDispose {}
     }
 }
 

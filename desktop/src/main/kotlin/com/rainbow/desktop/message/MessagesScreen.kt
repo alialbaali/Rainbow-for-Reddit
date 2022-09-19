@@ -37,60 +37,93 @@ fun MessagesScreen(
             MessageTab.Inbox -> messages(
                 inboxMessages,
                 onNavigateMainScreen,
-                onNavigateDetailsScreen,
+                onNavigateDetailsScreen = { detailsScreen ->
+                    if (detailsScreen is DetailsScreen.Message) {
+                        stateHolder.selectItemId(MessageTab.Inbox, detailsScreen.messageId)
+                    }
+                    onNavigateDetailsScreen(detailsScreen)
+                },
                 stateHolder.inboxMessages::setLastItem,
             )
 
             MessageTab.Unread -> messages(
                 unreadMessages,
                 onNavigateMainScreen,
-                onNavigateDetailsScreen,
+                onNavigateDetailsScreen = { detailsScreen ->
+                    if (detailsScreen is DetailsScreen.Message) {
+                        stateHolder.selectItemId(MessageTab.Unread, detailsScreen.messageId)
+                    }
+                    onNavigateDetailsScreen(detailsScreen)
+                },
                 stateHolder.unreadMessages::setLastItem,
             )
 
             MessageTab.Sent -> messages(
                 sentMessages,
                 onNavigateMainScreen,
-                onNavigateDetailsScreen,
+                onNavigateDetailsScreen = { detailsScreen ->
+                    if (detailsScreen is DetailsScreen.Message) {
+                        stateHolder.selectItemId(MessageTab.Sent, detailsScreen.messageId)
+                    }
+                    onNavigateDetailsScreen(detailsScreen)
+                },
                 stateHolder.sentMessages::setLastItem,
             )
 
             MessageTab.Messages -> messages(
                 messages,
                 onNavigateMainScreen,
-                onNavigateDetailsScreen,
+                onNavigateDetailsScreen = { detailsScreen ->
+                    if (detailsScreen is DetailsScreen.Message) {
+                        stateHolder.selectItemId(MessageTab.Messages, detailsScreen.messageId)
+                    }
+                    onNavigateDetailsScreen(detailsScreen)
+                },
                 stateHolder.messages::setLastItem,
             )
 
             MessageTab.Mentions -> messages(
                 mentions,
                 onNavigateMainScreen,
-                onNavigateDetailsScreen,
+                onNavigateDetailsScreen = { detailsScreen ->
+                    if (detailsScreen is DetailsScreen.Message) {
+                        stateHolder.selectItemId(MessageTab.Mentions, detailsScreen.messageId)
+                    }
+                    onNavigateDetailsScreen(detailsScreen)
+                },
                 stateHolder.mentions::setLastItem,
             )
 
             MessageTab.PostMessages -> messages(
                 postMessages,
                 onNavigateMainScreen,
-                onNavigateDetailsScreen,
+                onNavigateDetailsScreen = { detailsScreen ->
+                    if (detailsScreen is DetailsScreen.Message) {
+                        stateHolder.selectItemId(MessageTab.PostMessages, detailsScreen.messageId)
+                    }
+                    onNavigateDetailsScreen(detailsScreen)
+                },
                 stateHolder.postMessages::setLastItem,
             )
 
             MessageTab.CommentMessages -> messages(
                 commentMessages,
                 onNavigateMainScreen,
-                onNavigateDetailsScreen,
+                onNavigateDetailsScreen = { detailsScreen ->
+                    if (detailsScreen is DetailsScreen.Message) {
+                        stateHolder.selectItemId(MessageTab.CommentMessages, detailsScreen.messageId)
+                    }
+                    onNavigateDetailsScreen(detailsScreen)
+                },
                 stateHolder.commentMessages::setLastItem,
             )
         }
     }
 
     DisposableEffect(selectedTab, selectedItemIds) {
-        selectedItemIds[selectedTab]?.let { postId ->
-            onNavigateDetailsScreen(DetailsScreen.Message(postId))
+        selectedItemIds[selectedTab]?.let { messageId ->
+            onNavigateDetailsScreen(DetailsScreen.Message(messageId))
         }
-        onDispose {
-//            onNavigateDetailsScreen(DetailsScreen.None)
-        }
+        onDispose {}
     }
 }

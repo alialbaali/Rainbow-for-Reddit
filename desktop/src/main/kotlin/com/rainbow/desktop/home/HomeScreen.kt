@@ -5,10 +5,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.comment.comments
 import com.rainbow.desktop.components.EnumTabRow
+import com.rainbow.desktop.components.PostSorting
 import com.rainbow.desktop.components.RainbowLazyColumn
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
-import com.rainbow.desktop.components.PostSorting
 import com.rainbow.desktop.post.posts
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -81,8 +81,6 @@ fun HomeScreen(
         selectedItemIds[selectedTab]?.let { postId ->
             onNavigateDetailsScreen(DetailsScreen.Post(postId))
         }
-        onDispose {
-//            onNavigateDetailsScreen(DetailsScreen.None)
-        }
+        onDispose {}
     }
 }

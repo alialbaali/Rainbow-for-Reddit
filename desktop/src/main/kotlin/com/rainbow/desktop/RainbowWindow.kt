@@ -2,10 +2,7 @@ package com.rainbow.desktop
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEvent
-import androidx.compose.ui.input.key.isCtrlPressed
-import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -13,6 +10,7 @@ import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ApplicationScope.RainbowWindow(
     title: String,
@@ -36,4 +34,4 @@ fun ApplicationScope.RainbowWindow(
 
 @OptIn(ExperimentalComposeUiApi::class)
 private val KeyEvent.isRefreshPressed
-    get() = isCtrlPressed && key == Key.R
+    get() = isMetaPressed && key == Key.R
