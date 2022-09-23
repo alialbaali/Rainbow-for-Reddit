@@ -18,16 +18,12 @@ internal class SettingsRepositoryImpl(
     private val dispatcher: CoroutineDispatcher,
 ) : SettingsRepository {
 
-    override val isSidebarExpanded: Flow<Boolean> = flowSettings.getBooleanFlow(SettingsKeys.IsSidebarExpanded)
-
     override val theme: Flow<Theme> = flowSettings.getStringFlow(SettingsKeys.Theme, Theme.System.name)
         .map { Theme.valueOf(it) }
 
-    override val isFullHeight: Flow<Boolean> = flowSettings.getBooleanFlow(SettingsKeys.IsPostFullHeight)
-
-    override val postLayout: Flow<PostLayout> =
-        flowSettings.getStringFlow(SettingsKeys.PostLayout, PostLayout.Card.name)
-            .map { PostLayout.valueOf(it) }
+    override val postLayout: Flow<PostLayout> = flowSettings
+        .getStringFlow(SettingsKeys.PostLayout, PostLayout.Default.name)
+        .map { PostLayout.valueOf(it) }
 
     override val profilePostSorting: Flow<ProfilePostSorting> = flowSettings
         .getStringOrNullFlow(SettingsKeys.ProfilePostSorting)
@@ -90,14 +86,6 @@ internal class SettingsRepositoryImpl(
 
     override suspend fun setPostLayout(value: PostLayout) = withContext(dispatcher) {
         flowSettings.putString(SettingsKeys.PostLayout, value.name)
-    }
-
-    override suspend fun setIsPostFullHeight(value: Boolean) = withContext(dispatcher) {
-        flowSettings.putBoolean(SettingsKeys.IsPostFullHeight, value)
-    }
-
-    override suspend fun setIsSidebarExpanded(value: Boolean) = withContext(dispatcher) {
-        flowSettings.putBoolean(SettingsKeys.IsSidebarExpanded, value)
     }
 
     override suspend fun setHomePostSorting(value: HomePostSorting) = withContext(dispatcher) {

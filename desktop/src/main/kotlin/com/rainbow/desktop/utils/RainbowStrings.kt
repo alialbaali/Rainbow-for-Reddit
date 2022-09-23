@@ -70,6 +70,8 @@ object RainbowStrings {
     const val IsEnabled = "Is enabled"
     const val CollapseComments = "Collapse comments"
     const val ExpandComments = "Expand comments"
+    const val Expand = "Expand"
+    const val Collapse = "Collapse"
     const val AddComment = "Add comment"
     const val Upvote = "Upvote"
     const val Downvote = "Downvote"

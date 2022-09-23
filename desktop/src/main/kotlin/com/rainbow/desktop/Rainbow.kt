@@ -9,7 +9,7 @@ import com.rainbow.desktop.ui.RainbowTheme
 
 @Composable
 fun Rainbow() = RainbowTheme {
-    val isUserLoggedIn by SettingsStateHolder.isUserLoggedIn.collectAsState()
+    val isUserLoggedIn by SettingsStateHolder.Instance.isUserLoggedIn.collectAsState()
     if (isUserLoggedIn)
         App()
     else

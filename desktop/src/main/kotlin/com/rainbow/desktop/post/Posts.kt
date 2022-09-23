@@ -13,9 +13,11 @@ import com.rainbow.desktop.utils.PagingEffect
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.getOrDefault
 import com.rainbow.domain.models.Post
+import com.rainbow.domain.models.PostLayout
 
 fun LazyListScope.posts(
     state: UIState<List<Post>>,
+    postLayout: PostLayout,
     onNavigateMainScreen: (MainScreen) -> Unit,
     onNavigateDetailsScreen: (DetailsScreen) -> Unit,
     onAwardsClick: () -> Unit,
@@ -24,16 +26,38 @@ fun LazyListScope.posts(
 ) {
     val posts = state.getOrDefault(emptyList())
     itemsIndexed(posts) { index, post ->
-        PostItem(
-            post,
-            onNavigateMainScreen,
-            onNavigateDetailsScreen,
-            onAwardsClick,
-            onShowSnackbar,
-            Modifier.fillParentMaxWidth(),
-        )
+        when (postLayout) {
+            PostLayout.Compact -> CompactPostItem(
+                post,
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
+                onAwardsClick,
+                onShowSnackbar,
+                Modifier.fillParentMaxWidth(),
+            )
+
+            PostLayout.Card -> CardPostItem(
+                post,
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
+                onAwardsClick,
+                onShowSnackbar,
+                Modifier.fillParentMaxWidth(),
+            )
+
+            PostLayout.Large -> LargePostItem(
+                post,
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
+                onAwardsClick,
+                onShowSnackbar,
+                Modifier.fillParentMaxWidth(),
+            )
+        }
+
         PagingEffect(posts, index, onLoadMore)
     }
+
     if (state.isLoading) {
         item {
             RainbowProgressIndicator()
@@ -43,6 +67,7 @@ fun LazyListScope.posts(
 
 fun LazyGridScope.posts(
     state: UIState<List<Post>>,
+    postLayout: PostLayout,
     onNavigateMainScreen: (MainScreen) -> Unit,
     onNavigateDetailsScreen: (DetailsScreen) -> Unit,
     onAwardsClick: () -> Unit,
@@ -51,16 +76,38 @@ fun LazyGridScope.posts(
 ) {
     val posts = state.getOrDefault(emptyList())
     itemsIndexed(posts) { index, post ->
-        PostItem(
-            post,
-            onNavigateMainScreen,
-            onNavigateDetailsScreen,
-            onAwardsClick,
-            onShowSnackbar,
-            Modifier.fillMaxWidth(),
-        )
+        when (postLayout) {
+            PostLayout.Compact -> CompactPostItem(
+                post,
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
+                onAwardsClick,
+                onShowSnackbar,
+                Modifier.fillMaxWidth(),
+            )
+
+            PostLayout.Card -> CardPostItem(
+                post,
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
+                onAwardsClick,
+                onShowSnackbar,
+                Modifier.fillMaxWidth(),
+            )
+
+            PostLayout.Large -> LargePostItem(
+                post,
+                onNavigateMainScreen,
+                onNavigateDetailsScreen,
+                onAwardsClick,
+                onShowSnackbar,
+                Modifier.fillMaxWidth(),
+            )
+        }
+
         PagingEffect(posts, index, onLoadMore)
     }
+
     if (state.isLoading) {
         item {
             RainbowProgressIndicator()

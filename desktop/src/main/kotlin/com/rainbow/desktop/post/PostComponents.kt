@@ -6,12 +6,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -20,14 +21,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.desktop.award.ItemAwards
 import com.rainbow.desktop.components.*
 import com.rainbow.desktop.ui.RainbowTheme
-import com.rainbow.desktop.utils.*
+import com.rainbow.desktop.utils.OneTimeEffect
+import com.rainbow.desktop.utils.RainbowIcons
+import com.rainbow.desktop.utils.RainbowStrings
+import com.rainbow.desktop.utils.format
 import com.rainbow.domain.models.MarkPostAsRead
 import com.rainbow.domain.models.Post
+import com.rainbow.domain.models.PostLayout
 import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
 
@@ -99,91 +106,146 @@ fun PostInfo(
 }
 
 @Composable
-fun PostContent(post: Post, modifier: Modifier = Modifier) {
+fun PostContent(post: Post, postLayout: PostLayout, modifier: Modifier = Modifier) {
     when (val type = post.type) {
-        is Post.Type.Text -> TextPost(type, post.isRead, modifier)
-        is Post.Type.Link -> LinkPost(type, modifier)
+        is Post.Type.Text -> TextPost(type, postLayout, post.isRead, modifier)
+        is Post.Type.Link -> LinkPost(type, postLayout, modifier)
         is Post.Type.Gif -> GifPost(type, modifier)
-        is Post.Type.Image -> ImagePost(type, post.isNSFW, modifier)
+        is Post.Type.Image -> ImagePost(type, postLayout, post.isNSFW, modifier)
         is Post.Type.Video -> VideoPost(type, modifier)
         is Post.Type.None -> {}
     }
 }
 
-
 @Composable
-fun TextPost(text: Post.Type.Text, isRead: Boolean, modifier: Modifier = Modifier) {
-    Text(
-        text.body,
-        maxLines = 5,
-        style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onSurface,
-    )
+fun TextPost(text: Post.Type.Text, postLayout: PostLayout, isRead: Boolean, modifier: Modifier = Modifier) {
+    val maxLines = remember(postLayout) {
+        when (postLayout) {
+            PostLayout.Compact -> 5
+            PostLayout.Card -> 10
+            PostLayout.Large -> 15
+        }
+    }
+    ExpandableText(text.body, maxLines, modifier)
 }
 
 @Composable
-fun ImagePost(image: Post.Type.Image, isNSFW: Boolean, modifier: Modifier = Modifier) {
+fun ImagePost(
+    image: Post.Type.Image,
+    postLayout: PostLayout,
+    isNSFW: Boolean,
+    modifier: Modifier = Modifier,
+) {
     val painterResource = lazyPainterResource(image.urls.first())
-    Box(modifier) {
+    Box(
+        modifier
+            .clip(MaterialTheme.shapes.medium)
+            .background(MaterialTheme.colorScheme.background),
+    ) {
         KamelImage(
             painterResource,
             contentDescription = null,
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(MaterialTheme.shapes.medium)
-                .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium),
-            contentScale = ContentScale.FillWidth,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = postLayout.toContentScale(),
             onLoading = { RainbowProgressIndicator(Modifier.fillMaxSize()) },
             animationSpec = tween(),
         )
 
         if (image.urls.size > 1) {
+            val outerPadding = key(postLayout) {
+                when (postLayout) {
+                    PostLayout.Compact -> RainbowTheme.dimensions.small
+                    else -> RainbowTheme.dimensions.medium
+                }
+            }
+
+            val innerPadding = key(postLayout) {
+                when (postLayout) {
+                    PostLayout.Compact -> RainbowTheme.dimensions.extraSmall
+                    else -> RainbowTheme.dimensions.small
+                }
+            }
+
+            val minSize = remember(postLayout) {
+                when (postLayout) {
+                    PostLayout.Compact -> 25.dp
+                    else -> 40.dp
+                }
+            }
+
+            val style = key(postLayout) {
+                when (postLayout) {
+                    PostLayout.Compact -> MaterialTheme.typography.labelMedium
+                    else -> MaterialTheme.typography.titleMedium
+                }
+            }
+
             Text(
                 image.urls.size.toString(),
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.medium)
-                    .defaultPadding()
-                    .align(Alignment.BottomEnd)
+                    .padding(outerPadding)
+                    .sizeIn(minWidth = minSize, minHeight = minSize)
+                    .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.extraSmall)
+                    .padding(innerPadding)
+                    .align(Alignment.BottomEnd),
+                style = style,
+                textAlign = TextAlign.Center
             )
         }
     }
 }
 
 @Composable
-fun LinkPost(link: Post.Type.Link, modifier: Modifier = Modifier) {
+fun LinkPost(
+    link: Post.Type.Link,
+    postLayout: PostLayout,
+    modifier: Modifier = Modifier
+) {
     val painterResource = lazyPainterResource(link.previewUrl)
-    val imageShape = RoundedCornerShape(8.dp)
     val uriHandler = LocalUriHandler.current
+
+    val urlPadding = key(postLayout) {
+        when (postLayout) {
+            PostLayout.Compact -> PaddingValues(RainbowTheme.dimensions.small)
+            else -> PaddingValues(RainbowTheme.dimensions.medium)
+        }
+    }
+
+    val urlTextStyle = key(postLayout) {
+        when (postLayout) {
+            PostLayout.Compact -> MaterialTheme.typography.bodyMedium
+            else -> MaterialTheme.typography.bodyLarge
+        }
+    }
 
     Box(
         modifier
-            .clip(imageShape)
-            .clickable { uriHandler.openUri(link.url) },
+            .clip(MaterialTheme.shapes.medium)
+            .clickable { uriHandler.openUri(link.url) }
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         KamelImage(
             painterResource,
             contentDescription = link.url,
-            modifier = modifier,
-            contentScale = ContentScale.FillWidth,
-            onLoading = { RainbowProgressIndicator(modifier) },
-            animationSpec = tween(),
-            onFailure = {
-
-            }
+            modifier = Modifier.fillMaxSize(),
+            contentScale = postLayout.toContentScale(),
+            onLoading = { RainbowProgressIndicator() },
+            onFailure = {}
         )
 
         Text(
-            link.url,
-            Modifier
+            link.host,
+            modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .clip(imageShape)
-                .background(MaterialTheme.colorScheme.onBackground)
+                .background(MaterialTheme.colorScheme.inverseSurface)
                 .align(Alignment.BottomCenter)
-                .defaultPadding(),
-            MaterialTheme.colorScheme.background,
-            fontSize = 16.sp
+                .padding(urlPadding),
+            color = MaterialTheme.colorScheme.inverseOnSurface,
+            style = urlTextStyle,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
@@ -303,5 +365,13 @@ fun MarkPostIsReadEffect(post: Post, onPostUpdate: (Post) -> Unit, markPostAsRea
     OneTimeEffect(markPostAsRead) {
         if (markPostAsRead == MarkPostAsRead.OnScroll)
             PostActionsStateHolder.readPost(post)
+    }
+}
+
+private fun PostLayout.toContentScale(): ContentScale {
+    return when (this) {
+        PostLayout.Compact -> ContentScale.Crop
+        PostLayout.Card -> ContentScale.Crop
+        PostLayout.Large -> ContentScale.FillWidth
     }
 }

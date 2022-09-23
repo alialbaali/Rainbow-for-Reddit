@@ -4,7 +4,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.compose") version "1.2.0-alpha01-dev774"
+    id("org.jetbrains.compose") version "1.2.0-beta01"
 }
 
 repositories {

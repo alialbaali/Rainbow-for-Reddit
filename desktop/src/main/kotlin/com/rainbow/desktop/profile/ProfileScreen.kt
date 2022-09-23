@@ -56,6 +56,7 @@ fun ProfileScreen(
     val commentsSorting by stateHolder.commentsStateHolder.sorting.collectAsState()
     val commentsTimeSorting by stateHolder.commentsStateHolder.timeSorting.collectAsState()
     val selectedItemIds by stateHolder.selectedItemIds.collectAsState()
+    val postLayout by stateHolder.postLayout.collectAsState()
 
     RainbowLazyColumn(modifier) {
         userState.fold(
@@ -92,6 +93,7 @@ fun ProfileScreen(
 
                 items(
                     overviewItemsState,
+                    postLayout,
                     onNavigateMainScreen,
                     onNavigateDetailsScreen = { detailsScreen ->
                         if (detailsScreen is DetailsScreen.Post) {
@@ -117,6 +119,7 @@ fun ProfileScreen(
 
                 items(
                     savedItemsState,
+                    postLayout,
                     onNavigateMainScreen,
                     onNavigateDetailsScreen = { detailsScreen ->
                         if (detailsScreen is DetailsScreen.Post) {
@@ -166,6 +169,7 @@ fun ProfileScreen(
 
                 posts(
                     submittedPostsState,
+                    postLayout,
                     onNavigateMainScreen,
                     onNavigateDetailsScreen = { detailsScreen ->
                         if (detailsScreen is DetailsScreen.Post) {
@@ -191,6 +195,7 @@ fun ProfileScreen(
 
                 posts(
                     hiddenPostsState,
+                    postLayout,
                     onNavigateMainScreen,
                     onNavigateDetailsScreen = { detailsScreen ->
                         if (detailsScreen is DetailsScreen.Post) {
@@ -216,6 +221,7 @@ fun ProfileScreen(
 
                 posts(
                     upvotedPostsState,
+                    postLayout,
                     onNavigateMainScreen,
                     onNavigateDetailsScreen = { detailsScreen ->
                         if (detailsScreen is DetailsScreen.Post) {
@@ -241,6 +247,7 @@ fun ProfileScreen(
 
                 posts(
                     downvotedPostsState,
+                    postLayout,
                     onNavigateMainScreen,
                     onNavigateDetailsScreen = { detailsScreen ->
                         if (detailsScreen is DetailsScreen.Post) {

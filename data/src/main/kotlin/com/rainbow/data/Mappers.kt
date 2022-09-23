@@ -23,9 +23,14 @@ internal object Mappers {
             val previewUrl = preview?.images?.getOrNull(0)?.source?.url?.removeAmp()
             val validUrl = url?.removeParameters()
             val type = when {
-                !selftext.isNullOrBlank() -> Post.Type.Text(selftext!!)
+                !selftext.isNullOrBlank() -> Post.Type.Text(selftext!!.trim())
                 !url.isNullOrBlank() && url!!.isImage -> Post.Type.Image(listOf(url!!))
-                !validUrl.isNullOrBlank() && !previewUrl.isNullOrBlank() -> Post.Type.Link(validUrl, previewUrl)
+                !validUrl.isNullOrBlank() && !previewUrl.isNullOrBlank() -> Post.Type.Link(
+                    validUrl,
+                    previewUrl,
+                    Url(validUrl).fullHost
+                )
+
                 mediaMetadata != null -> {
                     val urls = mediaMetadata!!.values.mapNotNull { it.source?.url?.removeAmp() }
                     Post.Type.Image(urls)
@@ -346,6 +351,9 @@ internal object Mappers {
     fun Long.toLocalDateTime() = Instant
         .fromEpochSeconds(this)
         .toLocalDateTime(TimeZone.currentSystemDefault())
+
+    private val Url.fullHost
+        get() = "${protocol.name}://$host"
 
     private fun String.getPostId() = "t3_" + substringAfter("comments/").substringBefore("/")
 }

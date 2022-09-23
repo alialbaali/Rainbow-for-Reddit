@@ -26,6 +26,8 @@ fun HomeScreen(
     val comments by stateHolder.commentsStateHolder.items.collectAsState()
     val selectedTab by stateHolder.selectedTab.collectAsState()
     val selectedItemIds by stateHolder.selectedItemIds.collectAsState()
+    val postLayout by stateHolder.postLayout.collectAsState()
+
     RainbowLazyColumn(modifier) {
         stickyHeader {
             EnumTabRow(
@@ -47,6 +49,7 @@ fun HomeScreen(
 
                 posts(
                     posts,
+                    postLayout,
                     onNavigateMainScreen,
                     onNavigateDetailsScreen = { detailsScreen ->
                         if (detailsScreen is DetailsScreen.Post) {

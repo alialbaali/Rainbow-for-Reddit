@@ -19,11 +19,11 @@ fun CommentSettings(modifier: Modifier = Modifier) {
 
 @Composable
 private fun CommentSortingOption(modifier: Modifier = Modifier) {
-    val commentSorting by SettingsStateHolder.postCommentSorting.collectAsState()
+    val commentSorting by SettingsStateHolder.Instance.postCommentSorting.collectAsState()
     SettingsOption(RainbowStrings.DefaultCommentSorting, modifier) {
         ItemSorting(
             commentSorting,
-            SettingsStateHolder::setPostCommentSorting,
+            SettingsStateHolder.Instance::setPostCommentSorting,
             containerColor = MaterialTheme.colorScheme.background
         )
     }
@@ -31,11 +31,11 @@ private fun CommentSortingOption(modifier: Modifier = Modifier) {
 
 @Composable
 private fun IsCommentsCollapsedOption(modifier: Modifier = Modifier) {
-    val isCommentsCollapsed by SettingsStateHolder.isCommentsCollapsed.collectAsState()
+    val isCommentsCollapsed by SettingsStateHolder.Instance.isCommentsCollapsed.collectAsState()
     SettingsOption(RainbowStrings.CollapseCommentsByDefault, modifier) {
         Switch(
             isCommentsCollapsed,
-            onCheckedChange = { SettingsStateHolder.setIsCommentsCollapsed(it) },
+            onCheckedChange = { SettingsStateHolder.Instance.setIsCommentsCollapsed(it) },
         )
     }
 }

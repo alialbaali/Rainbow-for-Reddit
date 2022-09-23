@@ -29,6 +29,7 @@ import com.rainbow.desktop.ui.dimensions
 import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.PostCommentSorting
+import com.rainbow.domain.models.PostLayout
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -146,7 +147,10 @@ private fun Post(
 
         PostContent(
             post = post,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            postLayout = PostLayout.Large,
         )
 
         PostOptions(

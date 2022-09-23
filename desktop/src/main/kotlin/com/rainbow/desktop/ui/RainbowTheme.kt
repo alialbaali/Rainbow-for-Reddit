@@ -16,7 +16,7 @@ private val material2Shapes = Shapes(
 
 @Composable
 fun RainbowTheme(content: @Composable () -> Unit) {
-    val theme by SettingsStateHolder.theme.collectAsState()
+    val theme by SettingsStateHolder.Instance.theme.collectAsState()
 
     val colors = when (theme) {
         Theme.Dark -> darkColors

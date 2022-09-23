@@ -51,7 +51,7 @@ fun LoginScreen() {
                         state = UIState.Loading(Unit)
                         val uuid = UUID.randomUUID()
                         currentUriHandler.openUri(createAuthenticationUrl(uuid))
-                        SettingsStateHolder.loginUser(
+                        SettingsStateHolder.Instance.loginUser(
                             uuid,
                             onSuccess = { state = UIState.Success(Unit) },
                             onFailure = {

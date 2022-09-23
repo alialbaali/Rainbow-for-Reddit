@@ -28,6 +28,7 @@ fun SearchScreen(
     val postsSorting by stateHolder.postsStateHolder.sorting.collectAsState()
     val postsTimeSorting by stateHolder.postsStateHolder.timeSorting.collectAsState()
     val usersState by stateHolder.usersStateHolder.items.collectAsState()
+    val postLayout by stateHolder.postLayout.collectAsState()
     val selectedItemId by stateHolder.selectedItemId.collectAsState()
     val appliedModifier = remember(selectedTab) { if (selectedTab == SearchTab.Posts) modifier else Modifier }
     val columnsCount = remember(selectedTab) {
@@ -66,6 +67,7 @@ fun SearchScreen(
 
                 posts(
                     postsState,
+                    postLayout,
                     onNavigateMainScreen,
                     onNavigateDetailsScreen = { detailsScreen ->
                         if (detailsScreen is DetailsScreen.Post) {

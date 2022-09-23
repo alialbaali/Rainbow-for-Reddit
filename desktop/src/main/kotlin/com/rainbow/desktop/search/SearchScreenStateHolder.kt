@@ -8,6 +8,7 @@ import com.rainbow.desktop.user.UsersStateHolder
 import com.rainbow.desktop.utils.getOrNull
 import com.rainbow.domain.models.*
 import com.rainbow.domain.repository.PostRepository
+import com.rainbow.domain.repository.SettingsRepository
 import com.rainbow.domain.repository.SubredditRepository
 import com.rainbow.domain.repository.UserRepository
 import kotlinx.coroutines.flow.*
@@ -18,10 +19,13 @@ class SearchScreenStateHolder private constructor(
     private val postRepository: PostRepository = Repos.Post,
     private val subredditRepository: SubredditRepository = Repos.Subreddit,
     private val userRepository: UserRepository = Repos.User,
+    private val settingsRepository: SettingsRepository = Repos.Settings,
 ) : StateHolder() {
 
     private val mutableSelectedTab = MutableStateFlow(SearchTab.Default)
     val selectedTab get() = mutableSelectedTab.asStateFlow()
+
+    val postLayout = settingsRepository.postLayout.stateIn(scope, SharingStarted.Eagerly, PostLayout.Default)
 
     val postsStateHolder = object : PostsStateHolder<SearchPostSorting>(
         SearchPostSorting.Default,

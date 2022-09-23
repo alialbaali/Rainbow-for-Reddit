@@ -5,7 +5,11 @@ enum class Theme {
 }
 
 enum class PostLayout {
-    Card, Compact,
+    Compact, Card, Large;
+
+    companion object {
+        val Default = Compact
+    }
 }
 
 enum class MarkPostAsRead {

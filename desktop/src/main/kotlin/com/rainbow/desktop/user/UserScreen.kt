@@ -35,6 +35,7 @@ fun UserScreen(
     val commentsSorting by stateHolder.commentsStateHolder.sorting.collectAsState()
     val commentsTimeSorting by stateHolder.commentsStateHolder.timeSorting.collectAsState()
     val selectedItemIds by stateHolder.selectedItemIds.collectAsState()
+    val postLayout by stateHolder.postLayout.collectAsState()
 
     RainbowLazyColumn(modifier) {
         userState.fold(
@@ -71,6 +72,7 @@ fun UserScreen(
 
                 items(
                     items,
+                    postLayout,
                     onNavigateMainScreen,
                     onNavigateDetailsScreen = { detailsScreen ->
                         if (detailsScreen is DetailsScreen.Post) {
@@ -96,6 +98,7 @@ fun UserScreen(
 
                 posts(
                     posts,
+                    postLayout,
                     onNavigateMainScreen,
                     onNavigateDetailsScreen = { detailsScreen ->
                         if (detailsScreen is DetailsScreen.Post) {

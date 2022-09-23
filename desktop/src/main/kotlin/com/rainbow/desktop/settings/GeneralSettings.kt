@@ -29,11 +29,11 @@ fun GeneralSettings(modifier: Modifier = Modifier) {
 
 @Composable
 private fun TextSelectionOption(modifier: Modifier = Modifier) {
-    val isTextSelectionEnabled by SettingsStateHolder.isTextSelectionEnabled.collectAsState()
+    val isTextSelectionEnabled by SettingsStateHolder.Instance.isTextSelectionEnabled.collectAsState()
     SettingsOption(RainbowStrings.TextSelection) {
         Switch(
             isTextSelectionEnabled,
-            SettingsStateHolder::setIsTextSelectionEnabled,
+            SettingsStateHolder.Instance::setIsTextSelectionEnabled,
         )
     }
 }
@@ -41,11 +41,11 @@ private fun TextSelectionOption(modifier: Modifier = Modifier) {
 
 @Composable
 private fun ThemeOption(modifier: Modifier = Modifier) {
-    val theme by SettingsStateHolder.theme.collectAsState()
+    val theme by SettingsStateHolder.Instance.theme.collectAsState()
     SettingsOption(RainbowStrings.Theme, modifier) {
         EnumDropdownMenuHolder(
             theme,
-            SettingsStateHolder::setTheme,
+            SettingsStateHolder.Instance::setTheme,
             containerColor = MaterialTheme.colorScheme.background,
         )
     }
@@ -97,7 +97,7 @@ private fun LogoutDialog(
                 horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
             ) {
                 RainbowButton(
-                    onClick = SettingsStateHolder::logoutUser,
+                    onClick = SettingsStateHolder.Instance::logoutUser,
                     containerColor = MaterialTheme.colorScheme.error,
                     contentColor = MaterialTheme.colorScheme.onError,
                 ) {

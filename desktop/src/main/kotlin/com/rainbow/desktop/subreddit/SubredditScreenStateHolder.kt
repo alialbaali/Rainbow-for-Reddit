@@ -8,6 +8,7 @@ import com.rainbow.desktop.utils.getOrNull
 import com.rainbow.desktop.utils.toUIState
 import com.rainbow.domain.models.*
 import com.rainbow.domain.repository.PostRepository
+import com.rainbow.domain.repository.SettingsRepository
 import com.rainbow.domain.repository.SubredditRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -16,10 +17,13 @@ class SubredditScreenStateHolder constructor(
     private val subredditName: String,
     private val postRepository: PostRepository = Repos.Post,
     private val subredditRepository: SubredditRepository = Repos.Subreddit,
+    private val settingsRepository: SettingsRepository = Repos.Settings,
 ) : StateHolder() {
 
     private val mutableSelectedTab = MutableStateFlow(SubredditTab.Default)
     val selectedTab get() = mutableSelectedTab.asStateFlow()
+
+    val postLayout = settingsRepository.postLayout.stateIn(scope, SharingStarted.Eagerly, PostLayout.Default)
 
     val subreddit = subredditRepository.getSubreddit(subredditName)
         .map { it.toUIState() }

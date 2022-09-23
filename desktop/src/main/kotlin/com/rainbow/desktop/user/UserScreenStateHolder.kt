@@ -9,10 +9,7 @@ import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.getOrNull
 import com.rainbow.desktop.utils.toUIState
 import com.rainbow.domain.models.*
-import com.rainbow.domain.repository.CommentRepository
-import com.rainbow.domain.repository.ItemRepository
-import com.rainbow.domain.repository.PostRepository
-import com.rainbow.domain.repository.UserRepository
+import com.rainbow.domain.repository.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -22,10 +19,13 @@ class UserScreenStateHolder private constructor(
     private val postRepository: PostRepository = Repos.Post,
     private val commentRepository: CommentRepository = Repos.Comment,
     private val itemRepository: ItemRepository = Repos.Item,
+    private val settingsRepository: SettingsRepository = Repos.Settings,
 ) : StateHolder() {
 
     private val mutableSelectedTab = MutableStateFlow(UserTab.Default)
     val selectedTab get() = mutableSelectedTab.asStateFlow()
+
+    val postLayout = settingsRepository.postLayout.stateIn(scope, SharingStarted.Eagerly, PostLayout.Default)
 
     val user = userRepository.getUser(userName)
         .map { it.toUIState() }

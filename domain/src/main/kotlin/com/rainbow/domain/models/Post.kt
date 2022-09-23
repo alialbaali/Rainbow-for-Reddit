@@ -36,7 +36,7 @@ data class Post(
     sealed interface Type {
         object None : Type
         data class Text(val body: String) : Type
-        data class Link(val url: String, val previewUrl: String) : Type
+        data class Link(val url: String, val previewUrl: String, val host: String) : Type
         data class Gif(val url: String) : Type
         data class Image(val urls: List<String>) : Type
         data class Video(val url: String) : Type

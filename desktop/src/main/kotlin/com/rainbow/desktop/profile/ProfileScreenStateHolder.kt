@@ -8,10 +8,7 @@ import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.getOrNull
 import com.rainbow.domain.models.*
-import com.rainbow.domain.repository.CommentRepository
-import com.rainbow.domain.repository.ItemRepository
-import com.rainbow.domain.repository.PostRepository
-import com.rainbow.domain.repository.UserRepository
+import com.rainbow.domain.repository.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -20,6 +17,7 @@ class ProfileScreenStateHolder private constructor(
     private val itemRepository: ItemRepository = Repos.Item,
     private val postRepository: PostRepository = Repos.Post,
     private val commentRepository: CommentRepository = Repos.Comment,
+    private val settingsRepository: SettingsRepository = Repos.Settings,
 ) : StateHolder() {
 
     val currentUser
@@ -32,6 +30,8 @@ class ProfileScreenStateHolder private constructor(
     val selectedTab get() = mutableSelectedTab.asStateFlow()
 
     private val initialPostSorting = MutableStateFlow(ProfilePostSorting.Default)
+
+    val postLayout = settingsRepository.postLayout.stateIn(scope, SharingStarted.Eagerly, PostLayout.Default)
 
     val overviewItemsStateHolder = object : ItemsStateHolder<UserPostSorting>(
         UserPostSorting.Default,

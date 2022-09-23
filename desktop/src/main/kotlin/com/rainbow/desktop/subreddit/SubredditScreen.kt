@@ -48,6 +48,7 @@ fun SubredditScreen(
     val selectedItemId by stateHolder.selectedItemId.collectAsState()
     val flairsState by stateHolder.flairs.collectAsState()
     val isFlairsEnabled by stateHolder.isFlairsEnabled.collectAsState()
+    val postLayout by stateHolder.postLayout.collectAsState()
 
     RainbowLazyColumn(modifier) {
         subredditState.fold(
@@ -95,6 +96,7 @@ fun SubredditScreen(
                 when (selectedTab) {
                     SubredditTab.Posts -> posts(
                         postsState,
+                        postLayout,
                         onNavigateMainScreen,
                         onNavigateDetailsScreen = { detailsScreen ->
                             if (detailsScreen is DetailsScreen.Post) {

@@ -20,13 +20,13 @@ private const val SettingsTabFraction = 0.5F
 
 @Composable
 fun SettingsScreen(modifier: Modifier = Modifier) {
-    val selectedTab by SettingsStateHolder.selectedTab.collectAsState()
+    val selectedTab by SettingsStateHolder.Instance.selectedTab.collectAsState()
     Box(modifier.padding(DefaultContentPadding())) {
         Row(
             modifier = Modifier.matchParentSize(),
             horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
         ) {
-            SettingsTabs(selectedTab, SettingsStateHolder::selectTab)
+            SettingsTabs(selectedTab, SettingsStateHolder.Instance::selectTab)
             Crossfade(selectedTab) { animatedSelectedTab ->
                 when (animatedSelectedTab) {
                     SettingsTab.General -> GeneralSettings(Modifier.fillMaxWidth(SettingsTabFraction))
