@@ -29,7 +29,7 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "com.rainbow.desktop.MainKt"
+        mainClass = "com.rainbow.desktop.RainbowKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             macOS {

@@ -1,4 +1,4 @@
-package com.rainbow.desktop
+package com.rainbow.desktop.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -14,8 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.rainbow.desktop.components.OptionsSurface
-import com.rainbow.desktop.components.RainbowIconButton
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.navigation.title
 import com.rainbow.desktop.search.SearchTextField

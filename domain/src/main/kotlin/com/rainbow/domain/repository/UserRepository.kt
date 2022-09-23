@@ -12,6 +12,8 @@ interface UserRepository {
 
     val searchUsers: Flow<List<User>>
 
+    fun createAuthenticationUrl(uuid: UUID): String
+
     suspend fun loginUser(uuid: UUID): Result<Unit>
 
     suspend fun logoutUser()

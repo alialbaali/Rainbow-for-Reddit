@@ -11,6 +11,7 @@ import com.rainbow.remote.dto.RemoteUser
 import com.rainbow.remote.source.RemoteUserDataSource
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
+import io.ktor.http.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -33,6 +34,24 @@ internal class UserRepositoryImpl(
     override val isUserLoggedIn: Flow<Boolean> = settings.getBooleanFlow(IsUserLoggedInKey)
     override val currentUser: Flow<User> = localDataSource.currentUser
     override val searchUsers: Flow<List<User>> = localDataSource.searchUsers
+
+    override fun createAuthenticationUrl(uuid: UUID): String {
+        return URLBuilder(
+            protocol = URLProtocol.HTTPS,
+            host = "www.reddit.com/api/v1/authorize",
+            parameters = ParametersBuilder().apply {
+                append("client_id", "cpKMrRbh8b06TQ")
+                append("response_type", "code")
+                append("state", uuid.toString())
+                append("redirect_uri", "https://rainbowforreddit.herokuapp.com/")
+                append("duration", "permanent")
+                append(
+                    "scope",
+                    "submit, vote, mysubreddits, privatemessages, subscribe, history, wikiread, flair, identity, edit, read, report, save, submit"
+                )
+            }.build()
+        ).buildString()
+    }
 
     override suspend fun loginUser(uuid: UUID): Result<Unit> = withContext(dispatcher) {
         remoteDataSource.loginUser(uuid)

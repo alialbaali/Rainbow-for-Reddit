@@ -1,90 +1,61 @@
 package com.rainbow.desktop.login
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.unit.dp
-import com.rainbow.desktop.components.RainbowProgressIndicator
-import com.rainbow.desktop.settings.SettingsStateHolder
+import com.rainbow.desktop.components.RainbowButton
+import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.defaultPadding
-import io.ktor.http.*
-import java.util.*
 
 @Composable
-fun LoginScreen() {
-
-    var state by remember { mutableStateOf<UIState<Unit>?>(null) }
-    var isButtonEnabled by remember { mutableStateOf(true) }
-    var isSnackbarEnabled by remember { mutableStateOf(false) }
+fun LoginScreen(modifier: Modifier = Modifier) {
+    val stateHolder = remember { LoginScreenStateHolder.Instance }
+    val state by stateHolder.state.collectAsState()
     val currentUriHandler = LocalUriHandler.current
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    if (isSnackbarEnabled) {
-        val snackbarHostState = remember { SnackbarHostState() }
-
-        SnackbarHost(snackbarHostState, modifier = Modifier.defaultPadding())
-
-        LaunchedEffect(Unit) {
-            snackbarHostState.showSnackbar("Login failed")
+    LaunchedEffect(state) {
+        if (state.isFailure) {
+            snackbarHostState.showSnackbar(RainbowStrings.LoginFailed)
         }
     }
-
-    when (state) {
-        is UIState.Loading -> RainbowProgressIndicator()
-        else -> {
-            Column(
-                Modifier
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
+    Box(modifier, contentAlignment = Alignment.Center) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(RainbowStrings.Intro, style = MaterialTheme.typography.headlineLarge)
+            Spacer(Modifier.height(RainbowTheme.dimensions.extraLarge))
+            RainbowButton(
+                onClick = {
+                    val url = stateHolder.createAuthenticationUrl()
+                    currentUriHandler.openUri(url)
+                    stateHolder.loginUser()
+                },
+                enabled = state !is UIState.Loading,
+                containerColor = MaterialTheme.colorScheme.primary,
             ) {
-                Text(RainbowStrings.Intro, style = MaterialTheme.typography.headlineLarge)
-
-                Spacer(Modifier.height(32.dp))
-
-                Button(
-                    onClick = {
-                        state = UIState.Loading(Unit)
-                        val uuid = UUID.randomUUID()
-                        currentUriHandler.openUri(createAuthenticationUrl(uuid))
-                        SettingsStateHolder.Instance.loginUser(
-                            uuid,
-                            onSuccess = { state = UIState.Success(Unit) },
-                            onFailure = {
-                                state = UIState.Failure(Unit, it)
-                                isButtonEnabled = true
-                                isSnackbarEnabled = true
-                            }
-                        )
-                        isButtonEnabled = false
-                    },
-                    enabled = isButtonEnabled,
-                ) {
-                    Text(RainbowStrings.Login)
-                }
+                Text(RainbowStrings.Login)
             }
         }
-    }
-}
 
-private fun createAuthenticationUrl(uuid: UUID): String {
-    return URLBuilder(
-        protocol = URLProtocol.HTTPS,
-        host = "www.reddit.com/api/v1/authorize",
-        parameters = ParametersBuilder().apply {
-            append("client_id", "cpKMrRbh8b06TQ")
-            append("response_type", "code")
-            append("state", uuid.toString())
-            append("redirect_uri", "https://rainbowforreddit.herokuapp.com/")
-            append("duration", "permanent")
-            append(
-                "scope",
-                "submit, vote, mysubreddits, privatemessages, subscribe, history, wikiread, flair, identity, edit, read, report, save, submit"
-            )
-        }.build()
-    ).buildString()
+        SnackbarHost(
+            snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .defaultPadding()
+        )
+    }
 }
