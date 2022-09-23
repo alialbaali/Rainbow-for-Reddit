@@ -80,7 +80,15 @@ class MessagesScreenStateHolder(
                 .firstOrNull { it.isSuccess }
                 ?.getOrNull()
                 ?.firstOrNull()
-                ?.let { message -> selectItemId(MessageTab.Inbox, message.id) }
+                ?.let { message ->
+                    val id = when (val type = message.type) {
+                        is Message.Type.Message -> message.id
+                        is Message.Type.Mention -> type.postId
+                        is Message.Type.CommentReply -> type.postId
+                        is Message.Type.PostReply -> type.postId
+                    }
+                    selectItemId(MessageTab.Inbox, id)
+                }
         }
 
         scope.launch {
@@ -88,7 +96,15 @@ class MessagesScreenStateHolder(
                 .firstOrNull { it.isSuccess }
                 ?.getOrNull()
                 ?.firstOrNull()
-                ?.let { message -> selectItemId(MessageTab.Unread, message.id) }
+                ?.let { message ->
+                    val id = when (val type = message.type) {
+                        is Message.Type.Message -> message.id
+                        is Message.Type.Mention -> type.postId
+                        is Message.Type.CommentReply -> type.postId
+                        is Message.Type.PostReply -> type.postId
+                    }
+                    selectItemId(MessageTab.Unread, id)
+                }
         }
 
         scope.launch {
@@ -96,7 +112,15 @@ class MessagesScreenStateHolder(
                 .firstOrNull { it.isSuccess }
                 ?.getOrNull()
                 ?.firstOrNull()
-                ?.let { message -> selectItemId(MessageTab.Sent, message.id) }
+                ?.let { message ->
+                    val id = when (val type = message.type) {
+                        is Message.Type.Message -> message.id
+                        is Message.Type.Mention -> type.postId
+                        is Message.Type.CommentReply -> type.postId
+                        is Message.Type.PostReply -> type.postId
+                    }
+                    selectItemId(MessageTab.Sent, id)
+                }
         }
 
         scope.launch {
@@ -104,7 +128,15 @@ class MessagesScreenStateHolder(
                 .firstOrNull { it.isSuccess }
                 ?.getOrNull()
                 ?.firstOrNull()
-                ?.let { message -> selectItemId(MessageTab.Messages, message.id) }
+                ?.let { message ->
+                    val id = when (val type = message.type) {
+                        is Message.Type.Message -> message.id
+                        is Message.Type.Mention -> type.postId
+                        is Message.Type.CommentReply -> type.postId
+                        is Message.Type.PostReply -> type.postId
+                    }
+                    selectItemId(MessageTab.Messages, id)
+                }
         }
 
         scope.launch {
@@ -112,7 +144,15 @@ class MessagesScreenStateHolder(
                 .firstOrNull { it.isSuccess }
                 ?.getOrNull()
                 ?.firstOrNull()
-                ?.let { message -> selectItemId(MessageTab.Mentions, message.id) }
+                ?.let { message ->
+                    val id = when (val type = message.type) {
+                        is Message.Type.Message -> message.id
+                        is Message.Type.Mention -> type.postId
+                        is Message.Type.CommentReply -> type.postId
+                        is Message.Type.PostReply -> type.postId
+                    }
+                    selectItemId(MessageTab.Mentions, id)
+                }
         }
 
         scope.launch {
@@ -120,7 +160,15 @@ class MessagesScreenStateHolder(
                 .firstOrNull { it.isSuccess }
                 ?.getOrNull()
                 ?.firstOrNull()
-                ?.let { message -> selectItemId(MessageTab.PostMessages, message.id) }
+                ?.let { message ->
+                    val id = when (val type = message.type) {
+                        is Message.Type.Message -> message.id
+                        is Message.Type.Mention -> type.postId
+                        is Message.Type.CommentReply -> type.postId
+                        is Message.Type.PostReply -> type.postId
+                    }
+                    selectItemId(MessageTab.PostMessages, id)
+                }
         }
 
         scope.launch {
@@ -128,7 +176,15 @@ class MessagesScreenStateHolder(
                 .firstOrNull { it.isSuccess }
                 ?.getOrNull()
                 ?.firstOrNull()
-                ?.let { message -> selectItemId(MessageTab.CommentMessages, message.id) }
+                ?.let { message ->
+                    val id = when (val type = message.type) {
+                        is Message.Type.Message -> message.id
+                        is Message.Type.Mention -> type.postId
+                        is Message.Type.CommentReply -> type.postId
+                        is Message.Type.PostReply -> type.postId
+                    }
+                    selectItemId(MessageTab.CommentMessages, id)
+                }
         }
     }
 

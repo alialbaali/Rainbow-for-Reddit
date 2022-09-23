@@ -40,6 +40,8 @@ fun MessagesScreen(
                 onNavigateDetailsScreen = { detailsScreen ->
                     if (detailsScreen is DetailsScreen.Message) {
                         stateHolder.selectItemId(MessageTab.Inbox, detailsScreen.messageId)
+                    } else if (detailsScreen is DetailsScreen.Post) {
+                        stateHolder.selectItemId(MessageTab.Inbox, detailsScreen.postId)
                     }
                     onNavigateDetailsScreen(detailsScreen)
                 },
@@ -52,6 +54,8 @@ fun MessagesScreen(
                 onNavigateDetailsScreen = { detailsScreen ->
                     if (detailsScreen is DetailsScreen.Message) {
                         stateHolder.selectItemId(MessageTab.Unread, detailsScreen.messageId)
+                    } else if (detailsScreen is DetailsScreen.Post) {
+                        stateHolder.selectItemId(MessageTab.Unread, detailsScreen.postId)
                     }
                     onNavigateDetailsScreen(detailsScreen)
                 },
@@ -64,6 +68,8 @@ fun MessagesScreen(
                 onNavigateDetailsScreen = { detailsScreen ->
                     if (detailsScreen is DetailsScreen.Message) {
                         stateHolder.selectItemId(MessageTab.Sent, detailsScreen.messageId)
+                    } else if (detailsScreen is DetailsScreen.Post) {
+                        stateHolder.selectItemId(MessageTab.Sent, detailsScreen.postId)
                     }
                     onNavigateDetailsScreen(detailsScreen)
                 },
@@ -76,6 +82,8 @@ fun MessagesScreen(
                 onNavigateDetailsScreen = { detailsScreen ->
                     if (detailsScreen is DetailsScreen.Message) {
                         stateHolder.selectItemId(MessageTab.Messages, detailsScreen.messageId)
+                    } else if (detailsScreen is DetailsScreen.Post) {
+                        stateHolder.selectItemId(MessageTab.Messages, detailsScreen.postId)
                     }
                     onNavigateDetailsScreen(detailsScreen)
                 },
@@ -88,6 +96,8 @@ fun MessagesScreen(
                 onNavigateDetailsScreen = { detailsScreen ->
                     if (detailsScreen is DetailsScreen.Message) {
                         stateHolder.selectItemId(MessageTab.Mentions, detailsScreen.messageId)
+                    } else if (detailsScreen is DetailsScreen.Post) {
+                        stateHolder.selectItemId(MessageTab.Mentions, detailsScreen.postId)
                     }
                     onNavigateDetailsScreen(detailsScreen)
                 },
@@ -100,6 +110,8 @@ fun MessagesScreen(
                 onNavigateDetailsScreen = { detailsScreen ->
                     if (detailsScreen is DetailsScreen.Message) {
                         stateHolder.selectItemId(MessageTab.PostMessages, detailsScreen.messageId)
+                    } else if (detailsScreen is DetailsScreen.Post) {
+                        stateHolder.selectItemId(MessageTab.PostMessages, detailsScreen.postId)
                     }
                     onNavigateDetailsScreen(detailsScreen)
                 },
@@ -112,6 +124,8 @@ fun MessagesScreen(
                 onNavigateDetailsScreen = { detailsScreen ->
                     if (detailsScreen is DetailsScreen.Message) {
                         stateHolder.selectItemId(MessageTab.CommentMessages, detailsScreen.messageId)
+                    } else if (detailsScreen is DetailsScreen.Post) {
+                        stateHolder.selectItemId(MessageTab.CommentMessages, detailsScreen.postId)
                     }
                     onNavigateDetailsScreen(detailsScreen)
                 },
@@ -121,8 +135,13 @@ fun MessagesScreen(
     }
 
     DisposableEffect(selectedTab, selectedItemIds) {
-        selectedItemIds[selectedTab]?.let { messageId ->
-            onNavigateDetailsScreen(DetailsScreen.Message(messageId))
+        selectedItemIds[selectedTab]?.let { itemId ->
+            val detailsScreen = if (itemId.startsWith("t3")) {
+                DetailsScreen.Post(itemId)
+            } else {
+                DetailsScreen.Message(itemId)
+            }
+            onNavigateDetailsScreen(detailsScreen)
         }
         onDispose {}
     }

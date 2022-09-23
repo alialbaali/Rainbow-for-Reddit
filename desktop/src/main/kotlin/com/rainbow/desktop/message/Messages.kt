@@ -27,7 +27,14 @@ fun LazyListScope.messages(
             onNavigateMainScreen,
             Modifier
                 .clip(MaterialTheme.shapes.medium)
-                .clickable { onNavigateDetailsScreen(DetailsScreen.Message(message.id)) }
+                .clickable {
+                    when (val type = message.type) {
+                        is Message.Type.Message -> onNavigateDetailsScreen(DetailsScreen.Message(message.id))
+                        is Message.Type.Mention -> onNavigateDetailsScreen(DetailsScreen.Post(type.postId))
+                        is Message.Type.CommentReply -> onNavigateDetailsScreen(DetailsScreen.Post(type.postId))
+                        is Message.Type.PostReply -> onNavigateDetailsScreen(DetailsScreen.Post(type.postId))
+                    }
+                }
         )
         PagingEffect(messages, index, onLoadMore)
     }
