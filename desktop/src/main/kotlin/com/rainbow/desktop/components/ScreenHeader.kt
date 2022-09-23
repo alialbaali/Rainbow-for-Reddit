@@ -31,7 +31,6 @@ import com.rainbow.desktop.utils.defaultPadding
 import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
 
-private const val DescriptionMaxLines = 5
 private val BannerImageHeight = 200.dp
 private val ProfileImageSize = 200.dp
 private val BannerImageGradientHeight = BannerImageHeight / 2.dp
@@ -124,5 +123,5 @@ fun ScreenHeader(
 
 @Composable
 fun ScreenHeaderDescription(description: String?, modifier: Modifier = Modifier) {
-    ExpandableText(description ?: RainbowStrings.EmptyDescription, DescriptionMaxLines)
+    ExpandableText(description ?: RainbowStrings.EmptyDescription, modifier)
 }

@@ -126,7 +126,7 @@ fun TextPost(text: Post.Type.Text, postLayout: PostLayout, isRead: Boolean, modi
             PostLayout.Large -> 15
         }
     }
-    ExpandableText(text.body, maxLines, modifier)
+    ExpandableText(text.body, modifier, maxLines)
 }
 
 @Composable

@@ -5,10 +5,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.rainbow.desktop.components.ExpandableText
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.utils.defaultPadding
@@ -38,7 +38,7 @@ fun CommentItem(
                 onSubredditNameClick = { subredditName -> onNavigateMainScreen(MainScreen.Subreddit(subredditName)) },
                 isSubredditNameEnabled = true
             )
-            Text(comment.body, color = MaterialTheme.colorScheme.onBackground)
+            ExpandableText(comment.body)
             CommentOptions(comment, false, onShowSnackbar)
         }
     }

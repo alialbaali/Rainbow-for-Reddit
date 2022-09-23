@@ -5,6 +5,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.rounded.CloseFullscreen
 import androidx.compose.material.icons.rounded.OpenInFull
 import androidx.compose.material3.Icon
@@ -13,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.sp
@@ -20,11 +22,14 @@ import com.rainbow.desktop.ui.dimensions
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
 
+private const val DefaultMaxLines = 5
+
 @Composable
 fun ExpandableText(
     text: String,
-    defaultMaxLines: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    defaultMaxLines: Int = DefaultMaxLines,
+    style: TextStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
 ) {
     var isButtonVisible by remember { mutableStateOf(false) }
     var maxLines by remember(defaultMaxLines) { mutableStateOf(defaultMaxLines) }
@@ -37,13 +42,13 @@ fun ExpandableText(
     }
 
     Column(
-        modifier,
+        modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimensions.medium),
     ) {
         Text(
             text,
             modifier = Modifier.animateContentSize(animationSpec),
-            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
+            style = style,
             color = MaterialTheme.colorScheme.onSurface,
             maxLines = maxLines,
             overflow = TextOverflow.Ellipsis,

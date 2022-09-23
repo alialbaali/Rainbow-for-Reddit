@@ -10,6 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.rainbow.desktop.components.ExpandableText
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.defaultPadding
@@ -44,11 +45,7 @@ fun PostCommentItem(
                 onSubredditNameClick,
                 isSubredditNameEnabled = false
             )
-            Text(
-                comment.body,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            ExpandableText(comment.body, style = MaterialTheme.typography.titleMedium)
             CommentOptions(comment, isRepliesVisible, onShowSnackbar)
         }
     }

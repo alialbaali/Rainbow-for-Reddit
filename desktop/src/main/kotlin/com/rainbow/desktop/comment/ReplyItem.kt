@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.BoxLine
+import com.rainbow.desktop.components.ExpandableText
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.domain.models.Comment
@@ -47,7 +48,7 @@ fun ReplyItem(
                     onSubredditNameClick,
                     isSubredditNameEnabled = false
                 )
-                Text(reply.body, color = MaterialTheme.colorScheme.onBackground)
+                ExpandableText(reply.body, style = MaterialTheme.typography.titleMedium)
                 CommentOptions(reply, isRepliesVisible, onShowSnackbar)
             }
         }
