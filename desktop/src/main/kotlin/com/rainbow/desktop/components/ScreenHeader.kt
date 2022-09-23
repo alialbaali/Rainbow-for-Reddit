@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.desktop.ui.RainbowTheme
@@ -32,6 +31,7 @@ import com.rainbow.desktop.utils.defaultPadding
 import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
 
+private const val DescriptionMaxLines = 5
 private val BannerImageHeight = 200.dp
 private val ProfileImageSize = 200.dp
 private val BannerImageGradientHeight = BannerImageHeight / 2.dp
@@ -124,11 +124,5 @@ fun ScreenHeader(
 
 @Composable
 fun ScreenHeaderDescription(description: String?, modifier: Modifier = Modifier) {
-    Text(
-        text = description ?: RainbowStrings.EmptyDescription,
-        color = MaterialTheme.colorScheme.onSurface,
-        modifier = modifier,
-        style = MaterialTheme.typography.titleMedium,
-        overflow = TextOverflow.Ellipsis,
-    )
+    ExpandableText(description ?: RainbowStrings.EmptyDescription, DescriptionMaxLines)
 }
