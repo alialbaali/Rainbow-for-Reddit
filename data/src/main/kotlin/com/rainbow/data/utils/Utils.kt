@@ -2,12 +2,12 @@ package com.rainbow.data.utils
 
 const val DefaultLimit = 25
 
-fun String.toLongColor() = removePrefix("#").let {
+internal fun String.toLongColor(): Long = removePrefix("#").let { value ->
     if (this == "transparent")
         "00FFFFFF"
     else
-        "FF$it"
+        "FF$value"
 }.toLong(radix = 16)
 
-val <T : Enum<T>> Enum<T>.lowercaseName
+internal val <T : Enum<T>> Enum<T>.lowercaseName
     get() = name.lowercase()

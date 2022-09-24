@@ -2,7 +2,6 @@ package com.rainbow.domain.models
 
 import com.rainbow.domain.utils.RedditUrl
 import com.rainbow.domain.utils.asSubredditDisplayName
-import com.rainbow.domain.utils.colorOf
 import kotlinx.datetime.Instant
 
 data class Subreddit(
@@ -23,25 +22,10 @@ data class Subreddit(
     val creationDate: Instant,
 ) {
     data class Colors(
-        val primary: Long,
-        val banner: Long,
-        val key: Long,
-    ) {
-        companion object {
-
-            private val DefaultPrimaryColor = colorOf(red = "00", green = "00", blue = "00")
-
-            private val DefaultBackgroundColor = colorOf(red = "FF", green = "FF", blue = "FF")
-
-            private val DefaultKeyColor = colorOf(red = "FF", green = "FF", blue = "FF")
-
-            val Default = Colors(
-                DefaultPrimaryColor,
-                DefaultBackgroundColor,
-                DefaultKeyColor
-            )
-        }
-    }
+        val primary: Long?,
+        val banner: Long?,
+        val key: Long?,
+    )
 
     enum class Type {
         Public, Private

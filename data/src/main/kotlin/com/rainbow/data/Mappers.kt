@@ -225,7 +225,11 @@ internal object Mappers {
                 isFavorite = userHasFavorited ?: false,
                 isSubscribed = userIsSubscriber ?: false,
                 creationDate = Instant.fromEpochSeconds(created!!.toLong()),
-                colors = Subreddit.Colors.Default,
+                colors = Subreddit.Colors(
+                    primary = primaryColor.takeIf { !it.isNullOrBlank() }?.toLongColor(),
+                    banner = bannerBackgroundColor.takeIf { !it.isNullOrBlank() }?.toLongColor(),
+                    key = keyColor.takeIf { !it.isNullOrBlank() }?.toLongColor(),
+                ),
             )
         }
     }

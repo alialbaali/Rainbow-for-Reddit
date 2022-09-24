@@ -16,7 +16,9 @@ import com.rainbow.desktop.components.RainbowButton
 import com.rainbow.desktop.components.RainbowIconToggleButton
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
+import com.rainbow.desktop.utils.toColor
 import com.rainbow.domain.models.Subreddit
+import com.rainbow.domain.models.primaryColor
 
 @Composable
 fun SubredditItemName(subredditName: String, modifier: Modifier = Modifier) {
@@ -80,8 +82,9 @@ fun SubscribeButton(
             }
         },
         modifier = modifier,
+        // Needs check for content color for the right contrast. Maybe checking < or > than a certain value.
+//        containerColor = subreddit.primaryColor?.toColor() ?: MaterialTheme.colorScheme.primary,
         containerColor = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.onPrimary,
     ) {
         AnimatedContent(subreddit.isSubscribed) { isSubscribed ->
             Icon(
