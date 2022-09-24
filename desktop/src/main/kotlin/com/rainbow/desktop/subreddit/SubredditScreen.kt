@@ -5,9 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.rounded.Done
-import androidx.compose.material.icons.rounded.Label
-import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -186,7 +184,11 @@ private fun Header(
                 subreddit.imageUrl.toString(),
                 subreddit.name,
                 imageShape = MaterialTheme.shapes.large,
-            )
+            ) {
+                SubscribersCount(subreddit)
+                ActiveSubscribersCount(subreddit)
+                ScreenHeaderCreationDate(subreddit.creationDate)
+            }
 
             Column(
                 modifier = Modifier
@@ -222,6 +224,35 @@ private fun Header(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun SubscribersCount(subreddit: Subreddit, modifier: Modifier = Modifier) {
+    val subscribersCount = remember(subreddit.subscribersCount) { subreddit.subscribersCount.format() }
+
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.small),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(RainbowIcons.Groups, RainbowStrings.Subscribers)
+        Text(subscribersCount)
+    }
+}
+
+@Composable
+private fun ActiveSubscribersCount(subreddit: Subreddit, modifier: Modifier = Modifier) {
+    val activeSubscribersCount = remember(subreddit.activeSubscribersCount) {
+        subreddit.activeSubscribersCount.format()
+    }
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.small),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(RainbowIcons.WifiTethering, RainbowStrings.ActiveSubscribers)
+        Text(activeSubscribersCount)
     }
 }
 

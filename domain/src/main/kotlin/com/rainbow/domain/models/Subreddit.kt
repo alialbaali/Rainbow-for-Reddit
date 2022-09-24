@@ -3,7 +3,7 @@ package com.rainbow.domain.models
 import com.rainbow.domain.utils.RedditUrl
 import com.rainbow.domain.utils.asSubredditDisplayName
 import com.rainbow.domain.utils.colorOf
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
 
 data class Subreddit(
     val id: String,
@@ -20,7 +20,7 @@ data class Subreddit(
     val isSubscribed: Boolean,
     val isFavorite: Boolean,
     val type: Type = Type.Public,
-    val creationDate: LocalDateTime,
+    val creationDate: Instant,
 ) {
     data class Colors(
         val primary: Long,

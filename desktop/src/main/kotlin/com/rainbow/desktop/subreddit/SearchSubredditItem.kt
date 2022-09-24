@@ -136,7 +136,7 @@ private val Subreddit.infoItems
         ),
         SubredditInfoItem(
             RainbowStrings.Created,
-            creationDate.displayTime,
+            "creationDate.displayTime",
             RainbowIcons.CalendarToday
         ),
         SubredditInfoItem(

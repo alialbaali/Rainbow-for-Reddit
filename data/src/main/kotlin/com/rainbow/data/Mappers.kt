@@ -224,7 +224,7 @@ internal object Mappers {
                 isNSFW = over18 ?: false,
                 isFavorite = userHasFavorited ?: false,
                 isSubscribed = userIsSubscriber ?: false,
-                creationDate = created!!.toLong().toLocalDateTime(),
+                creationDate = Instant.fromEpochSeconds(created!!.toLong()),
                 colors = Subreddit.Colors.Default,
             )
         }

@@ -6,9 +6,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.rounded.Schedule
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,10 +27,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.ui.headerImageBorder
+import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.defaultPadding
+import com.rainbow.desktop.utils.formatDateOnly
 import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
+import kotlinx.datetime.Instant
 
 private val BannerImageHeight = 200.dp
 private val ProfileImageSize = 200.dp
@@ -67,6 +71,7 @@ fun ScreenHeader(
     title: String,
     modifier: Modifier = Modifier,
     imageShape: Shape = CircleShape,
+    content: @Composable RowScope.() -> Unit = {}
 ) {
     val bannerImageResource = lazyPainterResource(bannerImageUrl, filterQuality = FilterQuality.High)
     val profileImageResource = lazyPainterResource(imageUrl, filterQuality = FilterQuality.High)
@@ -109,15 +114,41 @@ fun ScreenHeader(
             animationSpec = tween(),
         )
 
-        Text(
-            title,
-            style = MaterialTheme.typography.displayMedium,
-            color = Color.White,
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomStart)
-                .defaultPadding(start = 232.dp)
-        )
+        CompositionLocalProvider(LocalContentColor provides Color.White) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomStart)
+                    .defaultPadding(start = 232.dp),
+            ) {
+                Text(
+                    text = title,
+                    modifier = Modifier.fillMaxWidth(),
+                    style = MaterialTheme.typography.displayMedium,
+                )
+                CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.bodyLarge) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium),
+                        verticalAlignment = Alignment.CenterVertically,
+                        content = content,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ScreenHeaderCreationDate(date: Instant, modifier: Modifier = Modifier) {
+    val formattedDate = remember(date) { date.formatDateOnly() }
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.small),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(RainbowIcons.Schedule, RainbowStrings.Created)
+        Text(formattedDate)
     }
 }
 
