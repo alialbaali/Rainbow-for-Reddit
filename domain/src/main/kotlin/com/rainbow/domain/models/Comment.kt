@@ -2,7 +2,7 @@ package com.rainbow.domain.models
 
 import com.rainbow.domain.utils.asSubredditDisplayName
 import com.rainbow.domain.utils.asUserDisplayName
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
 
 data class Comment(
     override val id: String,
@@ -21,7 +21,7 @@ data class Comment(
     val isSaved: Boolean = false,
     val vote: Vote = Vote.None,
     val flair: Flair, // make it nullable when it's empty?
-    val creationDate: LocalDateTime,
+    val creationDate: Instant,
     val isContinueThread: Boolean = false,
     val url: String,
 ) : Item {

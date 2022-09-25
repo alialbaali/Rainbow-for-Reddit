@@ -23,8 +23,6 @@ import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.*
-import kotlinx.datetime.toJavaLocalDateTime
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun SubredditScreen(
@@ -424,13 +422,8 @@ private fun RuleItem(rule: Rule, modifier: Modifier = Modifier) {
 
 @Composable
 private fun ModeratorItem(moderator: Moderator, onModeratorClick: (String) -> Unit, modifier: Modifier = Modifier) {
-    val formatter = remember { DateTimeFormatter.ofPattern("yyyy-MM-dd") }
     val permissions = remember(moderator) { moderator.permissions.joinToString { it.name } }
-    val modSince = remember(moderator) {
-        moderator.since
-            .toJavaLocalDateTime()
-            .let(formatter::format)
-    }
+    val modSince = remember(moderator) { moderator.since.formatDateOnly() }
 
     Column(
         modifier

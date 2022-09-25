@@ -2,7 +2,7 @@ package com.rainbow.domain.models
 
 import com.rainbow.domain.utils.asSubredditDisplayName
 import com.rainbow.domain.utils.asUserDisplayName
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
 
 data class Post(
     override val id: String,
@@ -30,7 +30,7 @@ data class Post(
     val flair: Flair,
     val userFlair: Flair,
     val url: String,
-    val creationDate: LocalDateTime,
+    val creationDate: Instant,
     val subredditImageUrl: String? = null,
 ) : Item {
     sealed interface Type {

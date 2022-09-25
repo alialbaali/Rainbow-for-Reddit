@@ -1,7 +1,7 @@
 package com.rainbow.domain.models
 
 import com.rainbow.domain.utils.asUserDisplayName
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
 
 data class Message(
     val id: String,
@@ -12,7 +12,7 @@ data class Message(
     val body: String,
     val isNew: Boolean,
     val type: Type,
-    val creationDate: LocalDateTime,
+    val creationDate: Instant,
 ) {
     sealed interface Type {
         object Message : Type

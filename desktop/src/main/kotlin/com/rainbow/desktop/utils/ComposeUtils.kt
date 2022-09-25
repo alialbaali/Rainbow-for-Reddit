@@ -12,10 +12,6 @@ import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.domain.models.*
-import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 
 typealias RainbowIcons = Icons.Rounded
 
@@ -61,27 +57,6 @@ fun Modifier.defaultPadding(
     end: Dp = 16.dp,
     bottom: Dp = 16.dp,
 ) = padding(start, top, end, bottom)
-
-val LocalDateTime.displayTime: String
-    get() {
-        val currentDateTime = LocalDateTime.now()
-        return when (val dayDiff = currentDateTime.dayOfYear - dayOfYear) {
-            0 -> when (val hourDiff = currentDateTime.hour - hour) {
-                0 -> when (val minuteDiff = currentDateTime.minute - minute) {
-                    0 -> "Now"
-                    in 0..60 -> minuteDiff.toString().plus("m")
-                    else -> error("Wrong Minute")
-                }
-
-                in 1..24 -> hourDiff.toString().plus("h")
-                else -> error("Wrong Hour")
-            }
-
-            else -> dayDiff.toString().plus("d")
-        }
-    }
-
-fun LocalDateTime.Companion.now() = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
 val Theme.text
     get() = when (this) {

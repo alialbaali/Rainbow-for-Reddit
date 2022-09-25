@@ -24,8 +24,8 @@ import com.halilibo.richtext.markdown.Markdown
 import com.halilibo.richtext.ui.RichText
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
-import com.rainbow.desktop.utils.displayTime
-import kotlinx.datetime.LocalDateTime
+import com.rainbow.desktop.utils.formatDisplayTime
+import kotlinx.datetime.Instant
 
 @Composable
 fun OpenInBrowserDropdownMenuItem(
@@ -123,9 +123,10 @@ fun CommentUserName(
 }
 
 @Composable
-fun CreationDate(date: LocalDateTime, modifier: Modifier = Modifier) {
+fun CreationDate(date: Instant, modifier: Modifier = Modifier) {
+    val displayTime = remember(date) { date.formatDisplayTime() }
     Text(
-        date.displayTime,
+        displayTime,
         modifier,
         color = MaterialTheme.colorScheme.surfaceVariant,
         style = MaterialTheme.typography.labelLarge,

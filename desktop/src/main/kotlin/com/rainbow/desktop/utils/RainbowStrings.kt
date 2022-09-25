@@ -97,7 +97,13 @@ object RainbowStrings {
     const val Since = "Since"
     const val SubredditOptions = "Subreddit options"
     const val LoginFailed = "Login has failed, please try to login again."
+    const val Now = "Now"
 
+    fun YearAgo(year: Int) = if (year == 1) "A year ago" else "$year years ago"
+    fun MonthAgo(month: Int) = if (month == 1) "A month ago" else "$month months ago"
+    fun DayAgo(day: Int) = if (day == 1) "Yesterday" else "$day days ago"
+    fun HourAgo(hour: Int) = if (hour == 1) "An hour ago" else "$hour hours ago"
+    fun MinuteAgo(minute: Int) = if (minute == 1) "A minute ago" else "$minute minutes ago"
     fun SubredditsCount(count: Int) = "$count Subreddits"
     fun UnsubscribeMessage(subredditName: String) = "You have unsubscribed from $subredditName."
     fun SubscribeMessage(subredditName: String) = "You have subscribed to $subredditName."

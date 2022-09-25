@@ -37,6 +37,11 @@ fun ApplicationScope.RainbowWindow(
     icon = painterResource("icons/Rainbow.svg")
 ) {
     window.minimumSize = MinWindowSize
+    window.rootPane?.apply {
+//        putClientProperty("apple.awt.fullWindowContent", true)
+//        putClientProperty("apple.awt.transparentTitleBar", true)
+//        putClientProperty("apple.awt.windowTitleVisible", false)
+    }
     content()
 }
 

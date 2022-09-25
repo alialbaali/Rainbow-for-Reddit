@@ -2,7 +2,7 @@ package com.rainbow.domain.models
 
 import com.rainbow.domain.utils.RedditUrl
 import com.rainbow.domain.utils.asUserDisplayName
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
 
 private const val DefaultUserImageUrl = ""
 
@@ -17,7 +17,7 @@ data class User(
     val imageUrl: String? = DefaultUserImageUrl,
     val bannerImageUrl: String?,
     val isNSFW: Boolean = false,
-    val creationDate: LocalDateTime,
+    val creationDate: Instant,
 )
 
 val User.totalKarma

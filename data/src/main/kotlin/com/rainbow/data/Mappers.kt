@@ -73,7 +73,7 @@ internal object Mappers {
                 isLocked = locked!!,
                 isSaved = saved ?: false,
                 isPinned = pinned!!,
-                creationDate = created!!.toLong().toLocalDateTime(),
+                creationDate = Instant.fromEpochSeconds(created!!.toLong()),
                 isMine = isSelf!!,
                 isHidden = hidden!!,
                 vote = likes.toVote(),
@@ -127,7 +127,7 @@ internal object Mappers {
                 awardeeKarma = awardeeKarma?.toLong() ?: 0,
                 awarderKarma = awarderKarma?.toLong() ?: 0,
                 isNSFW = subreddit?.over18 ?: false,
-                creationDate = created!!.toLong().toLocalDateTime(),
+                creationDate = Instant.fromEpochSeconds(created!!.toLong()),
                 imageUrl = iconImg!!,
                 bannerImageUrl = subreddit?.bannerImg?.removeParameters() ?: ""
             )
@@ -147,7 +147,7 @@ internal object Mappers {
                     subredditName = subreddit ?: "",
                     body = body ?: "",
                     votesCount = ups ?: 0,
-                    creationDate = (created?.toLong() ?: 0L).toLocalDateTime(),
+                    creationDate = Instant.fromEpochSeconds(created?.toLong() ?: 0L),
                     vote = likes.toVote(),
                     isEdited = false,
                     isSaved = saved ?: false,
@@ -241,7 +241,7 @@ internal object Mappers {
                 description!!,
                 priority!!.toInt(),
                 violationReason!!,
-                createdUtc!!.toLong().toLocalDateTime(),
+                Instant.fromEpochSeconds(createdUtc!!.toLong()),
             )
         }
     }
@@ -266,7 +266,7 @@ internal object Mappers {
                         else -> error("Permission isn't supported: $it")
                     }
                 } ?: emptyList(),
-                date!!.toLong().toLocalDateTime()
+                Instant.fromEpochSeconds(date!!.toLong())
             )
         }
     }
@@ -291,7 +291,7 @@ internal object Mappers {
                     "username_mention" -> Message.Type.Mention(context?.getPostId() ?: "")
                     else -> Message.Type.Message
                 },
-                created!!.toLong().toLocalDateTime(),
+                Instant.fromEpochSeconds(created!!.toLong()),
             )
         }
     }
@@ -322,7 +322,7 @@ internal object Mappers {
                 WikiPage(
                     contentMd ?: "",
                     UserMapper.map(revisionBy!!),
-                    revisionDate!!.toLong().toLocalDateTime(),
+                    Instant.fromEpochSeconds(revisionDate!!.toLong()),
                 )
             }
         }
@@ -351,10 +351,6 @@ internal object Mappers {
         false -> Vote.Down
         null -> Vote.None
     }
-
-    fun Long.toLocalDateTime() = Instant
-        .fromEpochSeconds(this)
-        .toLocalDateTime(TimeZone.currentSystemDefault())
 
     private val Url.fullHost
         get() = "${protocol.name}://$host"
