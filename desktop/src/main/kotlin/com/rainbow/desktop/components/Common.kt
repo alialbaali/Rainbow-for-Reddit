@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.rounded.Link
 import androidx.compose.material.icons.rounded.OpenInBrowser
 import androidx.compose.material3.Icon
@@ -19,7 +18,6 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
 import com.halilibo.richtext.markdown.Markdown
 import com.halilibo.richtext.ui.RichText
 import com.rainbow.desktop.utils.RainbowIcons
@@ -99,24 +97,14 @@ fun UserName(
 @Composable
 fun CommentUserName(
     userName: String,
-    postUserName: String,
+    isOP: Boolean,
     onClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isOP = remember(userName, postUserName) { userName == postUserName }
-    val color = if (isOP) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
-    val backgroundModifier = if (isOP) {
-        Modifier
-            .background(MaterialTheme.colorScheme.primary, MaterialTheme.shapes.extraSmall)
-            .padding(horizontal = 4.dp)
-    } else {
-        Modifier
-    }
+    val color = if (isOP) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
     Text(
         text = userName,
-        modifier = modifier
-            .then(backgroundModifier)
-            .clickable { onClick(userName) },
+        modifier = modifier.clickable { onClick(userName) },
         color = color,
         style = MaterialTheme.typography.labelLarge,
     )

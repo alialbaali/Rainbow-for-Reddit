@@ -11,6 +11,7 @@ data class Post(
     val subredditId: String,
     val subredditName: String,
     val title: String,
+    val body: String?,
     val type: Type = Type.Default,
     val votesCount: Int,
     val upvotesRatio: Double,
@@ -35,7 +36,6 @@ data class Post(
 ) : Item {
     sealed interface Type {
         object None : Type
-        data class Text(val body: String) : Type
         data class Link(val url: String, val previewUrl: String, val host: String) : Type
         data class Gif(val url: String) : Type
         data class Image(val urls: List<String>) : Type

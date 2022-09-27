@@ -75,7 +75,6 @@ fun SearchScreen(
                         }
                         onNavigateDetailsScreen(detailsScreen)
                     },
-                    {},
                     onShowSnackbar,
                     stateHolder.postsStateHolder::setLastItem,
                 )

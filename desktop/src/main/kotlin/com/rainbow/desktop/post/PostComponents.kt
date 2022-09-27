@@ -25,20 +25,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rainbow.desktop.award.ItemAwards
 import com.rainbow.desktop.components.*
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.OneTimeEffect
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
-import com.rainbow.desktop.utils.format
 import com.rainbow.domain.models.MarkPostAsRead
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.PostLayout
 import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
 
-private val SubredditIconSize = 48.dp
+private val SubredditIconSize = 50.dp
 
 fun Modifier.subredditIcon() = composed {
     Modifier
@@ -62,7 +60,6 @@ fun PostInfo(
     post: Post,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
-    onAwardsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val resource = lazyPainterResource(post.subredditImageUrl ?: "")
@@ -98,7 +95,7 @@ fun PostInfo(
                 }
                 if (post.awards.isNotEmpty()) {
                     Dot()
-                    ItemAwards(post.awards, onAwardsClick)
+                    Awards(post.awards)
                 }
             }
         }
@@ -108,7 +105,6 @@ fun PostInfo(
 @Composable
 fun PostContent(post: Post, postLayout: PostLayout, modifier: Modifier = Modifier) {
     when (val type = post.type) {
-        is Post.Type.Text -> TextPost(type, postLayout, post.isRead, modifier)
         is Post.Type.Link -> LinkPost(type, postLayout, modifier)
         is Post.Type.Gif -> GifPost(type, modifier)
         is Post.Type.Image -> ImagePost(type, postLayout, post.isNSFW, modifier)
@@ -118,7 +114,7 @@ fun PostContent(post: Post, postLayout: PostLayout, modifier: Modifier = Modifie
 }
 
 @Composable
-fun TextPost(text: Post.Type.Text, postLayout: PostLayout, isRead: Boolean, modifier: Modifier = Modifier) {
+fun PostBody(body: String, postLayout: PostLayout, modifier: Modifier = Modifier) {
     val maxLines = remember(postLayout) {
         when (postLayout) {
             PostLayout.Compact -> 5
@@ -126,7 +122,7 @@ fun TextPost(text: Post.Type.Text, postLayout: PostLayout, isRead: Boolean, modi
             PostLayout.Large -> 15
         }
     }
-    ExpandableText(text.body, modifier, maxLines)
+    ExpandableText(body, modifier, maxLines)
 }
 
 @Composable
@@ -280,24 +276,7 @@ fun PostOptions(
             onUnvote = { PostActionsStateHolder.unvotePost(post) }
         )
 
-        Row(
-            Modifier
-                .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.small)
-                .padding(vertical = RainbowTheme.dimensions.small, horizontal = RainbowTheme.dimensions.medium),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
-        ) {
-            Icon(
-                RainbowIcons.Forum,
-                RainbowStrings.Comments,
-                tint = MaterialTheme.colorScheme.onBackground
-            )
-            Text(
-                post.commentsCount.toInt().format(),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-        }
+        CommentsCount(post.commentsCount.toInt())
 
         Row(
             Modifier.background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.small),

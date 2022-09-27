@@ -43,15 +43,6 @@ class PostScreenStateHolder(
 
     private val mutableRefreshContent = MutableSharedFlow<Unit>(replay = 1)
 
-    companion object {
-        private val stateHolders = mutableListOf<PostScreenStateHolder>()
-
-        fun getOrCreateInstance(postId: String): PostScreenStateHolder {
-            return stateHolders.find { it.postId == postId }
-                ?: PostScreenStateHolder(postId).also(stateHolders::add)
-        }
-    }
-
     init {
         loadPostComments()
 
@@ -75,7 +66,10 @@ class PostScreenStateHolder(
             }
 
             mutableCommentsVisibility.value = comments.flattenRecursively()
-                .associate { comment -> comment.id to true }
+                .associate { comment ->
+                    val isVisible = commentsVisibility.value[comment.id] ?: true
+                    comment.id to isVisible
+                }
         }.launchIn(scope)
 
         mutableThreadParentId
@@ -102,7 +96,7 @@ class PostScreenStateHolder(
 
     private fun loadPostComments() = scope.launch {
         mutableComments.value = UIState.Loading(comments.value.getOrNull())
-        commentRepository.getPostsComments(
+        commentRepository.getPostComments(
             postId,
             commentSorting.value,
         ).onFailure {
@@ -110,9 +104,9 @@ class PostScreenStateHolder(
         }
     }
 
-    fun loadViewMoreComments(commentId: String, children: List<String>) = scope.launch {
+    fun loadMoreComments(commentId: String, children: List<String>) = scope.launch {
         mutableComments.value = UIState.Loading(comments.value.getOrNull())
-        commentRepository.getViewMoreComments(
+        commentRepository.getMoreComments(
             postId,
             commentId,
             children,

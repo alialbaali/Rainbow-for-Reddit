@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.*
 @OptIn(FlowPreview::class)
 object AppScreenStateHolder : StateHolder() {
 
-    private val mutableMainScreen = MutableStateFlow<MainScreen>(MainScreen.Subreddit("AppleWatch"))
+    private val mutableMainScreen = MutableStateFlow<MainScreen>(MainScreen.SidebarItem.Home)
     val mainScreen get() = mutableMainScreen.asStateFlow()
     val sidebarItem
         get() = mainScreen.map {

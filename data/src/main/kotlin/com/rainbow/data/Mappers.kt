@@ -6,8 +6,6 @@ import com.rainbow.domain.models.Rule
 import com.rainbow.remote.dto.*
 import io.ktor.http.*
 import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 
 internal object Mappers {
 
@@ -23,7 +21,6 @@ internal object Mappers {
             val previewUrl = preview?.images?.getOrNull(0)?.source?.url?.removeAmp()
             val validUrl = url?.removeParameters()
             val type = when {
-                !selftext.isNullOrBlank() -> Post.Type.Text(selftext!!.trim())
                 !url.isNullOrBlank() && url!!.isImage -> Post.Type.Image(listOf(url!!))
                 !validUrl.isNullOrBlank() && !previewUrl.isNullOrBlank() -> Post.Type.Link(
                     validUrl,
@@ -64,6 +61,7 @@ internal object Mappers {
                 subredditId = subredditId!!,
                 subredditName = subreddit!!,
                 title = title!!,
+                body = selftext,
                 type = type,
                 votesCount = ups!!,
                 upvotesRatio = upvoteRatio!!,
@@ -154,8 +152,8 @@ internal object Mappers {
                     replies = replies?.quickMap(CommentMapper) ?: emptyList(),
                     type = when {
                         children == null -> Comment.Type.None
-                        children!!.isEmpty() -> Comment.Type.ContinueThread(parentId ?: "")
-                        else -> Comment.Type.ViewMore(children!!)
+                        children!!.isEmpty() -> Comment.Type.Thread(parentId ?: "")
+                        else -> Comment.Type.MoreComments(children!!)
                     },
                     flair = FlairMapper.map(
                         RemoteFlair(

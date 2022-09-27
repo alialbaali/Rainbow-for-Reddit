@@ -103,8 +103,8 @@ fun PostScreen(
                 onCommentVisibilityChanged = stateHolder::setCommentVisibility,
                 onUserNameClick = { userName -> onNavigateMainScreen(MainScreen.User(userName)) },
                 onSubredditNameClick = { subredditName -> onNavigateMainScreen(MainScreen.Subreddit(subredditName)) },
-                onViewMoreClick = stateHolder::loadViewMoreComments,
-                onContinueThreadClick = stateHolder::setThreadParentId,
+                onRequestMoreComments = stateHolder::loadMoreComments,
+                onRequestThreadComments = stateHolder::setThreadParentId,
                 onShowSnackbar,
             )
         }
@@ -132,7 +132,6 @@ private fun Post(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
-            onAwardsClick = {}
         )
 
         if (post.flair.types.isNotEmpty()) FlairItem(post.flair, FlairStyle.Default)

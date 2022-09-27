@@ -101,7 +101,6 @@ fun ProfileScreen(
                         }
                         onNavigateDetailsScreen(detailsScreen)
                     },
-                    onAwardsClick = {},
                     onShowSnackbar,
                     stateHolder.overviewItemsStateHolder::setLastItem,
                 )
@@ -127,7 +126,6 @@ fun ProfileScreen(
                         }
                         onNavigateDetailsScreen(detailsScreen)
                     },
-                    onAwardsClick = {},
                     onShowSnackbar,
                     stateHolder.savedItemsStateHolder::setLastItem,
                 )
@@ -177,7 +175,6 @@ fun ProfileScreen(
                         }
                         onNavigateDetailsScreen(detailsScreen)
                     },
-                    {},
                     onShowSnackbar,
                     stateHolder.submittedPostsStateHolder::setLastItem,
                 )
@@ -203,7 +200,6 @@ fun ProfileScreen(
                         }
                         onNavigateDetailsScreen(detailsScreen)
                     },
-                    {},
                     onShowSnackbar,
                     stateHolder.hiddenPostsStateHolder::setLastItem,
                 )
@@ -229,7 +225,6 @@ fun ProfileScreen(
                         }
                         onNavigateDetailsScreen(detailsScreen)
                     },
-                    {},
                     onShowSnackbar,
                     stateHolder.upvotedPostsStateHolder::setLastItem,
                 )
@@ -255,7 +250,6 @@ fun ProfileScreen(
                         }
                         onNavigateDetailsScreen(detailsScreen)
                     },
-                    {},
                     onShowSnackbar,
                     stateHolder.downvotedPostsStateHolder::setLastItem,
                 )

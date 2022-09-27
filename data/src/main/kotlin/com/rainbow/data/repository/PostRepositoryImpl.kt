@@ -224,14 +224,7 @@ internal class PostRepositoryImpl(
     override suspend fun createPost(post: Post): Result<Unit> = withContext(dispatcher) {
         with(post) {
             when (val postType = type) {
-                is Type.None -> remotePostDataSource.submitTextPost(subredditName, title, null, isNSFW, isSpoiler)
-                is Type.Text -> remotePostDataSource.submitTextPost(
-                    subredditName,
-                    title,
-                    postType.body,
-                    isNSFW,
-                    isSpoiler
-                )
+                is Type.None -> remotePostDataSource.submitTextPost(subredditName, title, body, isNSFW, isSpoiler)
 
                 is Type.Link -> remotePostDataSource.submitUrlPost(
                     subredditName,

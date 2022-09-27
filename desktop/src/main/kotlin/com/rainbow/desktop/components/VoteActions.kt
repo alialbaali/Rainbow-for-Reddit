@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.ui.RainbowTheme
@@ -35,6 +36,7 @@ fun VoteActions(
             Vote.None -> votesCount
         }
     )
+    val animatedVotesCountFormatted = remember(animatedVotesCount) { animatedVotesCount.format() }
 
     Row(
         modifier.background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.small),
@@ -59,7 +61,7 @@ fun VoteActions(
             Icon(RainbowIcons.ArrowUpward, RainbowStrings.Upvote)
         }
         Text(
-            animatedVotesCount.format(),
+            animatedVotesCountFormatted,
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onBackground,
         )

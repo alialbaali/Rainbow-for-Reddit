@@ -80,7 +80,6 @@ fun UserScreen(
                         }
                         onNavigateDetailsScreen(detailsScreen)
                     },
-                    onAwardsClick = {},
                     onShowSnackbar,
                     stateHolder.itemsStateHolder::setLastItem,
                 )
@@ -106,7 +105,6 @@ fun UserScreen(
                         }
                         onNavigateDetailsScreen(detailsScreen)
                     },
-                    onAwardsClick = {},
                     onShowSnackbar,
                     stateHolder.postsStateHolder::setLastItem,
                 )

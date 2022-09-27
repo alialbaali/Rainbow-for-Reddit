@@ -5,14 +5,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.FlairItem
 import com.rainbow.desktop.components.FlairStyle
-import com.rainbow.desktop.navigation.DetailsScreen
-import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.defaultPadding
 import com.rainbow.domain.models.Post
@@ -22,15 +19,14 @@ import com.rainbow.domain.models.PostLayout
 @Composable
 fun CompactPostItem(
     post: Post,
-    onNavigateMainScreen: (MainScreen) -> Unit,
-    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
-    onAwardsClick: () -> Unit,
+    onClick: () -> Unit,
+    onUserNameClick: (String) -> Unit,
+    onSubredditNameClick: (String) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isTextPost = remember(post) { post.type is Post.Type.Text }
     Surface(
-        onClick = { onNavigateDetailsScreen(DetailsScreen.Post(post.id)) },
+        onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
     ) {
@@ -40,61 +36,36 @@ fun CompactPostItem(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
         ) {
-            if (isTextPost) {
-                PostInfo(
-                    post,
-                    onUserNameClick = { userName -> onNavigateMainScreen(MainScreen.User(userName)) },
-                    onSubredditNameClick = { subredditName -> onNavigateMainScreen(MainScreen.Subreddit(subredditName)) },
-                    onAwardsClick,
-                )
-                if (post.flair.types.isNotEmpty()) FlairItem(post.flair, FlairStyle.Default)
-                PostTitle(
-                    title = post.title,
-                    isRead = post.isRead,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                )
-                PostContent(
-                    post = post,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    postLayout = PostLayout.Compact,
-                )
-            } else {
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium),
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium),
+            ) {
+                Column(
+                    modifier = Modifier.weight(1F),
+                    verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
                 ) {
-                    Column(
-                        modifier = Modifier.weight(1F),
-                        verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
-                    ) {
-                        PostInfo(
-                            post,
-                            onUserNameClick = { userName -> onNavigateMainScreen(MainScreen.User(userName)) },
-                            onSubredditNameClick = { subredditName ->
-                                onNavigateMainScreen(
-                                    MainScreen.Subreddit(
-                                        subredditName
-                                    )
-                                )
-                            },
-                            onAwardsClick,
-                        )
-                        if (post.flair.types.isNotEmpty()) FlairItem(post.flair, FlairStyle.Default)
-                        PostTitle(
-                            title = post.title,
-                            isRead = post.isRead,
+                    PostInfo(
+                        post,
+                        onUserNameClick,
+                        onSubredditNameClick,
+                    )
+                    if (post.flair.types.isNotEmpty()) FlairItem(post.flair, FlairStyle.Default)
+                    PostTitle(
+                        title = post.title,
+                        isRead = post.isRead,
+                    )
+                    post.body?.let { body ->
+                        PostBody(
+                            body = body,
+                            postLayout = PostLayout.Compact,
                         )
                     }
-                    PostContent(
-                        post = post,
-                        modifier = Modifier.size(150.dp).align(Alignment.Bottom),
-                        postLayout = PostLayout.Compact,
-                    )
                 }
+                PostContent(
+                    post = post,
+                    postLayout = PostLayout.Compact,
+                    modifier = Modifier.size(150.dp).align(Alignment.Bottom),
+                )
             }
             PostOptions(post, onShowSnackbar)
         }
@@ -106,15 +77,14 @@ fun CompactPostItem(
 @Composable
 fun CardPostItem(
     post: Post,
-    onNavigateMainScreen: (MainScreen) -> Unit,
-    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
-    onAwardsClick: () -> Unit,
+    onClick: () -> Unit,
+    onUserNameClick: (String) -> Unit,
+    onSubredditNameClick: (String) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isTextPost = remember(post) { post.type is Post.Type.Text }
     Surface(
-        onClick = { onNavigateDetailsScreen(DetailsScreen.Post(post.id)) },
+        onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
     ) {
@@ -126,24 +96,26 @@ fun CardPostItem(
         ) {
             PostInfo(
                 post,
-                onUserNameClick = { userName -> onNavigateMainScreen(MainScreen.User(userName)) },
-                onSubredditNameClick = { subredditName -> onNavigateMainScreen(MainScreen.Subreddit(subredditName)) },
-                onAwardsClick,
+                onUserNameClick,
+                onSubredditNameClick,
             )
             if (post.flair.types.isNotEmpty()) FlairItem(post.flair, FlairStyle.Default)
             PostTitle(post.title, post.isRead)
+            post.body?.let { body ->
+                PostBody(
+                    body = body,
+                    postLayout = PostLayout.Card,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                )
+            }
             PostContent(
                 post,
-                modifier = if (isTextPost) {
-                    Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                } else {
-                    Modifier
-                        .fillMaxWidth()
-                        .height(300.dp)
-                },
                 postLayout = PostLayout.Card,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp),
             )
             PostOptions(post, onShowSnackbar)
         }
@@ -154,14 +126,14 @@ fun CardPostItem(
 @Composable
 fun LargePostItem(
     post: Post,
-    onNavigateMainScreen: (MainScreen) -> Unit,
-    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
-    onAwardsClick: () -> Unit,
+    onClick: () -> Unit,
+    onUserNameClick: (String) -> Unit,
+    onSubredditNameClick: (String) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(
-        onClick = { onNavigateDetailsScreen(DetailsScreen.Post(post.id)) },
+        onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
     ) {
@@ -173,18 +145,26 @@ fun LargePostItem(
         ) {
             PostInfo(
                 post,
-                onUserNameClick = { userName -> onNavigateMainScreen(MainScreen.User(userName)) },
-                onSubredditNameClick = { subredditName -> onNavigateMainScreen(MainScreen.Subreddit(subredditName)) },
-                onAwardsClick,
+                onUserNameClick,
+                onSubredditNameClick,
             )
             if (post.flair.types.isNotEmpty()) FlairItem(post.flair, FlairStyle.Default)
             PostTitle(post.title, post.isRead)
+            post.body?.let { body ->
+                PostBody(
+                    body = body,
+                    postLayout = PostLayout.Large,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                )
+            }
             PostContent(
                 post,
+                postLayout = PostLayout.Large,
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(),
-                postLayout = PostLayout.Large,
             )
             PostOptions(post, onShowSnackbar)
         }

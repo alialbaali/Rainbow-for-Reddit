@@ -100,7 +100,6 @@ fun SubredditScreen(
                             }
                             onNavigateDetailsScreen(detailsScreen)
                         },
-                        {},
                         onShowSnackbar,
                         stateHolder.postsStateHolder::setLastItem,
                     )

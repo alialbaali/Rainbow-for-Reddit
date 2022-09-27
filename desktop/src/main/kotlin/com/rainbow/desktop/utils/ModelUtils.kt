@@ -1,5 +1,6 @@
 package com.rainbow.desktop.utils
 
+import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.Subreddit
 import java.util.*
 
@@ -20,4 +21,13 @@ fun Int.format(): String {
 
 fun List<Subreddit>.filterContent(searchTerm: String) = filter {
     it.name.contains(searchTerm, ignoreCase = true) || it.shortDescription.contains(searchTerm)
+}
+
+fun List<Comment>.countRecursively(): Int {
+    return count { it.type !is Comment.Type.MoreComments } + sumOf { comment ->
+        when (val type = comment.type) {
+            is Comment.Type.MoreComments -> type.replies.count()
+            else -> comment.replies.countRecursively()
+        }
+    }
 }

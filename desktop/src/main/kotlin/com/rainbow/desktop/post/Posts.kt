@@ -20,36 +20,46 @@ fun LazyListScope.posts(
     postLayout: PostLayout,
     onNavigateMainScreen: (MainScreen) -> Unit,
     onNavigateDetailsScreen: (DetailsScreen) -> Unit,
-    onAwardsClick: () -> Unit,
     onShowSnackbar: (String) -> Unit,
     onLoadMore: (Post) -> Unit,
 ) {
     val posts = state.getOrDefault(emptyList())
+    val onPostClick = { postId: String ->
+        onNavigateDetailsScreen(DetailsScreen.Post(postId))
+    }
+    val onUserNameClick = { userName: String ->
+        onNavigateMainScreen(MainScreen.User(userName))
+    }
+
+    val onSubredditNameClick = { subredditName: String ->
+        onNavigateMainScreen(MainScreen.Subreddit(subredditName))
+    }
+
     itemsIndexed(posts) { index, post ->
         when (postLayout) {
             PostLayout.Compact -> CompactPostItem(
                 post,
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                onAwardsClick,
+                onClick = { onPostClick(post.id) },
+                onUserNameClick,
+                onSubredditNameClick,
                 onShowSnackbar,
                 Modifier.fillParentMaxWidth(),
             )
 
             PostLayout.Card -> CardPostItem(
                 post,
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                onAwardsClick,
+                onClick = { onPostClick(post.id) },
+                onUserNameClick,
+                onSubredditNameClick,
                 onShowSnackbar,
                 Modifier.fillParentMaxWidth(),
             )
 
             PostLayout.Large -> LargePostItem(
                 post,
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                onAwardsClick,
+                onClick = { onPostClick(post.id) },
+                onUserNameClick,
+                onSubredditNameClick,
                 onShowSnackbar,
                 Modifier.fillParentMaxWidth(),
             )
@@ -70,36 +80,46 @@ fun LazyGridScope.posts(
     postLayout: PostLayout,
     onNavigateMainScreen: (MainScreen) -> Unit,
     onNavigateDetailsScreen: (DetailsScreen) -> Unit,
-    onAwardsClick: () -> Unit,
     onShowSnackbar: (String) -> Unit,
     onLoadMore: (Post) -> Unit,
 ) {
     val posts = state.getOrDefault(emptyList())
+    val onPostClick = { postId: String ->
+        onNavigateDetailsScreen(DetailsScreen.Post(postId))
+    }
+    val onUserNameClick = { userName: String ->
+        onNavigateMainScreen(MainScreen.User(userName))
+    }
+
+    val onSubredditNameClick = { subredditName: String ->
+        onNavigateMainScreen(MainScreen.Subreddit(subredditName))
+    }
+
     itemsIndexed(posts) { index, post ->
         when (postLayout) {
             PostLayout.Compact -> CompactPostItem(
                 post,
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                onAwardsClick,
+                onClick = { onPostClick(post.id) },
+                onUserNameClick,
+                onSubredditNameClick,
                 onShowSnackbar,
                 Modifier.fillMaxWidth(),
             )
 
             PostLayout.Card -> CardPostItem(
                 post,
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                onAwardsClick,
+                onClick = { onPostClick(post.id) },
+                onUserNameClick,
+                onSubredditNameClick,
                 onShowSnackbar,
                 Modifier.fillMaxWidth(),
             )
 
             PostLayout.Large -> LargePostItem(
                 post,
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
-                onAwardsClick,
+                onClick = { onPostClick(post.id) },
+                onUserNameClick,
+                onSubredditNameClick,
                 onShowSnackbar,
                 Modifier.fillMaxWidth(),
             )

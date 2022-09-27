@@ -57,7 +57,6 @@ fun HomeScreen(
                         }
                         onNavigateDetailsScreen(detailsScreen)
                     },
-                    {},
                     onShowSnackbar,
                     stateHolder.postsStateHolder::setLastItem,
                 )

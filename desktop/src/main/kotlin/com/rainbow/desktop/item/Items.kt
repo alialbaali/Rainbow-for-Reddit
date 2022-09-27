@@ -23,17 +23,28 @@ fun LazyListScope.items(
     postLayout: PostLayout,
     onNavigateMainScreen: (MainScreen) -> Unit,
     onNavigateDetailsScreen: (DetailsScreen) -> Unit,
-    onAwardsClick: () -> Unit,
     onShowSnackbar: (String) -> Unit,
     onLoadMore: (Item) -> Unit,
 ) {
     val items = itemsState.getOrDefault(emptyList())
+    val onPostClick = { postId: String ->
+        onNavigateDetailsScreen(DetailsScreen.Post(postId))
+    }
+    val onUserNameClick = { userName: String ->
+        onNavigateMainScreen(MainScreen.User(userName))
+    }
+
+    val onSubredditNameClick = { subredditName: String ->
+        onNavigateMainScreen(MainScreen.Subreddit(subredditName))
+    }
+
     itemsIndexed(items) { index, item ->
         when (item) {
             is Comment -> CommentItem(
                 item,
-                onNavigateMainScreen,
-                onNavigateDetailsScreen,
+                onClick = { onPostClick(item.postId) },
+                onUserNameClick,
+                onSubredditNameClick,
                 onShowSnackbar,
                 Modifier.fillParentMaxWidth()
             )
@@ -41,27 +52,27 @@ fun LazyListScope.items(
             is Post -> when (postLayout) {
                 PostLayout.Compact -> CompactPostItem(
                     item,
-                    onNavigateMainScreen,
-                    onNavigateDetailsScreen,
-                    onAwardsClick,
+                    onClick = { onPostClick(item.id) },
+                    onUserNameClick,
+                    onSubredditNameClick,
                     onShowSnackbar,
                     Modifier.fillParentMaxWidth(),
                 )
 
                 PostLayout.Card -> CardPostItem(
                     item,
-                    onNavigateMainScreen,
-                    onNavigateDetailsScreen,
-                    onAwardsClick,
+                    onClick = { onPostClick(item.id) },
+                    onUserNameClick,
+                    onSubredditNameClick,
                     onShowSnackbar,
                     Modifier.fillParentMaxWidth(),
                 )
 
                 PostLayout.Large -> LargePostItem(
                     item,
-                    onNavigateMainScreen,
-                    onNavigateDetailsScreen,
-                    onAwardsClick,
+                    onClick = { onPostClick(item.id) },
+                    onUserNameClick,
+                    onSubredditNameClick,
                     onShowSnackbar,
                     Modifier.fillParentMaxWidth()
                 )
