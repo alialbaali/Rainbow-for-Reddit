@@ -109,4 +109,6 @@ object RainbowStrings {
     fun SubscribeMessage(subredditName: String) = "You have subscribed to $subredditName."
     fun FavoriteMessage(subredditName: String) = "You have starred $subredditName."
     fun UnFavoriteMessage(subredditName: String) = "You have unstarred $subredditName."
+    fun MoreReplies(count: Int) = if (count == 1) "$count More reply" else "$count More replies"
+    fun Awards(count: Int) = if (count == 1) "Only one award" else "$count Awards"
 }
