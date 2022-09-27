@@ -1,28 +1,34 @@
 package com.rainbow.desktop.components
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.rounded.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.KeyEvent
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.rememberWindowState
+import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
+import com.rainbow.desktop.utils.defaultPadding
 
+private val LayerDialogWidth = 500.dp
+
+// TODO Replace with layer dialog when it's released.
 @Composable
-fun RainbowDialog(
+fun LayerDialog(
     onCloseRequest: () -> Unit,
     title: String,
     modifier: Modifier = Modifier,
@@ -35,8 +41,11 @@ fun RainbowDialog(
     onKeyEvent: ((KeyEvent) -> Boolean) = { false },
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    val scrimColor by animateColorAsState(
+        if (visible) MaterialTheme.colorScheme.surfaceVariant else Color.Transparent,
+    )
+
     Window(
-//         TODO Replace with layer dialog when it's released.
         onCloseRequest,
         state,
         visible,
@@ -54,38 +63,35 @@ fun RainbowDialog(
         Box(
             Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.onBackground.copy(0.5F)),
+                .background(scrimColor),
             contentAlignment = Alignment.Center
         ) {
             Column(
                 modifier = Modifier
-                    .width(250.dp)
-                    .clip(MaterialTheme.shapes.large)
-                    .background(MaterialTheme.colorScheme.surface),
-                verticalArrangement = Arrangement.SpaceBetween,
+                    .width(LayerDialogWidth)
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .defaultPadding(),
+                verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(title, fontWeight = FontWeight.Medium)
-                    IconButton(onCloseRequest) {
-                        Icon(RainbowIcons.Close, RainbowStrings.Close)
-                    }
-                }
-                Column(
-                    modifier = modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    content()
-                }
+                Title(title, onCloseRequest)
+                content()
             }
+        }
+    }
+}
+
+@Composable
+private fun Title(title: String, onCloseRequest: () -> Unit, modifier: Modifier = Modifier) {
+    Row(
+        modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(title, style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onSurface)
+        RainbowIconButton(onCloseRequest) {
+            Icon(RainbowIcons.Close, RainbowStrings.Close)
         }
     }
 }
