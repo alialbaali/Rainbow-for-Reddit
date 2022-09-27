@@ -22,8 +22,9 @@ import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
 
-private val DropdownMenuMaxHeight = 300.dp
 private val DropDownMenuMinWidth = 200.dp
+private val DropdownMenuMaxHeight = 300.dp
+private val DropdownMenuMaxWidth = 400.dp
 private val DropdownMenuOffset = DpOffset(0.dp, 16.dp)
 
 @Composable
@@ -88,9 +89,9 @@ fun RainbowDropdownMenuHolder(
         RainbowDropdownMenu(
             isVisible = isVisible,
             onDismissRequest = { isVisible = false },
-            handler,
-            content = content,
-        )
+        ) {
+            content(handler)
+        }
     }
 }
 
@@ -131,9 +132,9 @@ fun RainbowDropdownMenuHolder(
         RainbowDropdownMenu(
             isVisible = isVisible,
             onDismissRequest = { isVisible = false },
-            handler,
-            content = content,
-        )
+        ) {
+            content(handler)
+        }
     }
 }
 
@@ -195,9 +196,8 @@ interface DropdownMenuHandler {
 fun RainbowDropdownMenu(
     isVisible: Boolean,
     onDismissRequest: () -> Unit,
-    handler: DropdownMenuHandler,
     modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.(DropdownMenuHandler) -> Unit,
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     // TODO: Remove vertical padding when it's possible.
     DropdownMenu(
@@ -205,10 +205,9 @@ fun RainbowDropdownMenu(
         onDismissRequest = onDismissRequest,
         modifier = Modifier
             .width(IntrinsicSize.Max)
-            .sizeIn(minWidth = DropDownMenuMinWidth, maxHeight = DropdownMenuMaxHeight)
+            .sizeIn(minWidth = DropDownMenuMinWidth, maxWidth = DropdownMenuMaxWidth, maxHeight = DropdownMenuMaxHeight)
             .background(MaterialTheme.colorScheme.surface),
         offset = DropdownMenuOffset,
-    ) {
-        content(handler)
-    }
+        content = content,
+    )
 }
