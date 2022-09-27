@@ -27,8 +27,8 @@ data class Comment(
 ) : Item {
     sealed interface Type {
         object None : Type
-        class ViewMore(val replies: List<String>) : Type
-        class ContinueThread(val parentId: String) : Type
+        class MoreComments(val replies: List<String>) : Type
+        class Thread(val parentId: String) : Type
     }
 }
 

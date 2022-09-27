@@ -20,11 +20,10 @@ interface RemoteCommentDataSource {
         after: String?,
     ): List<RemoteComment>
 
-    suspend fun getViewMoreComments(
+    suspend fun getMoreComments(
         postId: String,
         childrenIds: List<String>,
         commentsSorting: String,
-        limit: Int,
     ): List<RemoteComment>
 
     suspend fun getThreadComments(

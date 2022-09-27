@@ -1,82 +1,51 @@
 package com.rainbow.desktop.comment
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.rounded.Forum
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.rainbow.desktop.award.ItemAwards
 import com.rainbow.desktop.components.*
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
-import com.rainbow.desktop.utils.format
+import com.rainbow.desktop.utils.countRecursively
 import com.rainbow.domain.models.Comment
-
-@Composable
-fun PostCommentInfo(
-    comment: Comment,
-    postUserName: String,
-    onUserNameClick: (String) -> Unit,
-    onSubredditNameClick: (String) -> Unit,
-    isSubredditNameEnabled: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    Row(modifier, verticalAlignment = Alignment.CenterVertically) {
-        CommentUserName(comment.userName, postUserName, onUserNameClick)
-        if (comment.flair.types.isNotEmpty()) {
-            Dot()
-            FlairItem(comment.flair, FlairStyle.Compact)
-        }
-        if (isSubredditNameEnabled) {
-            Dot()
-            SubredditName(comment.subredditName, onSubredditNameClick)
-        }
-        Dot()
-        CreationDate(comment.creationDate)
-        if (comment.awards.isNotEmpty()) {
-            Dot()
-            ItemAwards(comment.awards, {})
-        }
-    }
-}
 
 @Composable
 fun CommentInfo(
     comment: Comment,
+    postUserName: String?,
+    isSubredditNameVisible: Boolean,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
-    isSubredditNameEnabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
+    val isOP = remember(comment.userName, postUserName) { comment.userName == postUserName }
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
-        UserName(comment.userName, onUserNameClick)
-        Dot()
+        CommentUserName(comment.userName, isOP, onUserNameClick)
         if (comment.flair.types.isNotEmpty()) {
             Dot()
             FlairItem(comment.flair, FlairStyle.Compact)
         }
-        if (isSubredditNameEnabled) {
-            SubredditName(comment.subredditName, onSubredditNameClick)
+        if (isSubredditNameVisible) {
             Dot()
+            SubredditName(comment.subredditName, onSubredditNameClick)
         }
+        Dot()
         CreationDate(comment.creationDate)
         if (comment.awards.isNotEmpty()) {
             Dot()
-            ItemAwards(comment.awards, {})
+            Awards(comment.awards)
         }
     }
 }
@@ -89,6 +58,8 @@ fun CommentOptions(
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val commentsCount = remember(comment.replies) { comment.replies.countRecursively() }
+
     Row(
         modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -102,25 +73,12 @@ fun CommentOptions(
             onUnvote = { CommentActionsStateHolder.unvoteComment(comment) }
         )
 
-        AnimatedVisibility(comment.replies.isNotEmpty() && !isRepliesVisible) {
-            Row(
-                Modifier
-                    .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.medium)
-                    .padding(RainbowTheme.dimensions.small),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
-            ) {
-                Icon(
-                    RainbowIcons.Forum,
-                    RainbowStrings.Comments,
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    comment.replies.count().format(),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
-            }
+        AnimatedVisibility(
+            visible = comment.replies.isNotEmpty() && !isRepliesVisible,
+            enter = fadeIn() + scaleIn(),
+            exit = fadeOut() + scaleOut(),
+        ) {
+            CommentsCount(commentsCount)
         }
 
         Row(

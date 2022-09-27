@@ -22,8 +22,9 @@ fun LazyListScope.comments(
     itemsIndexed(comments) { index, comment ->
         CommentItem(
             comment,
-            onNavigateMainScreen,
-            onNavigateDetailsScreen,
+            onClick = { onNavigateDetailsScreen(DetailsScreen.Post(comment.postId)) },
+            onUserNameClick = { userName -> onNavigateMainScreen(MainScreen.User(userName)) },
+            onSubredditNameClick = { subredditName -> onNavigateMainScreen(MainScreen.Subreddit(subredditName)) },
             onShowSnackbar,
             modifier = Modifier.fillParentMaxWidth(),
         )

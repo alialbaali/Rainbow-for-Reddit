@@ -45,17 +45,16 @@ class RemoteCommentDataSourceImpl(private val client: HttpClient = redditClient)
         }.toList()
     }
 
-    override suspend fun getViewMoreComments(
+    override suspend fun getMoreComments(
         postId: String,
         childrenIds: List<String>,
         commentsSorting: String,
-        limit: Int,
     ): List<RemoteComment> {
         return client.requestOrThrow<Map<String, Item<Map<String, List<Item<RemoteComment>>>>>>(Comments.Replies) {
             parameter(Keys.Sort, commentsSorting)
             parameter(Keys.PostId, postId)
             parameter(Keys.ApiType, Values.Json)
-            parameter(Keys.Children, childrenIds.take(limit).joinToString())
+            parameter(Keys.Children, childrenIds.joinToString())
         }["json"]?.data?.get("things")?.map { it.data } ?: emptyList()
     }
 

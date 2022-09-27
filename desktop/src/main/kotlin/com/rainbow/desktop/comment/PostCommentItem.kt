@@ -38,14 +38,14 @@ fun PostCommentItem(
                 .defaultPadding(),
             verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
         ) {
-            PostCommentInfo(
+            CommentInfo(
                 comment,
                 postUserName,
+                isSubredditNameVisible = false,
                 onUserNameClick,
                 onSubredditNameClick,
-                isSubredditNameEnabled = false
             )
-            ExpandableText(comment.body, style = MaterialTheme.typography.titleMedium)
+            ExpandableText(comment.body, style = MaterialTheme.typography.bodyLarge)
             CommentOptions(comment, isRepliesVisible, onShowSnackbar)
         }
     }
@@ -53,7 +53,7 @@ fun PostCommentItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ViewMoreCommentItem(onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun MoreCommentsItem(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Surface(
         onClick,
         shape = MaterialTheme.shapes.medium,
@@ -64,6 +64,7 @@ fun ViewMoreCommentItem(onClick: () -> Unit, modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .defaultPadding(),
             color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.bodyLarge,
         )
     }
 }

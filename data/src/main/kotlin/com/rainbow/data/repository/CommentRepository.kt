@@ -79,7 +79,7 @@ internal class CommentRepositoryImpl(
         }
     }
 
-    override suspend fun getPostsComments(
+    override suspend fun getPostComments(
         postId: String,
         commentsSorting: PostCommentSorting,
     ): Result<Unit> = runCatching {
@@ -93,18 +93,17 @@ internal class CommentRepositoryImpl(
         }
     }
 
-    override suspend fun getViewMoreComments(
+    override suspend fun getMoreComments(
         postId: String,
         commentId: String,
         children: List<String>,
         commentsSorting: PostCommentSorting
     ): Result<Unit> = runCatching {
         withContext(dispatcher) {
-            val allComments = remoteCommentDataSource.getViewMoreComments(
+            val allComments = remoteCommentDataSource.getMoreComments(
                 postId,
                 children,
                 commentsSorting.lowercaseName,
-                DefaultLimit,
             ).quickMap(mapper)
 
             val newPostComments = allComments.filter { it.parentId == postId }

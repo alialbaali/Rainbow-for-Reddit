@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.BoxLine
@@ -30,25 +31,24 @@ fun ReplyItem(
     Surface(onClick) {
         Row(
             modifier
-//                .height(IntrinsicSize.Min)
+                .height(IntrinsicSize.Min)
                 .padding(horizontal = 16.dp)
         ) {
             repeat(depth) {
                 BoxLine(it)
             }
             Column(
-                Modifier
-                    .padding(vertical = 16.dp),
+                Modifier.padding(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
             ) {
-                PostCommentInfo(
+                CommentInfo(
                     reply,
                     postUserName,
+                    isSubredditNameVisible = false,
                     onUserNameClick,
                     onSubredditNameClick,
-                    isSubredditNameEnabled = false
                 )
-                ExpandableText(reply.body, style = MaterialTheme.typography.titleMedium)
+                ExpandableText(reply.body, style = MaterialTheme.typography.bodyLarge)
                 CommentOptions(reply, isRepliesVisible, onShowSnackbar)
             }
         }
@@ -57,7 +57,9 @@ fun ReplyItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ViewMoreReplyItem(onClick: () -> Unit, depth: Int, modifier: Modifier = Modifier) {
+fun MoreRepliesItem(type: Comment.Type.MoreComments, onClick: () -> Unit, depth: Int, modifier: Modifier = Modifier) {
+    val count = remember { type.replies.count() }
+
     Surface(onClick) {
         Row(
             modifier
@@ -68,11 +70,12 @@ fun ViewMoreReplyItem(onClick: () -> Unit, depth: Int, modifier: Modifier = Modi
                 BoxLine(it)
             }
             Text(
-                RainbowStrings.ViewMore,
+                RainbowStrings.MoreReplies(count),
                 Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp),
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodyLarge
             )
         }
     }
@@ -80,7 +83,7 @@ fun ViewMoreReplyItem(onClick: () -> Unit, depth: Int, modifier: Modifier = Modi
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContinueThreadReplyItem(onClick: () -> Unit, depth: Int, modifier: Modifier = Modifier) {
+fun ThreadItem(onClick: () -> Unit, depth: Int, modifier: Modifier = Modifier) {
     Surface(onClick) {
         Row(
             modifier
@@ -95,7 +98,8 @@ fun ContinueThreadReplyItem(onClick: () -> Unit, depth: Int, modifier: Modifier 
                 Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp),
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodyLarge
             )
         }
     }

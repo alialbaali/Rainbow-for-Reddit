@@ -18,13 +18,14 @@ import com.rainbow.domain.models.Comment
 @Composable
 fun CommentItem(
     comment: Comment,
-    onNavigateMainScreen: (MainScreen) -> Unit,
-    onNavigateDetailsScreen: (DetailsScreen) -> Unit,
+    onClick: () -> Unit,
+    onUserNameClick: (String) -> Unit,
+    onSubredditNameClick: (String) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(
-        onClick = { onNavigateDetailsScreen(DetailsScreen.Post(comment.postId)) },
+        onClick = onClick,
         modifier = modifier,
         shape = MaterialTheme.shapes.medium
     ) {
@@ -34,9 +35,10 @@ fun CommentItem(
         ) {
             CommentInfo(
                 comment,
-                onUserNameClick = { userName -> onNavigateMainScreen(MainScreen.User(userName)) },
-                onSubredditNameClick = { subredditName -> onNavigateMainScreen(MainScreen.Subreddit(subredditName)) },
-                isSubredditNameEnabled = true
+                postUserName = null,
+                isSubredditNameVisible = true,
+                onUserNameClick,
+                onSubredditNameClick,
             )
             ExpandableText(comment.body)
             CommentOptions(comment, false, onShowSnackbar)

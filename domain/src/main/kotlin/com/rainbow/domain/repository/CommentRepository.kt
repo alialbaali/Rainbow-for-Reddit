@@ -31,12 +31,12 @@ interface CommentRepository {
         lastCommentId: String?,
     ): Result<Unit>
 
-    suspend fun getPostsComments(
+    suspend fun getPostComments(
         postId: String,
         commentsSorting: PostCommentSorting,
     ): Result<Unit>
 
-    suspend fun getViewMoreComments(
+    suspend fun getMoreComments(
         postId: String,
         commentId: String,
         children: List<String>,

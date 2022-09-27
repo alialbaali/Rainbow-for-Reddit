@@ -22,8 +22,8 @@ fun LazyListScope.postComments(
     onCommentVisibilityChanged: (String, Boolean) -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
-    onViewMoreClick: (String, List<String>) -> Unit,
-    onContinueThreadClick: (String) -> Unit,
+    onRequestMoreComments: (String, List<String>) -> Unit,
+    onRequestThreadComments: (String) -> Unit,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -48,15 +48,15 @@ fun LazyListScope.postComments(
                     modifier.clip(comment.replies.isEmpty(), isRepliesVisible),
                 )
 
-                is Comment.Type.ViewMore -> ViewMoreCommentItem(
+                is Comment.Type.MoreComments -> MoreCommentsItem(
                     onClick = {
                         val moreComments = commentType.replies
-                        onViewMoreClick(comment.id, moreComments)
+                        onRequestMoreComments(comment.id, moreComments)
                     },
                     modifier.clip(isEmpty = true, isRepliesVisible = false)
                 )
 
-                is Comment.Type.ContinueThread -> {}
+                is Comment.Type.Thread -> {}
             }
         }
         replies(
@@ -69,8 +69,8 @@ fun LazyListScope.postComments(
             setIsRepliesVisible = { reply, isVisible -> onCommentVisibilityChanged(reply.id, isVisible) },
             onUserNameClick,
             onSubredditNameClick,
-            onViewMoreClick,
-            onContinueThreadClick,
+            onRequestMoreComments,
+            onRequestThreadComments,
             hasMoreCommentsAfterIndex = { parentId ->
                 val parentIndex = comments.indexOfFirst { it.id == parentId }
                 comments.getOrNull(parentIndex + 1) != null
@@ -131,7 +131,8 @@ fun LazyListScope.replies(
                             Modifier
                     )
 
-                    is Comment.Type.ViewMore -> ViewMoreReplyItem(
+                    is Comment.Type.MoreComments -> MoreRepliesItem(
+                        replyType,
                         onClick = { onRequestMoreComments(reply.id, replyType.replies) },
                         depth,
                         if (isLastItem)
@@ -145,7 +146,7 @@ fun LazyListScope.replies(
                             Modifier
                     )
 
-                    is Comment.Type.ContinueThread -> ContinueThreadReplyItem(
+                    is Comment.Type.Thread -> ThreadItem(
                         onClick = { onRequestThreadComments(replyType.parentId) },
                         depth,
                         if (isLastItem)
