@@ -1,25 +1,28 @@
 package com.rainbow.desktop.post
 
+import androidx.compose.animation.*
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.comment.postComments
 import com.rainbow.desktop.components.*
@@ -30,6 +33,10 @@ import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.PostCommentSorting
 import com.rainbow.domain.models.PostLayout
+import io.kamel.image.KamelImage
+import io.kamel.image.lazyPainterResource
+
+private val LazyImageSize = 150.dp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -149,7 +156,6 @@ private fun Post(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
-            postLayout = PostLayout.Large,
         )
 
         PostOptions(
@@ -162,6 +168,130 @@ private fun Post(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun PostContent(post: Post, modifier: Modifier = Modifier) {
+    when (val type = post.type) {
+        is Post.Type.Image -> {
+            val urls = remember(type) { type.urls }
+            if (urls.size > 1) {
+                var selectedUrl by remember(urls) { mutableStateOf(urls.first()) }
+                val selectedUrlIndex = remember(selectedUrl) { urls.indexOf(selectedUrl) }
+                val isForwardEnabled = remember(selectedUrlIndex) { urls.getOrNull(selectedUrlIndex + 1) != null }
+                val isBackEnabled = remember(selectedUrlIndex) { urls.getOrNull(selectedUrlIndex - 1) != null }
+                var slideDirection by remember { mutableStateOf(AnimatedContentScope.SlideDirection.Left) }
+
+                Box(modifier = Modifier.clip(MaterialTheme.shapes.medium)) {
+                    AnimatedContent(
+                        selectedUrl,
+                        transitionSpec = { slideIntoContainer(slideDirection) with slideOutOfContainer(slideDirection) }
+                    ) { url ->
+                        val painterResource = lazyPainterResource(url)
+                        KamelImage(
+                            painterResource,
+                            contentDescription = post.title,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.FillWidth,
+                            onLoading = { RainbowProgressIndicator(Modifier.fillMaxSize()) },
+                        )
+                    }
+
+                    RainbowIconButton(
+                        onClick = {
+                            slideDirection = AnimatedContentScope.SlideDirection.Left
+                            selectedUrl = urls[selectedUrlIndex + 1]
+                        },
+                        modifier = Modifier.align(Alignment.CenterEnd).padding(RainbowTheme.dimensions.medium),
+                        enabled = isForwardEnabled,
+                    ) {
+                        Icon(RainbowIcons.ArrowForward, RainbowStrings.NavigateForward)
+                    }
+
+                    RainbowIconButton(
+                        onClick = {
+                            slideDirection = AnimatedContentScope.SlideDirection.Right
+                            selectedUrl = urls[selectedUrlIndex - 1]
+                        },
+                        modifier = Modifier.align(Alignment.CenterStart).padding(RainbowTheme.dimensions.medium),
+                        enabled = isBackEnabled,
+                    ) {
+                        Icon(RainbowIcons.ArrowBack, RainbowStrings.NavigateBack)
+                    }
+                }
+
+                PostImages(
+                    title = post.title,
+                    type = type,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    onSelectChange = {
+                        val index = urls.indexOf(it)
+                        slideDirection = if (index > selectedUrlIndex) {
+                            AnimatedContentScope.SlideDirection.Left
+                        } else {
+                            AnimatedContentScope.SlideDirection.Right
+                        }
+                        selectedUrl = it
+                    },
+                    selectedUrl = selectedUrl
+                )
+            }
+        }
+
+        else -> PostContent(
+            post = post,
+            modifier = modifier,
+            postLayout = PostLayout.Large,
+        )
+    }
+}
+
+@Composable
+private fun PostImages(
+    selectedUrl: String,
+    title: String,
+    type: Post.Type.Image,
+    onSelectChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyRow(
+        modifier = modifier.background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.medium),
+        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium),
+        verticalAlignment = Alignment.CenterVertically,
+        contentPadding = PaddingValues(RainbowTheme.dimensions.medium)
+    ) {
+        items(type.urls) { url ->
+            val resource = lazyPainterResource(url)
+            Box {
+                KamelImage(
+                    resource,
+                    title,
+                    Modifier
+                        .clip(MaterialTheme.shapes.small)
+                        .clickable { onSelectChange(url) }
+                        .background(MaterialTheme.colorScheme.surface)
+                        .size(LazyImageSize),
+                    contentScale = ContentScale.Crop,
+                    onLoading = { RainbowProgressIndicator(Modifier.size(LazyImageSize)) },
+                )
+
+                AnimatedVisibility(
+                    visible = selectedUrl == url,
+                    Modifier
+                        .padding(RainbowTheme.dimensions.small)
+                        .align(Alignment.TopEnd)
+                ) {
+                    Icon(
+                        RainbowIcons.CheckCircle,
+                        RainbowStrings.Selected,
+                        tint = Color.White,
+                    )
+                }
+            }
+        }
+    }
+}
 
 @Composable
 private fun LazyItemScope.CommentActions(

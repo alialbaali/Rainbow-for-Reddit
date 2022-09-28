@@ -46,6 +46,7 @@ object RainbowStrings {
     const val English = "English"
     const val EmptyDescription = "No description available."
     const val Select = "No description available."
+    const val Selected = "Selected"
     const val AwardeeKarma = "Awardee karma"
     const val AwarderKarma = "Awarder karma"
     const val PostKarma = "Post karma"
