@@ -36,7 +36,9 @@ fun LazyListScope.messages(
                     }
                 }
         )
-        PagingEffect(messages, index, onLoadMore)
+        PagingEffect(index, messages.lastIndex) {
+            onLoadMore(message)
+        }
     }
 
     if (messagesState.isLoading) {

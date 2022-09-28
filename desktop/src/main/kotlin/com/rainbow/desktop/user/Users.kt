@@ -24,7 +24,9 @@ fun LazyGridScope.users(
             onClick = { onNavigateMainScreen(MainScreen.User(user.name)) },
             onShowSnackbar
         )
-        PagingEffect(users, index, onLoadMore)
+        PagingEffect(index, users.lastIndex) {
+            onLoadMore(user)
+        }
     }
 
     if (state.isLoading) {

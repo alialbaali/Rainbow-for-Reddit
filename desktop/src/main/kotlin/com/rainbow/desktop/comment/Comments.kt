@@ -28,7 +28,9 @@ fun LazyListScope.comments(
             onShowSnackbar,
             modifier = Modifier.fillParentMaxWidth(),
         )
-        PagingEffect(comments, index, onLoadMore)
+        PagingEffect(index, comments.lastIndex) {
+            onLoadMore(comment)
+        }
     }
     if (state.isLoading) {
         item {

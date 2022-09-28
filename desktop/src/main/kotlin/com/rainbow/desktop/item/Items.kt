@@ -78,7 +78,9 @@ fun LazyListScope.items(
                 )
             }
         }
-        PagingEffect(items, index, onLoadMore)
+        PagingEffect(index, items.lastIndex) {
+            onLoadMore(item)
+        }
     }
     if (itemsState.isLoading) {
         item {

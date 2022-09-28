@@ -65,7 +65,9 @@ fun LazyListScope.posts(
             )
         }
 
-        PagingEffect(posts, index, onLoadMore)
+        PagingEffect(index, posts.lastIndex) {
+            onLoadMore(post)
+        }
     }
 
     if (state.isLoading) {
@@ -125,7 +127,9 @@ fun LazyGridScope.posts(
             )
         }
 
-        PagingEffect(posts, index, onLoadMore)
+        PagingEffect(index, posts.lastIndex) {
+            onLoadMore(post)
+        }
     }
 
     if (state.isLoading) {

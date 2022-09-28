@@ -15,26 +15,19 @@ import com.rainbow.domain.models.*
 
 typealias RainbowIcons = Icons.Rounded
 
+private const val PagingEffectIndexThreshold = 10 // Higher means faster paging.
+
 @Composable
 fun DefaultContentPadding() = PaddingValues(vertical = RainbowTheme.dimensions.medium)
 
 @NonRestartableComposable
 @Composable
-inline fun <T> PagingEffect(
-    iterable: Iterable<T>,
+fun PagingEffect(
     currentIndex: Int,
-    crossinline block: (T) -> Unit,
+    lastIndex: Int,
+    block: () -> Unit,
 ) {
-    SideEffect {
-        iterable.runOnIndex(currentIndex, block)
-    }
-}
-
-inline fun <T> Iterable<T>.runOnIndex(currentIndex: Int, block: (T) -> Unit) {
-    withIndex().last().apply {
-        if (index == currentIndex)
-            block(value)
-    }
+    if (currentIndex == lastIndex - PagingEffectIndexThreshold) SideEffect(block)
 }
 
 @Composable

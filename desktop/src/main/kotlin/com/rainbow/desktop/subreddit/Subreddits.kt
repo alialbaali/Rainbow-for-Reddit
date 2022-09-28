@@ -24,7 +24,9 @@ fun LazyGridScope.subreddits(
             onClick = { onNavigateMainScreen(MainScreen.Subreddit(subreddit.name)) },
             onShowSnackbar
         )
-        PagingEffect(subreddits, index, onLoadMore)
+        PagingEffect(index, subreddits.lastIndex) {
+            onLoadMore(subreddit)
+        }
     }
 
     if (state.isLoading) {
