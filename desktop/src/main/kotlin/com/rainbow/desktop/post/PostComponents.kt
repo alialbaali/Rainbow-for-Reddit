@@ -38,9 +38,10 @@ import io.kamel.image.lazyPainterResource
 
 private val SubredditIconSize = 50.dp
 
-fun Modifier.subredditIcon() = composed {
+fun Modifier.subredditIcon(onClick: () -> Unit) = composed {
     Modifier
         .clip(MaterialTheme.shapes.small)
+        .clickable(onClick = onClick)
         .background(MaterialTheme.colorScheme.onSurface, MaterialTheme.shapes.small)
         .size(SubredditIconSize)
 }
@@ -67,9 +68,12 @@ fun PostInfo(
         KamelImage(
             resource,
             post.subredditName,
-            Modifier.subredditIcon(),
+            Modifier.subredditIcon { onSubredditNameClick(post.subredditName) },
             onFailure = {
-                Box(Modifier.subredditIcon(), contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier.subredditIcon { onSubredditNameClick(post.subredditName) },
+                    contentAlignment = Alignment.Center
+                ) {
                     TextBox(
                         post.subredditName.first().toString().uppercase(),
                         fontSize = 30.sp,
