@@ -23,6 +23,32 @@ class RemotePostDataSourceImpl(private val client: HttpClient = redditClient) : 
         }.toList()
     }
 
+    override suspend fun getPopularPosts(
+        postsSorting: String,
+        timeSorting: String,
+        limit: Int,
+        after: String?
+    ): List<RemotePost> {
+        return client.getOrThrow<Listing<RemotePost>>(Posts.PopularPosts(postsSorting)) {
+            parameter(Keys.Time, timeSorting)
+            parameter(Keys.After, after)
+            parameter(Keys.Limit, limit)
+        }.toList()
+    }
+
+    override suspend fun getAllPosts(
+        postsSorting: String,
+        timeSorting: String,
+        limit: Int,
+        after: String?
+    ): List<RemotePost> {
+        return client.getOrThrow<Listing<RemotePost>>(Posts.AllPosts(postsSorting)) {
+            parameter(Keys.Time, timeSorting)
+            parameter(Keys.After, after)
+            parameter(Keys.Limit, limit)
+        }.toList()
+    }
+
     override suspend fun getSubredditPosts(
         subredditName: String,
         postsSorting: String,

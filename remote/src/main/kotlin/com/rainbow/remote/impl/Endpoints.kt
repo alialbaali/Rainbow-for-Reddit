@@ -26,7 +26,7 @@ internal sealed class Endpoint(val path: String) {
 
         object ReportUser : Endpoint(ActionPath + "report_user")
 
-        object Search: Endpoint("users/search")
+        object Search : Endpoint("users/search")
     }
 
     object Items {
@@ -71,6 +71,12 @@ internal sealed class Endpoint(val path: String) {
 
         // https://oauth.reddit.com/{main-page-sorting}
         class MainPagePosts(mainPageSorting: String) : Endpoint(mainPageSorting)
+
+        // https://oauth.reddit.com/r/popular/{sorting}
+        class PopularPosts(postsSorting: String) : Endpoint(SubredditPath + "popular/$postsSorting")
+
+        // https://oauth.reddit.com/r/all/{sorting}
+        class AllPosts(postsSorting: String) : Endpoint(SubredditPath + "all/$postsSorting")
 
         // https://oauth.reddit.com/r/{subreddit-name}/{post-sorting}
         class SubredditPosts(subredditName: String, postsSorting: String) :
@@ -127,7 +133,7 @@ internal sealed class Endpoint(val path: String) {
 
     object Comments {
 
-        object Home: Endpoint("comments")
+        object Home : Endpoint("comments")
 
         // https://oauth.reddit.com/comments/{post-id}
         class PostComments(postId: String) : Endpoint("$CommentPath$postId")

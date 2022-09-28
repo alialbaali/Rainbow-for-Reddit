@@ -11,6 +11,20 @@ interface RemotePostDataSource {
         after: String?,
     ): List<RemotePost>
 
+    suspend fun getPopularPosts(
+        postsSorting: String,
+        timeSorting: String,
+        limit: Int,
+        after: String?,
+    ): List<RemotePost>
+
+    suspend fun getAllPosts(
+        postsSorting: String,
+        timeSorting: String,
+        limit: Int,
+        after: String?,
+    ): List<RemotePost>
+
     suspend fun getSubredditPosts(
         subredditName: String,
         postsSorting: String,

@@ -41,6 +41,8 @@ fun Sidebar(
             Column {
                 listOf(
                     MainScreen.SidebarItem.Home,
+                    MainScreen.SidebarItem.Popular,
+                    MainScreen.SidebarItem.All,
                     MainScreen.SidebarItem.Subreddits,
                     MainScreen.SidebarItem.Messages,
                 ).forEach { item ->

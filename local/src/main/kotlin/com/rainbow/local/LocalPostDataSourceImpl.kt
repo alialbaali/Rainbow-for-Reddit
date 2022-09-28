@@ -14,6 +14,12 @@ class LocalPostDataSourceImpl : LocalPostDataSource {
     private val mutableHomePosts = MutableStateFlow(emptyList<Post>())
     override val homePosts get() = mutableHomePosts.asStateFlow()
 
+    private val mutablePopularPosts = MutableStateFlow(emptyList<Post>())
+    override val popularPosts: Flow<List<Post>> get() = mutablePopularPosts.asStateFlow()
+
+    private val mutableAllPosts = MutableStateFlow(emptyList<Post>())
+    override val allPosts: Flow<List<Post>> get() = mutableAllPosts.asStateFlow()
+
     private val mutableProfileSubmittedPosts = MutableStateFlow(emptyList<Post>())
     override val profileSubmittedPosts get() = mutableProfileSubmittedPosts.asStateFlow()
 
@@ -35,7 +41,7 @@ class LocalPostDataSourceImpl : LocalPostDataSource {
     private val mutableSearchPosts = MutableStateFlow(emptyList<Post>())
     override val searchPosts get() = mutableSearchPosts.asStateFlow()
 
-    private val allPosts = listOf(
+    private val _allPosts = listOf(
         mutablePosts,
         mutableHomePosts,
         mutableProfileSubmittedPosts,
@@ -53,6 +59,14 @@ class LocalPostDataSourceImpl : LocalPostDataSource {
 
     override fun insertHomePost(post: Post) {
         mutableHomePosts.value = homePosts.value + post
+    }
+
+    override fun insertPopularPost(post: Post) {
+        mutablePopularPosts.value += post
+    }
+
+    override fun insertAllPost(post: Post) {
+        mutableAllPosts.value += post
     }
 
     override fun insertProfileSubmittedPost(post: Post) {
@@ -84,7 +98,7 @@ class LocalPostDataSourceImpl : LocalPostDataSource {
     }
 
     override fun getPost(postId: String): Flow<Post?> {
-        return combine(allPosts) { arrayOfPosts ->
+        return combine(_allPosts) { arrayOfPosts ->
             arrayOfPosts.toList()
                 .flatten()
                 .find { post -> post.id == postId }
@@ -92,7 +106,7 @@ class LocalPostDataSourceImpl : LocalPostDataSource {
     }
 
     override fun updatePost(postId: String, block: (Post) -> Post) {
-        allPosts.forEach { state ->
+        _allPosts.forEach { state ->
             state.value = state.value.map { post ->
                 if (post.id == postId)
                     block(post)
@@ -108,6 +122,14 @@ class LocalPostDataSourceImpl : LocalPostDataSource {
 
     override fun clearHomePosts() {
         mutableHomePosts.value = emptyList()
+    }
+
+    override fun clearPopularPosts() {
+        mutablePopularPosts.value = emptyList()
+    }
+
+    override fun clearAllPosts() {
+        mutableAllPosts.value = emptyList()
     }
 
     override fun clearProfileSubmittedPosts() {

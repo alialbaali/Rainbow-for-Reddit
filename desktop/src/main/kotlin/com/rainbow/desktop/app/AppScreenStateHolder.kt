@@ -1,11 +1,13 @@
 package com.rainbow.desktop.app
 
+import com.rainbow.desktop.all.AllScreenStateHolder
 import com.rainbow.desktop.home.HomeScreenStateHolder
 import com.rainbow.desktop.home.HomeTab
 import com.rainbow.desktop.message.MessageTab
 import com.rainbow.desktop.message.MessagesScreenStateHolder
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
+import com.rainbow.desktop.popular.PopularScreenStateHolder
 import com.rainbow.desktop.profile.ProfileScreenStateHolder
 import com.rainbow.desktop.profile.ProfileTab
 import com.rainbow.desktop.search.SearchScreenStateHolder
@@ -156,6 +158,16 @@ object AppScreenStateHolder : StateHolder() {
                                 UserTab.Comments -> commentsStateHolder.loadItems()
                             }
                         }
+                    }
+
+                    MainScreen.SidebarItem.All -> {
+                        val stateHolder = AllScreenStateHolder.Instance
+                        stateHolder.postsStateHolder.loadItems()
+                    }
+
+                    MainScreen.SidebarItem.Popular -> {
+                        val stateHolder = PopularScreenStateHolder.Instance
+                        stateHolder.postsStateHolder.loadItems()
                     }
                 }
             }

@@ -13,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.rainbow.desktop.all.AllScreen
 import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.components.RainbowTopAppBar
 import com.rainbow.desktop.home.HomeScreen
@@ -21,6 +22,7 @@ import com.rainbow.desktop.message.MessagesScreen
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.navigation.Sidebar
+import com.rainbow.desktop.popular.PopularScreen
 import com.rainbow.desktop.post.PostScreen
 import com.rainbow.desktop.profile.ProfileScreen
 import com.rainbow.desktop.search.SearchScreen
@@ -177,6 +179,20 @@ private fun MainScreenContent(
 
                     MainScreen.SidebarItem.Settings -> SettingsScreen(
                         Modifier.fillMaxSize()
+                    )
+
+                    MainScreen.SidebarItem.All -> AllScreen(
+                        onNavigateMainScreen,
+                        onNavigateDetailsScreen,
+                        onShowSnackbar,
+                        Modifier.fillMaxSize(),
+                    )
+
+                    MainScreen.SidebarItem.Popular -> PopularScreen(
+                        onNavigateMainScreen,
+                        onNavigateDetailsScreen,
+                        onShowSnackbar,
+                        Modifier.fillMaxSize(),
                     )
                 }
 

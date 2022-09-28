@@ -16,6 +16,8 @@ enum class TimeSorting {
 }
 
 typealias ProfilePostSorting = UserPostSorting
+typealias PopularPostSorting = HomePostSorting
+typealias AllPostSorting = HomePostSorting
 
 enum class UserPostSorting : PostSorting {
     Hot, New, Top, Controversial;

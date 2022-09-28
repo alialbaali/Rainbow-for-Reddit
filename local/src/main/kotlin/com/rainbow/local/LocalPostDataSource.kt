@@ -9,6 +9,10 @@ interface LocalPostDataSource {
 
     val homePosts: Flow<List<Post>>
 
+    val popularPosts: Flow<List<Post>>
+
+    val allPosts: Flow<List<Post>>
+
     val profileSubmittedPosts: Flow<List<Post>>
 
     val profileUpvotedPosts: Flow<List<Post>>
@@ -26,6 +30,10 @@ interface LocalPostDataSource {
     fun insertPost(post: Post)
 
     fun insertHomePost(post: Post)
+
+    fun insertPopularPost(post: Post)
+
+    fun insertAllPost(post: Post)
 
     fun insertProfileSubmittedPost(post: Post)
 
@@ -48,6 +56,10 @@ interface LocalPostDataSource {
     fun clearPosts()
 
     fun clearHomePosts()
+
+    fun clearPopularPosts()
+
+    fun clearAllPosts()
 
     fun clearProfileSubmittedPosts()
 

@@ -9,6 +9,10 @@ interface PostRepository {
 
     val homePosts: Flow<List<Post>>
 
+    val popularPosts: Flow<List<Post>>
+
+    val allPosts: Flow<List<Post>>
+
     val profileSubmittedPosts: Flow<List<Post>>
 
     val profileUpvotedPosts: Flow<List<Post>>
@@ -22,6 +26,18 @@ interface PostRepository {
     val subredditPosts: Flow<List<Post>>
 
     val searchPosts: Flow<List<Post>>
+
+    suspend fun getPopularPosts(
+        postsSorting: PopularPostSorting,
+        timeSorting: TimeSorting,
+        lastPostId: String?,
+    ): Result<Unit>
+
+    suspend fun getAllPosts(
+        postsSorting: AllPostSorting,
+        timeSorting: TimeSorting,
+        lastPostId: String?,
+    ): Result<Unit>
 
     suspend fun getProfileSubmittedPosts(
         postsSorting: UserPostSorting,

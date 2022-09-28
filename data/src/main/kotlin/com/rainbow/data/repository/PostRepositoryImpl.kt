@@ -40,6 +40,16 @@ internal class PostRepositoryImpl(
             .map { it.filterNot { post -> post.isHidden } }
             .flowOn(dispatcher)
 
+    override val popularPosts: Flow<List<Post>>
+        get() = localPostDataSource.popularPosts
+            .map { it.filterNot { post -> post.isHidden } }
+            .flowOn(dispatcher)
+
+    override val allPosts: Flow<List<Post>>
+        get() = localPostDataSource.allPosts
+            .map { it.filterNot { post -> post.isHidden } }
+            .flowOn(dispatcher)
+
     override val profileSubmittedPosts: Flow<List<Post>>
         get() = localPostDataSource.profileSubmittedPosts
             .map { it.filterNot { post -> post.isHidden } }
@@ -74,6 +84,42 @@ internal class PostRepositoryImpl(
         get() = localPostDataSource.searchPosts
             .map { it.filterNot { post -> post.isHidden } }
             .flowOn(dispatcher)
+
+    override suspend fun getPopularPosts(
+        postsSorting: PopularPostSorting,
+        timeSorting: TimeSorting,
+        lastPostId: String?
+    ): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            if (lastPostId == null) localPostDataSource.clearPopularPosts()
+            remotePostDataSource.getPopularPosts(
+                postsSorting.lowercaseName,
+                timeSorting.lowercaseName,
+                DefaultLimit,
+                lastPostId,
+            ).quickMap(postMapper)
+                .mapWithSubredditImageUrl()
+                .forEach(localPostDataSource::insertPopularPost)
+        }
+    }
+
+    override suspend fun getAllPosts(
+        postsSorting: AllPostSorting,
+        timeSorting: TimeSorting,
+        lastPostId: String?
+    ): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            if (lastPostId == null) localPostDataSource.clearAllPosts()
+            remotePostDataSource.getAllPosts(
+                postsSorting.lowercaseName,
+                timeSorting.lowercaseName,
+                DefaultLimit,
+                lastPostId,
+            ).quickMap(postMapper)
+                .mapWithSubredditImageUrl()
+                .forEach(localPostDataSource::insertAllPost)
+        }
+    }
 
     override suspend fun getProfileSubmittedPosts(
         postsSorting: UserPostSorting,
