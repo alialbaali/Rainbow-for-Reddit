@@ -15,6 +15,9 @@ import com.rainbow.desktop.utils.defaultPadding
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.PostLayout
 
+private val CompactPostItemContentSize = 150.dp
+private val CardPostItemContentSize = 300.dp
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompactPostItem(
@@ -36,6 +39,12 @@ fun CompactPostItem(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
         ) {
+            PostInfo(
+                post,
+                onUserNameClick,
+                onSubredditNameClick,
+            )
+            if (post.flair.types.isNotEmpty()) FlairItem(post.flair, FlairStyle.Default)
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium),
@@ -44,12 +53,6 @@ fun CompactPostItem(
                     modifier = Modifier.weight(1F),
                     verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
                 ) {
-                    PostInfo(
-                        post,
-                        onUserNameClick,
-                        onSubredditNameClick,
-                    )
-                    if (post.flair.types.isNotEmpty()) FlairItem(post.flair, FlairStyle.Default)
                     PostTitle(
                         title = post.title,
                         isRead = post.isRead,
@@ -64,7 +67,9 @@ fun CompactPostItem(
                 PostContent(
                     post = post,
                     postLayout = PostLayout.Compact,
-                    modifier = Modifier.size(150.dp).align(Alignment.Bottom),
+                    modifier = Modifier
+                        .size(CompactPostItemContentSize)
+                        .align(Alignment.Top),
                 )
             }
             PostOptions(post, onShowSnackbar)
@@ -115,7 +120,7 @@ fun CardPostItem(
                 postLayout = PostLayout.Card,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(300.dp),
+                    .height(CardPostItemContentSize),
             )
             PostOptions(post, onShowSnackbar)
         }
