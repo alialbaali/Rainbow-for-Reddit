@@ -12,9 +12,13 @@ import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.domain.models.*
+import io.kamel.core.config.KamelConfig
+import io.kamel.core.config.takeFrom
+import io.kamel.image.config.Default
 
 typealias RainbowIcons = Icons.Rounded
 
+private const val KamelConfigCacheSize = 10_000
 private const val PagingEffectIndexThreshold = 10 // Higher means faster paging.
 
 @Composable
@@ -126,3 +130,11 @@ inline fun <reified T : StateHolder> rememberStateHolder(crossinline factory: @D
 private val stateHolders = mutableListOf<StateHolder>()
 
 fun Long.toColor() = Color(this)
+
+val KamelConfig.Companion.Rainbow
+    get() = KamelConfig {
+        takeFrom(KamelConfig.Default)
+        imageBitmapCacheSize = KamelConfigCacheSize
+        imageVectorCacheSize = KamelConfigCacheSize
+        svgCacheSize = KamelConfigCacheSize
+    }
