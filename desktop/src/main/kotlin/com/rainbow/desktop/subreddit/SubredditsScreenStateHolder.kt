@@ -3,13 +3,11 @@ package com.rainbow.desktop.subreddit
 import com.rainbow.data.Repos
 import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.utils.filterContent
+import com.rainbow.desktop.utils.getOrDefault
 import com.rainbow.desktop.utils.map
 import com.rainbow.domain.models.Subreddit
 import com.rainbow.domain.repository.SubredditRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 
 class SubredditsScreenStateHolder private constructor(
     private val subredditRepository: SubredditRepository = Repos.Subreddit,
@@ -25,6 +23,15 @@ class SubredditsScreenStateHolder private constructor(
                     mutableItems.value = items.value.map {
                         it.filterContent(searchTerm)
                     }
+                }
+                .launchIn(scope)
+
+            items
+                .filter { it.isSuccess }
+                .onEach {
+                    val subreddits = it.getOrDefault(emptyList())
+                    val lastSubreddit = subreddits.lastOrNull()
+                    getItems(lastSubreddit)
                 }
                 .launchIn(scope)
         }

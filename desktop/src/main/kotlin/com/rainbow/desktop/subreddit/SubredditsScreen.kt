@@ -1,5 +1,6 @@
 package com.rainbow.desktop.subreddit
 
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,8 @@ import com.rainbow.desktop.ui.dimensions
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.getOrDefault
 
+private const val Span = 4
+
 @Composable
 fun SubredditsScreen(
     onNavigateMainScreen: (MainScreen) -> Unit,
@@ -32,12 +35,13 @@ fun SubredditsScreen(
     val searchTerm by stateHolder.searchTerm.collectAsState()
     val subreddits = remember(subredditsState) { subredditsState.getOrDefault(emptyList()) }
     LazyVerticalGrid(
-        columns = GridCells.Fixed(4),
+        columns = GridCells.Fixed(Span),
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimensions.medium),
         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimensions.medium),
         contentPadding = PaddingValues(MaterialTheme.dimensions.medium)
     ) {
-        item(span = { GridItemSpan(4) }) {
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            val count by animateIntAsState(subreddits.count())
             Row(
                 Modifier.fillMaxWidth(),
                 Arrangement.SpaceBetween,
@@ -49,7 +53,7 @@ fun SubredditsScreen(
                     RainbowStrings.FilterSubreddits,
                 )
 
-                Text(RainbowStrings.SubredditsCount(subreddits.count()))
+                Text(RainbowStrings.SubredditsCount(count))
             }
         }
 
@@ -57,7 +61,7 @@ fun SubredditsScreen(
             subredditsState,
             onNavigateMainScreen,
             onShowSnackbar,
-            stateHolder.subredditsStateHolder::setLastItem
+            onLoadMore = {}
         )
     }
 }

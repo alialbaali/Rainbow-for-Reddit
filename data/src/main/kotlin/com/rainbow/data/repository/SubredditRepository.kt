@@ -17,6 +17,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
+private const val ProfileSubredditsLimit = 100
+
 @OptIn(ExperimentalSettingsApi::class)
 internal class SubredditRepositoryImpl(
     private val remoteSubredditDataSource: RemoteSubredditDataSource,
@@ -45,7 +47,7 @@ internal class SubredditRepositoryImpl(
         withContext(dispatcher) {
             if (lastSubredditId == null) localSubredditDataSource.clearProfileSubreddits()
 
-            remoteSubredditDataSource.getProfileSubreddits(DefaultLimit, lastSubredditId)
+            remoteSubredditDataSource.getProfileSubreddits(ProfileSubredditsLimit, lastSubredditId)
                 .quickMap(subredditMapper)
                 .forEach(localSubredditDataSource::insertProfileSubreddit)
         }
