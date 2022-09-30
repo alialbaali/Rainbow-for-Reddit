@@ -74,6 +74,8 @@ object Repos {
 
     @OptIn(ExperimentalSettingsApi::class)
     object Comment : CommentRepository by CommentRepositoryImpl(
+        User,
+        Subreddit,
         RemoteCommentDataSourceImpl(),
         LocalCommentDataSourceImpl(),
         LocalItemDataSource,
@@ -91,6 +93,8 @@ object Repos {
 
     @OptIn(ExperimentalSettingsApi::class)
     object Item : ItemRepository by ItemRepositoryImpl(
+        User,
+        Subreddit,
         RemoteItemDataSourceImpl(),
         LocalItemDataSource,
         flowSettings,

@@ -133,7 +133,7 @@ private fun Post(
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)) {
         PostInfo(
-            post = post,
+            post,
             onUserNameClick,
             onSubredditNameClick,
             modifier = Modifier

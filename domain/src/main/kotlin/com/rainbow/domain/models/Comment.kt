@@ -24,6 +24,8 @@ data class Comment(
     val creationDate: Instant,
     val isContinueThread: Boolean = false,
     val url: String,
+    val userImageUrl: String? = null,
+    val subredditImageUrl: String? = null,
 ) : Item {
     sealed interface Type {
         object None : Type

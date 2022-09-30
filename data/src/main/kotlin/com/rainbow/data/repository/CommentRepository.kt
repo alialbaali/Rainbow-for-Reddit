@@ -7,19 +7,23 @@ import com.rainbow.data.utils.SettingsKeys
 import com.rainbow.data.utils.lowercaseName
 import com.rainbow.domain.models.*
 import com.rainbow.domain.repository.CommentRepository
+import com.rainbow.domain.repository.SubredditRepository
+import com.rainbow.domain.repository.UserRepository
 import com.rainbow.local.LocalCommentDataSource
 import com.rainbow.local.LocalItemDataSource
 import com.rainbow.remote.dto.RemoteComment
 import com.rainbow.remote.source.RemoteCommentDataSource
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.firstOrNull
 
 @OptIn(ExperimentalSettingsApi::class)
 internal class CommentRepositoryImpl(
+    private val userRepository: UserRepository,
+    private val subredditRepository: SubredditRepository,
     private val remoteCommentDataSource: RemoteCommentDataSource,
     private val localCommentDataSource: LocalCommentDataSource,
     private val localItemDataSource: LocalItemDataSource,
@@ -48,7 +52,7 @@ internal class CommentRepositoryImpl(
                 timeSorting.lowercaseName,
                 DefaultLimit,
                 lastCommentId
-            ).quickMap(mapper).forEach(localCommentDataSource::insertProfileComment)
+            ).quickMap(mapper).mapWithImageUrls().forEach(localCommentDataSource::insertProfileComment)
         }
     }
 
@@ -57,6 +61,7 @@ internal class CommentRepositoryImpl(
             if (lastCommentId == null) localCommentDataSource.clearHomeComments()
             remoteCommentDataSource.getHomeComments(DefaultLimit, lastCommentId)
                 .quickMap(mapper)
+                .mapWithImageUrls()
                 .forEach(localCommentDataSource::insertHomeComment)
         }
     }
@@ -75,7 +80,7 @@ internal class CommentRepositoryImpl(
                 timeSorting.lowercaseName,
                 DefaultLimit,
                 lastCommentId
-            ).quickMap(mapper).forEach(localCommentDataSource::insertUserComment)
+            ).quickMap(mapper).mapWithImageUrls().forEach(localCommentDataSource::insertUserComment)
         }
     }
 
@@ -89,7 +94,7 @@ internal class CommentRepositoryImpl(
                 postId,
                 commentsSorting.lowercaseName,
                 DefaultLimit
-            ).quickMap(mapper).forEach(localCommentDataSource::insertPostComment)
+            ).quickMap(mapper).mapWithImageUrls().forEach(localCommentDataSource::insertPostComment)
         }
     }
 
@@ -104,7 +109,7 @@ internal class CommentRepositoryImpl(
                 postId,
                 children,
                 commentsSorting.lowercaseName,
-            ).quickMap(mapper)
+            ).quickMap(mapper).mapWithImageUrls()
 
             val newPostComments = allComments.filter { it.parentId == postId }
             val comments = postComments.first()
@@ -132,6 +137,7 @@ internal class CommentRepositoryImpl(
                 DefaultLimit,
             ).quickMap(mapper)
                 .map { it.copy(isContinueThread = true) }
+                .mapWithImageUrls()
                 .forEach(localCommentDataSource::insertPostComment)
         }
     }
@@ -216,5 +222,41 @@ internal class CommentRepositoryImpl(
                 replies = replies.replaceRepliesViewMore(commentId, comments)
             )
         }
+    }
+
+    private suspend fun List<Comment>.mapWithImageUrls() = coroutineScope {
+        val imageUrls = flattenRecursively()
+            .filter { it.type is Comment.Type.None }
+            .map { comment ->
+                val subredditImageUrl = async {
+                    subredditRepository.getSubreddit(comment.subredditName).firstOrNull()?.getOrNull()?.imageUrl
+                }
+                val userImageUrl = async {
+                    userRepository.getUser(comment.userName).firstOrNull()?.getOrNull()?.imageUrl
+                }
+                Triple(
+                    comment.id,
+                    subredditImageUrl,
+                    userImageUrl
+                )
+            }
+
+        mapWithImageUrlsRecursively(imageUrls)
+    }
+
+    private suspend fun List<Comment>.mapWithImageUrlsRecursively(imageUrls: List<Triple<String, Deferred<String?>, Deferred<String?>>>): List<Comment> =
+        map { comment ->
+            val value = imageUrls.firstOrNull { it.first == comment.id }
+            val subredditImageUrl = value?.second
+            val userImageUrl = value?.third
+            comment.copy(
+                subredditImageUrl = subredditImageUrl?.await(),
+                userImageUrl = userImageUrl?.await(),
+                replies = comment.replies.mapWithImageUrlsRecursively(imageUrls),
+            )
+        }
+
+    private fun List<Comment>.flattenRecursively(): List<Comment> = flatMap { comment ->
+        comment.replies.flattenRecursively() + comment
     }
 }

@@ -4,10 +4,8 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.StarBorder
 import androidx.compose.material.icons.rounded.Visibility
@@ -19,17 +17,17 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.rainbow.desktop.components.*
+import com.rainbow.desktop.item.ItemInfo
+import com.rainbow.desktop.item.PostInfo
+import com.rainbow.desktop.item.SubredditInfo
+import com.rainbow.desktop.item.UserInfo
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.MarkPostAsRead
@@ -37,29 +35,6 @@ import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.PostLayout
 import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
-
-private val SubredditIconSize = 50.dp
-private val UserIconSize = 30.dp
-private val UserIconOffset = 8.dp
-private val UserIconBorderWidth = 3.dp
-
-fun Modifier.subredditIcon(onClick: () -> Unit) = composed {
-    Modifier
-        .clip(MaterialTheme.shapes.small)
-        .clickable(onClick = onClick)
-        .background(MaterialTheme.colorScheme.onSurface, MaterialTheme.shapes.small)
-        .size(SubredditIconSize)
-}
-
-fun Modifier.userIcon(onClick: () -> Unit) = composed {
-    Modifier
-        .offset(UserIconOffset, UserIconOffset)
-        .border(UserIconBorderWidth, MaterialTheme.colorScheme.surface, CircleShape)
-        .clip(CircleShape)
-        .clickable(onClick = onClick)
-        .background(MaterialTheme.colorScheme.onSurface, CircleShape)
-        .size(UserIconSize)
-}
 
 @Composable
 fun PostTitle(title: String, isRead: Boolean, modifier: Modifier = Modifier) {
@@ -78,73 +53,31 @@ fun PostInfo(
     onSubredditNameClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val subredditImageResource = lazyPainterResource(post.subredditImageUrl ?: "")
-    val userImageResource = lazyPainterResource(post.userImageUrl ?: "")
-    Row(modifier, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        Box {
-            KamelImage(
-                subredditImageResource,
-                post.subredditName,
-                Modifier.subredditIcon { onSubredditNameClick(post.subredditName) },
-                onFailure = {
-                    Box(
-                        modifier = Modifier.subredditIcon { onSubredditNameClick(post.subredditName) },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        TextBox(
-                            post.subredditName.first().toString().uppercase(),
-                            fontSize = 30.sp,
-                            color = MaterialTheme.colorScheme.surface,
-                            modifier = Modifier.fillMaxSize(),
-                        )
-                    }
-                }
-            )
-
-            KamelImage(
-                userImageResource,
-                post.userName,
-                Modifier
-                    .userIcon { onUserNameClick(post.userName) }
-                    .align(Alignment.BottomEnd),
-                onFailure = {
-                    Box(
-                        modifier = Modifier
-                            .userIcon { onUserNameClick(post.userName) }
-                            .align(Alignment.BottomEnd),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        TextBox(
-                            post.userName.first().toString().uppercase(),
-                            fontSize = 16.sp,
-                            color = MaterialTheme.colorScheme.surface,
-                            modifier = Modifier.fillMaxSize(),
-                        )
-                    }
-                }
-            )
-        }
-        Column(Modifier.fillMaxWidth()) {
-            SubredditName(post.subredditName, onSubredditNameClick)
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                UserName(post.userName, onUserNameClick)
-                if (post.userFlair.types.isNotEmpty()) {
-                    Dot()
-                    FlairItem(post.userFlair, FlairStyle.Compact)
-                }
-                Dot()
-                CreationDate(post.creationDate)
-                if (post.isNSFW) {
-                    Dot()
-                    Text(RainbowStrings.NSFW, fontWeight = FontWeight.Medium, fontSize = 14.sp, color = Color.Red)
-                }
-                if (post.awards.isNotEmpty()) {
-                    Dot()
-                    Awards(post.awards)
-                }
-            }
-        }
+    val userInfo = remember(post, onUserNameClick) {
+        UserInfo(
+            post.userName,
+            post.userImageUrl,
+            onUserNameClick,
+        )
     }
+    val subredditInfo = remember(post, onSubredditNameClick) {
+        SubredditInfo(
+            post.subredditName,
+            post.subredditImageUrl,
+            onSubredditNameClick
+        )
+    }
+    val postInfo = remember(post) { PostInfo(post.isNSFW) }
+
+    ItemInfo(
+        userInfo,
+        subredditInfo,
+        postInfo,
+        commentInfo = null,
+        post.userFlair,
+        post.creationDate,
+        post.awards,
+    )
 }
 
 @Composable

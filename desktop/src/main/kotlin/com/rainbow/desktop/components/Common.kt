@@ -99,9 +99,10 @@ fun CommentUserName(
     userName: String,
     isOP: Boolean,
     onClick: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.onSurface,
 ) {
-    val color = if (isOP) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+    val color = if (isOP) MaterialTheme.colorScheme.primary else color
     Text(
         text = userName,
         modifier = modifier.clickable { onClick(userName) },

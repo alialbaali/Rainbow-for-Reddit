@@ -262,6 +262,8 @@ internal class PostRepositoryImpl(
             .map { post ->
                 post ?: remotePostDataSource.getPost(postId)
                     .let(postMapper::map)
+                    .let { listOf(it).mapWithImageUrls() }
+                    .first()
                     .also(localPostDataSource::insertPost)
             }
             .map { Result.success(it) }

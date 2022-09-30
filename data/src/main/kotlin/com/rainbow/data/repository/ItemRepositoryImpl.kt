@@ -5,21 +5,26 @@ import com.rainbow.data.quickMap
 import com.rainbow.data.utils.DefaultLimit
 import com.rainbow.data.utils.SettingsKeys
 import com.rainbow.data.utils.lowercaseName
-import com.rainbow.domain.models.Item
-import com.rainbow.domain.models.TimeSorting
-import com.rainbow.domain.models.UserPostSorting
+import com.rainbow.domain.models.*
 import com.rainbow.domain.repository.ItemRepository
+import com.rainbow.domain.repository.SubredditRepository
+import com.rainbow.domain.repository.UserRepository
 import com.rainbow.local.LocalItemDataSource
 import com.rainbow.remote.dto.RemoteItem
 import com.rainbow.remote.source.RemoteItemDataSource
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalSettingsApi::class)
 internal class ItemRepositoryImpl(
+    private val userRepository: UserRepository,
+    private val subredditRepository: SubredditRepository,
     private val remoteItemDataSource: RemoteItemDataSource,
     private val localItemDataSource: LocalItemDataSource,
     private val settings: FlowSettings,
@@ -45,7 +50,7 @@ internal class ItemRepositoryImpl(
                 timeSorting.lowercaseName,
                 DefaultLimit,
                 lastItemId
-            ).quickMap(mapper).forEach(localItemDataSource::insertProfileOverviewItem)
+            ).quickMap(mapper).mapWithImageUrls().forEach(localItemDataSource::insertProfileOverviewItem)
         }
     }
 
@@ -63,7 +68,7 @@ internal class ItemRepositoryImpl(
                 timeSorting.lowercaseName,
                 DefaultLimit,
                 lastItemId
-            ).quickMap(mapper).forEach(localItemDataSource::insertProfileSavedItem)
+            ).quickMap(mapper).mapWithImageUrls().forEach(localItemDataSource::insertProfileSavedItem)
         }
     }
 
@@ -82,7 +87,44 @@ internal class ItemRepositoryImpl(
                 timeSorting.lowercaseName,
                 DefaultLimit,
                 lastItemId
-            ).quickMap(mapper).forEach(localItemDataSource::insertUserOverviewItem)
+            ).quickMap(mapper).mapWithImageUrls().forEach(localItemDataSource::insertUserOverviewItem)
+        }
+    }
+
+    private suspend fun List<Item>.mapWithImageUrls() = coroutineScope {
+        val result = map { item ->
+            val subredditName = when (item) {
+                is Comment -> item.subredditName
+                is Post -> item.subredditName
+            }
+            val userName = when (item) {
+                is Comment -> item.userName
+                is Post -> item.userName
+            }
+            val subredditImageUrl = async {
+                subredditRepository.getSubreddit(subredditName).firstOrNull()?.getOrNull()?.imageUrl
+            }
+            val userImageUrl = async {
+                userRepository.getUser(userName).firstOrNull()?.getOrNull()?.imageUrl
+            }
+            Triple(
+                item.id,
+                subredditImageUrl,
+                userImageUrl
+            )
+        }
+        map { item ->
+            val value = result.first { it.first == item.id }
+            val subredditImageUrl = value.second
+            val userImageUrl = value.third
+            when (item) {
+                is Comment -> item.copy(
+                    subredditImageUrl = subredditImageUrl.await(),
+                    userImageUrl = userImageUrl.await()
+                )
+
+                is Post -> item.copy(subredditImageUrl = subredditImageUrl.await(), userImageUrl = userImageUrl.await())
+            }
         }
     }
 }

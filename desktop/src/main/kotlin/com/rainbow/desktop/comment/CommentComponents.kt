@@ -14,6 +14,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.components.*
+import com.rainbow.desktop.item.CommentInfo
+import com.rainbow.desktop.item.ItemInfo
+import com.rainbow.desktop.item.SubredditInfo
+import com.rainbow.desktop.item.UserInfo
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
@@ -31,23 +35,31 @@ fun CommentInfo(
     modifier: Modifier = Modifier,
 ) {
     val isOP = remember(comment.userName, postUserName) { comment.userName == postUserName }
-    Row(modifier, verticalAlignment = Alignment.CenterVertically) {
-        CommentUserName(comment.userName, isOP, onUserNameClick)
-        if (comment.flair.types.isNotEmpty()) {
-            Dot()
-            FlairItem(comment.flair, FlairStyle.Compact)
-        }
-        if (isSubredditNameVisible) {
-            Dot()
-            SubredditName(comment.subredditName, onSubredditNameClick)
-        }
-        Dot()
-        CreationDate(comment.creationDate)
-        if (comment.awards.isNotEmpty()) {
-            Dot()
-            Awards(comment.awards)
-        }
+    val userInfo = remember(comment, onUserNameClick) {
+        UserInfo(
+            comment.userName,
+            comment.userImageUrl,
+            onUserNameClick,
+        )
     }
+    val subredditInfo = remember(comment, onSubredditNameClick) {
+        SubredditInfo(
+            comment.subredditName,
+            comment.subredditImageUrl,
+            onSubredditNameClick,
+        )
+    }
+    val commentInfo = remember(isOP) { CommentInfo(isOP) }
+
+    ItemInfo(
+        userInfo,
+        if (isSubredditNameVisible) subredditInfo else null,
+        postInfo = null,
+        commentInfo,
+        comment.flair,
+        comment.creationDate,
+        comment.awards,
+    )
 }
 
 @OptIn(ExperimentalAnimationApi::class)
