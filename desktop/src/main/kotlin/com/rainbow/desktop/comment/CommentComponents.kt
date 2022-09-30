@@ -1,6 +1,7 @@
 package com.rainbow.desktop.comment
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -69,7 +70,7 @@ fun CommentInfo(
 @Composable
 fun CommentOptions(
     comment: Comment,
-    isRepliesVisible: Boolean,
+    onRepliesCountClick: (() -> Unit)?,
     onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -88,12 +89,8 @@ fun CommentOptions(
             onUnvote = { CommentActionsStateHolder.unvoteComment(comment) }
         )
 
-        AnimatedVisibility(
-            visible = comment.replies.isNotEmpty() && !isRepliesVisible,
-            enter = fadeIn() + scaleIn(),
-            exit = fadeOut() + scaleOut(),
-        ) {
-            CommentsCount(commentsCount)
+        if (comment.replies.isNotEmpty()) {
+            CommentsCount(commentsCount, onRepliesCountClick)
         }
 
         Row(

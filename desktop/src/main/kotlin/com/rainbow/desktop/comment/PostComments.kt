@@ -36,7 +36,6 @@ fun LazyListScope.postComments(
                 is Comment.Type.None -> PostCommentItem(
                     comment,
                     postUserName,
-                    isRepliesVisible = isRepliesVisible,
                     onClick = {
                         onCommentVisibilityChanged(
                             comment.id,
@@ -120,7 +119,6 @@ fun LazyListScope.replies(
                     is Comment.Type.None -> ReplyItem(
                         reply,
                         postUserName,
-                        isRepliesVisible(reply),
                         depth,
                         onClick = { setIsRepliesVisible(reply, !isRepliesVisible(reply)) },
                         onUserNameClick,

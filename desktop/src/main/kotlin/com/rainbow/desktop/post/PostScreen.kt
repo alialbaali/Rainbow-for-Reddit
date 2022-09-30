@@ -11,6 +11,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.text.selection.DisableSelection
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -71,18 +73,26 @@ fun PostScreen(
     ) {
         if (post != null) {
             item {
-                Post(
-                    post,
-                    onUserNameClick = { userName -> onNavigateMainScreen(MainScreen.User(userName)) },
-                    onSubredditNameClick = { subredditName -> onNavigateMainScreen(MainScreen.Subreddit(subredditName)) },
-                    onShowSnackbar,
-                    Modifier
-                        .clip(MaterialTheme.shapes.medium)
-                        .shadow(1.dp)
-                        .background(MaterialTheme.colorScheme.surface)
-                        .fillParentMaxWidth()
-                        .defaultPadding()
-                )
+                SelectionContainer {
+                    Post(
+                        post,
+                        onUserNameClick = { userName -> onNavigateMainScreen(MainScreen.User(userName)) },
+                        onSubredditNameClick = { subredditName ->
+                            onNavigateMainScreen(
+                                MainScreen.Subreddit(
+                                    subredditName
+                                )
+                            )
+                        },
+                        onShowSnackbar,
+                        Modifier
+                            .clip(MaterialTheme.shapes.medium)
+                            .shadow(1.dp)
+                            .background(MaterialTheme.colorScheme.surface)
+                            .fillParentMaxWidth()
+                            .defaultPadding()
+                    )
+                }
                 Spacer(Modifier.height(16.dp))
             }
             stickyHeader {
@@ -132,16 +142,20 @@ private fun Post(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)) {
-        PostInfo(
-            post,
-            onUserNameClick,
-            onSubredditNameClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-        )
+        DisableSelection {
+            PostInfo(
+                post,
+                onUserNameClick,
+                onSubredditNameClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+            )
+        }
 
-        if (post.flair.types.isNotEmpty()) FlairItem(post.flair, FlairStyle.Default)
+        DisableSelection {
+            if (post.flair.types.isNotEmpty()) FlairItem(post.flair, FlairStyle.Default)
+        }
 
         PostTitle(
             title = post.title,
@@ -161,20 +175,24 @@ private fun Post(
             )
         }
 
-        PostContent(
-            post = post,
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-        )
+        DisableSelection {
+            PostContent(
+                post = post,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+            )
+        }
 
-        PostOptions(
-            post,
-            onShowSnackbar,
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-        )
+        DisableSelection {
+            PostOptions(
+                post,
+                onShowSnackbar,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+            )
+        }
     }
 }
 

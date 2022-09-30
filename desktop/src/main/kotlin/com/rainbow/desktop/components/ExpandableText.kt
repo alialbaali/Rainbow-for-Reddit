@@ -6,6 +6,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.material.icons.rounded.CloseFullscreen
 import androidx.compose.material.icons.rounded.OpenInFull
 import androidx.compose.material3.Icon
@@ -56,22 +57,25 @@ fun ExpandableText(
         )
 
         if (isButtonVisible) {
-            RainbowButton(
-                onClick = { maxLines = if (isTextExpanded) defaultMaxLines else Int.MAX_VALUE },
-                modifier = Modifier.align(Alignment.End).animateContentSize(animationSpec),
-            ) {
-                val buttonText = remember(isTextExpanded) {
-                    if (isTextExpanded)
-                        RainbowStrings.Collapse
-                    else
-                        RainbowStrings.Expand
+            DisableSelection {
+                RainbowButton(
+                    onClick = { maxLines = if (isTextExpanded) defaultMaxLines else Int.MAX_VALUE },
+                    modifier = Modifier.align(Alignment.End).animateContentSize(animationSpec),
+                ) {
+                    val buttonText = remember(isTextExpanded) {
+                        if (isTextExpanded)
+                            RainbowStrings.Collapse
+                        else
+                            RainbowStrings.Expand
+                    }
+                    Icon(
+                        imageVector = if (isTextExpanded) RainbowIcons.CloseFullscreen else RainbowIcons.OpenInFull,
+                        contentDescription = buttonText
+                    )
+                    Text(buttonText)
                 }
-                Icon(
-                    imageVector = if (isTextExpanded) RainbowIcons.CloseFullscreen else RainbowIcons.OpenInFull,
-                    contentDescription = buttonText
-                )
-                Text(buttonText)
             }
         }
+
     }
 }

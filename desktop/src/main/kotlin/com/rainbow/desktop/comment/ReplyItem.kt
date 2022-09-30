@@ -1,6 +1,7 @@
 package com.rainbow.desktop.comment
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -20,7 +21,6 @@ import com.rainbow.domain.models.Comment
 fun ReplyItem(
     reply: Comment,
     postUserName: String,
-    isRepliesVisible: Boolean,
     depth: Int,
     onClick: () -> Unit,
     onUserNameClick: (String) -> Unit,
@@ -48,8 +48,10 @@ fun ReplyItem(
                     onUserNameClick,
                     onSubredditNameClick,
                 )
-                ExpandableText(reply.body, style = MaterialTheme.typography.bodyLarge)
-                CommentOptions(reply, isRepliesVisible, onShowSnackbar)
+                SelectionContainer {
+                    ExpandableText(reply.body, style = MaterialTheme.typography.bodyLarge)
+                }
+                CommentOptions(reply, onClick, onShowSnackbar)
             }
         }
     }

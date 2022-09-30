@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -121,11 +122,13 @@ fun ScreenHeader(
                     .align(Alignment.BottomStart)
                     .defaultPadding(start = 232.dp),
             ) {
-                Text(
-                    text = title,
-                    modifier = Modifier.fillMaxWidth(),
-                    style = MaterialTheme.typography.displayMedium,
-                )
+                SelectionContainer {
+                    Text(
+                        text = title,
+                        modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.displayMedium,
+                    )
+                }
                 CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.bodyLarge) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -154,5 +157,7 @@ fun ScreenHeaderCreationDate(date: Instant, modifier: Modifier = Modifier) {
 
 @Composable
 fun ScreenHeaderDescription(description: String?, modifier: Modifier = Modifier) {
-    ExpandableText(description ?: RainbowStrings.EmptyDescription, modifier)
+    SelectionContainer {
+        ExpandableText(description ?: RainbowStrings.EmptyDescription, modifier)
+    }
 }

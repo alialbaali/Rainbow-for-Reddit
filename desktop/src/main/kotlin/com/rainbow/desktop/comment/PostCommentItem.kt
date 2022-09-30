@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -21,7 +22,6 @@ import com.rainbow.domain.models.Comment
 fun PostCommentItem(
     comment: Comment,
     postUserName: String,
-    isRepliesVisible: Boolean,
     onClick: () -> Unit,
     onUserNameClick: (String) -> Unit,
     onSubredditNameClick: (String) -> Unit,
@@ -45,8 +45,10 @@ fun PostCommentItem(
                 onUserNameClick,
                 onSubredditNameClick,
             )
-            ExpandableText(comment.body, style = MaterialTheme.typography.bodyLarge)
-            CommentOptions(comment, isRepliesVisible, onShowSnackbar)
+            SelectionContainer {
+                ExpandableText(comment.body, style = MaterialTheme.typography.bodyLarge)
+            }
+            CommentOptions(comment, onClick, onShowSnackbar)
         }
     }
 }

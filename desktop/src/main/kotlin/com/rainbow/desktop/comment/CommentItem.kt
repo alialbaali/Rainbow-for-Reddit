@@ -9,8 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.ExpandableText
-import com.rainbow.desktop.navigation.DetailsScreen
-import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.utils.defaultPadding
 import com.rainbow.domain.models.Comment
 
@@ -41,7 +39,7 @@ fun CommentItem(
                 onSubredditNameClick,
             )
             ExpandableText(comment.body)
-            CommentOptions(comment, false, onShowSnackbar)
+            CommentOptions(comment, onRepliesCountClick = null, onShowSnackbar)
         }
     }
 }

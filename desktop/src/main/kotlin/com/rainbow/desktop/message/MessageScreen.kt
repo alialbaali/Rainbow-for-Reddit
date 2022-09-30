@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -21,7 +22,6 @@ fun MessageScreen(
     onNavigateMainScreen: (MainScreen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     val stateHolder = remember(messageId) { MessageScreenStateHolder.getInstance(messageId) }
     val messageState by stateHolder.message.collectAsState()
     val message = remember(messageState) { messageState.getOrNull() }
@@ -34,7 +34,9 @@ fun MessageScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         if (message != null) {
-            MessageItem(message, onNavigateMainScreen)
+            SelectionContainer {
+                MessageItem(message, onNavigateMainScreen)
+            }
         }
     }
 }

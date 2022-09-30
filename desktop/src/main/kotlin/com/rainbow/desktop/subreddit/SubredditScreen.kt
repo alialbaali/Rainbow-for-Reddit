@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -110,7 +111,7 @@ fun SubredditScreen(
                     SubredditTab.Rules -> rules(rulesState, onShowSnackbar)
                     SubredditTab.Moderators -> moderators(
                         moderatorsState,
-                        { onNavigateMainScreen(MainScreen.User(it)) },
+                        onModeratorClick = { onNavigateMainScreen(MainScreen.User(it)) },
                         onShowSnackbar
                     )
                 }
@@ -132,15 +133,17 @@ private fun LazyListScope.wiki(wikiState: UIState<WikiPage>, onShowSnackbar: (St
     item {
         val wikiPage = remember(wikiState) { wikiState.getOrNull() }
         if (wikiPage != null) {
-            Column(
-                Modifier
-                    .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
-                    .defaultPadding()
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
-            ) {
-                MarkdownText(wikiPage.content)
-                Text("Revised by ${wikiPage.revisionBy.name} on ${wikiPage.revisionDate}")
+            SelectionContainer(Modifier.fillParentMaxWidth()) {
+                Column(
+                    Modifier
+                        .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
+                        .defaultPadding()
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
+                ) {
+                    Text(wikiPage.content)
+                    Text("Revised by ${wikiPage.revisionBy.name} on ${wikiPage.revisionDate}")
+                }
             }
         }
     }
@@ -148,13 +151,15 @@ private fun LazyListScope.wiki(wikiState: UIState<WikiPage>, onShowSnackbar: (St
 
 private fun LazyListScope.about(subreddit: Subreddit) {
     item {
-        MarkdownText(
-            subreddit.longDescription,
-            Modifier
-                .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
-                .defaultPadding()
-                .fillMaxWidth()
-        )
+        SelectionContainer(Modifier.fillParentMaxWidth()) {
+            Text(
+                subreddit.longDescription,
+                Modifier
+                    .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
+                    .defaultPadding()
+                    .fillMaxWidth()
+            )
+        }
     }
 }
 
@@ -390,7 +395,9 @@ private fun LazyListScope.rules(rulesState: UIState<List<Rule>>, onShowSnackbar:
     val rules = rulesState.getOrDefault(emptyList())
 
     items(rules) { rule ->
-        RuleItem(rule, Modifier.fillMaxWidth())
+        SelectionContainer(Modifier.fillParentMaxWidth()) {
+            RuleItem(rule, Modifier.fillMaxWidth())
+        }
     }
 
     if (rulesState.isLoading) {
