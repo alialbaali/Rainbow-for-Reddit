@@ -236,6 +236,12 @@ private fun PostContent(post: Post, modifier: Modifier = Modifier) {
                     },
                     selectedUrl = selectedUrl
                 )
+            } else {
+                PostContent(
+                    post = post,
+                    modifier = modifier,
+                    postLayout = PostLayout.Large,
+                )
             }
         }
 
