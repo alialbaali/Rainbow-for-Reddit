@@ -62,7 +62,7 @@ internal object Mappers {
                 subredditId = subredditId!!,
                 subredditName = subreddit!!,
                 title = title!!,
-                body = selftext,
+                body = selftext?.takeIf { it.isNotBlank() },
                 type = type,
                 votesCount = ups!!,
                 upvotesRatio = upvoteRatio!!,
