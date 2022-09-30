@@ -1,12 +1,15 @@
 package com.rainbow.desktop.comment
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
@@ -188,8 +191,10 @@ fun LazyListScope.replies(
 }
 
 private fun Modifier.clip(isEmpty: Boolean, isRepliesVisible: Boolean) = composed {
+    val dp by animateDpAsState(if (!isEmpty && isRepliesVisible) 0.dp else 16.dp)
+    val cornerSize = remember(dp) { CornerSize(dp) }
+
     if (!isEmpty && isRepliesVisible) {
-        val cornerSize = CornerSize(0.dp)
         Modifier.clip(
             MaterialTheme.shapes.medium.copy(
                 bottomEnd = cornerSize,
@@ -197,6 +202,6 @@ private fun Modifier.clip(isEmpty: Boolean, isRepliesVisible: Boolean) = compose
             )
         )
     } else {
-        Modifier.clip(MaterialTheme.shapes.medium)
+        Modifier.clip(MaterialTheme.shapes.medium.copy(cornerSize))
     }
 }
