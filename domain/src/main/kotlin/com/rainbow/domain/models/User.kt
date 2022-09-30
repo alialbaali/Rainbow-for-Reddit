@@ -2,7 +2,10 @@ package com.rainbow.domain.models
 
 import com.rainbow.domain.utils.RedditUrl
 import com.rainbow.domain.utils.asUserDisplayName
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 private const val DefaultUserImageUrl = ""
 
@@ -31,3 +34,11 @@ val User.fullUrl
 
 val User.displayName
     get() = name.asUserDisplayName()
+
+val User.isCakeDay: Boolean
+    get() {
+        val timeZone = TimeZone.currentSystemDefault()
+        val today = Clock.System.now().toLocalDateTime(timeZone).date
+        val date = creationDate.toLocalDateTime(timeZone).date
+        return today.dayOfYear == date.dayOfYear
+    }

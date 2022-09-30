@@ -104,6 +104,7 @@ object RainbowStrings {
     const val SubredditOptions = "Subreddit options"
     const val LoginFailed = "Login has failed, please try to login again."
     const val Now = "Now"
+    const val CakeDay = "Cake day"
 
     fun YearAgo(year: Int) = if (year == 1) "A year ago" else "$year Years ago"
     fun MonthAgo(month: Int) = if (month == 1) "A month ago" else "$month Months ago"

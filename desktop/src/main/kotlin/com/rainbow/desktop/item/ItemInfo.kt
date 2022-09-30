@@ -5,6 +5,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.rounded.Cake
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.desktop.components.*
 import com.rainbow.desktop.ui.RainbowTheme
+import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.domain.models.Award
 import com.rainbow.domain.models.Flair
@@ -29,6 +32,7 @@ private val SubredditIconSize = 50.dp
 private val UserIconSize = 30.dp
 private val UserIconOffset = 8.dp
 private val UserIconBorderWidth = 3.dp
+private val CakeDaySize = 20.dp
 
 @Composable
 fun ItemInfo(
@@ -46,6 +50,7 @@ fun ItemInfo(
         Column(Modifier.fillMaxWidth()) {
             if (subredditInfo != null) {
                 SubredditName(subredditInfo.name, subredditInfo.onClick)
+                Spacer(Modifier.height(RainbowTheme.dimensions.extraSmall))
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (commentInfo == null) {
@@ -56,6 +61,15 @@ fun ItemInfo(
                     else
                         MaterialTheme.colorScheme.surfaceVariant
                     CommentUserName(userInfo.name, commentInfo.isOP, userInfo.onClick, color = color)
+                }
+                if (userInfo.isCakeDay) {
+                    Dot()
+                    Icon(
+                        RainbowIcons.Cake,
+                        RainbowStrings.CakeDay,
+                        Modifier.size(CakeDaySize),
+                        MaterialTheme.colorScheme.secondary
+                    )
                 }
                 if (flair.types.isNotEmpty()) {
                     Dot()
@@ -172,6 +186,7 @@ private fun Modifier.userIcon(isSubredditIconEnabled: Boolean, onClick: () -> Un
 data class UserInfo(
     val name: String,
     val imageUrl: String?,
+    val isCakeDay: Boolean,
     val onClick: (String) -> Unit,
 )
 

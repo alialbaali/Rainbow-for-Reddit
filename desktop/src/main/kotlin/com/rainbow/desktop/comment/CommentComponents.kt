@@ -24,6 +24,7 @@ import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.Saved
 import com.rainbow.desktop.utils.countRecursively
 import com.rainbow.domain.models.Comment
+import com.rainbow.domain.models.isCakeDay
 
 @Composable
 fun CommentInfo(
@@ -39,6 +40,7 @@ fun CommentInfo(
         UserInfo(
             comment.userName,
             comment.user?.imageUrl,
+            isCakeDay = comment.user?.isCakeDay == true,
             onUserNameClick,
         )
     }

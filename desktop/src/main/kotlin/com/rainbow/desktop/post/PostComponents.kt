@@ -33,6 +33,7 @@ import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.MarkPostAsRead
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.PostLayout
+import com.rainbow.domain.models.isCakeDay
 import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
 
@@ -57,6 +58,7 @@ fun PostInfo(
         UserInfo(
             post.userName,
             post.user?.imageUrl,
+            isCakeDay = post.user?.isCakeDay == true,
             onUserNameClick,
         )
     }
