@@ -8,8 +8,10 @@ data class Post(
     override val id: String,
     val userId: String,
     val userName: String,
+    val user: User? = null,
     val subredditId: String,
     val subredditName: String,
+    val subreddit: Subreddit? = null,
     val title: String,
     val body: String?,
     val type: Type = Type.Default,
@@ -32,8 +34,6 @@ data class Post(
     val userFlair: Flair,
     val url: String,
     val creationDate: Instant,
-    val subredditImageUrl: String? = null,
-    val userImageUrl: String? = null,
 ) : Item {
     sealed interface Type {
         object None : Type

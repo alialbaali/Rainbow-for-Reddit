@@ -38,14 +38,14 @@ fun CommentInfo(
     val userInfo = remember(comment, onUserNameClick) {
         UserInfo(
             comment.userName,
-            comment.userImageUrl,
+            comment.user?.imageUrl,
             onUserNameClick,
         )
     }
     val subredditInfo = remember(comment, onSubredditNameClick) {
         SubredditInfo(
             comment.subredditName,
-            comment.subredditImageUrl,
+            comment.subreddit?.imageUrl,
             onSubredditNameClick,
         )
     }
@@ -59,6 +59,7 @@ fun CommentInfo(
         comment.flair,
         comment.creationDate,
         comment.awards,
+        modifier,
     )
 }
 

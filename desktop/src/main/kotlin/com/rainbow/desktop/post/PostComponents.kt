@@ -56,14 +56,14 @@ fun PostInfo(
     val userInfo = remember(post, onUserNameClick) {
         UserInfo(
             post.userName,
-            post.userImageUrl,
+            post.user?.imageUrl,
             onUserNameClick,
         )
     }
     val subredditInfo = remember(post, onSubredditNameClick) {
         SubredditInfo(
             post.subredditName,
-            post.subredditImageUrl,
+            post.subreddit?.imageUrl,
             onSubredditNameClick
         )
     }
@@ -77,6 +77,7 @@ fun PostInfo(
         post.userFlair,
         post.creationDate,
         post.awards,
+        modifier,
     )
 }
 

@@ -9,9 +9,11 @@ data class Comment(
     val parentId: String,
     override val postId: String,
     val userId: String,
-    val subredditId: String,
     val userName: String,
+    val user: User? = null,
+    val subredditId: String,
     val subredditName: String,
+    val subreddit: Subreddit? = null,
     val replies: List<Comment> = emptyList(),
     val type: Type,
     val body: String,
@@ -24,8 +26,6 @@ data class Comment(
     val creationDate: Instant,
     val isContinueThread: Boolean = false,
     val url: String,
-    val userImageUrl: String? = null,
-    val subredditImageUrl: String? = null,
 ) : Item {
     sealed interface Type {
         object None : Type

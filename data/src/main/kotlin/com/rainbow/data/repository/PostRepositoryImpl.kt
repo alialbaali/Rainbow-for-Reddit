@@ -100,7 +100,7 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             ).quickMap(postMapper)
-                .mapWithImageUrls()
+                .mapWithParentModels()
                 .forEach(localPostDataSource::insertPopularPost)
         }
     }
@@ -118,7 +118,7 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             ).quickMap(postMapper)
-                .mapWithImageUrls()
+                .mapWithParentModels()
                 .forEach(localPostDataSource::insertAllPost)
         }
     }
@@ -137,7 +137,7 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             ).quickMap(postMapper)
-                .mapWithImageUrls()
+                .mapWithParentModels()
                 .forEach(localPostDataSource::insertProfileSubmittedPost)
         }
     }
@@ -156,7 +156,7 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId
             ).quickMap(postMapper)
-                .mapWithImageUrls()
+                .mapWithParentModels()
                 .forEach(localPostDataSource::insertProfileUpvotedPost)
         }
     }
@@ -175,7 +175,7 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId
             ).quickMap(postMapper)
-                .mapWithImageUrls()
+                .mapWithParentModels()
                 .forEach(localPostDataSource::insertProfileDownvotedPost)
         }
     }
@@ -194,7 +194,7 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId
             ).quickMap(postMapper)
-                .mapWithImageUrls()
+                .mapWithParentModels()
                 .forEach(localPostDataSource::insertProfileHiddenPost)
         }
     }
@@ -214,7 +214,7 @@ internal class PostRepositoryImpl(
                 timeSorting.lowercaseName,
                 DefaultLimit,
                 lastPostId,
-            ).quickMap(postMapper).mapWithImageUrls()
+            ).quickMap(postMapper).mapWithParentModels()
                 .forEach(localPostDataSource::insertUserSubmittedPost)
         }
     }
@@ -232,7 +232,7 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             ).quickMap(postMapper)
-                .mapWithImageUrls()
+                .mapWithParentModels()
                 .forEach(localPostDataSource::insertHomePost)
         }
     }
@@ -252,7 +252,7 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             ).quickMap(postMapper)
-                .mapWithImageUrls()
+                .mapWithParentModels()
                 .forEach(localPostDataSource::insertSubredditPost)
         }
     }
@@ -262,7 +262,7 @@ internal class PostRepositoryImpl(
             .map { post ->
                 post ?: remotePostDataSource.getPost(postId)
                     .let(postMapper::map)
-                    .let { listOf(it).mapWithImageUrls() }
+                    .let { listOf(it).mapWithParentModels() }
                     .first()
                     .also(localPostDataSource::insertPost)
             }
@@ -411,25 +411,25 @@ internal class PostRepositoryImpl(
         }
     }
 
-    private suspend fun List<Post>.mapWithImageUrls() = coroutineScope {
+    private suspend fun List<Post>.mapWithParentModels() = coroutineScope {
         val result = map { post ->
-            val subredditImageUrl = async {
-                subredditRepository.getSubreddit(post.subredditName).firstOrNull()?.getOrNull()?.imageUrl
+            val subreddit = async {
+                subredditRepository.getSubreddit(post.subredditName).firstOrNull()?.getOrNull()
             }
-            val userImageUrl = async {
-                userRepository.getUser(post.userName).firstOrNull()?.getOrNull()?.imageUrl
+            val user = async {
+                userRepository.getUser(post.userName).firstOrNull()?.getOrNull()
             }
             Triple(
                 post.id,
-                subredditImageUrl,
-                userImageUrl
+                subreddit,
+                user
             )
         }
         map { post ->
             val value = result.first { it.first == post.id }
-            val subredditImageUrl = value.second
-            val userImageUrl = value.third
-            post.copy(subredditImageUrl = subredditImageUrl.await(), userImageUrl = userImageUrl.await())
+            val subreddit = value.second
+            val user = value.third
+            post.copy(subreddit = subreddit.await(), user = user.await())
         }
     }
 }

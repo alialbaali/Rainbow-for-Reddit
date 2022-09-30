@@ -50,7 +50,7 @@ internal class ItemRepositoryImpl(
                 timeSorting.lowercaseName,
                 DefaultLimit,
                 lastItemId
-            ).quickMap(mapper).mapWithImageUrls().forEach(localItemDataSource::insertProfileOverviewItem)
+            ).quickMap(mapper).mapWithParentModels().forEach(localItemDataSource::insertProfileOverviewItem)
         }
     }
 
@@ -68,7 +68,7 @@ internal class ItemRepositoryImpl(
                 timeSorting.lowercaseName,
                 DefaultLimit,
                 lastItemId
-            ).quickMap(mapper).mapWithImageUrls().forEach(localItemDataSource::insertProfileSavedItem)
+            ).quickMap(mapper).mapWithParentModels().forEach(localItemDataSource::insertProfileSavedItem)
         }
     }
 
@@ -87,11 +87,11 @@ internal class ItemRepositoryImpl(
                 timeSorting.lowercaseName,
                 DefaultLimit,
                 lastItemId
-            ).quickMap(mapper).mapWithImageUrls().forEach(localItemDataSource::insertUserOverviewItem)
+            ).quickMap(mapper).mapWithParentModels().forEach(localItemDataSource::insertUserOverviewItem)
         }
     }
 
-    private suspend fun List<Item>.mapWithImageUrls() = coroutineScope {
+    private suspend fun List<Item>.mapWithParentModels() = coroutineScope {
         val result = map { item ->
             val subredditName = when (item) {
                 is Comment -> item.subredditName
@@ -101,29 +101,25 @@ internal class ItemRepositoryImpl(
                 is Comment -> item.userName
                 is Post -> item.userName
             }
-            val subredditImageUrl = async {
-                subredditRepository.getSubreddit(subredditName).firstOrNull()?.getOrNull()?.imageUrl
+            val subreddit = async {
+                subredditRepository.getSubreddit(subredditName).firstOrNull()?.getOrNull()
             }
-            val userImageUrl = async {
-                userRepository.getUser(userName).firstOrNull()?.getOrNull()?.imageUrl
+            val user = async {
+                userRepository.getUser(userName).firstOrNull()?.getOrNull()
             }
             Triple(
                 item.id,
-                subredditImageUrl,
-                userImageUrl
+                subreddit,
+                user
             )
         }
         map { item ->
             val value = result.first { it.first == item.id }
-            val subredditImageUrl = value.second
-            val userImageUrl = value.third
+            val subreddit = value.second
+            val user = value.third
             when (item) {
-                is Comment -> item.copy(
-                    subredditImageUrl = subredditImageUrl.await(),
-                    userImageUrl = userImageUrl.await()
-                )
-
-                is Post -> item.copy(subredditImageUrl = subredditImageUrl.await(), userImageUrl = userImageUrl.await())
+                is Comment -> item.copy(subreddit = subreddit.await(), user = user.await())
+                is Post -> item.copy(subreddit = subreddit.await(), user = user.await())
             }
         }
     }

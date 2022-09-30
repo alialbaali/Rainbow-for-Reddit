@@ -52,7 +52,7 @@ internal class CommentRepositoryImpl(
                 timeSorting.lowercaseName,
                 DefaultLimit,
                 lastCommentId
-            ).quickMap(mapper).mapWithImageUrls().forEach(localCommentDataSource::insertProfileComment)
+            ).quickMap(mapper).mapWithParentModels().forEach(localCommentDataSource::insertProfileComment)
         }
     }
 
@@ -61,7 +61,7 @@ internal class CommentRepositoryImpl(
             if (lastCommentId == null) localCommentDataSource.clearHomeComments()
             remoteCommentDataSource.getHomeComments(DefaultLimit, lastCommentId)
                 .quickMap(mapper)
-                .mapWithImageUrls()
+                .mapWithParentModels()
                 .forEach(localCommentDataSource::insertHomeComment)
         }
     }
@@ -80,7 +80,7 @@ internal class CommentRepositoryImpl(
                 timeSorting.lowercaseName,
                 DefaultLimit,
                 lastCommentId
-            ).quickMap(mapper).mapWithImageUrls().forEach(localCommentDataSource::insertUserComment)
+            ).quickMap(mapper).mapWithParentModels().forEach(localCommentDataSource::insertUserComment)
         }
     }
 
@@ -94,7 +94,7 @@ internal class CommentRepositoryImpl(
                 postId,
                 commentsSorting.lowercaseName,
                 DefaultLimit
-            ).quickMap(mapper).mapWithImageUrls().forEach(localCommentDataSource::insertPostComment)
+            ).quickMap(mapper).mapWithParentModels().forEach(localCommentDataSource::insertPostComment)
         }
     }
 
@@ -109,7 +109,7 @@ internal class CommentRepositoryImpl(
                 postId,
                 children,
                 commentsSorting.lowercaseName,
-            ).quickMap(mapper).mapWithImageUrls()
+            ).quickMap(mapper).mapWithParentModels()
 
             val newPostComments = allComments.filter { it.parentId == postId }
             val comments = postComments.first()
@@ -137,7 +137,7 @@ internal class CommentRepositoryImpl(
                 DefaultLimit,
             ).quickMap(mapper)
                 .map { it.copy(isContinueThread = true) }
-                .mapWithImageUrls()
+                .mapWithParentModels()
                 .forEach(localCommentDataSource::insertPostComment)
         }
     }
@@ -224,35 +224,35 @@ internal class CommentRepositoryImpl(
         }
     }
 
-    private suspend fun List<Comment>.mapWithImageUrls() = coroutineScope {
-        val imageUrls = flattenRecursively()
+    private suspend fun List<Comment>.mapWithParentModels() = coroutineScope {
+        val models = flattenRecursively()
             .filter { it.type is Comment.Type.None }
             .map { comment ->
-                val subredditImageUrl = async {
-                    subredditRepository.getSubreddit(comment.subredditName).firstOrNull()?.getOrNull()?.imageUrl
+                val subreddit = async {
+                    subredditRepository.getSubreddit(comment.subredditName).firstOrNull()?.getOrNull()
                 }
-                val userImageUrl = async {
-                    userRepository.getUser(comment.userName).firstOrNull()?.getOrNull()?.imageUrl
+                val user = async {
+                    userRepository.getUser(comment.userName).firstOrNull()?.getOrNull()
                 }
                 Triple(
                     comment.id,
-                    subredditImageUrl,
-                    userImageUrl
+                    subreddit,
+                    user
                 )
             }
 
-        mapWithImageUrlsRecursively(imageUrls)
+        mapWithParentModelsRecursively(models)
     }
 
-    private suspend fun List<Comment>.mapWithImageUrlsRecursively(imageUrls: List<Triple<String, Deferred<String?>, Deferred<String?>>>): List<Comment> =
+    private suspend fun List<Comment>.mapWithParentModelsRecursively(models: List<Triple<String, Deferred<Subreddit?>, Deferred<User?>>>): List<Comment> =
         map { comment ->
-            val value = imageUrls.firstOrNull { it.first == comment.id }
-            val subredditImageUrl = value?.second
-            val userImageUrl = value?.third
+            val value = models.firstOrNull { it.first == comment.id }
+            val subreddit = value?.second
+            val user = value?.third
             comment.copy(
-                subredditImageUrl = subredditImageUrl?.await(),
-                userImageUrl = userImageUrl?.await(),
-                replies = comment.replies.mapWithImageUrlsRecursively(imageUrls),
+                subreddit = subreddit?.await(),
+                user = user?.await(),
+                replies = comment.replies.mapWithParentModelsRecursively(models),
             )
         }
 
