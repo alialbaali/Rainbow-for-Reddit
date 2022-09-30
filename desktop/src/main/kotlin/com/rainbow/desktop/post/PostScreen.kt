@@ -151,6 +151,16 @@ private fun Post(
                 .wrapContentHeight()
         )
 
+        post.body?.let { body ->
+            PostBody(
+                body = body,
+                postLayout = PostLayout.Large,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            )
+        }
+
         PostContent(
             post = post,
             modifier = Modifier
