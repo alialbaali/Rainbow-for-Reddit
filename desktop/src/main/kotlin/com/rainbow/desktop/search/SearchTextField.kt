@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 //import androidx.compose.material3.DropdownMenu
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -63,6 +64,7 @@ fun SearchTextField(
                     }
                     false
                 },
+            backgroundColor = MaterialTheme.colorScheme.background,
         )
 //        DropdownMenu(
 //            isExpanded,

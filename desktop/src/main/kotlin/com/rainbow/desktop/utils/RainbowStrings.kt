@@ -66,7 +66,7 @@ object RainbowStrings {
     const val UnFavorite = "UnFavorite"
     const val Favorite = "Favorite"
     const val Todo = "TODO"
-    const val FilterSubreddits = "Fitler subreddits"
+    const val FilterSubreddits = "Filter subreddits"
     const val Refresh = "Refresh"
     const val Apply = "Apply"
     const val Clear = "Clear"
