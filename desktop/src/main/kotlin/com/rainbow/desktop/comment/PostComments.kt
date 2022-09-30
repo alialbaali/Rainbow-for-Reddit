@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
@@ -48,13 +49,18 @@ fun LazyListScope.postComments(
                     modifier.clip(comment.replies.isEmpty(), isRepliesVisible),
                 )
 
-                is Comment.Type.MoreComments -> MoreCommentsItem(
-                    onClick = {
-                        val moreComments = commentType.replies
-                        onRequestMoreComments(comment.id, moreComments)
-                    },
-                    modifier.clip(isEmpty = true, isRepliesVisible = false)
-                )
+//                is Comment.Type.MoreComments -> MoreCommentsItem(
+//                    onClick = {
+//                        val moreComments = commentType.replies
+//                        onRequestMoreComments(comment.id, moreComments)
+//                    },
+//                    modifier.clip(isEmpty = true, isRepliesVisible = false)
+//                )
+
+                is Comment.Type.MoreComments -> DisposableEffect(Unit) {
+                    onRequestMoreComments(comment.id, commentType.replies)
+                    onDispose { }
+                }
 
                 is Comment.Type.Thread -> {}
             }
