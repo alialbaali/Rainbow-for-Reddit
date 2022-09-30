@@ -44,6 +44,7 @@ object Repos {
 
     @OptIn(ExperimentalSettingsApi::class)
     object Post : PostRepository by PostRepositoryImpl(
+        User,
         Subreddit,
         RemotePostDataSourceImpl(),
         LocalPostDataSourceImpl(),

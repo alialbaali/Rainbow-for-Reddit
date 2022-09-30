@@ -5,6 +5,7 @@ import com.rainbow.domain.models.*
 import com.rainbow.domain.models.Rule
 import com.rainbow.remote.dto.*
 import io.ktor.http.*
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 internal object Mappers {
@@ -71,7 +72,7 @@ internal object Mappers {
                 isLocked = locked!!,
                 isSaved = saved ?: false,
                 isPinned = pinned!!,
-                creationDate = Instant.fromEpochSeconds(created!!.toLong()),
+                creationDate = created.toInstant(),
                 isMine = isSelf!!,
                 isHidden = hidden!!,
                 vote = likes.toVote(),
@@ -116,6 +117,9 @@ internal object Mappers {
 
     val UserMapper = Mapper<RemoteUser, User> {
         with(it) {
+            val validIconImage = iconImg.takeIf { url -> !url.isNullOrBlank() }?.removeParameters()
+            val validSubreddit = subreddit?.let(SubredditMapper::map)
+
             User(
                 id = subreddit?.name!!,
                 name = name!!,
@@ -125,9 +129,9 @@ internal object Mappers {
                 awardeeKarma = awardeeKarma?.toLong() ?: 0,
                 awarderKarma = awarderKarma?.toLong() ?: 0,
                 isNSFW = subreddit?.over18 ?: false,
-                creationDate = Instant.fromEpochSeconds(created!!.toLong()),
-                imageUrl = iconImg!!,
-                bannerImageUrl = subreddit?.bannerImg?.removeParameters() ?: ""
+                creationDate = created.toInstant(),
+                imageUrl = validIconImage ?: validSubreddit?.imageUrl,
+                bannerImageUrl = validSubreddit?.bannerImageUrl,
             )
         }
     }
@@ -145,7 +149,7 @@ internal object Mappers {
                     subredditName = subreddit ?: "",
                     body = body ?: "",
                     votesCount = ups ?: 0,
-                    creationDate = Instant.fromEpochSeconds(created?.toLong() ?: 0L),
+                    creationDate = created.toInstant(),
                     vote = likes.toVote(),
                     isEdited = false,
                     isSaved = saved ?: false,
@@ -168,6 +172,21 @@ internal object Mappers {
                     url = permalink?.toRedditUrl().orEmpty()
                 )
             }
+        }
+    }
+
+    val PermissionMapper = Mapper<String, Moderator.Permission> {
+        when (it) {
+            "all" -> Moderator.Permission.All
+            "wiki" -> Moderator.Permission.Wiki
+            "mail" -> Moderator.Permission.Mail
+            "config" -> Moderator.Permission.Config
+            "flair" -> Moderator.Permission.Flair
+            "access" -> Moderator.Permission.Access
+            "chat_operator" -> Moderator.Permission.ChatOperator
+            "posts" -> Moderator.Permission.Posts
+            "chat_config" -> Moderator.Permission.ChatConfig
+            else -> error("Permission isn't supported: $it")
         }
     }
 
@@ -208,6 +227,8 @@ internal object Mappers {
                 ?.removeParameters()
             val validBannerMobileImage = mobileBannerImage.takeIf { url -> !url.isNullOrBlank() }
                 ?.removeParameters()
+            val validHeaderImage = headerImg.takeIf { url -> !url.isNullOrBlank() }
+                ?.removeParameters()
 
             Subreddit(
                 id = name ?: "",
@@ -218,11 +239,12 @@ internal object Mappers {
                 subscribersCount = subscribers ?: 0,
                 activeSubscribersCount = activeUserCount ?: 0,
                 imageUrl = validCommunityImage ?: validIconImage,
-                bannerImageUrl = validBannerBackgroundImage ?: validBannerImage ?: validBannerMobileImage,
+                bannerImageUrl = validBannerBackgroundImage ?: validBannerImage ?: validBannerMobileImage
+                ?: validHeaderImage,
                 isNSFW = over18 ?: false,
                 isFavorite = userHasFavorited ?: false,
                 isSubscribed = userIsSubscriber ?: false,
-                creationDate = Instant.fromEpochSeconds(created!!.toLong()),
+                creationDate = created.toInstant(),
                 colors = Subreddit.Colors(
                     primary = primaryColor.takeIf { !it.isNullOrBlank() }?.toLongColor(),
                     banner = bannerBackgroundColor.takeIf { !it.isNullOrBlank() }?.toLongColor(),
@@ -239,7 +261,7 @@ internal object Mappers {
                 description!!,
                 priority!!.toInt(),
                 violationReason!!,
-                Instant.fromEpochSeconds(createdUtc!!.toLong()),
+                createdUtc.toInstant(),
             )
         }
     }
@@ -250,21 +272,8 @@ internal object Mappers {
                 id!!,
                 name!!,
                 FlairMapper.map(RemoteFlair(text = authorFlairText)),
-                modPermissions?.map {
-                    when (it) {
-                        "all" -> Moderator.Permission.All
-                        "wiki" -> Moderator.Permission.Wiki
-                        "mail" -> Moderator.Permission.Mail
-                        "config" -> Moderator.Permission.Config
-                        "flair" -> Moderator.Permission.Flair
-                        "access" -> Moderator.Permission.Access
-                        "chat_operator" -> Moderator.Permission.ChatOperator
-                        "posts" -> Moderator.Permission.Posts
-                        "chat_config" -> Moderator.Permission.ChatConfig
-                        else -> error("Permission isn't supported: $it")
-                    }
-                } ?: emptyList(),
-                Instant.fromEpochSeconds(date!!.toLong())
+                modPermissions?.quickMap(PermissionMapper) ?: emptyList(),
+                date.toInstant()
             )
         }
     }
@@ -289,7 +298,7 @@ internal object Mappers {
                     "username_mention" -> Message.Type.Mention(context?.getPostId() ?: "")
                     else -> Message.Type.Message
                 },
-                Instant.fromEpochSeconds(created!!.toLong()),
+                created.toInstant(),
             )
         }
     }
@@ -320,7 +329,7 @@ internal object Mappers {
                 WikiPage(
                     contentMd ?: "",
                     UserMapper.map(revisionBy!!),
-                    Instant.fromEpochSeconds(revisionDate!!.toLong()),
+                    revisionDate?.toDouble().toInstant(),
                 )
             }
         }
@@ -354,4 +363,9 @@ internal object Mappers {
         get() = "${protocol.name}://$host"
 
     private fun String.getPostId() = "t3_" + substringAfter("comments/").substringBefore("/")
+
+    private fun Double?.toInstant() = this?.toLong()?.let(Instant.Companion::fromEpochSeconds) ?: CurrentDate
+
+    private val CurrentDate
+        get() = Clock.System.now()
 }

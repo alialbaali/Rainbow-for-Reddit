@@ -4,8 +4,10 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.StarBorder
 import androidx.compose.material.icons.rounded.Visibility
@@ -37,6 +39,9 @@ import io.kamel.image.KamelImage
 import io.kamel.image.lazyPainterResource
 
 private val SubredditIconSize = 50.dp
+private val UserIconSize = 30.dp
+private val UserIconOffset = 8.dp
+private val UserIconBorderWidth = 3.dp
 
 fun Modifier.subredditIcon(onClick: () -> Unit) = composed {
     Modifier
@@ -44,6 +49,16 @@ fun Modifier.subredditIcon(onClick: () -> Unit) = composed {
         .clickable(onClick = onClick)
         .background(MaterialTheme.colorScheme.onSurface, MaterialTheme.shapes.small)
         .size(SubredditIconSize)
+}
+
+fun Modifier.userIcon(onClick: () -> Unit) = composed {
+    Modifier
+        .offset(UserIconOffset, UserIconOffset)
+        .border(UserIconBorderWidth, MaterialTheme.colorScheme.surface, CircleShape)
+        .clip(CircleShape)
+        .clickable(onClick = onClick)
+        .background(MaterialTheme.colorScheme.onSurface, CircleShape)
+        .size(UserIconSize)
 }
 
 @Composable
@@ -63,26 +78,52 @@ fun PostInfo(
     onSubredditNameClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val resource = lazyPainterResource(post.subredditImageUrl ?: "")
+    val subredditImageResource = lazyPainterResource(post.subredditImageUrl ?: "")
+    val userImageResource = lazyPainterResource(post.userImageUrl ?: "")
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        KamelImage(
-            resource,
-            post.subredditName,
-            Modifier.subredditIcon { onSubredditNameClick(post.subredditName) },
-            onFailure = {
-                Box(
-                    modifier = Modifier.subredditIcon { onSubredditNameClick(post.subredditName) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    TextBox(
-                        post.subredditName.first().toString().uppercase(),
-                        fontSize = 30.sp,
-                        color = MaterialTheme.colorScheme.surface,
-                        modifier = Modifier.fillMaxSize(),
-                    )
+        Box {
+            KamelImage(
+                subredditImageResource,
+                post.subredditName,
+                Modifier.subredditIcon { onSubredditNameClick(post.subredditName) },
+                onFailure = {
+                    Box(
+                        modifier = Modifier.subredditIcon { onSubredditNameClick(post.subredditName) },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        TextBox(
+                            post.subredditName.first().toString().uppercase(),
+                            fontSize = 30.sp,
+                            color = MaterialTheme.colorScheme.surface,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
                 }
-            }
-        )
+            )
+
+            KamelImage(
+                userImageResource,
+                post.userName,
+                Modifier
+                    .userIcon { onUserNameClick(post.userName) }
+                    .align(Alignment.BottomEnd),
+                onFailure = {
+                    Box(
+                        modifier = Modifier
+                            .userIcon { onUserNameClick(post.userName) }
+                            .align(Alignment.BottomEnd),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        TextBox(
+                            post.userName.first().toString().uppercase(),
+                            fontSize = 16.sp,
+                            color = MaterialTheme.colorScheme.surface,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
+                }
+            )
+        }
         Column(Modifier.fillMaxWidth()) {
             SubredditName(post.subredditName, onSubredditNameClick)
             Row(verticalAlignment = Alignment.CenterVertically) {

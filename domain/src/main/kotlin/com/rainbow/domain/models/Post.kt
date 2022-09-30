@@ -33,6 +33,7 @@ data class Post(
     val url: String,
     val creationDate: Instant,
     val subredditImageUrl: String? = null,
+    val userImageUrl: String? = null,
 ) : Item {
     sealed interface Type {
         object None : Type

@@ -9,6 +9,7 @@ import com.rainbow.domain.models.*
 import com.rainbow.domain.models.Post.Type
 import com.rainbow.domain.repository.PostRepository
 import com.rainbow.domain.repository.SubredditRepository
+import com.rainbow.domain.repository.UserRepository
 import com.rainbow.local.LocalItemDataSource
 import com.rainbow.local.LocalPostDataSource
 import com.rainbow.remote.dto.RemotePost
@@ -23,6 +24,7 @@ import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalSettingsApi::class)
 internal class PostRepositoryImpl(
+    private val userRepository: UserRepository,
     private val subredditRepository: SubredditRepository,
     private val remotePostDataSource: RemotePostDataSource,
     private val localPostDataSource: LocalPostDataSource,
@@ -98,7 +100,7 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             ).quickMap(postMapper)
-                .mapWithSubredditImageUrl()
+                .mapWithImageUrls()
                 .forEach(localPostDataSource::insertPopularPost)
         }
     }
@@ -116,7 +118,7 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             ).quickMap(postMapper)
-                .mapWithSubredditImageUrl()
+                .mapWithImageUrls()
                 .forEach(localPostDataSource::insertAllPost)
         }
     }
@@ -135,7 +137,7 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             ).quickMap(postMapper)
-                .mapWithSubredditImageUrl()
+                .mapWithImageUrls()
                 .forEach(localPostDataSource::insertProfileSubmittedPost)
         }
     }
@@ -154,7 +156,7 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId
             ).quickMap(postMapper)
-                .mapWithSubredditImageUrl()
+                .mapWithImageUrls()
                 .forEach(localPostDataSource::insertProfileUpvotedPost)
         }
     }
@@ -173,7 +175,7 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId
             ).quickMap(postMapper)
-                .mapWithSubredditImageUrl()
+                .mapWithImageUrls()
                 .forEach(localPostDataSource::insertProfileDownvotedPost)
         }
     }
@@ -192,7 +194,7 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId
             ).quickMap(postMapper)
-                .mapWithSubredditImageUrl()
+                .mapWithImageUrls()
                 .forEach(localPostDataSource::insertProfileHiddenPost)
         }
     }
@@ -212,7 +214,7 @@ internal class PostRepositoryImpl(
                 timeSorting.lowercaseName,
                 DefaultLimit,
                 lastPostId,
-            ).quickMap(postMapper).mapWithSubredditImageUrl()
+            ).quickMap(postMapper).mapWithImageUrls()
                 .forEach(localPostDataSource::insertUserSubmittedPost)
         }
     }
@@ -230,7 +232,7 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             ).quickMap(postMapper)
-                .mapWithSubredditImageUrl()
+                .mapWithImageUrls()
                 .forEach(localPostDataSource::insertHomePost)
         }
     }
@@ -250,7 +252,7 @@ internal class PostRepositoryImpl(
                 DefaultLimit,
                 lastPostId,
             ).quickMap(postMapper)
-                .mapWithSubredditImageUrl()
+                .mapWithImageUrls()
                 .forEach(localPostDataSource::insertSubredditPost)
         }
     }
@@ -407,16 +409,25 @@ internal class PostRepositoryImpl(
         }
     }
 
-    private suspend fun List<Post>.mapWithSubredditImageUrl() = coroutineScope {
+    private suspend fun List<Post>.mapWithImageUrls() = coroutineScope {
         val result = map { post ->
-            post.id to async {
-                subredditRepository.getSubreddit(post.subredditName)
-                    .firstOrNull()?.getOrNull()?.imageUrl
+            val subredditImageUrl = async {
+                subredditRepository.getSubreddit(post.subredditName).firstOrNull()?.getOrNull()?.imageUrl
             }
+            val userImageUrl = async {
+                userRepository.getUser(post.userName).firstOrNull()?.getOrNull()?.imageUrl
+            }
+            Triple(
+                post.id,
+                subredditImageUrl,
+                userImageUrl
+            )
         }
         map { post ->
-            val subredditImageUrl = result.first { it.first == post.id }.second
-            post.copy(subredditImageUrl = subredditImageUrl.await())
+            val value = result.first { it.first == post.id }
+            val subredditImageUrl = value.second
+            val userImageUrl = value.third
+            post.copy(subredditImageUrl = subredditImageUrl.await(), userImageUrl = userImageUrl.await())
         }
     }
 }
