@@ -3,8 +3,6 @@ package com.rainbow.desktop.settings
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.rounded.Article
-import androidx.compose.material.icons.rounded.Forum
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -13,7 +11,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.ui.RainbowTheme
+import com.rainbow.desktop.utils.Comments
 import com.rainbow.desktop.utils.DefaultContentPadding
+import com.rainbow.desktop.utils.Posts
 import com.rainbow.desktop.utils.RainbowIcons
 
 private const val SettingsTabFraction = 0.5F
@@ -96,6 +96,6 @@ private fun SettingsTabItem(tab: SettingsTab, modifier: Modifier = Modifier) {
 private val SettingsTab.icon
     get() = when (this) {
         SettingsTab.General -> RainbowIcons.Settings
-        SettingsTab.Post -> RainbowIcons.Article
-        SettingsTab.Comment -> RainbowIcons.Forum
+        SettingsTab.Post -> RainbowIcons.Posts
+        SettingsTab.Comment -> RainbowIcons.Comments
     }

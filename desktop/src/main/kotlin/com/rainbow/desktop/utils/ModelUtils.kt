@@ -6,7 +6,7 @@ import java.util.*
 
 private const val MinimumNumberToFormat = 10_000
 
-private val suffixes = TreeMap(mapOf(1_000 to "k", 1_000_000 to "m"))
+private val suffixes = TreeMap(mapOf(1_000 to "K", 1_000_000 to "M"))
 
 fun Int.format(): String {
 //    Int.MIN_VALUE == -Int.MIN_VALUE, so we need an adjustment here

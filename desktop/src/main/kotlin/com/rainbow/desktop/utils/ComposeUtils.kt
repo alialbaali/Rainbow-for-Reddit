@@ -138,3 +138,24 @@ val KamelConfig.Companion.Rainbow
         imageVectorCacheSize = KamelConfigCacheSize
         svgCacheSize = KamelConfigCacheSize
     }
+
+val RainbowIcons.Posts
+    get() = Article
+
+val RainbowIcons.Upvote
+    get() = ArrowUpward
+
+val RainbowIcons.Downvote
+    get() = ArrowDownward
+
+val RainbowIcons.Hidden
+    get() = VisibilityOff
+
+val RainbowIcons.Saved
+    get() = Star
+
+val RainbowIcons.Comments
+    get() = Forum
+
+val RainbowIcons.User
+    get() = AccountCircle

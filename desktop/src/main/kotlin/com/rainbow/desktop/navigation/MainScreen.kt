@@ -4,6 +4,7 @@ import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.Composable
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
+import com.rainbow.desktop.utils.User
 
 sealed interface MainScreen {
     data class Subreddit(val subredditName: String) : MainScreen
@@ -26,7 +27,7 @@ inline val MainScreen.SidebarItem.icon
         MainScreen.SidebarItem.Home -> RainbowIcons.Home
         MainScreen.SidebarItem.Subreddits -> RainbowIcons.GridView
         MainScreen.SidebarItem.Messages -> RainbowIcons.Message
-        MainScreen.SidebarItem.Profile -> RainbowIcons.Person
+        MainScreen.SidebarItem.Profile -> RainbowIcons.User
         MainScreen.SidebarItem.Settings -> RainbowIcons.Settings
         MainScreen.SidebarItem.All -> RainbowIcons.Layers
         MainScreen.SidebarItem.Popular -> RainbowIcons.TrendingUp

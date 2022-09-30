@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.rounded.Forum
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -13,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.ui.RainbowTheme
+import com.rainbow.desktop.utils.Comments
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.format
@@ -29,7 +29,7 @@ fun CommentsCount(count: Int, modifier: Modifier = Modifier) {
         horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.medium)
     ) {
         Icon(
-            RainbowIcons.Forum,
+            RainbowIcons.Comments,
             RainbowStrings.Comments,
             tint = MaterialTheme.colorScheme.onBackground
         )

@@ -1,6 +1,7 @@
 package com.rainbow.desktop.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.comment.comments
@@ -10,6 +11,9 @@ import com.rainbow.desktop.components.RainbowLazyColumn
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.posts
+import com.rainbow.desktop.utils.Comments
+import com.rainbow.desktop.utils.Posts
+import com.rainbow.desktop.utils.RainbowIcons
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -32,7 +36,8 @@ fun HomeScreen(
         stickyHeader {
             EnumTabRow(
                 selectedTab,
-                onTabClick = { stateHolder.selectTab(it) }
+                onTabClick = { stateHolder.selectTab(it) },
+                icon = { Icon(it.icon, it.name) }
             )
         }
 
@@ -86,3 +91,9 @@ fun HomeScreen(
         onDispose {}
     }
 }
+
+private val HomeTab.icon
+    get() = when (this) {
+        HomeTab.Posts -> RainbowIcons.Posts
+        HomeTab.Comments -> RainbowIcons.Comments
+    }

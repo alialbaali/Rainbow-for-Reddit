@@ -75,6 +75,7 @@ fun SubredditScreen(
                     ScrollableEnumTabRow(
                         selectedTab = selectedTab,
                         onTabClick = { stateHolder.selectTab(it) },
+                        icon = { Icon(it.icon, it.name) }
                     )
                 }
 
@@ -481,3 +482,12 @@ private fun ModeratorItem(moderator: Moderator, onModeratorClick: (String) -> Un
         }
     }
 }
+
+private val SubredditTab.icon
+    get() = when (this) {
+        SubredditTab.Posts -> RainbowIcons.Posts
+        SubredditTab.About -> RainbowIcons.Info
+        SubredditTab.Wiki -> RainbowIcons.Help
+        SubredditTab.Rules -> RainbowIcons.Gavel
+        SubredditTab.Moderators -> RainbowIcons.AdminPanelSettings
+    }

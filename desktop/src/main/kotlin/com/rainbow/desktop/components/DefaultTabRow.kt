@@ -11,23 +11,21 @@ inline fun <reified T : Enum<T>> ScrollableEnumTabRow(
     selectedTab: T,
     crossinline onTabClick: (T) -> Unit,
     modifier: Modifier = Modifier,
+    noinline icon: (@Composable (T) -> Unit)? = null,
+    crossinline text: @Composable (T) -> Unit = { Text(it.name) },
 ) {
     val values = remember { enumValues<T>() }
     val selectedTabIndex = remember(values, selectedTab) { values.indexOf(selectedTab) }
-    ScrollableTabRow(
-        selectedTabIndex,
-        containerColor = MaterialTheme.colorScheme.surface,
-        modifier = modifier.clip(MaterialTheme.shapes.small),
-        divider = {},
-        contentColor = MaterialTheme.colorScheme.primary,
-    ) {
+    RainbowScrollableTabRow(selectedTabIndex, modifier) {
         values.forEach { tab ->
-            Tab(
+            RainbowTab(
                 selected = tab == selectedTab,
                 onClick = { onTabClick(tab) },
-                text = {
-                    Text(tab.name)
-                }
+                text = { text(tab) },
+                icon = if (icon != null) {
+                    { icon(tab) }
+                } else
+                    null,
             )
         }
     }
@@ -38,24 +36,74 @@ inline fun <reified T : Enum<T>> EnumTabRow(
     selectedTab: T,
     crossinline onTabClick: (T) -> Unit,
     modifier: Modifier = Modifier,
+    noinline icon: (@Composable (T) -> Unit)? = null,
+    crossinline text: @Composable (T) -> Unit = { Text(it.name) },
 ) {
     val values = remember { enumValues<T>() }
     val selectedTabIndex = remember(values, selectedTab) { values.indexOf(selectedTab) }
+    RainbowTabRow(selectedTabIndex, modifier) {
+        values.forEach { tab ->
+            RainbowTab(
+                selected = tab == selectedTab,
+                onClick = { onTabClick(tab) },
+                text = { text(tab) },
+                icon = if (icon != null) {
+                    { icon(tab) }
+                } else
+                    null,
+            )
+        }
+    }
+}
+
+@Composable
+fun RainbowScrollableTabRow(
+    selectedTabIndex: Int,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    ScrollableTabRow(
+        selectedTabIndex,
+        containerColor = MaterialTheme.colorScheme.surface,
+        modifier = modifier.clip(MaterialTheme.shapes.small),
+        divider = {},
+        contentColor = MaterialTheme.colorScheme.primary,
+        tabs = content,
+    )
+}
+
+@Composable
+fun RainbowTabRow(
+    selectedTabIndex: Int,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
     TabRow(
         selectedTabIndex,
         containerColor = MaterialTheme.colorScheme.surface,
         modifier = modifier.clip(MaterialTheme.shapes.small),
         divider = {},
         contentColor = MaterialTheme.colorScheme.primary,
-    ) {
-        values.forEach { tab ->
-            Tab(
-                selected = tab == selectedTab,
-                onClick = { onTabClick(tab) },
-                text = {
-                    Text(tab.name)
-                }
-            )
-        }
-    }
+        tabs = content,
+    )
+}
+
+@Composable
+fun RainbowTab(
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    text: @Composable (() -> Unit)? = null,
+    icon: @Composable (() -> Unit)? = null,
+) {
+    Tab(
+        selected,
+        onClick,
+        modifier,
+        enabled,
+        text,
+        icon,
+        unselectedContentColor = MaterialTheme.colorScheme.surfaceVariant,
+    )
 }

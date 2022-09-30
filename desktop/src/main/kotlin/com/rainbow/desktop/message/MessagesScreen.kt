@@ -1,11 +1,17 @@
 package com.rainbow.desktop.message
 
+import androidx.compose.material.icons.rounded.*
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.components.RainbowLazyColumn
 import com.rainbow.desktop.components.ScrollableEnumTabRow
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
+import com.rainbow.desktop.utils.Comments
+import com.rainbow.desktop.utils.Posts
+import com.rainbow.desktop.utils.RainbowIcons
+import com.rainbow.desktop.utils.User
 
 @Composable
 fun MessagesScreen(
@@ -30,7 +36,8 @@ fun MessagesScreen(
             ScrollableEnumTabRow(
                 selectedTab = selectedTab,
                 onTabClick = stateHolder::selectTab,
-                Modifier.fillParentMaxWidth()
+                Modifier.fillParentMaxWidth(),
+                icon = { Icon(it.icon, it.name) },
             )
         }
         when (selectedTab) {
@@ -146,3 +153,14 @@ fun MessagesScreen(
         onDispose {}
     }
 }
+
+private val MessageTab.icon
+    get() = when (this) {
+        MessageTab.Inbox -> RainbowIcons.Inbox
+        MessageTab.Unread -> RainbowIcons.MarkEmailUnread
+        MessageTab.Sent -> RainbowIcons.Send
+        MessageTab.Messages -> RainbowIcons.Email
+        MessageTab.Mentions -> RainbowIcons.User
+        MessageTab.PostMessages -> RainbowIcons.Posts
+        MessageTab.CommentMessages -> RainbowIcons.Comments
+    }

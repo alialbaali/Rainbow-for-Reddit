@@ -2,16 +2,22 @@ package com.rainbow.desktop.search
 
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.material.icons.rounded.GridView
+import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import com.rainbow.desktop.components.PostSorting
 import com.rainbow.desktop.components.RainbowLazyVerticalGrid
 import com.rainbow.desktop.components.ScrollableEnumTabRow
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
-import com.rainbow.desktop.components.PostSorting
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.subreddit.subreddits
 import com.rainbow.desktop.user.users
+import com.rainbow.desktop.utils.Posts
+import com.rainbow.desktop.utils.RainbowIcons
+import com.rainbow.desktop.utils.User
 
 @Composable
 fun SearchScreen(
@@ -42,7 +48,11 @@ fun SearchScreen(
     RainbowLazyVerticalGrid(appliedModifier, columns = GridCells.Fixed(columnsCount)) {
 
         item(span = { GridItemSpan(maxLineSpan) }) {
-            ScrollableEnumTabRow(selectedTab, stateHolder::selectTab)
+            ScrollableEnumTabRow(
+                selectedTab,
+                stateHolder::selectTab,
+                icon = { Icon(it.icon, it.name) }
+            )
         }
 
         when (selectedTab) {
@@ -102,3 +112,10 @@ fun SearchScreen(
         onDispose {}
     }
 }
+
+private val SearchTab.icon
+    get() = when (this) {
+        SearchTab.Subreddits -> RainbowIcons.GridView
+        SearchTab.Posts -> RainbowIcons.Posts
+        SearchTab.Users -> RainbowIcons.User
+    }

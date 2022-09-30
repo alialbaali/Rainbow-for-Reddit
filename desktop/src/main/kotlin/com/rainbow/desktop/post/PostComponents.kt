@@ -6,7 +6,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.rounded.*
+import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material.icons.rounded.StarBorder
+import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,9 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.desktop.components.*
 import com.rainbow.desktop.ui.RainbowTheme
-import com.rainbow.desktop.utils.OneTimeEffect
-import com.rainbow.desktop.utils.RainbowIcons
-import com.rainbow.desktop.utils.RainbowStrings
+import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.MarkPostAsRead
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.PostLayout
@@ -300,7 +300,7 @@ fun PostOptions(
                 if (post.isHidden) {
                     Icon(RainbowIcons.Visibility, RainbowStrings.UnHide)
                 } else {
-                    Icon(RainbowIcons.VisibilityOff, RainbowStrings.Hide)
+                    Icon(RainbowIcons.Hidden, RainbowStrings.Hide)
                 }
             }
 
@@ -319,7 +319,7 @@ fun PostOptions(
             ) {
                 AnimatedContent(post.isSaved) { isSaved ->
                     if (isSaved) {
-                        Icon(RainbowIcons.Star, RainbowStrings.Unsave)
+                        Icon(RainbowIcons.Saved, RainbowStrings.Unsave)
                     } else {
                         Icon(RainbowIcons.StarBorder, RainbowStrings.Save)
                     }

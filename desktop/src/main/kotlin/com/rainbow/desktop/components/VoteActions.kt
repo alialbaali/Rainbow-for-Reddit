@@ -4,8 +4,6 @@ import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material.icons.rounded.ArrowDownward
-import androidx.compose.material.icons.rounded.ArrowUpward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,9 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.ui.RainbowTheme
-import com.rainbow.desktop.utils.RainbowIcons
-import com.rainbow.desktop.utils.RainbowStrings
-import com.rainbow.desktop.utils.format
+import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.Vote
 
 @Composable
@@ -58,7 +54,7 @@ fun VoteActions(
             checkedContainerColor = MaterialTheme.colorScheme.background,
             hoverContainerColor = MaterialTheme.colorScheme.background,
         ) {
-            Icon(RainbowIcons.ArrowUpward, RainbowStrings.Upvote)
+            Icon(RainbowIcons.Upvote, RainbowStrings.Upvote)
         }
         Text(
             animatedVotesCountFormatted,
@@ -80,7 +76,7 @@ fun VoteActions(
             checkedContainerColor = MaterialTheme.colorScheme.background,
             hoverContainerColor = MaterialTheme.colorScheme.background,
         ) {
-            Icon(RainbowIcons.ArrowDownward, RainbowStrings.Downvote)
+            Icon(RainbowIcons.Downvote, RainbowStrings.Downvote)
         }
     }
 }

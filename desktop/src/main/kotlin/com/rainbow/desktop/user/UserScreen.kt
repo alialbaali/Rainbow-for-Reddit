@@ -1,18 +1,20 @@
 package com.rainbow.desktop.user
 
+import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.comment.comments
+import com.rainbow.desktop.components.PostSorting
 import com.rainbow.desktop.components.RainbowLazyColumn
 import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.components.ScrollableEnumTabRow
 import com.rainbow.desktop.item.items
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
-import com.rainbow.desktop.components.PostSorting
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.profile.Header
-import com.rainbow.desktop.utils.fold
+import com.rainbow.desktop.utils.*
 
 @Composable
 fun UserScreen(
@@ -50,6 +52,7 @@ fun UserScreen(
                     ScrollableEnumTabRow(
                         selectedTab = selectedTab,
                         onTabClick = { stateHolder.selectTab(it) },
+                        icon = { Icon(it.icon, it.name) }
                     )
                 }
             },
@@ -147,3 +150,10 @@ fun UserScreen(
         onDispose {}
     }
 }
+
+private val UserTab.icon
+    get() = when (this) {
+        UserTab.Overview -> RainbowIcons.User
+        UserTab.Submitted -> RainbowIcons.Posts
+        UserTab.Comments -> RainbowIcons.Comments
+    }

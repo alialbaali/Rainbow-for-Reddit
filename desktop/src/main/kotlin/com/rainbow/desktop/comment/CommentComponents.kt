@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -18,6 +17,7 @@ import com.rainbow.desktop.components.*
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
+import com.rainbow.desktop.utils.Saved
 import com.rainbow.desktop.utils.countRecursively
 import com.rainbow.domain.models.Comment
 
@@ -100,7 +100,7 @@ fun CommentOptions(
             ) {
                 AnimatedContent(comment.isSaved) { isSaved ->
                     if (isSaved) {
-                        Icon(RainbowIcons.Star, RainbowStrings.Unsave)
+                        Icon(RainbowIcons.Saved, RainbowStrings.Unsave)
                     } else {
                         Icon(RainbowIcons.StarBorder, RainbowStrings.Save)
                     }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -19,9 +20,7 @@ import com.rainbow.desktop.item.items
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.posts
-import com.rainbow.desktop.utils.RainbowStrings
-import com.rainbow.desktop.utils.defaultPadding
-import com.rainbow.desktop.utils.fold
+import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.User
 
 @Composable
@@ -71,6 +70,7 @@ fun ProfileScreen(
                     ScrollableEnumTabRow(
                         selectedTab = selectedTab,
                         onTabClick = { stateHolder.selectTab(it) },
+                        icon = { Icon(it.icon, it.name) }
                     )
                 }
             },
@@ -331,3 +331,14 @@ fun Header(user: User, modifier: Modifier = Modifier) {
 //        )
     }
 }
+
+private val ProfileTab.icon
+    get() = when (this) {
+        ProfileTab.Overview -> RainbowIcons.User
+        ProfileTab.Submitted -> RainbowIcons.Posts
+        ProfileTab.Saved -> RainbowIcons.Saved
+        ProfileTab.Hidden -> RainbowIcons.Hidden
+        ProfileTab.Upvoted -> RainbowIcons.Upvote
+        ProfileTab.Downvoted -> RainbowIcons.Downvote
+        ProfileTab.Comments -> RainbowIcons.Comments
+    }
