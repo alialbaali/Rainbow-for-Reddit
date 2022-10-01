@@ -2,10 +2,8 @@ package com.rainbow.desktop.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Link
 import androidx.compose.material.icons.rounded.OpenInBrowser
 import androidx.compose.material.icons.rounded.PushPin
@@ -24,6 +22,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.halilibo.richtext.markdown.Markdown
 import com.halilibo.richtext.ui.RichText
+import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.formatDisplayTime
@@ -136,6 +135,25 @@ fun CreationDate(date: Instant, modifier: Modifier = Modifier) {
         color = MaterialTheme.colorScheme.surfaceVariant,
         style = MaterialTheme.typography.labelLarge,
     )
+}
+
+@Composable
+fun EditionDate(date: Instant, modifier: Modifier = Modifier) {
+    val displayTime = remember(date) { date.formatDisplayTime() }
+    Row(modifier, Arrangement.spacedBy(RainbowTheme.dimensions.small), Alignment.CenterVertically) {
+        Icon(
+            RainbowIcons.Edit,
+            RainbowStrings.Edited,
+            Modifier.size(20.dp),
+            MaterialTheme.colorScheme.surfaceVariant
+        )
+
+        Text(
+            displayTime,
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            style = MaterialTheme.typography.labelLarge,
+        )
+    }
 }
 
 @Composable

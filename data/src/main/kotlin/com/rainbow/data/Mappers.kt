@@ -3,6 +3,7 @@ package com.rainbow.data
 import com.rainbow.data.utils.toLongColor
 import com.rainbow.domain.models.*
 import com.rainbow.domain.models.Rule
+import com.rainbow.remote.NullableEditionDate
 import com.rainbow.remote.dto.*
 import io.ktor.http.*
 import kotlinx.datetime.Clock
@@ -73,11 +74,11 @@ internal object Mappers {
                 isSaved = saved ?: false,
                 isPinned = pinned!!,
                 creationDate = created.toInstant(),
+                editionDate = edited.takeIf { it != NullableEditionDate }.toInstantOrNull(),
                 isMine = isSelf!!,
                 isHidden = hidden!!,
                 vote = likes.toVote(),
                 isNSFW = over18!!,
-                isEdited = false,
                 isSticky = stickied ?: false,
                 isMod = distinguished != null,
                 flair = FlairMapper.map(
@@ -152,8 +153,8 @@ internal object Mappers {
                     body = body ?: "",
                     votesCount = ups ?: 0,
                     creationDate = created.toInstant(),
+                    editionDate = edited.takeIf { it != NullableEditionDate }.toInstantOrNull(),
                     vote = likes.toVote(),
-                    isEdited = false,
                     isSaved = saved ?: false,
                     isSticky = stickied ?: false,
                     isMod = distinguished != null,
@@ -369,6 +370,8 @@ internal object Mappers {
     private fun String.getPostId() = "t3_" + substringAfter("comments/").substringBefore("/")
 
     private fun Double?.toInstant() = this?.toLong()?.let(Instant.Companion::fromEpochSeconds) ?: CurrentDate
+
+    private fun Double?.toInstantOrNull() = this?.toLong()?.let(Instant.Companion::fromEpochSeconds)
 
     private val CurrentDate
         get() = Clock.System.now()

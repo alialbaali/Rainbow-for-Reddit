@@ -23,7 +23,6 @@ data class Post(
     val isLocked: Boolean = false,
     val isSpoiler: Boolean = false,
     val isPinned: Boolean = false,
-    val isEdited: Boolean = false,
     val isMine: Boolean = false,
     val isSaved: Boolean = false,
     val isHidden: Boolean = false,
@@ -36,6 +35,7 @@ data class Post(
     val userFlair: Flair,
     val url: String,
     val creationDate: Instant,
+    val editionDate: Instant?
 ) : Item {
     sealed interface Type {
         object None : Type

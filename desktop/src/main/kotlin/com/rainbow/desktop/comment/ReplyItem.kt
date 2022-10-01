@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.BoxLine
+import com.rainbow.desktop.components.EditionDate
 import com.rainbow.desktop.components.ExpandableText
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.RainbowStrings
@@ -50,6 +51,9 @@ fun ReplyItem(
                 )
                 SelectionContainer {
                     ExpandableText(reply.body, style = MaterialTheme.typography.bodyLarge)
+                }
+                reply.editionDate?.let { editionDate ->
+                    EditionDate(editionDate)
                 }
                 CommentOptions(reply, onClick, onShowSnackbar)
             }

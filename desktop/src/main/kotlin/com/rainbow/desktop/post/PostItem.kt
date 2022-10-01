@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.rainbow.desktop.components.EditionDate
 import com.rainbow.desktop.components.FlairItem
 import com.rainbow.desktop.components.FlairStyle
 import com.rainbow.desktop.components.StickyIcon
@@ -64,6 +65,9 @@ fun CompactPostItem(
                                 body = body,
                                 postLayout = PostLayout.Compact,
                             )
+                        }
+                        post.editionDate?.let { editionDate ->
+                            EditionDate(editionDate)
                         }
                     }
                     PostContent(
@@ -128,6 +132,9 @@ fun CardPostItem(
                         .fillMaxWidth()
                         .height(CardPostItemContentSize),
                 )
+                post.editionDate?.let { editionDate ->
+                    EditionDate(editionDate)
+                }
                 PostOptions(post, onShowSnackbar)
             }
         }
@@ -181,6 +188,9 @@ fun LargePostItem(
                         .fillMaxWidth()
                         .wrapContentHeight(),
                 )
+                post.editionDate?.let { editionDate ->
+                    EditionDate(editionDate)
+                }
                 PostOptions(post, onShowSnackbar)
             }
         }

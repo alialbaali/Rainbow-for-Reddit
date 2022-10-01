@@ -10,6 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.rainbow.desktop.components.EditionDate
 import com.rainbow.desktop.components.ExpandableText
 import com.rainbow.desktop.components.StickyIcon
 import com.rainbow.desktop.utils.defaultPadding
@@ -43,6 +44,9 @@ fun CommentItem(
                     onSubredditNameClick,
                 )
                 ExpandableText(comment.body)
+                comment.editionDate?.let { editionDate ->
+                    EditionDate(editionDate)
+                }
                 CommentOptions(comment, onRepliesCountClick = null, onShowSnackbar)
             }
         }

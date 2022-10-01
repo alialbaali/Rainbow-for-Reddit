@@ -11,6 +11,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.rainbow.desktop.components.EditionDate
 import com.rainbow.desktop.components.ExpandableText
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.RainbowStrings
@@ -47,6 +48,9 @@ fun PostCommentItem(
             )
             SelectionContainer {
                 ExpandableText(comment.body, style = MaterialTheme.typography.bodyLarge)
+            }
+            comment.editionDate?.let { editionDate ->
+                EditionDate(editionDate)
             }
             CommentOptions(comment, onClick, onShowSnackbar)
         }

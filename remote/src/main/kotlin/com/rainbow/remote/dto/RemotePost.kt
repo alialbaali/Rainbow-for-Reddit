@@ -1,6 +1,7 @@
 package com.rainbow.remote.dto
 
 
+import com.rainbow.remote.EditedTransformingSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -68,8 +69,9 @@ data class RemotePost(
     val domain: String? = null, // self.AskReddit
     @SerialName("downs")
     val downs: Int? = null, // 0
-//    @SerialName("edited")
-//    val edited: Boolean? = null, // false
+    @Serializable(EditedTransformingSerializer::class)
+    @SerialName("edited")
+    val edited: Double? = null, // false
     @SerialName("gilded")
     val gilded: Int? = null, // 0
 //    @SerialName("gildings")

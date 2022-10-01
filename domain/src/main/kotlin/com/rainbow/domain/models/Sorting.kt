@@ -11,7 +11,7 @@ enum class TimeSorting {
     Month, Year, All;
 
     companion object {
-        val Default = Week
+        val Default = Day
     }
 }
 

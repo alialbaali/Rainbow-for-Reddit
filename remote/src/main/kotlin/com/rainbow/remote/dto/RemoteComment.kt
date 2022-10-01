@@ -1,11 +1,11 @@
 package com.rainbow.remote.dto
 
+import com.rainbow.remote.EditedTransformingSerializer
 import com.rainbow.remote.Item
 import com.rainbow.remote.Listing
 import com.rainbow.remote.toList
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.*
 
 @Serializable
@@ -76,9 +76,9 @@ data class RemoteComment internal constructor(
     val distinguished: String? = null, // null
     @SerialName("downs")
     val downs: Int? = null, // 0
-//    @Serializable(EditedTransformingSerializer::class)
-//    @SerialName("edited")
-//    val edited: Boolean? = null, // false
+    @Serializable(EditedTransformingSerializer::class)
+    @SerialName("edited")
+    val edited: Double? = null, // false
     @SerialName("gilded")
     val gilded: Int? = null, // 0
 //    @SerialName("gildings")
@@ -163,14 +163,6 @@ private object RepliesTransformingSerializer : JsonTransformingSerializer<Item<L
             JsonObject(mapOf("data" to JsonObject(mapOf("children" to JsonArray(emptyList())))))
         else
             element
-        return super.transformDeserialize(result)
-    }
-}
-
-private object EditedTransformingSerializer : JsonTransformingSerializer<Boolean>(Boolean.serializer()) {
-    override fun transformDeserialize(element: JsonElement): JsonElement {
-        val edited = element.jsonPrimitive.booleanOrNull ?: true
-        val result = JsonObject(mapOf("edited" to JsonPrimitive(edited)))
         return super.transformDeserialize(result)
     }
 }
