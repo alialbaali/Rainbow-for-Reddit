@@ -45,6 +45,7 @@ object RainbowStrings {
     const val Language = "Language"
     const val English = "English"
     const val EmptyDescription = "No description available."
+    const val Mod = "Mod"
     const val Sticky = "Sticky"
     const val Select = "No description available."
     const val Selected = "Selected"

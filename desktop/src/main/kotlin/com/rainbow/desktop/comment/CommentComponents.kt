@@ -42,6 +42,7 @@ fun CommentInfo(
             comment.userName,
             comment.user?.imageUrl,
             isCakeDay = comment.user?.isCakeDay == true,
+            comment.isMod,
             onUserNameClick,
         )
     }

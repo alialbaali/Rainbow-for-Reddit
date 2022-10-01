@@ -62,8 +62,8 @@ data class RemotePost(
     val createdUtc: Double? = null, // 1613648272.0
 //    @SerialName("discussion_type")
 //    val discussionType: Any? = null, // null
-//    @SerialName("distinguished")
-//    val distinguished: Boolean? = null, // null
+    @SerialName("distinguished")
+    val distinguished: String? = null, // null
     @SerialName("domain")
     val domain: String? = null, // self.AskReddit
     @SerialName("downs")

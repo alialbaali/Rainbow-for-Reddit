@@ -72,8 +72,8 @@ data class RemoteComment internal constructor(
     val createdUtc: Double? = null, // 1612444773.0
     @SerialName("depth")
     val depth: Int? = null, // 0
-//    @SerialName("distinguished")
-//    val distinguished: Boolean? = null, // null
+    @SerialName("distinguished")
+    val distinguished: String? = null, // null
     @SerialName("downs")
     val downs: Int? = null, // 0
 //    @Serializable(EditedTransformingSerializer::class)

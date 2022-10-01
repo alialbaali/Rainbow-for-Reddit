@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.rounded.Cake
+import androidx.compose.material.icons.rounded.VerifiedUser
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,7 +33,8 @@ private val SubredditIconSize = 50.dp
 private val UserIconSize = 30.dp
 private val UserIconOffset = 8.dp
 private val UserIconBorderWidth = 3.dp
-private val CakeDaySize = 20.dp
+private val CakeDayIconSize = 20.dp
+private val ModIconSize = 20.dp
 
 @Composable
 fun ItemInfo(
@@ -62,12 +64,21 @@ fun ItemInfo(
                         MaterialTheme.colorScheme.surfaceVariant
                     CommentUserName(userInfo.name, commentInfo.isOP, userInfo.onClick, color = color)
                 }
+                if (userInfo.isMod) {
+                    Spacer(Modifier.width(RainbowTheme.dimensions.extraSmall))
+                    Icon(
+                        RainbowIcons.VerifiedUser,
+                        RainbowStrings.Mod,
+                        Modifier.size(ModIconSize),
+                        MaterialTheme.colorScheme.surfaceVariant,
+                    )
+                }
                 if (userInfo.isCakeDay) {
                     Dot()
                     Icon(
                         RainbowIcons.Cake,
                         RainbowStrings.CakeDay,
-                        Modifier.size(CakeDaySize),
+                        Modifier.size(CakeDayIconSize),
                         MaterialTheme.colorScheme.secondary
                     )
                 }
@@ -187,6 +198,7 @@ data class UserInfo(
     val name: String,
     val imageUrl: String?,
     val isCakeDay: Boolean,
+    val isMod: Boolean,
     val onClick: (String) -> Unit,
 )
 

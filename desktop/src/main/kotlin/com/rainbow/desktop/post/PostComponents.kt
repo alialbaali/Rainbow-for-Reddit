@@ -59,6 +59,7 @@ fun PostInfo(
             post.userName,
             post.user?.imageUrl,
             isCakeDay = post.user?.isCakeDay == true,
+            post.isMod,
             onUserNameClick,
         )
     }
