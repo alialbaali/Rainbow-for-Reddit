@@ -78,6 +78,7 @@ internal object Mappers {
                 vote = likes.toVote(),
                 isNSFW = over18!!,
                 isEdited = false,
+                isSticky = stickied ?: false,
                 flair = FlairMapper.map(
                     RemoteFlair(
                         id = linkFlairTemplateId,
@@ -153,6 +154,7 @@ internal object Mappers {
                     vote = likes.toVote(),
                     isEdited = false,
                     isSaved = saved ?: false,
+                    isSticky = stickied ?: false,
                     replies = replies?.quickMap(CommentMapper) ?: emptyList(),
                     type = when {
                         children == null -> Comment.Type.None

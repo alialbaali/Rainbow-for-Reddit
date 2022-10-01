@@ -28,6 +28,7 @@ data class Post(
     val isSaved: Boolean = false,
     val isHidden: Boolean = false,
     val isRead: Boolean = false,
+    val isSticky: Boolean = false,
     val vote: Vote = Vote.None,
     val awards: List<Award> = emptyList(),
     val flair: Flair,

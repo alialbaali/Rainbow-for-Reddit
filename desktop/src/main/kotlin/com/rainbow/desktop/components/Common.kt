@@ -3,9 +3,12 @@ package com.rainbow.desktop.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.material.icons.rounded.Link
 import androidx.compose.material.icons.rounded.OpenInBrowser
+import androidx.compose.material.icons.rounded.PushPin
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,12 +21,25 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
 import com.halilibo.richtext.markdown.Markdown
 import com.halilibo.richtext.ui.RichText
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
 import com.rainbow.desktop.utils.formatDisplayTime
 import kotlinx.datetime.Instant
+
+@Composable
+fun BoxScope.StickyIcon() {
+    Icon(
+        RainbowIcons.PushPin,
+        RainbowStrings.Sticky,
+        Modifier
+            .offset(x = 8.dp, (-8).dp)
+            .align(Alignment.TopEnd),
+        MaterialTheme.colorScheme.primary
+    )
+}
 
 @Composable
 fun OpenInBrowserDropdownMenuItem(

@@ -21,6 +21,7 @@ data class Comment(
     val awards: List<Award> = emptyList(),
     val isEdited: Boolean = false,
     val isSaved: Boolean = false,
+    val isSticky: Boolean = false,
     val vote: Vote = Vote.None,
     val flair: Flair, // make it nullable when it's empty?
     val creationDate: Instant,

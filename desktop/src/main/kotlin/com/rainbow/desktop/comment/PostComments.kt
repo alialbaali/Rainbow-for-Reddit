@@ -2,6 +2,7 @@ package com.rainbow.desktop.comment
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyListScope
@@ -15,6 +16,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.rainbow.desktop.components.RainbowProgressIndicator
+import com.rainbow.desktop.components.StickyIcon
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.getOrDefault
 import com.rainbow.domain.models.Comment
@@ -36,20 +38,24 @@ fun LazyListScope.postComments(
         item {
             val isRepliesVisible = commentsVisibility[comment.id] ?: true
             when (val commentType = comment.type) {
-                is Comment.Type.None -> PostCommentItem(
-                    comment,
-                    postUserName,
-                    onClick = {
-                        onCommentVisibilityChanged(
-                            comment.id,
-                            commentsVisibility[comment.id]?.not() ?: false
-                        )
-                    },
-                    onUserNameClick,
-                    onSubredditNameClick,
-                    onShowSnackbar,
-                    modifier.clip(comment.replies.isEmpty(), isRepliesVisible),
-                )
+                is Comment.Type.None -> Box {
+                    PostCommentItem(
+                        comment,
+                        postUserName,
+                        onClick = {
+                            onCommentVisibilityChanged(
+                                comment.id,
+                                commentsVisibility[comment.id]?.not() ?: false
+                            )
+                        },
+                        onUserNameClick,
+                        onSubredditNameClick,
+                        onShowSnackbar,
+                        modifier.clip(comment.replies.isEmpty(), isRepliesVisible),
+                    )
+
+                    if (comment.isSticky) StickyIcon()
+                }
 
 //                is Comment.Type.MoreComments -> MoreCommentsItem(
 //                    onClick = {
