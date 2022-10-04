@@ -12,7 +12,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.ui.headerImageBorder
 import io.kamel.image.KamelImage
@@ -65,7 +64,7 @@ fun ItemHeader(bannerImageUrl: String, imageUrl: String, text: String, modifier:
             contentDescription = text,
             modifier = ImageModifier,
             onLoading = { RainbowProgressIndicator(ImageModifier) },
-            onFailure = { TextBox(text, 40.sp, ImageModifier) }
+            onFailure = { LetterBox(text, LetterBoxSize.Large, ImageModifier) }
         )
     }
 }

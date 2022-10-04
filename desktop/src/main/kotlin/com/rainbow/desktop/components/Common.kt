@@ -171,19 +171,3 @@ fun NSFWBox(modifier: Modifier = Modifier) {
             .background(Color.Red)
     )
 }
-
-@Composable
-fun TextBox(
-    text: String,
-    fontSize: TextUnit,
-    modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.inverseOnSurface,
-) {
-    Box(modifier, Alignment.Center) {
-        Text(
-            text.first().toString().uppercase(),
-            color = color,
-            fontSize = fontSize,
-        )
-    }
-}

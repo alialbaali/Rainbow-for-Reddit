@@ -111,7 +111,7 @@ fun ScreenHeader(
             modifier = ImageModifier(imageShape),
             contentScale = ContentScale.Fit,
             onLoading = { RainbowProgressIndicator(ImageModifier(imageShape)) },
-            onFailure = { TextBox(title, 150.sp, ImageModifier(imageShape)) },
+            onFailure = { LetterBox(title, LetterBoxSize.ExtraLarge, ImageModifier(imageShape)) },
             animationSpec = tween(),
         )
 

@@ -123,11 +123,11 @@ private fun ItemInfoImages(userInfo: UserInfo, subredditInfo: SubredditInfo?, mo
                             .align(Alignment.Center),
                         contentAlignment = Alignment.Center
                     ) {
-                        TextBox(
+                        LetterBox(
                             subredditInfo.name,
-                            fontSize = 30.sp,
-                            color = MaterialTheme.colorScheme.surface,
-                            modifier = Modifier.fillMaxSize(),
+                            LetterBoxSize.Medium,
+                            Modifier.fillMaxSize(),
+                            MaterialTheme.colorScheme.surface,
                         )
                     }
                 },
@@ -154,11 +154,11 @@ private fun ItemInfoImages(userInfo: UserInfo, subredditInfo: SubredditInfo?, mo
                         .align(userIconAlignment),
                     contentAlignment = Alignment.Center
                 ) {
-                    TextBox(
+                    LetterBox(
                         userInfo.name,
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.surface,
-                        modifier = Modifier.fillMaxSize(),
+                        LetterBoxSize.Small,
+                        Modifier.fillMaxSize(),
+                        MaterialTheme.colorScheme.surface,
                     )
                 }
             },
