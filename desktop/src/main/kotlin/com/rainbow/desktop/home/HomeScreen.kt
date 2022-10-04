@@ -14,6 +14,7 @@ import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.utils.Comments
 import com.rainbow.desktop.utils.Posts
 import com.rainbow.desktop.utils.RainbowIcons
+import com.rainbow.desktop.utils.getOrDefault
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -24,13 +25,15 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
     val stateHolder = remember { HomeScreenStateHolder.Instance }
-    val posts by stateHolder.postsStateHolder.items.collectAsState()
+    val postsState by stateHolder.postsStateHolder.items.collectAsState()
     val postSorting by stateHolder.postsStateHolder.sorting.collectAsState()
     val timeSorting by stateHolder.postsStateHolder.timeSorting.collectAsState()
-    val comments by stateHolder.commentsStateHolder.items.collectAsState()
+    val commentsState by stateHolder.commentsStateHolder.items.collectAsState()
     val selectedTab by stateHolder.selectedTab.collectAsState()
     val selectedItemIds by stateHolder.selectedItemIds.collectAsState()
     val postLayout by stateHolder.postLayout.collectAsState()
+    val posts = remember(postsState) { postsState.getOrDefault(emptyList()) }
+    val comments = remember(commentsState) { commentsState.getOrDefault(emptyList()) }
 
     RainbowLazyColumn(modifier) {
         stickyHeader {

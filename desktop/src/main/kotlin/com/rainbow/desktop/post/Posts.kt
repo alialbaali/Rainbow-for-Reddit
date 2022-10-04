@@ -16,14 +16,13 @@ import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.PostLayout
 
 fun LazyListScope.posts(
-    state: UIState<List<Post>>,
+    posts: List<Post>,
     postLayout: PostLayout,
     onNavigateMainScreen: (MainScreen) -> Unit,
     onNavigateDetailsScreen: (DetailsScreen) -> Unit,
     onShowSnackbar: (String) -> Unit,
     onLoadMore: (Post) -> Unit,
 ) {
-    val posts = state.getOrDefault(emptyList())
     val onPostClick = { postId: String ->
         onNavigateDetailsScreen(DetailsScreen.Post(postId))
     }
@@ -67,25 +66,18 @@ fun LazyListScope.posts(
 
         PagingEffect(index, posts.lastIndex) {
             onLoadMore(post)
-        }
-    }
-
-    if (state.isLoading) {
-        item {
-            RainbowProgressIndicator()
         }
     }
 }
 
 fun LazyGridScope.posts(
-    state: UIState<List<Post>>,
+    posts: List<Post>,
     postLayout: PostLayout,
     onNavigateMainScreen: (MainScreen) -> Unit,
     onNavigateDetailsScreen: (DetailsScreen) -> Unit,
     onShowSnackbar: (String) -> Unit,
     onLoadMore: (Post) -> Unit,
 ) {
-    val posts = state.getOrDefault(emptyList())
     val onPostClick = { postId: String ->
         onNavigateDetailsScreen(DetailsScreen.Post(postId))
     }
@@ -129,12 +121,6 @@ fun LazyGridScope.posts(
 
         PagingEffect(index, posts.lastIndex) {
             onLoadMore(post)
-        }
-    }
-
-    if (state.isLoading) {
-        item {
-            RainbowProgressIndicator()
         }
     }
 }

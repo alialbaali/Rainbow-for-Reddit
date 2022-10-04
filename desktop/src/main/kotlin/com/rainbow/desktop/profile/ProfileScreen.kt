@@ -34,24 +34,31 @@ fun ProfileScreen(
     val selectedTab by stateHolder.selectedTab.collectAsState(ProfileTab.Overview)
     val userState by stateHolder.currentUser.collectAsState()
     val overviewItemsState by stateHolder.overviewItemsStateHolder.items.collectAsState()
+    val overviewItems = remember(overviewItemsState) { overviewItemsState.getOrDefault(emptyList()) }
     val overviewItemsSorting by stateHolder.overviewItemsStateHolder.sorting.collectAsState()
     val overviewItemsTimeSorting by stateHolder.overviewItemsStateHolder.timeSorting.collectAsState()
     val savedItemsState by stateHolder.savedItemsStateHolder.items.collectAsState()
+    val savedItems = remember(savedItemsState) { savedItemsState.getOrDefault(emptyList()) }
     val savedItemsSorting by stateHolder.savedItemsStateHolder.sorting.collectAsState()
     val savedItemsTimeSorting by stateHolder.savedItemsStateHolder.timeSorting.collectAsState()
     val submittedPostsState by stateHolder.submittedPostsStateHolder.items.collectAsState()
+    val submittedPosts = remember(submittedPostsState) { submittedPostsState.getOrDefault(emptyList()) }
     val submittedPostsSorting by stateHolder.submittedPostsStateHolder.sorting.collectAsState()
     val submittedPostsTimeSorting by stateHolder.submittedPostsStateHolder.timeSorting.collectAsState()
     val upvotedPostsState by stateHolder.upvotedPostsStateHolder.items.collectAsState()
+    val upvotedPosts = remember(upvotedPostsState) { upvotedPostsState.getOrDefault(emptyList()) }
     val upvotedPostsSorting by stateHolder.upvotedPostsStateHolder.sorting.collectAsState()
     val upvotedPostsTimeSorting by stateHolder.upvotedPostsStateHolder.timeSorting.collectAsState()
     val downvotedPostsState by stateHolder.downvotedPostsStateHolder.items.collectAsState()
+    val downvotedPosts = remember(downvotedPostsState) { downvotedPostsState.getOrDefault(emptyList()) }
     val downvotedPostsSorting by stateHolder.downvotedPostsStateHolder.sorting.collectAsState()
     val downvotedPostsTimeSorting by stateHolder.downvotedPostsStateHolder.timeSorting.collectAsState()
     val hiddenPostsState by stateHolder.hiddenPostsStateHolder.items.collectAsState()
+    val hiddenPosts = remember(hiddenPostsState) { hiddenPostsState.getOrDefault(emptyList()) }
     val hiddenPostsSorting by stateHolder.hiddenPostsStateHolder.sorting.collectAsState()
     val hiddenPostsTimeSorting by stateHolder.hiddenPostsStateHolder.timeSorting.collectAsState()
     val commentsState by stateHolder.commentsStateHolder.items.collectAsState()
+    val comments = remember(commentsState) { commentsState.getOrDefault(emptyList()) }
     val commentsSorting by stateHolder.commentsStateHolder.sorting.collectAsState()
     val commentsTimeSorting by stateHolder.commentsStateHolder.timeSorting.collectAsState()
     val selectedItemIds by stateHolder.selectedItemIds.collectAsState()
@@ -92,7 +99,7 @@ fun ProfileScreen(
                 }
 
                 items(
-                    overviewItemsState,
+                    overviewItems,
                     postLayout,
                     onNavigateMainScreen,
                     onNavigateDetailsScreen = { detailsScreen ->
@@ -117,7 +124,7 @@ fun ProfileScreen(
                 }
 
                 items(
-                    savedItemsState,
+                    savedItems,
                     postLayout,
                     onNavigateMainScreen,
                     onNavigateDetailsScreen = { detailsScreen ->
@@ -142,7 +149,7 @@ fun ProfileScreen(
                 }
 
                 comments(
-                    commentsState,
+                    comments,
                     onNavigateMainScreen,
                     onNavigateDetailsScreen = { detailsScreen ->
                         if (detailsScreen is DetailsScreen.Post) {
@@ -166,7 +173,7 @@ fun ProfileScreen(
                 }
 
                 posts(
-                    submittedPostsState,
+                    submittedPosts,
                     postLayout,
                     onNavigateMainScreen,
                     onNavigateDetailsScreen = { detailsScreen ->
@@ -191,7 +198,7 @@ fun ProfileScreen(
                 }
 
                 posts(
-                    hiddenPostsState,
+                    hiddenPosts,
                     postLayout,
                     onNavigateMainScreen,
                     onNavigateDetailsScreen = { detailsScreen ->
@@ -216,7 +223,7 @@ fun ProfileScreen(
                 }
 
                 posts(
-                    upvotedPostsState,
+                    upvotedPosts,
                     postLayout,
                     onNavigateMainScreen,
                     onNavigateDetailsScreen = { detailsScreen ->
@@ -241,7 +248,7 @@ fun ProfileScreen(
                 }
 
                 posts(
-                    downvotedPostsState,
+                    downvotedPosts,
                     postLayout,
                     onNavigateMainScreen,
                     onNavigateDetailsScreen = { detailsScreen ->
@@ -253,6 +260,16 @@ fun ProfileScreen(
                     onShowSnackbar,
                     stateHolder.downvotedPostsStateHolder::setLastItem,
                 )
+            }
+        }
+
+        if (
+            overviewItemsState.isLoading || submittedPostsState.isLoading || savedItemsState.isLoading
+            || commentsState.isLoading || downvotedPostsState.isLoading || hiddenPostsState.isLoading
+            || upvotedPostsState.isLoading
+        ) {
+            item {
+                RainbowProgressIndicator()
             }
         }
     }

@@ -3,21 +3,22 @@ package com.rainbow.desktop.search
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.material.icons.rounded.GridView
-import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.components.PostSorting
 import com.rainbow.desktop.components.RainbowLazyVerticalGrid
+import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.components.ScrollableEnumTabRow
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.posts
-import com.rainbow.desktop.subreddit.subreddits
+import com.rainbow.desktop.subreddit.searchSubreddits
 import com.rainbow.desktop.user.users
 import com.rainbow.desktop.utils.Posts
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.User
+import com.rainbow.desktop.utils.getOrDefault
 
 @Composable
 fun SearchScreen(
@@ -44,6 +45,9 @@ fun SearchScreen(
             SearchTab.Users -> 4
         }
     }
+    val subreddits = remember(subredditsState) { subredditsState.getOrDefault(emptyList()) }
+    val posts = remember(postsState) { postsState.getOrDefault(emptyList()) }
+    val users = remember(usersState) { usersState.getOrDefault(emptyList()) }
 
     RainbowLazyVerticalGrid(appliedModifier, columns = GridCells.Fixed(columnsCount)) {
 
@@ -57,8 +61,8 @@ fun SearchScreen(
 
         when (selectedTab) {
             SearchTab.Subreddits -> {
-                subreddits(
-                    subredditsState,
+                searchSubreddits(
+                    subreddits,
                     onNavigateMainScreen,
                     onShowSnackbar,
                     stateHolder.subredditsStateHolder::setLastItem,
@@ -76,7 +80,7 @@ fun SearchScreen(
                 }
 
                 posts(
-                    postsState,
+                    posts,
                     postLayout,
                     onNavigateMainScreen,
                     onNavigateDetailsScreen = { detailsScreen ->
@@ -92,11 +96,17 @@ fun SearchScreen(
 
             SearchTab.Users -> {
                 users(
-                    usersState,
+                    users,
                     onNavigateMainScreen,
                     onShowSnackbar,
                     stateHolder.usersStateHolder::setLastItem,
                 )
+            }
+        }
+
+        if (subredditsState.isLoading || usersState.isLoading || postsState.isLoading) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                RainbowProgressIndicator()
             }
         }
     }

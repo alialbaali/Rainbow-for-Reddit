@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.components.RainbowTextField
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.ui.dimensions
@@ -34,6 +35,7 @@ fun SubredditsScreen(
     val subredditsState by stateHolder.subredditsStateHolder.items.collectAsState()
     val searchTerm by stateHolder.searchTerm.collectAsState()
     val subreddits = remember(subredditsState) { subredditsState.getOrDefault(emptyList()) }
+    val (favoriteSubreddits, notFavoriteSubreddits) = remember(subreddits) { subreddits.partition { it.isFavorite } }
     LazyVerticalGrid(
         columns = GridCells.Fixed(Span),
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimensions.medium),
@@ -57,11 +59,12 @@ fun SubredditsScreen(
             }
         }
 
-        subreddits(
-            subredditsState,
-            onNavigateMainScreen,
-            onShowSnackbar,
-            onLoadMore = {}
-        )
+        subreddits(favoriteSubreddits, notFavoriteSubreddits, onNavigateMainScreen, onShowSnackbar)
+
+        if (subredditsState.isLoading) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                RainbowProgressIndicator()
+            }
+        }
     }
 }

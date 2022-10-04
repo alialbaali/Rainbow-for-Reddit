@@ -1,23 +1,18 @@
 package com.rainbow.desktop.user
 
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.utils.PagingEffect
-import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.getOrDefault
 import com.rainbow.domain.models.User
 
 fun LazyGridScope.users(
-    state: UIState<List<User>>,
+    users: List<User>,
     onNavigateMainScreen: (MainScreen) -> Unit,
     onShowSnackbar: (String) -> Unit,
     onLoadMore: (User) -> Unit,
 ) {
-    val users = state.getOrDefault(emptyList())
-
     itemsIndexed(users) { index, user ->
         UserItem(
             user,
@@ -26,12 +21,6 @@ fun LazyGridScope.users(
         )
         PagingEffect(index, users.lastIndex) {
             onLoadMore(user)
-        }
-    }
-
-    if (state.isLoading) {
-        item(span = { GridItemSpan(maxLineSpan) }) {
-            RainbowProgressIndicator()
         }
     }
 }

@@ -35,6 +35,7 @@ fun SubredditScreen(
 ) {
     val stateHolder = remember(subredditName) { SubredditScreenStateHolder.getInstance(subredditName) }
     val postsState by stateHolder.postsStateHolder.items.collectAsState()
+    val posts = remember(postsState) { postsState.getOrDefault(emptyList()) }
     val moderatorsState by stateHolder.moderators.collectAsState()
     val subredditState by stateHolder.subreddit.collectAsState()
     val selectedTab by stateHolder.selectedTab.collectAsState()
@@ -93,7 +94,7 @@ fun SubredditScreen(
 
                 when (selectedTab) {
                     SubredditTab.Posts -> posts(
-                        postsState,
+                        posts,
                         postLayout,
                         onNavigateMainScreen,
                         onNavigateDetailsScreen = { detailsScreen ->

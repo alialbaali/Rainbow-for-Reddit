@@ -7,6 +7,7 @@ import com.rainbow.desktop.components.RainbowLazyColumn
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.posts
+import com.rainbow.desktop.utils.getOrDefault
 
 @Composable
 fun PopularScreen(
@@ -16,11 +17,12 @@ fun PopularScreen(
     modifier: Modifier = Modifier,
 ) {
     val stateHolder = remember { PopularScreenStateHolder.Instance }
-    val posts by stateHolder.postsStateHolder.items.collectAsState()
+    val postsState by stateHolder.postsStateHolder.items.collectAsState()
     val postSorting by stateHolder.postsStateHolder.sorting.collectAsState()
     val timeSorting by stateHolder.postsStateHolder.timeSorting.collectAsState()
     val selectedItemId by stateHolder.selectedItemId.collectAsState()
     val postLayout by stateHolder.postLayout.collectAsState()
+    val posts = remember(postsState) { postsState.getOrDefault(emptyList()) }
 
     RainbowLazyColumn(modifier) {
         item {
