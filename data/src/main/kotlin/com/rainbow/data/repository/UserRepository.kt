@@ -4,19 +4,20 @@ import com.rainbow.data.Mapper
 import com.rainbow.data.quickMap
 import com.rainbow.data.utils.DefaultLimit
 import com.rainbow.data.utils.SettingsKeys
+import com.rainbow.domain.models.Karma
 import com.rainbow.domain.models.User
+import com.rainbow.domain.repository.SubredditRepository
 import com.rainbow.domain.repository.UserRepository
 import com.rainbow.local.LocalUserDataSource
+import com.rainbow.remote.dto.RemoteKarma
 import com.rainbow.remote.dto.RemoteUser
+import com.rainbow.remote.source.RemoteKarmaDataSource
 import com.rainbow.remote.source.RemoteUserDataSource
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import io.ktor.http.*
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import java.util.*
 
@@ -24,16 +25,19 @@ private const val IsUserLoggedInKey = "is_user_logged_in"
 
 @OptIn(ExperimentalSettingsApi::class)
 internal class UserRepositoryImpl(
-    private val remoteDataSource: RemoteUserDataSource,
-    private val localDataSource: LocalUserDataSource,
+    private val subredditRepository: SubredditRepository,
+    private val remoteUserDataSource: RemoteUserDataSource,
+    private val localUserDataSource: LocalUserDataSource,
+    private val remoteKarmaDataSource: RemoteKarmaDataSource,
     private val settings: FlowSettings,
     private val dispatcher: CoroutineDispatcher,
-    private val mapper: Mapper<RemoteUser, User>,
+    private val userMapper: Mapper<RemoteUser, User>,
+    private val karmaMapper: Mapper<RemoteKarma, Karma>,
 ) : UserRepository {
 
     override val isUserLoggedIn: Flow<Boolean> = settings.getBooleanFlow(IsUserLoggedInKey)
-    override val currentUser: Flow<User> = localDataSource.currentUser
-    override val searchUsers: Flow<List<User>> = localDataSource.searchUsers
+    override val currentUser: Flow<User> = localUserDataSource.currentUser
+    override val searchUsers: Flow<List<User>> = localUserDataSource.searchUsers
 
     override fun createAuthenticationUrl(uuid: UUID): String {
         return URLBuilder(
@@ -54,7 +58,7 @@ internal class UserRepositoryImpl(
     }
 
     override suspend fun loginUser(uuid: UUID): Result<Unit> = withContext(dispatcher) {
-        remoteDataSource.loginUser(uuid)
+        remoteUserDataSource.loginUser(uuid)
             .onSuccess { settings.putBoolean(IsUserLoggedInKey, true) }
     }
 
@@ -64,20 +68,20 @@ internal class UserRepositoryImpl(
 
     override suspend fun getCurrentUser(): Result<Unit> = runCatching {
         withContext(dispatcher) {
-            remoteDataSource.getCurrentUser()
-                .let(mapper::map)
+            remoteUserDataSource.getCurrentUser()
+                .let(userMapper::map)
                 .also { settings.putString(SettingsKeys.UserName, it.name) }
-                .also(localDataSource::setCurrentUser)
+                .also(localUserDataSource::setCurrentUser)
         }
     }
 
     override fun getUser(userName: String): Flow<Result<User>> {
-        return localDataSource.users
+        return localUserDataSource.users
             .map {
                 it.find { user -> user.name == userName }
-                    ?: remoteDataSource.getUserAbout(userName)
-                        .let(mapper::map)
-                        .also(localDataSource::insertUser)
+                    ?: remoteUserDataSource.getUserAbout(userName)
+                        .let(userMapper::map)
+                        .also(localUserDataSource::insertUser)
             }
             .map { Result.success(it) }
             .catch { emit(Result.failure(it)) }
@@ -85,11 +89,11 @@ internal class UserRepositoryImpl(
     }
 
     override suspend fun checkUserName(userName: String): Result<Boolean> = withContext(dispatcher) {
-        remoteDataSource.checkUserName(userName)
+        remoteUserDataSource.checkUserName(userName)
     }
 
     override suspend fun blockUser(userName: String): Result<Unit> = withContext(dispatcher) {
-        remoteDataSource.blockUser(userName)
+        remoteUserDataSource.blockUser(userName)
     }
 
     override suspend fun searchUsers(
@@ -97,11 +101,18 @@ internal class UserRepositoryImpl(
         lastUserId: String?,
     ): Result<Unit> = runCatching {
         withContext(dispatcher) {
-            if (lastUserId == null) localDataSource.clearSearchUsers()
+            if (lastUserId == null) localUserDataSource.clearSearchUsers()
 
-            remoteDataSource.searchUsers(searchTerm, DefaultLimit, lastUserId)
-                .quickMap(mapper)
-                .forEach(localDataSource::insertSearchUser)
+            remoteUserDataSource.searchUsers(searchTerm, DefaultLimit, lastUserId)
+                .quickMap(userMapper)
+                .forEach(localUserDataSource::insertSearchUser)
         }
     }
+
+    override suspend fun getProfileKarma(): Result<List<Karma>> = runCatching {
+        withContext(dispatcher) {
+            remoteKarmaDataSource.getProfileKarma().quickMap(karmaMapper)
+        }
+    }
+
 }

@@ -4,6 +4,6 @@ import com.rainbow.remote.dto.RemoteKarma
 
 interface RemoteKarmaDataSource {
 
-    suspend fun getMyKarma(): Result<List<RemoteKarma>>
+    suspend fun getProfileKarma(): List<RemoteKarma>
 
 }

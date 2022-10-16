@@ -49,7 +49,7 @@ fun UserScreen(
                 }
             },
             onSuccess = { user ->
-                item { Header(user) }
+                item { Header(user, onShowSnackbar) }
                 item {
                     ScrollableEnumTabRow(
                         selectedTab = selectedTab,

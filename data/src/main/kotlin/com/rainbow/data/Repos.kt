@@ -35,11 +35,14 @@ object Repos {
 
     @OptIn(ExperimentalSettingsApi::class)
     object User : UserRepository by UserRepositoryImpl(
+        Subreddit,
         RemoteUserDataSourceImpl(),
         LocalUserDataSourceImpl(),
+        RemoteKarmaDataSourceImpl(),
         flowSettings,
         DefaultDispatcher,
         Mappers.UserMapper,
+        Mappers.KarmaMapper,
     )
 
     @OptIn(ExperimentalSettingsApi::class)

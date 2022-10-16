@@ -1,27 +1,28 @@
 package com.rainbow.desktop.profile
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.rounded.Autorenew
+import androidx.compose.material.icons.rounded.Cake
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.rainbow.desktop.comment.comments
 import com.rainbow.desktop.components.*
 import com.rainbow.desktop.item.items
+import com.rainbow.desktop.karma.karma
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.posts
+import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.User
+import com.rainbow.domain.models.fullUrl
 
 @Composable
 fun ProfileScreen(
@@ -61,6 +62,9 @@ fun ProfileScreen(
     val comments = remember(commentsState) { commentsState.getOrDefault(emptyList()) }
     val commentsSorting by stateHolder.commentsStateHolder.sorting.collectAsState()
     val commentsTimeSorting by stateHolder.commentsStateHolder.timeSorting.collectAsState()
+    val karmaState by stateHolder.karma.collectAsState()
+    val karma = remember(karmaState) { karmaState.getOrDefault(emptyList()) }
+
     val selectedItemIds by stateHolder.selectedItemIds.collectAsState()
     val postLayout by stateHolder.postLayout.collectAsState()
 
@@ -72,7 +76,7 @@ fun ProfileScreen(
                 }
             },
             onSuccess = { user ->
-                item { Header(user) }
+                item { Header(user, onShowSnackbar) }
                 item {
                     ScrollableEnumTabRow(
                         selectedTab = selectedTab,
@@ -261,6 +265,10 @@ fun ProfileScreen(
                     stateHolder.downvotedPostsStateHolder::setLastItem,
                 )
             }
+
+            ProfileTab.Karma -> karma(karma) { subredditName ->
+                onNavigateMainScreen(MainScreen.Subreddit(subredditName))
+            }
         }
 
         if (
@@ -283,69 +291,41 @@ fun ProfileScreen(
 }
 
 @Composable
-fun Header(user: User, modifier: Modifier = Modifier) {
+fun Header(user: User, onShowSnackbar: (String) -> Unit, modifier: Modifier = Modifier) {
     Surface(
         modifier
-            .heightIn(min = 350.dp)
+            .heightIn(min = ScreenHeaderContentMinHeight)
             .fillMaxWidth(),
         shape = MaterialTheme.shapes.medium
     ) {
-        Column {
-            ScreenHeader(user.bannerImageUrl.toString(), user.imageUrl.toString(), user.name)
-            ScreenHeaderDescription(
-                user.description,
-                Modifier
-                    .fillMaxWidth()
-                    .defaultPadding(start = 232.dp)
-            )
-            Row(Modifier.fillMaxWidth().defaultPadding(start = 232.dp)) {
-                Column(Modifier.weight(1F)) {
-                    Text(
-                        RainbowStrings.PostKarma,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.DarkGray,
-                        fontSize = 16.sp
-                    )
-                    Text(user.postKarma.toString(), fontSize = 14.sp)
-                }
-                Column(Modifier.weight(1F)) {
-                    Text(
-                        RainbowStrings.CommentKarma,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.DarkGray,
-                        fontSize = 16.sp
-                    )
-                    Text(user.commentKarma.toString(), fontSize = 14.sp)
-                }
+        Column(Modifier.height(IntrinsicSize.Max)) {
+            ScreenHeader(
+                user.bannerImageUrl.toString(),
+                user.imageUrl.toString(),
+                user.name,
+            ) {
+                PostKarma(user)
+                CommentKarma(user)
+                ScreenHeaderCreationDate(user.creationDate, RainbowIcons.Cake)
             }
 
-            Row(Modifier.fillMaxWidth().defaultPadding(start = 232.dp)) {
-                Column(Modifier.weight(1F)) {
-                    Text(
-                        RainbowStrings.AwardeeKarma,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.DarkGray,
-                        fontSize = 16.sp
-                    )
-                    Text(user.awardeeKarma.toString(), fontSize = 14.sp)
-                }
-                Column(Modifier.weight(1F)) {
-                    Text(
-                        RainbowStrings.AwarderKarma,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.DarkGray,
-                        fontSize = 16.sp
-                    )
-                    Text(user.awarderKarma.toString(), fontSize = 14.sp)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .defaultPadding(start = 232.dp),
+                verticalArrangement = Arrangement.SpaceBetween,
+            ) {
+                ScreenHeaderDescription(user.description)
+                Spacer(Modifier.width(RainbowTheme.dimensions.medium))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Menu(user, onShowSnackbar)
                 }
             }
         }
-
-//        Text(
-//            user.creationDate.toJavaLocalDateTime().format(DateTimeFormatter.ISO_DATE_TIME),
-//            modifier = Modifier
-//                .defaultPadding(start = 232.dp),
-//        )
     }
 }
 
@@ -358,4 +338,50 @@ private val ProfileTab.icon
         ProfileTab.Upvoted -> RainbowIcons.Upvote
         ProfileTab.Downvoted -> RainbowIcons.Downvote
         ProfileTab.Comments -> RainbowIcons.Comments
+        ProfileTab.Karma -> RainbowIcons.Autorenew
     }
+
+@Composable
+private fun Menu(
+    user: User,
+    onShowSnackbar: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    RainbowDropdownMenuHolder(
+        icon = { Icon(RainbowIcons.MoreVert, RainbowStrings.SubredditOptions) },
+    ) { handler ->
+        OpenInBrowserDropdownMenuItem(user.fullUrl, handler)
+        CopyLinkDropdownMenuItem(user.fullUrl, handler, onShowSnackbar)
+    }
+}
+
+@Composable
+private fun PostKarma(user: User, modifier: Modifier = Modifier) {
+    val postKarma = remember(user.postKarma) {
+        user.postKarma.toInt().format()
+    }
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.small),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(RainbowIcons.Posts, RainbowStrings.PostsKarma)
+        Text(postKarma)
+    }
+}
+
+@Composable
+private fun CommentKarma(user: User, modifier: Modifier = Modifier) {
+    val commentKarma = remember(user.commentKarma) {
+        user.commentKarma.toInt().format()
+    }
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.small),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(RainbowIcons.Comments, RainbowStrings.CommentsKarma)
+        Text(commentKarma)
+    }
+}
+

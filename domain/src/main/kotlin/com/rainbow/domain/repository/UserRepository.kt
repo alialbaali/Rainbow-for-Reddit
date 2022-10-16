@@ -1,5 +1,6 @@
 package com.rainbow.domain.repository
 
+import com.rainbow.domain.models.Karma
 import com.rainbow.domain.models.User
 import kotlinx.coroutines.flow.Flow
 import java.util.*
@@ -27,5 +28,7 @@ interface UserRepository {
     suspend fun blockUser(userName: String): Result<Unit>
 
     suspend fun searchUsers(searchTerm: String, lastUserId: String?): Result<Unit>
+
+    suspend fun getProfileKarma(): Result<List<Karma>>
 
 }

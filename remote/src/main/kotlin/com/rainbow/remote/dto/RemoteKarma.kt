@@ -5,10 +5,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RemoteKarma(
-    @SerialName("sr")
-    val sr: String,
     @SerialName("comment_karma")
-    val commentKarma: Int,
+    val commentKarma: Int? = null, // 39
     @SerialName("link_karma")
-    val linkKarma: Int,
+    val linkKarma: Int? = null, // 1809
+    @SerialName("sr")
+    val sr: String? = null // me_irl
 )

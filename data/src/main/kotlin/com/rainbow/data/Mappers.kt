@@ -11,6 +11,14 @@ import kotlinx.datetime.Instant
 
 internal object Mappers {
 
+    val KarmaMapper: Mapper<RemoteKarma, Karma> = Mapper {
+        Karma(
+            subredditName = it.sr ?: "",
+            postKarma = it.linkKarma ?: 0,
+            commentKarma = it.commentKarma ?: 0,
+        )
+    }
+
     val ItemMapper = Mapper<RemoteItem, Item> {
         when (it) {
             is RemoteComment -> CommentMapper.map(it)

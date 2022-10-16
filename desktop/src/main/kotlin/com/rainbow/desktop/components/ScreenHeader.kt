@@ -23,9 +23,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.ui.headerImageBorder
 import com.rainbow.desktop.utils.RainbowIcons
@@ -143,14 +143,14 @@ fun ScreenHeader(
 }
 
 @Composable
-fun ScreenHeaderCreationDate(date: Instant, modifier: Modifier = Modifier) {
+fun ScreenHeaderCreationDate(date: Instant, icon: ImageVector = RainbowIcons.Schedule, modifier: Modifier = Modifier) {
     val formattedDate = remember(date) { date.formatDateOnly() }
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(RainbowTheme.dimensions.small),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(RainbowIcons.Schedule, RainbowStrings.Created)
+        Icon(icon, RainbowStrings.Created)
         Text(formattedDate)
     }
 }

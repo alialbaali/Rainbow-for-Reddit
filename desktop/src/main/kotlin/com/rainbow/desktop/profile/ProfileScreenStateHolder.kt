@@ -7,6 +7,7 @@ import com.rainbow.desktop.post.PostsStateHolder
 import com.rainbow.desktop.state.StateHolder
 import com.rainbow.desktop.utils.UIState
 import com.rainbow.desktop.utils.getOrNull
+import com.rainbow.desktop.utils.toUIState
 import com.rainbow.domain.models.*
 import com.rainbow.domain.repository.*
 import kotlinx.coroutines.flow.*
@@ -107,6 +108,9 @@ class ProfileScreenStateHolder private constructor(
         ): Result<Unit> = commentRepository.getProfileComments(sorting, timeSorting, lastItem?.id)
     }
 
+    private val mutableKarma = MutableStateFlow<UIState<List<Karma>>>(UIState.Empty)
+    val karma get() = mutableKarma.asStateFlow()
+
     private val mutableSelectedItemIds = MutableStateFlow(emptyMap<ProfileTab, String>())
     val selectedItemIds get() = mutableSelectedItemIds.asStateFlow()
 
@@ -123,6 +127,7 @@ class ProfileScreenStateHolder private constructor(
                     ProfileTab.Upvoted -> if (upvotedPostsStateHolder.items.value.isEmpty) upvotedPostsStateHolder.loadItems()
                     ProfileTab.Downvoted -> if (downvotedPostsStateHolder.items.value.isEmpty) downvotedPostsStateHolder.loadItems()
                     ProfileTab.Comments -> if (commentsStateHolder.items.value.isEmpty) commentsStateHolder.loadItems()
+                    ProfileTab.Karma -> if (karma.value.isEmpty) loadKarma()
                 }
             }
             .launchIn(scope)
@@ -198,5 +203,9 @@ class ProfileScreenStateHolder private constructor(
 
     fun selectItemId(tab: ProfileTab, id: String) {
         mutableSelectedItemIds.value += tab to id
+    }
+
+    fun loadKarma() = scope.launch {
+        mutableKarma.value = userRepository.getProfileKarma().toUIState()
     }
 }

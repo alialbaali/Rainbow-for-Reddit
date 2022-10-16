@@ -115,6 +115,7 @@ object AppScreenStateHolder : StateHolder() {
                                 ProfileTab.Upvoted -> upvotedPostsStateHolder.loadItems()
                                 ProfileTab.Downvoted -> downvotedPostsStateHolder.loadItems()
                                 ProfileTab.Comments -> commentsStateHolder.loadItems()
+                                ProfileTab.Karma -> stateHolder.loadKarma()
                             }
                         }
                     }
