@@ -5,13 +5,16 @@ import com.rainbow.data.quickMap
 import com.rainbow.data.utils.DefaultLimit
 import com.rainbow.data.utils.SettingsKeys
 import com.rainbow.domain.models.Karma
+import com.rainbow.domain.models.Trophy
 import com.rainbow.domain.models.User
 import com.rainbow.domain.repository.SubredditRepository
 import com.rainbow.domain.repository.UserRepository
 import com.rainbow.local.LocalUserDataSource
 import com.rainbow.remote.dto.RemoteKarma
+import com.rainbow.remote.dto.RemoteTrophy
 import com.rainbow.remote.dto.RemoteUser
 import com.rainbow.remote.source.RemoteKarmaDataSource
+import com.rainbow.remote.source.RemoteTrophyDataSource
 import com.rainbow.remote.source.RemoteUserDataSource
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
@@ -29,10 +32,12 @@ internal class UserRepositoryImpl(
     private val remoteUserDataSource: RemoteUserDataSource,
     private val localUserDataSource: LocalUserDataSource,
     private val remoteKarmaDataSource: RemoteKarmaDataSource,
+    private val remoteTrophyDataSource: RemoteTrophyDataSource,
     private val settings: FlowSettings,
     private val dispatcher: CoroutineDispatcher,
     private val userMapper: Mapper<RemoteUser, User>,
     private val karmaMapper: Mapper<RemoteKarma, Karma>,
+    private val trophyMapper: Mapper<RemoteTrophy, Trophy>,
 ) : UserRepository {
 
     override val isUserLoggedIn: Flow<Boolean> = settings.getBooleanFlow(IsUserLoggedInKey)
@@ -112,6 +117,20 @@ internal class UserRepositoryImpl(
     override suspend fun getProfileKarma(): Result<List<Karma>> = runCatching {
         withContext(dispatcher) {
             remoteKarmaDataSource.getProfileKarma().quickMap(karmaMapper)
+        }
+    }
+
+    override suspend fun getProfileTrophies(): Result<List<Trophy>> = runCatching {
+        withContext(dispatcher) {
+            remoteTrophyDataSource.getUserTrophies(settings.getString(SettingsKeys.UserName))
+                .quickMap(trophyMapper)
+        }
+    }
+
+    override suspend fun getUserTrophies(userName: String): Result<List<Trophy>> = runCatching {
+        withContext(dispatcher) {
+            remoteTrophyDataSource.getUserTrophies(userName)
+                .quickMap(trophyMapper)
         }
     }
 

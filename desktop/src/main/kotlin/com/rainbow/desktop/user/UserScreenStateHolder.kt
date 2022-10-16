@@ -63,6 +63,9 @@ class UserScreenStateHolder private constructor(
         ): Result<Unit> = commentRepository.getUserComments(userName, sorting, timeSorting, lastItem?.id)
     }
 
+    private val mutableTrophies = MutableStateFlow<UIState<List<Trophy>>>(UIState.Empty)
+    val trophies get() = mutableTrophies.asStateFlow()
+
     private val mutableSelectedItemIds = MutableStateFlow(emptyMap<UserTab, String>())
     val selectedItemIds get() = mutableSelectedItemIds.asStateFlow()
 
@@ -73,6 +76,7 @@ class UserScreenStateHolder private constructor(
                     UserTab.Overview -> if (itemsStateHolder.items.value.isEmpty) itemsStateHolder.loadItems()
                     UserTab.Submitted -> if (postsStateHolder.items.value.isEmpty) postsStateHolder.loadItems()
                     UserTab.Comments -> if (commentsStateHolder.items.value.isEmpty) commentsStateHolder.loadItems()
+                    UserTab.Trophies -> if (trophies.value.isEmpty) loadTrophies()
                 }
             }
             .launchIn(scope)
@@ -134,5 +138,9 @@ class UserScreenStateHolder private constructor(
 
     fun selectItemId(tab: UserTab, id: String) {
         mutableSelectedItemIds.value += tab to id
+    }
+
+    fun loadTrophies() = scope.launch {
+        mutableTrophies.value = userRepository.getUserTrophies(userName).toUIState()
     }
 }

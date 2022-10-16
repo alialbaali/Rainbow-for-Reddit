@@ -39,10 +39,12 @@ object Repos {
         RemoteUserDataSourceImpl(),
         LocalUserDataSourceImpl(),
         RemoteKarmaDataSourceImpl(),
+        RemoteTrophyDataSourceImpl(),
         flowSettings,
         DefaultDispatcher,
         Mappers.UserMapper,
         Mappers.KarmaMapper,
+        Mappers.TrophyMapper,
     )
 
     @OptIn(ExperimentalSettingsApi::class)

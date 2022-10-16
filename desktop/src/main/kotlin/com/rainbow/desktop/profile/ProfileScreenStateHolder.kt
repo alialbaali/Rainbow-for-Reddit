@@ -111,6 +111,9 @@ class ProfileScreenStateHolder private constructor(
     private val mutableKarma = MutableStateFlow<UIState<List<Karma>>>(UIState.Empty)
     val karma get() = mutableKarma.asStateFlow()
 
+    private val mutableTrophies = MutableStateFlow<UIState<List<Trophy>>>(UIState.Empty)
+    val trophies get() = mutableTrophies.asStateFlow()
+
     private val mutableSelectedItemIds = MutableStateFlow(emptyMap<ProfileTab, String>())
     val selectedItemIds get() = mutableSelectedItemIds.asStateFlow()
 
@@ -128,6 +131,7 @@ class ProfileScreenStateHolder private constructor(
                     ProfileTab.Downvoted -> if (downvotedPostsStateHolder.items.value.isEmpty) downvotedPostsStateHolder.loadItems()
                     ProfileTab.Comments -> if (commentsStateHolder.items.value.isEmpty) commentsStateHolder.loadItems()
                     ProfileTab.Karma -> if (karma.value.isEmpty) loadKarma()
+                    ProfileTab.Trophies -> if (trophies.value.isEmpty) loadTrophies()
                 }
             }
             .launchIn(scope)
@@ -207,5 +211,9 @@ class ProfileScreenStateHolder private constructor(
 
     fun loadKarma() = scope.launch {
         mutableKarma.value = userRepository.getProfileKarma().toUIState()
+    }
+
+    fun loadTrophies() = scope.launch {
+        mutableTrophies.value = userRepository.getProfileTrophies().toUIState()
     }
 }

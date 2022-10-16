@@ -116,6 +116,7 @@ object AppScreenStateHolder : StateHolder() {
                                 ProfileTab.Downvoted -> downvotedPostsStateHolder.loadItems()
                                 ProfileTab.Comments -> commentsStateHolder.loadItems()
                                 ProfileTab.Karma -> stateHolder.loadKarma()
+                                ProfileTab.Trophies -> stateHolder.loadTrophies()
                             }
                         }
                     }
@@ -157,6 +158,7 @@ object AppScreenStateHolder : StateHolder() {
                                 UserTab.Overview -> itemsStateHolder.loadItems()
                                 UserTab.Submitted -> postsStateHolder.loadItems()
                                 UserTab.Comments -> commentsStateHolder.loadItems()
+                                UserTab.Trophies -> loadTrophies()
                             }
                         }
                     }

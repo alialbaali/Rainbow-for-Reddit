@@ -1,5 +1,6 @@
 package com.rainbow.desktop.user
 
+import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -13,6 +14,7 @@ import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.posts
 import com.rainbow.desktop.profile.Header
+import com.rainbow.desktop.trophy.trophies
 import com.rainbow.desktop.utils.*
 
 @Composable
@@ -38,6 +40,8 @@ fun UserScreen(
     val comments = remember(commentsState) { commentsState.getOrDefault(emptyList()) }
     val commentsSorting by stateHolder.commentsStateHolder.sorting.collectAsState()
     val commentsTimeSorting by stateHolder.commentsStateHolder.timeSorting.collectAsState()
+    val trophiesState by stateHolder.trophies.collectAsState()
+    val trophies = remember(trophiesState) { trophiesState.getOrDefault(emptyList()) }
     val selectedItemIds by stateHolder.selectedItemIds.collectAsState()
     val postLayout by stateHolder.postLayout.collectAsState()
 
@@ -138,9 +142,11 @@ fun UserScreen(
                     stateHolder.commentsStateHolder::setLastItem,
                 )
             }
+
+            UserTab.Trophies -> trophies(trophies)
         }
 
-        if (userState.isLoading) {
+        if (userState.isLoading || postsState.isLoading || commentsState.isLoading || trophiesState.isLoading) {
             item { RainbowProgressIndicator() }
         }
     }
@@ -158,4 +164,5 @@ private val UserTab.icon
         UserTab.Overview -> RainbowIcons.User
         UserTab.Submitted -> RainbowIcons.Posts
         UserTab.Comments -> RainbowIcons.Comments
+        UserTab.Trophies -> RainbowIcons.EmojiEvents
     }

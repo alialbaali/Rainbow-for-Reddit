@@ -112,7 +112,7 @@ private fun ItemInfoImages(userInfo: UserInfo, subredditInfo: SubredditInfo?, mo
         if (subredditInfo != null) {
             KamelImage(
                 subredditImageResource,
-                subredditInfo.imageUrl,
+                subredditInfo.name,
                 Modifier
                     .subredditIcon { subredditInfo.onClick(subredditInfo.name) }
                     .align(Alignment.Center),

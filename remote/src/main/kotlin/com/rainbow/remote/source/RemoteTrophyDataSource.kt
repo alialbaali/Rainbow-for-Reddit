@@ -4,6 +4,6 @@ import com.rainbow.remote.dto.RemoteTrophy
 
 interface RemoteTrophyDataSource {
 
-    suspend fun getUserTrophies(userName: String): Result<List<RemoteTrophy>>
+    suspend fun getUserTrophies(userName: String): List<RemoteTrophy>
 
 }

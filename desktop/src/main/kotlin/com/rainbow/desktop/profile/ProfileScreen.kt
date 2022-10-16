@@ -3,6 +3,7 @@ package com.rainbow.desktop.profile
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.rounded.Autorenew
 import androidx.compose.material.icons.rounded.Cake
+import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -19,6 +20,7 @@ import com.rainbow.desktop.karma.karma
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.posts
+import com.rainbow.desktop.trophy.trophies
 import com.rainbow.desktop.ui.RainbowTheme
 import com.rainbow.desktop.utils.*
 import com.rainbow.domain.models.User
@@ -64,6 +66,8 @@ fun ProfileScreen(
     val commentsTimeSorting by stateHolder.commentsStateHolder.timeSorting.collectAsState()
     val karmaState by stateHolder.karma.collectAsState()
     val karma = remember(karmaState) { karmaState.getOrDefault(emptyList()) }
+    val trophiesState by stateHolder.trophies.collectAsState()
+    val trophies = remember(trophiesState) { trophiesState.getOrDefault(emptyList()) }
 
     val selectedItemIds by stateHolder.selectedItemIds.collectAsState()
     val postLayout by stateHolder.postLayout.collectAsState()
@@ -269,12 +273,14 @@ fun ProfileScreen(
             ProfileTab.Karma -> karma(karma) { subredditName ->
                 onNavigateMainScreen(MainScreen.Subreddit(subredditName))
             }
+
+            ProfileTab.Trophies -> trophies(trophies)
         }
 
         if (
             overviewItemsState.isLoading || submittedPostsState.isLoading || savedItemsState.isLoading
             || commentsState.isLoading || downvotedPostsState.isLoading || hiddenPostsState.isLoading
-            || upvotedPostsState.isLoading
+            || upvotedPostsState.isLoading || karmaState.isLoading || trophiesState.isLoading
         ) {
             item {
                 RainbowProgressIndicator()
@@ -339,6 +345,7 @@ private val ProfileTab.icon
         ProfileTab.Downvoted -> RainbowIcons.Downvote
         ProfileTab.Comments -> RainbowIcons.Comments
         ProfileTab.Karma -> RainbowIcons.Autorenew
+        ProfileTab.Trophies -> RainbowIcons.EmojiEvents
     }
 
 @Composable

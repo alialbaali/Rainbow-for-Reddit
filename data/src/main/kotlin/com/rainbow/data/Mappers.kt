@@ -11,6 +11,14 @@ import kotlinx.datetime.Instant
 
 internal object Mappers {
 
+    val TrophyMapper = Mapper<RemoteTrophy, Trophy> {
+        Trophy(
+            name = it.name ?: "",
+            imageUrl = it.icon70 ?: "",
+            grantedAt = it.grantedAt?.toDouble()?.toInstantOrNull(),
+        )
+    }
+
     val KarmaMapper: Mapper<RemoteKarma, Karma> = Mapper {
         Karma(
             subredditName = it.sr ?: "",
