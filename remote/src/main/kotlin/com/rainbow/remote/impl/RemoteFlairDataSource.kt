@@ -1,7 +1,7 @@
 package com.rainbow.remote.impl
 
 import com.rainbow.remote.FlairSelectorResponse
-import com.rainbow.remote.client.redditClient
+import com.rainbow.remote.client.Clients
 import com.rainbow.remote.dto.CurrentFlair
 import com.rainbow.remote.dto.RemoteFlair
 import com.rainbow.remote.impl.Endpoint.Flairs
@@ -12,7 +12,7 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 
 class RemoteSubredditFlairDataSourceImpl(
-    private val client: HttpClient = redditClient
+    private val client: HttpClient = Clients.Reddit
 ) : RemoteSubredditFlairDataSource {
 
     override suspend fun getCurrentSubredditFlair(subredditName: String): RemoteFlair {

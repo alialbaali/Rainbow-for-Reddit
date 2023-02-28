@@ -16,9 +16,7 @@ import com.rainbow.desktop.components.RainbowButton
 import com.rainbow.desktop.components.RainbowIconToggleButton
 import com.rainbow.desktop.utils.RainbowIcons
 import com.rainbow.desktop.utils.RainbowStrings
-import com.rainbow.desktop.utils.toColor
 import com.rainbow.domain.models.Subreddit
-import com.rainbow.domain.models.primaryColor
 
 @Composable
 fun SubredditItemName(subredditName: String, modifier: Modifier = Modifier) {

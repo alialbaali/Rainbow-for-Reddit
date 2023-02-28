@@ -6,12 +6,9 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.ui.Modifier
-import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.utils.PagingEffect
-import com.rainbow.desktop.utils.UIState
-import com.rainbow.desktop.utils.getOrDefault
 import com.rainbow.domain.models.Post
 import com.rainbow.domain.models.PostLayout
 

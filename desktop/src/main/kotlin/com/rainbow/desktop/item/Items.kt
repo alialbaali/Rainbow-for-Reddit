@@ -4,15 +4,12 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.ui.Modifier
 import com.rainbow.desktop.comment.CommentItem
-import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.post.CardPostItem
 import com.rainbow.desktop.post.CompactPostItem
 import com.rainbow.desktop.post.LargePostItem
 import com.rainbow.desktop.utils.PagingEffect
-import com.rainbow.desktop.utils.UIState
-import com.rainbow.desktop.utils.getOrDefault
 import com.rainbow.domain.models.Comment
 import com.rainbow.domain.models.Item
 import com.rainbow.domain.models.Post

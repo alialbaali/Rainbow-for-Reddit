@@ -6,12 +6,9 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import com.rainbow.desktop.components.RainbowProgressIndicator
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.utils.PagingEffect
 import com.rainbow.desktop.utils.RainbowStrings
-import com.rainbow.desktop.utils.UIState
-import com.rainbow.desktop.utils.getOrDefault
 import com.rainbow.domain.models.Subreddit
 
 fun LazyGridScope.subreddits(

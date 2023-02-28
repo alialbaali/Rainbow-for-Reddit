@@ -45,7 +45,7 @@ internal class CommentRepositoryImpl(
         withContext(dispatcher) {
             if (lastCommentId == null) localCommentDataSource.clearProfileComments()
 
-            val currentUserId = settings.getString(SettingsKeys.UserName)
+            val currentUserId = settings.getStringOrNull(SettingsKeys.UserName)!!
             remoteCommentDataSource.getUserComments(
                 currentUserId,
                 commentsSorting.lowercaseName,

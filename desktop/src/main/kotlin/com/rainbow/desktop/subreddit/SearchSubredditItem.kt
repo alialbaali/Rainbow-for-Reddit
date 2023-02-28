@@ -16,7 +16,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rainbow.desktop.components.ItemHeader
-import com.rainbow.desktop.utils.*
+import com.rainbow.desktop.utils.RainbowIcons
+import com.rainbow.desktop.utils.RainbowStrings
+import com.rainbow.desktop.utils.format
 import com.rainbow.domain.models.Subreddit
 
 @Composable

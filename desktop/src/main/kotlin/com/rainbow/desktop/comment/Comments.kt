@@ -6,7 +6,6 @@ import androidx.compose.ui.Modifier
 import com.rainbow.desktop.navigation.DetailsScreen
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.utils.PagingEffect
-import com.rainbow.desktop.utils.getOrDefault
 import com.rainbow.domain.models.Comment
 
 fun LazyListScope.comments(

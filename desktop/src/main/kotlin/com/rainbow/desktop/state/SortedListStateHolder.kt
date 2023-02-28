@@ -7,7 +7,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-abstract class SortedListStateHolder<T : Any, S : ItemSorting>(initialSorting: S, private val dataItems: Flow<List<T>>) :
+abstract class SortedListStateHolder<T : Any, S : ItemSorting>(
+    initialSorting: S,
+    private val dataItems: Flow<List<T>>
+) :
     ListStateHolder<T>(dataItems) {
 
     private val mutableSorting = MutableStateFlow(initialSorting)

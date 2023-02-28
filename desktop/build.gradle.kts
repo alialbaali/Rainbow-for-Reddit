@@ -3,7 +3,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.compose") version "1.2.0"
+    id("org.jetbrains.compose") version "1.3.0"
 }
 
 repositories {
@@ -14,15 +14,14 @@ repositories {
 
 dependencies {
     implementation(compose.desktop.currentOs)
+    implementation(compose.materialIconsExtended)
+    implementation(compose.preview)
+    implementation(KotlinX.Coroutines.swing)
     @OptIn(ExperimentalComposeLibrary::class)
     implementation(compose.material3)
-    implementation(compose.materialIconsExtended)
-    implementation(KotlinX.Coroutines.swing)
     implementation("com.alialbaali.kamel:kamel-image:0.4.1")
     implementation("com.halilibo.compose-richtext:richtext-commonmark:0.13.0")
     implementation("com.halilibo.compose-richtext:richtext-ui-material:0.13.0")
-    api(compose.preview)
-    implementation(project(":domain"))
     implementation(project(":data"))
 }
 

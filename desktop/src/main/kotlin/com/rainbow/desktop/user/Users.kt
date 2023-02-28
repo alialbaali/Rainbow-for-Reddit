@@ -4,7 +4,6 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import com.rainbow.desktop.navigation.MainScreen
 import com.rainbow.desktop.utils.PagingEffect
-import com.rainbow.desktop.utils.getOrDefault
 import com.rainbow.domain.models.User
 
 fun LazyGridScope.users(

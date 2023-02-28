@@ -1,19 +1,40 @@
 package com.rainbow.remote.impl
 
 import com.rainbow.remote.*
+import com.rainbow.remote.client.Clients
 import com.rainbow.remote.client.settings
 import com.rainbow.remote.dto.RemoteUser
+import com.rainbow.remote.dto.Scope
+import com.rainbow.remote.dto.Scope.Companion.joinToLowerCaseString
 import com.rainbow.remote.impl.Endpoint.Users
 import com.rainbow.remote.source.RemoteUserDataSource
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.http.*
 import java.util.*
 
+private const val RedditAuthUrl = "www.reddit.com/api/v1/authorize"
+
 class RemoteUserDataSourceImpl(
-    private val rainbowClient: HttpClient = com.rainbow.remote.client.rainbowClient,
-    private val redditClient: HttpClient = com.rainbow.remote.client.redditClient,
+    private val rainbowClient: HttpClient = Clients.Rainbow,
+    private val redditClient: HttpClient = Clients.Reddit,
 ) : RemoteUserDataSource {
+
+    override fun createAuthenticationUrl(uuid: UUID): String {
+        return URLBuilder(
+            protocol = URLProtocol.HTTPS,
+            host = RedditAuthUrl,
+            parameters = ParametersBuilder().apply {
+                append("client_id", RainbowProperties.ClientId)
+                append("response_type", "code")
+                append("state", uuid.toString())
+                append("redirect_uri", RainbowProperties.RainbowUrl)
+                append("duration", "permanent")
+                append("scope", Scope.UserScope.joinToLowerCaseString())
+            }.build()
+        ).buildString()
+    }
 
     override suspend fun loginUser(uuid: UUID): Result<Unit> {
         val response = rainbowClient.get("/code") {

@@ -18,7 +18,6 @@ import com.rainbow.remote.source.RemoteTrophyDataSource
 import com.rainbow.remote.source.RemoteUserDataSource
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
-import io.ktor.http.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
@@ -40,35 +39,23 @@ internal class UserRepositoryImpl(
     private val trophyMapper: Mapper<RemoteTrophy, Trophy>,
 ) : UserRepository {
 
-    override val isUserLoggedIn: Flow<Boolean> = settings.getBooleanFlow(IsUserLoggedInKey)
+    override val isUserLoggedIn: Flow<Boolean> = settings.getBooleanFlow(IsUserLoggedInKey, false)
     override val currentUser: Flow<User> = localUserDataSource.currentUser
     override val searchUsers: Flow<List<User>> = localUserDataSource.searchUsers
 
-    override fun createAuthenticationUrl(uuid: UUID): String {
-        return URLBuilder(
-            protocol = URLProtocol.HTTPS,
-            host = "www.reddit.com/api/v1/authorize",
-            parameters = ParametersBuilder().apply {
-                append("client_id", "cpKMrRbh8b06TQ")
-                append("response_type", "code")
-                append("state", uuid.toString())
-                append("redirect_uri", "https://rainbowforreddit.herokuapp.com/")
-                append("duration", "permanent")
-                append(
-                    "scope",
-                    "submit, vote, mysubreddits, privatemessages, subscribe, history, wikiread, flair, identity, edit, read, report, save, submit"
-                )
-            }.build()
-        ).buildString()
+    override fun createAuthenticationUrl(uuid: UUID): String = remoteUserDataSource.createAuthenticationUrl(uuid)
+
+    override suspend fun loginUser(uuid: UUID): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            remoteUserDataSource.loginUser(uuid)
+                .onSuccess { settings.putBoolean(IsUserLoggedInKey, true) }
+        }
     }
 
-    override suspend fun loginUser(uuid: UUID): Result<Unit> = withContext(dispatcher) {
-        remoteUserDataSource.loginUser(uuid)
-            .onSuccess { settings.putBoolean(IsUserLoggedInKey, true) }
-    }
-
-    override suspend fun logoutUser() = withContext(dispatcher) {
-        settings.clear()
+    override suspend fun logoutUser() = runCatching {
+        withContext(dispatcher) {
+            settings.clear()
+        }
     }
 
     override suspend fun getCurrentUser(): Result<Unit> = runCatching {
@@ -122,7 +109,7 @@ internal class UserRepositoryImpl(
 
     override suspend fun getProfileTrophies(): Result<List<Trophy>> = runCatching {
         withContext(dispatcher) {
-            remoteTrophyDataSource.getUserTrophies(settings.getString(SettingsKeys.UserName))
+            remoteTrophyDataSource.getUserTrophies(settings.getStringOrNull(SettingsKeys.UserName)!!)
                 .quickMap(trophyMapper)
         }
     }

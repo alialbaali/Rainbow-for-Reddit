@@ -35,6 +35,7 @@ class LoginScreenStateHolder(
                     userRepository.getCurrentUser()
                 }
             }
+            .onFailure { throw it }
             .toUIState()
     }
 

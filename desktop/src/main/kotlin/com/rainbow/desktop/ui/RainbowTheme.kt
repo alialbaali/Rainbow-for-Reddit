@@ -3,8 +3,9 @@ package com.rainbow.desktop.ui
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Shapes
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
-import com.rainbow.desktop.settings.SettingsStateHolder
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.staticCompositionLocalOf
 import com.rainbow.domain.models.Theme
 
 // A workaround to override DropdownMenu shape.

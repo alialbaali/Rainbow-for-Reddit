@@ -18,7 +18,7 @@ interface UserRepository {
 
     suspend fun loginUser(uuid: UUID): Result<Unit>
 
-    suspend fun logoutUser()
+    suspend fun logoutUser(): Result<Unit>
 
     suspend fun getCurrentUser(): Result<Unit>
 

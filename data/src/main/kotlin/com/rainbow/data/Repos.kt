@@ -5,29 +5,20 @@ import com.rainbow.domain.repository.*
 import com.rainbow.local.*
 import com.rainbow.remote.impl.*
 import com.russhwolf.settings.ExperimentalSettingsApi
-import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.coroutines.toFlowSettings
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 object Repos {
 
     private val DefaultDispatcher = Dispatchers.IO
     private val LocalItemDataSource = LocalItemDataSourceImpl()
 
-    @OptIn(
-        ExperimentalSettingsImplementation::class,
-        ExperimentalSettingsApi::class,
-    )
     private val settings = Settings()
         .let { it as ObservableSettings }
 
-    @OptIn(
-        ExperimentalSettingsApi::class,
-        ExperimentalCoroutinesApi::class,
-    )
+    @OptIn(ExperimentalSettingsApi::class)
     private val flowSettings = settings.toFlowSettings(DefaultDispatcher)
 
     @OptIn(ExperimentalSettingsApi::class)

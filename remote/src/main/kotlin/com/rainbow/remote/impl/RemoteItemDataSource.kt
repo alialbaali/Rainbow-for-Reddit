@@ -1,7 +1,7 @@
 package com.rainbow.remote.impl
 
 import com.rainbow.remote.Listing
-import com.rainbow.remote.client.redditClient
+import com.rainbow.remote.client.Clients
 import com.rainbow.remote.dto.RemoteItem
 import com.rainbow.remote.getOrThrow
 import com.rainbow.remote.source.RemoteItemDataSource
@@ -9,7 +9,7 @@ import com.rainbow.remote.toList
 import io.ktor.client.*
 import io.ktor.client.request.*
 
-class RemoteItemDataSourceImpl(private val client: HttpClient = redditClient) : RemoteItemDataSource {
+class RemoteItemDataSourceImpl(private val client: HttpClient = Clients.Reddit) : RemoteItemDataSource {
 
     override suspend fun getUserOverviewItems(
         userName: String,

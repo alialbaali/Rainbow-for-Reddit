@@ -45,7 +45,7 @@ internal class ItemRepositoryImpl(
             if (lastItemId == null) localItemDataSource.clearProfileOverviewItems()
 
             remoteItemDataSource.getUserOverviewItems(
-                settings.getString(SettingsKeys.UserName),
+                settings.getStringOrNull(SettingsKeys.UserName)!!,
                 postSorting.lowercaseName,
                 timeSorting.lowercaseName,
                 DefaultLimit,
@@ -63,7 +63,7 @@ internal class ItemRepositoryImpl(
             if (lastItemId == null) localItemDataSource.clearProfileSavedItems()
 
             remoteItemDataSource.getUserSavedItems(
-                settings.getString(SettingsKeys.UserName),
+                settings.getStringOrNull(SettingsKeys.UserName)!!,
                 postSorting.lowercaseName,
                 timeSorting.lowercaseName,
                 DefaultLimit,

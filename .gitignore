@@ -30,3 +30,4 @@ local.properties
 hs_err_pid*
 identifier.sqlite
 *DS_STORE
+rainbow.properties

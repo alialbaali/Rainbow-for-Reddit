@@ -5,6 +5,8 @@ import java.util.*
 
 interface RemoteUserDataSource {
 
+    fun createAuthenticationUrl(uuid: UUID): String
+
     suspend fun loginUser(uuid: UUID): Result<Unit>
 
     suspend fun getCurrentUser(): RemoteUser

@@ -1,46 +1,26 @@
 package com.rainbow.remote.client
 
+import com.rainbow.remote.RainbowProperties
 import io.ktor.client.*
-import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
-import io.ktor.client.plugins.json.*
-import io.ktor.client.plugins.logging.*
-import io.ktor.client.plugins.observer.*
-import io.ktor.http.*
 
-private const val ClientId = "cpKMrRbh8b06TQ"
-private const val ClientPassword = ""
+private const val RefreshTokenUrl = "https://www.reddit.com/api/v1/access_token"
 
 internal val tokenClient by lazy {
-    HttpClient(CIO) {
-        developmentMode = true
-        expectSuccess = false
+    HttpClient(DefaultEngine) {
+        applyDefaultConfig()
 
-        ResponseObserver {
-            println(it)
-        }
-
-        Logging {
-            level = LogLevel.ALL
-            logger = Logger.DEFAULT
+        defaultRequest {
+            url(RefreshTokenUrl)
         }
 
         Auth {
             basic {
                 sendWithoutRequest { true }
-                credentials { BasicAuthCredentials(ClientId, ClientPassword) }
+                credentials { BasicAuthCredentials(RainbowProperties.ClientId, RainbowProperties.ClientPassword) }
             }
-        }
-
-        Json {
-            serializer = DefaultSerializer
-            accept(ContentType.Application.Json)
-        }
-
-        install(UserAgent) {
-            agent = RainbowUserAgent
         }
     }
 }

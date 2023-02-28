@@ -131,7 +131,7 @@ internal class PostRepositoryImpl(
         withContext(dispatcher) {
             if (lastPostId == null) localPostDataSource.clearProfileSubmittedPosts()
             remotePostDataSource.getUserSubmittedPosts(
-                settings.getString(SettingsKeys.UserName),
+                settings.getStringOrNull(SettingsKeys.UserName)!!,
                 postsSorting.lowercaseName,
                 timeSorting.lowercaseName,
                 DefaultLimit,
@@ -150,7 +150,7 @@ internal class PostRepositoryImpl(
         withContext(dispatcher) {
             if (lastPostId == null) localPostDataSource.clearProfileUpvotedPosts()
             remotePostDataSource.getUserUpvotedPosts(
-                settings.getString(SettingsKeys.UserName),
+                settings.getStringOrNull(SettingsKeys.UserName)!!,
                 postsSorting.lowercaseName,
                 timeSorting.lowercaseName,
                 DefaultLimit,
@@ -169,7 +169,7 @@ internal class PostRepositoryImpl(
         withContext(dispatcher) {
             if (lastPostId == null) localPostDataSource.clearProfileDownvotedPosts()
             remotePostDataSource.getUserDownvotedPosts(
-                settings.getString(SettingsKeys.UserName),
+                settings.getStringOrNull(SettingsKeys.UserName)!!,
                 postsSorting.lowercaseName,
                 timeSorting.lowercaseName,
                 DefaultLimit,
@@ -188,7 +188,7 @@ internal class PostRepositoryImpl(
         withContext(dispatcher) {
             if (lastPostId == null) localPostDataSource.clearProfileHiddenPosts()
             remotePostDataSource.getUserHiddenPosts(
-                settings.getString(SettingsKeys.UserName),
+                settings.getStringOrNull(SettingsKeys.UserName)!!,
                 postsSorting.lowercaseName,
                 timeSorting.lowercaseName,
                 DefaultLimit,

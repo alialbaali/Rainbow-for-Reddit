@@ -1,6 +1,9 @@
 package com.rainbow.desktop.message
 
-import androidx.compose.material.icons.rounded.*
+import androidx.compose.material.icons.rounded.Email
+import androidx.compose.material.icons.rounded.Inbox
+import androidx.compose.material.icons.rounded.MarkEmailUnread
+import androidx.compose.material.icons.rounded.Send
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier

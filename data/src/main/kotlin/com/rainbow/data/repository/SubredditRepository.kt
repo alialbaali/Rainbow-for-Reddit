@@ -144,7 +144,7 @@ internal class SubredditRepositoryImpl(
 
     override suspend fun selectFlair(subredditName: String, flairId: String): Result<Unit> = runCatching {
         withContext(dispatcher) {
-            val userName = settings.getString(SettingsKeys.UserName)
+            val userName = settings.getStringOrNull(SettingsKeys.UserName)!!
             remoteSubredditFlairDataSource.selectSubredditFlair(subredditName, userName, flairId)
             flairs.first().firstOrNull { it.id == flairId }.also(localSubredditFlairDataSource::setCurrentFlair)
         }
@@ -152,7 +152,7 @@ internal class SubredditRepositoryImpl(
 
     override suspend fun unselectFlair(subredditName: String): Result<Unit> = runCatching {
         withContext(dispatcher) {
-            val userName = settings.getString(SettingsKeys.UserName)
+            val userName = settings.getStringOrNull(SettingsKeys.UserName)!!
             remoteSubredditFlairDataSource.unSelectSubredditFlair(subredditName, userName)
             localSubredditFlairDataSource.setCurrentFlair(null)
         }
