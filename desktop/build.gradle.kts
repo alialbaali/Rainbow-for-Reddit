@@ -39,7 +39,7 @@ compose.desktop {
             linux {
                 iconFile.set(project.file("src/main/resources/icons/Rainbow.png"))
             }
-            packageName = "Rainbow"
+            packageName = "rainbow"
             packageVersion = "1.0.0"
         }
     }
