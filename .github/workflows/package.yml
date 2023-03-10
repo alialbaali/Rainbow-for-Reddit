@@ -1,0 +1,29 @@
+name: Package
+
+on: [ push ]
+
+jobs:
+  create-windows-installer:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: ./desktop
+    steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v2
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15
+#      - name: Grant execute permission for gradlew
+#        run: chmod +x gradlew
+      - name: Run packageReleaseMsi with Gradle Wrapper
+        run: gradle packageMsi
+      - name: Upload asset
+        uses: actions/upload-artifact@v3
+        with:
+#          path: ./desktop/build/compose/binaries/main-release/msi/*.msi
+          path: ./desktop/build/compose/binaries/main/msi/*.msi
+          name: rainbow.msi
