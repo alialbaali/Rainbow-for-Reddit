@@ -1,5 +1,6 @@
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import java.util.*
 
 plugins {
     kotlin("jvm")
@@ -29,7 +30,14 @@ compose.desktop {
     application {
         mainClass = "com.rainbow.desktop.RainbowKt"
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(
+                TargetFormat.Deb,
+//                TargetFormat.Rpm,
+                TargetFormat.Dmg,
+//                TargetFormat.Pkg,
+                TargetFormat.Exe,
+//                TargetFormat.Msi,
+            )
             macOS {
                 iconFile.set(project.file("src/main/resources/icons/Rainbow.icns"))
             }
