@@ -50,5 +50,14 @@ compose.desktop {
             packageName = "rainbow"
             packageVersion = "1.0.0"
         }
+
+        buildTypes {
+            release {
+                proguard {
+                    isEnabled.set(false)
+                    configurationFiles.from("${project.rootDir}/compose.pro")
+                }
+            }
+        }
     }
 }
