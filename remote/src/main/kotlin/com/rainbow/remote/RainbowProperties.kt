@@ -2,9 +2,13 @@ package com.rainbow.remote
 
 object RainbowProperties {
 
-    val RainbowUrl = System.getProperty("rainbow.url")!!
-    val RainbowHost = System.getProperty("rainbow.host")!!
-    val ClientId = System.getProperty("client.id")!!
-    val ClientPassword = System.getProperty("client.password")!!
+    val RainbowUrl = "https://rainbow.fly.dev/"
+    val RainbowHost = "rainbow.fly.dev"
+
+    // INSERT YOUR CLIENT ID HERE.
+    val ClientId = ""
+
+    // LEAVE CLIENT PASSWORD EMPTY.
+    val ClientPassword = ""
 
 }
